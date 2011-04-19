@@ -25,13 +25,13 @@ operator () (const double & x) const
     return v0;
   }
   else if (x < x2){
-    return v0 + (1. - v0) * sin ((x - (x1 + 0.5 * Lt)) / Lt * M_PI);
+    return v0 + (1. - v0) * (sin ((x - (x1 + 0.5 * Lt)) / Lt * M_PI) + 1.) / 2.;
   }
   else if (x < x3 ){
     return 1.;
   }
   else if (x < x4){
-    return v0 - (1. - v0) * sin ((x - (x3 + 0.5 * Lt)) / Lt * M_PI);
+    return v0 + (1. - v0) * (-sin ((x - (x3 + 0.5 * Lt)) / Lt * M_PI) + 1.) / 2.;
   }
   else {
     return v0;

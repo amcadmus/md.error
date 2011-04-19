@@ -39,7 +39,7 @@ int main (int argc, char * argv[])
       ("Ly", po::value<double > (&Ly)->default_value (20.),  "box size y")
       ("Lz", po::value<double > (&Lz)->default_value (20.),  "box size z")
       ("Lh", po::value<double > (&Lh)->default_value (20.),  "high density range")
-      ("Lt", po::value<double > (&Lt)->default_value (20.),  "transition layer thickness")
+      ("Lt", po::value<double > (&Lt)->default_value (10.),  "transition layer thickness")
       ("rhoh", po::value<double > (&rhoh)->default_value (1.),  "higher density")
       ("rhol", po::value<double > (&rhol)->default_value (.5),  "lower  density")
       ("file-name,f",	po::value<std::string > (&filename)->	default_value (std::string("confout.gro"), "file to output"));
