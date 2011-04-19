@@ -34,7 +34,8 @@ estimate (const DensityProfile_PiecewiseConst & dp)
 	// myx = (ix + 0.5) * hx;
 	// myy = (iy + 0.5) * hy;
 	// myz = (iz + 0.5) * hz;
-	double sum = 0.;
+	double sumx, sumy, sumz;
+	sumx = sumy = sumz = 0.f;
 	for (int jx = 0; jx < int(nx); ++jx){
 	  int dx = jx - ix;
 	  if      (dx < -int(nx)/2) dx += nx;
@@ -54,13 +55,19 @@ estimate (const DensityProfile_PiecewiseConst & dp)
 	      targetx = (dx) * hx;
 	      targety = (dy) * hy;
 	      targetz = (dz) * hz;
-	      double f2 = fk.f2 (targetx, targety, targetz);
+	      // double f2 = fk.f2 (targetx, targety, targetz);
+	      // double rho = dp.getProfile (jx, jy, jz);
+	      // sum += f2 * rho * dvolume;
 	      double rho = dp.getProfile (jx, jy, jz);
-	      sum += f2 * rho * dvolume;
+	      double fx, fy, fz;
+	      fk.f (targetx, targety, targetz, fx, fy, fz);
+	      sumx += fx * rho * dvolume;
+	      sumy += fy * rho * dvolume;
+	      sumz += fz * rho * dvolume;
 	    }
 	  }
 	}
-	profile[index3to1(ix, iy, iz)] = sqrt(sum);
+	profile[index3to1(ix, iy, iz)] = sqrt(sumx*sumx + sumy*sumy + sumz*sumz);
       }
     }
   }
