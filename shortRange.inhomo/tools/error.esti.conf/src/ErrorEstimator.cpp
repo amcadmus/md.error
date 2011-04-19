@@ -20,6 +20,11 @@ estimate (const DensityProfile_PiecewiseConst & dp)
   profile.resize (nx * ny * nz);
   double dvolume = hx * hy * hz;
   printf ("# error estimator: hx %f, hy %f, hz %f\n", hx, hy, hz);  
+  int convCut = int(nx/2);
+  if (convCut > int(ny/2)) convCut = int(ny/2);
+  if (convCut > int(nz/2)) convCut = int(nz/2);
+  printf ("# convCut: %d\n", convCut);  
+  
   
   for (int ix = 0; ix < int(nx); ++ix){
     // printf ("ix %d, iy %d, iz %d\n", ix, iy, iz);
@@ -31,17 +36,20 @@ estimate (const DensityProfile_PiecewiseConst & dp)
 	// myz = (iz + 0.5) * hz;
 	double sum = 0.;
 	for (int jx = 0; jx < int(nx); ++jx){
+	  int dx = jx - ix;
+	  if      (dx < -int(nx)/2) dx += nx;
+	  else if (dx >= int(nx)/2) dx -= nx;
+	  if (fabs(dx) > convCut) continue;
 	  for (int jy = 0; jy < int(ny); ++jy){
+	    int dy = jy - iy;
+	    if      (dy < -int(ny)/2) dy += ny;
+	    else if (dy >= int(ny)/2) dy -= ny;
+	    if (fabs(dy) > convCut) continue;
 	    for (int jz = 0; jz < int(nz); ++jz){
-	      int dx = jx - ix;
-	      int dy = jy - iy;
 	      int dz = jz - iz;
-	      if      (dx < -int(nx)/2) dx += nx;
-	      else if (dx >= int(nx)/2) dx -= nx;
-	      if      (dy < -int(ny)/2) dy += ny;
-	      else if (dy >= int(ny)/2) dy -= ny;
 	      if      (dz < -int(nz)/2) dz += nz;
 	      else if (dz >= int(nz)/2) dz -= nz;
+	      if (fabs(dz) > convCut) continue;
 	      double targetx, targety, targetz;
 	      targetx = (dx) * hx;
 	      targety = (dy) * hy;
