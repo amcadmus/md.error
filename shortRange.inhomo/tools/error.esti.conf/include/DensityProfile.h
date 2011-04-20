@@ -29,6 +29,8 @@ public:
 public:
   DensityProfile_PiecewiseConst (const std::string & filename,
 				 const double & refh);
+  DensityProfile_PiecewiseConst (const std::vector<std::string> & filename,
+				 const double & refh);
   const double & getProfile (const unsigned & ix,
 			     const unsigned & iy,
 			     const unsigned & iz) const

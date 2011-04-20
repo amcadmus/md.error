@@ -17,7 +17,7 @@
 
 int main(int argc, char * argv[])
 {
-      if (argc != 4){
+  if (argc != 4){
     std::cerr << "usage:\n"
 	     << argv[0] << " inputConf refh rcut" << std::endl;
     return 1;
