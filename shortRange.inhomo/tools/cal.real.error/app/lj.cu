@@ -47,7 +47,11 @@ int main(int argc, char * argv[])
   Topology::Molecule mol;
   mol.pushAtom (Topology::Atom (1.0, 0.0, 0));
   LennardJones6_12Parameter ljparam;
-  ScalorType rcut2 = sys.box.size.z / 2 - 1.f;
+  // ScalorType rcut2 = sys.box.size.z / 2 - 1.f;
+  ScalorType rcut2 = rcut1 * 3;
+  if (rcut2 > sys.box.size.z / 2.f - 1.f) rcut2 = sys.box.size.z / 2 - 1.f;
+  printf ("# rcut1 is %f\n", rcut1);
+  printf ("# rcut2 is %f\n", rcut2);
   ljparam.reinit (1.f, 1.f, 0.f, rcut1, rcut2);
   
   sysTop.addNonBondedInteraction (Topology::NonBondedInteraction(0, 0, ljparam));
@@ -59,20 +63,21 @@ int main(int argc, char * argv[])
   SystemNonBondedInteraction sysNbInter;
   sysNbInter.reinit (sysTop);
   
-  ScalorType maxrcut = sysNbInter.maxRcut();
-  ScalorType rlist = rcut2;
-  CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
-  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 10.f);
-  sys.normalizeDeviceData ();
-  clist.rebuild (sys, NULL);
-  nlist.rebuild (sys, clist, NULL);
+  // ScalorType maxrcut = sysNbInter.maxRcut();
+  // ScalorType rlist = rcut2;
+  // CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
+  // NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 2.f);
+  // sys.normalizeDeviceData ();
+  // clist.rebuild (sys, NULL);
+  // nlist.rebuild (sys, clist, NULL);
   InteractionEngine inter (sys, NThreadsPerBlockAtom);
   inter.registNonBondedInteraction (sysNbInter);
   
   try{ 
     inter.clearInteraction (sys);
-    inter.applyNonBondedInteraction (sys, nlist, NULL, NULL);
-
+    // inter.applyNonBondedInteraction (sys, nlist, NULL, NULL);
+    inter.applyNonBondedInteraction (sys, rcut2);
+    
     sys.updateHostFromDevice (NULL);
     FILE *fp = fopen ("force.out", "w");
     fprintf (fp, "%d\n%f %f %f\n",

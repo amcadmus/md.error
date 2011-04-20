@@ -4044,7 +4044,6 @@ buildCellNeighborhood (const IntVectorType numCell,
   }
 }
 
-
 __global__ void Parallel::CudaGlobal::
 buildCellNeighborhood (const IntVectorType numCell,
 		       const IndexType devideLevel,
