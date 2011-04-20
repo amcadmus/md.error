@@ -49,7 +49,7 @@ f2 (const double & dx,
   double diff = dx*dx + dy*dy + dz*dz;
   if (diff <= rc2) return 0.;
 
-  double tmp = 6. * epsilon * sigma6 / (diff * diff * diff * sqrt(diff));
+  double tmp = 4. * 6. * epsilon * sigma6 / (diff * diff * diff * sqrt(diff));
   return tmp * tmp;
 }
 
@@ -67,7 +67,7 @@ f (const double & dx,
     return ;
   }
   
-  double tmp = 6. * epsilon * sigma6 / (diff * diff * diff * (diff));
+  double tmp = 4. * 6. * epsilon * sigma6 / (diff * diff * diff * (diff));
   fx = dx * tmp;
   fy = dy * tmp;
   fz = dz * tmp;

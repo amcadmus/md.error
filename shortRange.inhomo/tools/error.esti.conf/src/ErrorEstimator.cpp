@@ -31,6 +31,7 @@ estimate (const DensityProfile_PiecewiseConst & dp)
     printf ("ix %d\n", ix);
     for (int iy = 0; iy < int(ny); ++iy){
       for (int iz = 0; iz < int(nz); ++iz){
+	// if (ix != 0 || iy != 0 || iz !=0 ) continue;
 	double sumx, sumy, sumz;
 	sumx = sumy = sumz = 0.;
 	double sum = 0.;
@@ -53,16 +54,16 @@ estimate (const DensityProfile_PiecewiseConst & dp)
 	      targetx = (dx) * hx;
 	      targety = (dy) * hy;
 	      targetz = (dz) * hz;
+	      double rho = dp.getProfile (jx, jy, jz);
+	      // double rho = 2;
 	      double f2 = fk.f2 (targetx, targety, targetz);
-	      // double rho = dp.getProfile (jx, jy, jz);
-	      double rho = 2;
-	      // sum += f2 * rho * dvolume;
 	      double fx, fy, fz;
 	      fk.f (targetx, targety, targetz, fx, fy, fz);
 	      if (fabs(fx*fx + fy*fy + fz*fz - f2) > 1e-10) {
 		std::cout << "force not match!!!" << std::endl;
 		printf ("%.10e %.10e %e\n", fx*fx + fy*fy + fz*fz, f2, fx*fx + fy*fy + fz*fz -f2);
 	      }
+	      sum += f2 * rho * dvolume;
 	      sumx += fx * rho * dvolume;
 	      sumy += fy * rho * dvolume;
 	      sumz += fz * rho * dvolume;
