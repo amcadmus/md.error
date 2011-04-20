@@ -54,8 +54,9 @@ int main (int argc, char * argv[])
   }
 
   double volume = Lx * Ly * Lz;
-  unsigned natom = unsigned(volume / rhoh);
+  unsigned natom = unsigned(volume * rhoh);
   unsigned seed = unsigned (time(NULL));
+  std::cout << "# seed is " << seed << std::endl;
   RandomGenerator_MT19937::init_genrand(seed);
   AcceptRatio ar (Lx, Lh, Lt, rhoh, rhol);
 
