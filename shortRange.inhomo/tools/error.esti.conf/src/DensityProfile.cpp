@@ -133,7 +133,7 @@ reinit_xtc (const std::string & filename,
   strncpy (fname, filename.c_str(), 1024);
   XDRFILE * fp = xdrfile_open (fname, "r");
   int natoms;
-  if (read_xtc_natoms (fname, &natoms) != 1){
+  if (read_xtc_natoms (fname, &natoms) != 0){
     std::cerr << "wrong reading natoms" << std::endl;    
     exit (1);
   }
@@ -165,7 +165,10 @@ reinit_xtc (const std::string & filename,
   profile.clear();
   profile.resize (nx * ny * nz, 0.);
 
-  while (read_xtc (fp, natoms, &step, &time, gbox, xx, &prec) != 0){
+  int nfile = 0;
+  while (read_xtc (fp, natoms, &step, &time, gbox, xx, &prec) == 0){
+    std::cout << "loaded frame at time " << time << "ps   \r";  
+    std::cout << std::flush;  
     for (unsigned i = 0; i < unsigned(natoms); ++i) {
       double tmp;
       tmp = xx[i][0];
@@ -182,8 +185,15 @@ reinit_xtc (const std::string & filename,
       unsigned iz = unsigned (tmp / hz);
       profile[index3to1(ix, iy, iz)] += 1.;
     }
+    nfile ++;
   }
+  std::cout << std::endl;
 
+  double dvolume = hx * hy * hz;
+  for (unsigned i = 0; i < profile.size(); ++i){
+    profile[i] /= dvolume * nfile;
+  }
+  
   free(xx);
   xdrfile_close(fp);
 }

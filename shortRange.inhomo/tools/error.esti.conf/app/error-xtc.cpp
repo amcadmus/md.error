@@ -19,7 +19,7 @@ int main(int argc, char * argv[])
 {
   if (argc != 5){
     std::cerr << "usage:\n"
-	     << argv[0] << " fileFilenames refh_Profile refh_Error rcut" << std::endl;
+	     << argv[0] << " xtc refh_Profile refh_Error rcut" << std::endl;
     return 1;
   }
   double refh_Profile, refh_Error, rcut;
