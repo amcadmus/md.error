@@ -82,5 +82,127 @@ getValue (const double & xx,
 }
 
 
+//
+// consider correlation
+//
+class DensityProfile_Corr_PiecewiseConst
+{
+  std::vector<double > boxsize;
+  int nx, ny, nz;
+  double hx, hy, hz;
+  int corrBond, corrDim;
+  int numCorr;
+  std::vector<double > mean;
+  std::vector<std::vector<double > > corr;
+public:
+  inline int  index3to1 (int  ix, int  iy, int  iz) const;
+  inline void index1to3 (int& input,
+			 int& ix, int& iy, int& iz) const;
+  inline int  corrIndex3to1 (int  ix, int  iy, int  iz) const;
+  inline void corrIndex1to3 (int& input,
+			     int& ix, int& iy, int& iz) const;
+public:
+  DensityProfile_Corr_PiecewiseConst (const std::string & filename,
+				      const double & refh);
+  void reinit_xtc (const std::string & filename,
+		   const double & refh);
+  const double & getMean (const int & ix,
+			  const int & iy,
+			  const int & iz) const
+      {return mean[index3to1(ix, iy, iz)];}
+  const double & getCorr (const int & ix,
+			  const int & iy,
+			  const int & iz,
+			  const int & dx,
+			  const int & dy,
+			  const int & dz) const
+      {return corr[index3to1(ix, iy, iz)][corrIndex1to3(dx, dy, dz)];}
+  inline const double & getMean (const double & xx,
+				 const double & yy,
+				 const double & zz) const;
+  inline const double & getCorr (const double & xx,
+				 const double & yy,
+				 const double & zz,
+				 const double & dx,
+				 const double & dy,
+				 const double & dz) const;
+  const int & getNx () const {return nx;}
+  const int & getNy () const {return ny;}
+  const int & getNz () const {return nz;}
+  const std::vector<double > & getBox () const {return boxsize;}
+public:
+  void print_x  (const std::string & filename) const;
+  void print_xy (const std::string & filename) const;
+};
+
+
+int DensityProfile_Corr_PiecewiseConst::
+corrIndex3to1 (int  ix, int  iy, int  iz) const
+{
+  ix += corrBond;
+  iy += corrBond;
+  iz += corrBond;
+  return iz + corrDim * (iy + corrDim * ix);
+}
+
+void DensityProfile_Corr_PiecewiseConst::
+corrIndex1to3 (int& input,
+	       int& ix, int& iy, int& iz) const
+{
+  int tmp = input;
+  iz = tmp % (corrDim);
+  tmp = (tmp - iz) / corrDim;
+  iy = tmp % (corrDim);
+  ix =  (tmp - iy) / corrDim;
+  ix -= corrBond;
+  iy -= corrBond;
+  iz -= corrBond;
+}
+    
+int DensityProfile_Corr_PiecewiseConst::
+index3to1 (int  ix, int  iy, int  iz) const
+{
+  return iz + nz * (iy + ny * ix);
+}
+
+void DensityProfile_Corr_PiecewiseConst::
+index1to3 (int& input,
+	   int& ix, int& iy, int& iz) const
+{
+  int tmp = input;
+  iz = tmp % (nz);
+  tmp = (tmp - iz) / nz;
+  iy = tmp % (ny);
+  ix =  (tmp - iy) / ny;
+}
+
+const double & DensityProfile_Corr_PiecewiseConst::
+getValue (const double & xx,
+	  const double & yy,
+	  const double & zz) const
+{
+  int ix = int (xx / hx);
+  int iy = int (yy / hy);
+  int iz = int (zz / hz);
+  return getMean (ix, iy, iz);
+}
+
+const double & DensityProfile_Corr_PiecewiseConst::
+getCorr (const double & xx,
+	 const double & yy,
+	 const double & zz,
+	 const double & dx,
+	 const double & dy,
+	 const double & dz) const
+{
+  int ix = int (xx / hx);
+  int iy = int (yy / hy);
+  int iz = int (zz / hz);
+  int idx = int (dx / hx);
+  int idy = int (dy / hy);
+  int idz = int (dz / hz);
+  return getCorr (ix, iy, iz, idx, idy, idz);
+}
+
 
 #endif
