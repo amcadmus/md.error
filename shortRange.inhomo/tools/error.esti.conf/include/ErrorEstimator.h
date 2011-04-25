@@ -52,7 +52,7 @@ class ErrorEstimatorConvN2_Corr
 {
   const ForceKernel & fk;
   std::vector<double > boxsize;
-  unsigned nx, ny, nz;
+  int  nx, ny, nz;
   double   hx, hy, hz;
   std::vector<double > profile;
   inline unsigned index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const;

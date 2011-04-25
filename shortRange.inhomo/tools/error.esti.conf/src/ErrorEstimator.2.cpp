@@ -115,10 +115,10 @@ print_x (const std::string & file) const
     exit(1);
   }
 
-  for (unsigned i = 0; i < nx; ++i){
+  for (int i = 0; i < nx; ++i){
     // double sum = 0.;
-    // for (unsigned j = 0; j < ny; ++j){
-    //   for (unsigned k = 0; k < nz; ++k){
+    // for (int j = 0; j < ny; ++j){
+    //   for (int k = 0; k < nz; ++k){
     // 	sum += profile[index3to1(i, j, k)];
     //   }
     // }
@@ -137,12 +137,12 @@ print_xy (const std::string & file) const
     exit(1);
   }
 
-  for (unsigned i = 0; i < nx; ++i){
+  for (int i = 0; i < nx; ++i){
     double vx = (i + 0.5) * hx;
-    for (unsigned j = 0; j < ny; ++j){
+    for (int j = 0; j < ny; ++j){
       double vy = (j + 0.5) * hy;
       // double sum = 0.;
-      // for (unsigned k = 0; k < nz; ++k){
+      // for (int k = 0; k < nz; ++k){
       // 	sum += profile[index3to1(i, j, k)];
       // }
       fprintf (fp, "%f %f %e\n", vx, vy, profile[index3to1(i,j,0)]);

@@ -4,9 +4,11 @@
 
 DensityProfile_Corr_PiecewiseConst::
 DensityProfile_Corr_PiecewiseConst (const std::string & filename,
+				    const int & corrBond_,
 				    const double & refh)
+    : zero (0.)
 {
-  reinit_xtc (filename, refh);  
+  reinit_xtc (filename, corrBond_, refh);  
 }
 
 void DensityProfile_Corr_PiecewiseConst::
@@ -80,22 +82,22 @@ reinit_xtc (const std::string & filename,
       profile[index3to1(ix, iy, iz)] += 1./dvolume;
     }
     nfile ++;
-    for (unsigned i = 0; i < nx * ny * nz; ++i){
+    for (int i = 0; i < nx * ny * nz; ++i){
       mean[i] += profile[i];
     }
-    for (unsigned i = 0; i < nx * ny * nz; ++i){
+    for (int i = 0; i < nx * ny * nz; ++i){
       int myi, myj, myk;
       index1to3 (i, myi, myj, myk);
       int writeIndex = 0;
-      for (unsigned di = -corrBond; di <= corrBond; ++di){
+      for (int di = -corrBond; di <= corrBond; ++di){
 	int targeti = myi + di;
 	if      (targeti <   0) targeti += nx;
 	else if (targeti >= nx) targeti -= nx;
-	for (unsigned dj = -corrBond; dj <= corrBond; ++dj){
+	for (int dj = -corrBond; dj <= corrBond; ++dj){
 	  int targetj = myj + dj;
 	  if      (targetj <   0) targetj += ny;
 	  else if (targetj >= ny) targetj -= ny;
-	  for (unsigned dk = -corrBond; dk <= corrBond; ++dk){
+	  for (int dk = -corrBond; dk <= corrBond; ++dk){
 	    int targetk = myk + dk;
 	    if      (targetk <   0) targetk += nz;
 	    else if (targetk >= nz) targetk -= nz;
@@ -112,7 +114,7 @@ reinit_xtc (const std::string & filename,
     mean[i] /= nfile;
   }
   for (unsigned i = 0; i < corr.size(); ++i){
-    for (unsigned j = 0; j < numCorr; ++j){
+    for (int j = 0; j < numCorr; ++j){
       corr[i][j] /= nfile;
     }
   }
@@ -131,15 +133,15 @@ print_x (const std::string & file) const
     exit(1);
   }
 
-  for (unsigned i = 0; i < nx; ++i){
+  for (int i = 0; i < nx; ++i){
     // double sum = 0.;
-    // for (unsigned j = 0; j < ny; ++j){
-    //   for (unsigned k = 0; k < nz; ++k){
+    // for (int j = 0; j < ny; ++j){
+    //   for (int k = 0; k < nz; ++k){
     // 	sum += profile[index3to1(i, j, k)];
     //   }
     // }
     // fprintf (fp, "%f %f\n", (i + 0.5) * hx, sum / ny / nz);
-    fprintf (fp, "%f %f\n", (i + 0.5) * hx, profile[index3to1(i, 0, 0)]);
+    fprintf (fp, "%f %f\n", (i + 0.5) * hx, mean[index3to1(i, 0, 0)]);
   }
 
   fclose (fp);
@@ -154,16 +156,16 @@ print_xy (const std::string & file) const
     exit(1);
   }
 
-  for (unsigned i = 0; i < nx; ++i){
+  for (int i = 0; i < nx; ++i){
     double vx = (i + 0.5) * hx;
-    for (unsigned j = 0; j < ny; ++j){
+    for (int j = 0; j < ny; ++j){
       double vy = (j + 0.5) * hy;
       // double sum = 0.;
-      // for (unsigned k = 0; k < nz; ++k){
+      // for (int k = 0; k < nz; ++k){
       // 	sum += profile[index3to1(i, j, k)];
       // }
       // fprintf (fp, "%f %f %f\n", vx, vy, sum / nz);
-      fprintf (fp, "%f %f %f\n", vx, vy, profile[index3to1(i,j,0)]);
+      fprintf (fp, "%f %f %f\n", vx, vy, mean[index3to1(i,j,0)]);
     }
     fprintf (fp, "\n");
   }

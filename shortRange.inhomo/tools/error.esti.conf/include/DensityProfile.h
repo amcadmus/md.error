@@ -90,6 +90,7 @@ class DensityProfile_Corr_PiecewiseConst
   std::vector<double > boxsize;
   int nx, ny, nz;
   double hx, hy, hz;
+  double zero;
   int corrBond, corrDim;
   int numCorr;
   std::vector<double > mean;
@@ -103,8 +104,10 @@ public:
 			     int& ix, int& iy, int& iz) const;
 public:
   DensityProfile_Corr_PiecewiseConst (const std::string & filename,
+				      const int & corrBond,
 				      const double & refh);
   void reinit_xtc (const std::string & filename,
+		   const int & corrBond,
 		   const double & refh);
   const double & getMean (const int & ix,
 			  const int & iy,
@@ -116,7 +119,7 @@ public:
 			  const int & dx,
 			  const int & dy,
 			  const int & dz) const
-      {return corr[index3to1(ix, iy, iz)][corrIndex1to3(dx, dy, dz)];}
+      {return corr[index3to1(ix, iy, iz)][corrIndex3to1(dx, dy, dz)];}
   inline const double & getMean (const double & xx,
 				 const double & yy,
 				 const double & zz) const;
@@ -177,9 +180,9 @@ index1to3 (int& input,
 }
 
 const double & DensityProfile_Corr_PiecewiseConst::
-getValue (const double & xx,
-	  const double & yy,
-	  const double & zz) const
+getMean (const double & xx,
+	 const double & yy,
+	 const double & zz) const
 {
   int ix = int (xx / hx);
   int iy = int (yy / hy);
@@ -201,6 +204,9 @@ getCorr (const double & xx,
   int idx = int (dx / hx);
   int idy = int (dy / hy);
   int idz = int (dz / hz);
+  if (-idx > corrBond || idx > corrBond) return zero;
+  if (-idy > corrBond || idy > corrBond) return zero;
+  if (-idz > corrBond || idz > corrBond) return zero;
   return getCorr (ix, iy, iz, idx, idy, idz);
 }
 
