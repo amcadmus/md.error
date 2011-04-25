@@ -17,15 +17,22 @@
 
 int main(int argc, char * argv[])
 {
-  if (argc != 4){
+  if (argc != 5){
     std::cerr << "usage:\n"
-	     << argv[0] << " inputConf refh rcut" << std::endl;
+	     << argv[0] << " fileFilenames refh_Profile refh_Error rcut" << std::endl;
     return 1;
   }
+  double refh_Profile, refh_Error, rcut;
+  refh_Profile = atof(argv[2]);
+  refh_Error = atof(argv[3]);
+  rcut = atof(argv[4]);
 
-  DensityProfile_PiecewiseConst dp (std::string(argv[1]), atof(argv[2]));
-  Disperson6 lj (1., 1., atof(argv[3]));
-  ErrorEstimatorConvN2 error (lj);
+  DensityProfile_PiecewiseConst dp (std::string(argv[1]), refh_Profile);
+  dp.print_x  (std::string("profile.x.out"));
+  dp.print_xy (std::string("profile.xy.out"));
+
+  Disperson6 lj (1., 1., rcut);
+  ErrorEstimatorConvN2 error (lj, dp.getBox(), refh_Error);
 
   error.estimate (dp);
   error.print_x (std::string("esti.x.out"));

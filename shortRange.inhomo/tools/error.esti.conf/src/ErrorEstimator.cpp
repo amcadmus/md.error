@@ -2,22 +2,24 @@
 #include "ForceKernel.h"
 
 ErrorEstimatorConvN2::
-ErrorEstimatorConvN2 (const ForceKernel & fk_)
-    : fk (fk_)
+ErrorEstimatorConvN2 (const ForceKernel & fk_,
+		      const std::vector<double > & box,
+		      const double refh)
+    : fk (fk_),
+      boxsize (box)
 {
+  nx = unsigned (boxsize[0] / refh);
+  ny = unsigned (boxsize[1] / refh);
+  nz = unsigned (boxsize[2] / refh);
+  hx = boxsize[0] / nx;
+  hy = boxsize[1] / ny;
+  hz = boxsize[2] / nz;
+  profile.resize (nx * ny * nz, 0.);
 }
 
 void ErrorEstimatorConvN2::
 estimate (const DensityProfile_PiecewiseConst & dp)
 {
-  boxsize = dp.getBox();
-  nx = dp.getNx();
-  ny = dp.getNy();
-  nz = dp.getNz();
-  hx = boxsize[0] / nx;
-  hy = boxsize[1] / ny;
-  hz = boxsize[2] / nz;
-  profile.resize (nx * ny * nz);
   double dvolume = hx * hy * hz;
   printf ("# error estimator: hx %f, hy %f, hz %f\n", hx, hy, hz);  
   double convCut = double(nx/2);
@@ -25,7 +27,6 @@ estimate (const DensityProfile_PiecewiseConst & dp)
   if (convCut > double(nz/2)) convCut = double(nz/2);
   convCut -= 1.00001;
   printf ("# convCut: %f\n", convCut);  
-  
   
   for (int ix = 0; ix < int(nx); ++ix){
     printf ("ix %d\n", ix);
@@ -54,7 +55,7 @@ estimate (const DensityProfile_PiecewiseConst & dp)
 	      targetx = (dx) * hx;
 	      targety = (dy) * hy;
 	      targetz = (dz) * hz;
-	      double rho = dp.getProfile (jx, jy, jz);
+	      double rho = dp.getValue ((jx+0.5)*hx, (jy+0.5)*hy, (jz+0.5)*hz);
 	      // double rho = 2;
 	      double f2 = fk.f2 (targetx, targety, targetz);
 	      double fx, fy, fz;

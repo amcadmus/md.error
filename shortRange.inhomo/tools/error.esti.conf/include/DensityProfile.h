@@ -15,6 +15,9 @@
 #include <vector>
 #include <cmath>
 
+#define CPLUSPLUS
+#include "xdrfile/xdrfile.h"
+#include "xdrfile/xdrfile_xtc.h"
 
 class DensityProfile_PiecewiseConst
 {
@@ -31,10 +34,15 @@ public:
 				 const double & refh);
   DensityProfile_PiecewiseConst (const std::vector<std::string> & filename,
 				 const double & refh);
+  void reinit_xtc (const std::string & filename,
+		   const double & refh);
   const double & getProfile (const unsigned & ix,
 			     const unsigned & iy,
 			     const unsigned & iz) const
       {return profile[index3to1(ix, iy, iz)];}
+  inline const double & getValue (const double & xx,
+				  const double & yy,
+				  const double & zz) const;
   const unsigned & getNx () const {return nx;}
   const unsigned & getNy () const {return ny;}
   const unsigned & getNz () const {return nz;}
@@ -61,6 +69,18 @@ index1to3 (unsigned& input,
   iy = tmp % (ny);
   ix =  (tmp - iy) / ny;
 }
+
+const double & DensityProfile_PiecewiseConst::
+getValue (const double & xx,
+	  const double & yy,
+	  const double & zz) const
+{
+  unsigned ix = unsigned (xx / hx);
+  unsigned iy = unsigned (yy / hy);
+  unsigned iz = unsigned (zz / hz);
+  return getProfile (ix, iy, iz);
+}
+
 
 
 #endif

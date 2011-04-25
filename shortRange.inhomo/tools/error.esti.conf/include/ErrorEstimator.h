@@ -16,7 +16,9 @@ class ErrorEstimatorConvN2
   inline void     index1to3 (unsigned& input,
 			     unsigned& ix, unsigned& iy, unsigned& iz) const;
 public:
-  ErrorEstimatorConvN2 (const ForceKernel & fk);
+  ErrorEstimatorConvN2 (const ForceKernel & fk,
+			const std::vector<double > & box,
+			const double refh);
   void estimate (const DensityProfile_PiecewiseConst & dp);
 public:
   void print_x  (const std::string & filename) const;
