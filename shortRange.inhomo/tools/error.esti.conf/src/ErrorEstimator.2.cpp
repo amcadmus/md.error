@@ -21,6 +21,8 @@ void ErrorEstimatorConvN2_Corr::
 estimate (const DensityProfile_Corr_PiecewiseConst & dp,
 	  const int & corrBond)
 {
+  int myCorrBond = corrBond;
+  
   double dvolume = hx * hy * hz;
   printf ("# error estimator: hx %f, hy %f, hz %f\n", hx, hy, hz);  
   double convCut = double(nx/2);
@@ -37,6 +39,7 @@ estimate (const DensityProfile_Corr_PiecewiseConst & dp,
 	double sumx, sumy, sumz;
 	sumx = sumy = sumz = 0.;
 	double sum = 0.;
+	double sum2 = 0.;
 	double sumCorr = 0.;
 	for (int jx = 0; jx < int(nx); ++jx){
 	  int dx = jx - ix;
@@ -67,39 +70,52 @@ estimate (const DensityProfile_Corr_PiecewiseConst & dp,
 		printf ("%.10e %.10e %e\n", fx*fx + fy*fy + fz*fz, f2, fx*fx + fy*fy + fz*fz -f2);
 	      }
 	      sum += f2 * rho * dvolume;
+	      sum2 += f2 * rho * rho * dvolume;
 	      sumx += fx * rho * dvolume;
 	      sumy += fy * rho * dvolume;
 	      sumz += fz * rho * dvolume;
 
+	      // if ((ix+0.5)*hx >= 45 && (ix+0.5)*hx <= 55) {
+	      // 	myCorrBond = corrBond;
+	      // }
+	      // else {
+	      // 	myCorrBond = 0;
+	      // }
 	      
 	      int kx, ky, kz;
-	      for (int ddx = -corrBond; ddx <= corrBond; ++ddx){
-		kx = jx + ddx;
-		if      (kx <   0) kx += nx;
-		else if (kx >= nx) kx -= nx;		
-		for (int ddy = -corrBond; ddy <= corrBond; ++ddy){
-		  ky = jy + ddy;
-		  if      (ky <   0) ky += ny;
-		  else if (ky >= ny) ky -= ny;		
-		  for (int ddz = -corrBond; ddz <= corrBond; ++ddz){
-		    kz = jz + ddz;
-		    if      (kz <   0) kz += nz;
-		    else if (kz >= nz) kz -= nz;		
-		    double gx, gy, gz;
-		    fk.f ((dx+ddx)*hx, (dy+ddy)*hy, (dz+ddz)*hz, gx, gy, gz);
-		    double rho2 =
-			dp.getCorr ((jx+0.5)*hx, (jy+0.5)*hy, (jz+0.5)*hz,
-				    ddx*hx, ddy*hy, ddz*hz);
-		    double rho12 =
-			dp.getMean ((kx+0.5)*hx, (ky+0.5)*hy, (kz+0.5)*hz);
-		    sumCorr += (rho2 - rho * rho12) * (fx*gx + fy*gy + fz*gz) * dvolume * dvolume;
-		  }
-		}
+	      for (int ddx = -myCorrBond; ddx <= myCorrBond; ++ddx){
+	      	kx = jx + ddx;
+	      	if      (kx <   0) kx += nx;
+	      	else if (kx >= nx) kx -= nx;		
+	      	for (int ddy = -myCorrBond; ddy <= myCorrBond; ++ddy){
+	      	  ky = jy + ddy;
+	      	  if      (ky <   0) ky += ny;
+	      	  else if (ky >= ny) ky -= ny;		
+	      	  for (int ddz = -myCorrBond; ddz <= myCorrBond; ++ddz){
+	      	    if (ddx == 0 && ddy == 0 && ddz == 0) continue;
+	      	    kz = jz + ddz;
+	      	    if      (kz <   0) kz += nz;
+	      	    else if (kz >= nz) kz -= nz;		
+	      	    double gx, gy, gz;
+	      	    fk.f ((dx+ddx)*hx, (dy+ddy)*hy, (dz+ddz)*hz, gx, gy, gz);
+	      	    double rho2 =
+	      		dp.getCorr ((jx+0.5)*hx, (jy+0.5)*hy, (jz+0.5)*hz,
+	      			    ddx*hx, ddy*hy, ddz*hz);
+	      	    double rho12 =
+	      		dp.getMean ((kx+0.5)*hx, (ky+0.5)*hy, (kz+0.5)*hz);
+	      	    sumCorr += (rho2 - rho * rho12) * (fx*gx + fy*gy + fz*gz) * dvolume * dvolume;
+	      	  }
+	      	}
 	      }
 	    }
 	  }
 	}
-	profile[index3to1(ix, iy, iz)] = sqrt(sum + sumx*sumx + sumy*sumy + sumz*sumz + sumCorr);
+	profile[index3to1(ix, iy, iz)] = sqrt(sum +
+					      sumx*sumx + sumy*sumy + sumz*sumz +
+					      sumCorr);
+	printf ("%d %d %d,  sum %e, sum1 %e, sumCorr %e minus: %e  profile: %e\n",
+		ix, iy, iz,
+		sum, sumx*sumx + sumy*sumy + sumz*sumz, sumCorr, sum2, profile[index3to1(ix, iy, iz)]);
       }
     }
   }

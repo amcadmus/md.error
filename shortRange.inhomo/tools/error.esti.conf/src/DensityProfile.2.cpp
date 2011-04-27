@@ -65,6 +65,9 @@ reinit_xtc (const std::string & filename,
   while (read_xtc (fp, natoms, &step, &time, gbox, xx, &prec) == 0){
     std::cout << "loaded frame at time " << time << "ps   \r";  
     std::cout << std::flush;  
+    for (int i = 0; i < nx * ny * nz; ++i){
+      profile[i] = 0.;
+    }
     for (unsigned i = 0; i < unsigned(natoms); ++i) {
       double tmp;
       tmp = xx[i][0];
@@ -101,6 +104,13 @@ reinit_xtc (const std::string & filename,
 	    int targetk = myk + dk;
 	    if      (targetk <   0) targetk += nz;
 	    else if (targetk >= nz) targetk -= nz;
+	    // if (writeIndex != corrIndex3to1 (di, dj, dk)){
+	    //   std::cerr << "wrong corrIndex3to1" << std::endl;
+	    //   exit (1);
+	    // }
+	    // int tmpa(-1), tmpb(0), tmpc(1), tmpt;
+	    // tmpt = corrIndex3to1 (tmpa, tmpb, tmpc);
+	    // corrIndex1to3 (tmpt, tmpa, tmpb, tmpc);
 	    corr[i][writeIndex++] +=
 		profile[i] * profile[index3to1(targeti, targetj, targetk)];
 	  }
