@@ -112,7 +112,7 @@ int main(int argc, char * argv[])
   xx = (rvec *) malloc (sizeof(rvec) * sys.hdata.numAtom);
   XDRFILE * fpxtc = xdrfile_open (xtcname, "r");
   if (fpxtc == NULL){
-    fprintf (stderr, "cannot open file traj.xtc\n");
+    fprintf (stderr, "cannot open file %s\n", xtcname);
     return 1;;
   }
   std::vector<double > boxsize (3);
