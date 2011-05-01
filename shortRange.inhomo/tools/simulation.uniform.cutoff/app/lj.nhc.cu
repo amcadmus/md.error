@@ -29,7 +29,7 @@
 int main(int argc, char * argv[])
 {
   IndexType nstep = 100000;
-  IndexType confFeq = 100000;
+  IndexType confFeq = 500;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.002;
   ScalorType rcut = 8.0;
@@ -176,6 +176,7 @@ int main(int argc, char * argv[])
       }
 
       if ((i+1) % confFeq == 0){
+	printf ("write conf\n");
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);

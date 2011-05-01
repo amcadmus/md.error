@@ -31,8 +31,8 @@ int main(int argc, char * argv[])
   IndexType nstep = 100000;
   IndexType confFeq = 100000;
   IndexType thermoFeq = 100;
-  ScalorType dt = 0.002;
-  ScalorType rcut = 8.0;
+  ScalorType dt = 0.0001;
+  ScalorType rcut = 5.0;
   ScalorType nlistExten = 0.3;
   ScalorType refT = 0.70;
   ScalorType tauT = 1.;
@@ -56,7 +56,7 @@ int main(int argc, char * argv[])
   Topology::System sysTop;
   Topology::Molecule mol;
   mol.pushAtom (Topology::Atom (1.0, 0.0, 0));
-  ScalorType capValue = 100;
+  ScalorType capValue = 1000;
   LennardJones6_12CapParameter ljparam;
   ljparam.reinit (1.f, 1.f, 0.f, rcut, capValue);
   sysTop.addNonBondedInteraction (Topology::NonBondedInteraction(0, 0, ljparam));
@@ -73,7 +73,7 @@ int main(int argc, char * argv[])
   ScalorType maxrcut = sysNbInter.maxRcut();
   ScalorType rlist = maxrcut + nlistExten;
   CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
-  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 10.f);
+  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 3.f);
   sys.normalizeDeviceData ();
   clist.rebuild (sys, NULL);
   nlist.rebuild (sys, clist, NULL);
