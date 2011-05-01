@@ -87,8 +87,8 @@ print_x (const std::string & file) const
     // 	sum += profile[index3to1(i, j, k)];
     //   }
     // }
-    // fprintf (fp, "%f %f\n", (i + 0.5) * hx, profile[index3to1(i,0,0)]);
-    fprintf (fp, "%f %f\n", (i + 0.5) * hx, sum / ny / nz);
+    fprintf (fp, "%f %f\n", (i + 0.5) * hx, profile[index3to1(i,0,0)]);
+    // fprintf (fp, "%f %f\n", (i + 0.5) * hx, sum / ny / nz);
   }
 
   fclose (fp);
