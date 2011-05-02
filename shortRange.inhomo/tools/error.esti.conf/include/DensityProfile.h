@@ -113,6 +113,8 @@ public:
 			  const int & iy,
 			  const int & iz) const
       {return mean[index3to1(ix, iy, iz)];}
+  const double & getMean (const int & i) const
+      {return mean[i];}
   const double & getCorr (const int & ix,
 			  const int & iy,
 			  const int & iz,
@@ -133,6 +135,8 @@ public:
   const int & getNy () const {return ny;}
   const int & getNz () const {return nz;}
   const std::vector<double > & getBox () const {return boxsize;}
+  const int & getCorrBond () const {return corrBond;}
+  const int & getCorrDim  () const {return corrDim; }
 public:
   void print_x  (const std::string & filename) const;
   void print_xy (const std::string & filename) const;

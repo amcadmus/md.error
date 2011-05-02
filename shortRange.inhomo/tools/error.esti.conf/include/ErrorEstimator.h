@@ -88,4 +88,51 @@ index1to3 (unsigned& input,
 
 
 
+//
+// with FFT
+//
+
+#include <fftw3.h>
+
+class ErrorEstimatorFFT_Corr
+{
+  const ForceKernel & fk;
+  std::vector<double > boxsize;
+  int  nx, ny, nz, nele;
+  double   hx, hy, hz;
+  inline unsigned index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const;
+  inline void     index1to3 (unsigned& input,
+			     unsigned& ix, unsigned& iy, unsigned& iz) const;
+  fftw_complex * rho_real, * rho_complex;
+  fftw_plan p_forward_rho, p_backward_rho;
+public:
+  ErrorEstimatorFFT_Corr (const ForceKernel & fk,
+			  const DensityProfile_Corr_PiecewiseConst & dp);
+  ~ErrorEstimatorFFT_Corr ();
+  void estimate (const DensityProfile_Corr_PiecewiseConst & dp,
+		 const int & corrBond);
+public:
+  void print_x  (const std::string & filename) const;
+  void print_xy (const std::string & filename) const;
+};
+
+unsigned ErrorEstimatorFFT_Corr::
+index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const
+{
+  return iz + nz * (iy + ny * ix);
+}
+
+void ErrorEstimatorFFT_Corr::
+index1to3 (unsigned& input,
+	   unsigned& ix, unsigned& iy, unsigned& iz) const
+{
+  unsigned tmp = input;
+  iz = tmp % (nz);
+  tmp = (tmp - iz) / nz;
+  iy = tmp % (ny);
+  ix =  (tmp - iy) / ny;
+}
+
+
+
 #endif
