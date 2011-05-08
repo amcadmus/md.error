@@ -122,6 +122,9 @@ public:
 			  const int & dy,
 			  const int & dz) const
       {return corr[index3to1(ix, iy, iz)][corrIndex3to1(dx, dy, dz)];}
+  const double & getCorr (const int & i,
+			  const int & j) const
+      {return corr[i][j];}
   inline const double & getMean (const double & xx,
 				 const double & yy,
 				 const double & zz) const;

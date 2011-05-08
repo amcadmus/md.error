@@ -16,7 +16,7 @@
 #include "DensityProfile.h"
 
 int main(int argc, char * argv[])
-{
+{  
   if (argc != 6){
     std::cerr << "usage:\n"
 	      << argv[0] << " xtc refh_Profile refh_Error rcut rcorr" << std::endl;
@@ -36,7 +36,14 @@ int main(int argc, char * argv[])
   Disperson6 lj (1., 1., rcut);
   ErrorEstimatorFFT_Corr error (lj, dp);
 
-  error.estimate (dp, rcorr * ratio);
+  double k = 0.8660254037844386;
+  double tmp1 = error.integral_an1 (13, k, rcut);
+  double tmp2 = error.integral_an (13, k, rcut);
+  double tmp3 = error.integral_an13_numerical (k, rcut);
+  printf ("tmp1 (small) is %e, tmp2 (large) is %e, tmp3 (numerical) is %e\n",
+	  tmp1, tmp2, tmp3);
+  
+  error.estimate (dp, rcorr * ratio, rcut);
   error.print_x (std::string("esti.x.out"));
   error.print_xy(std::string("esti.xy.out"));
   

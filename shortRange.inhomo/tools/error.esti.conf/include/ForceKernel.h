@@ -19,9 +19,11 @@ public:
 
 class Disperson6 : public ForceKernel
 {
+public:
   double epsilon;
   double sigma;
   double sigma6;
+  double rc;
   double rc2;
 public:
   Disperson6 (const double & epsilon,
