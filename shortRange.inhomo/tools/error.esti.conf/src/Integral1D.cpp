@@ -281,3 +281,4 @@ typedef double (*F1) ( double);
 template class Integral1D<F1,double >;
 template class Integral1D<F1,float >;
 template class Integral1D<f13,double >;
+template class Integral1D<f5, double >;

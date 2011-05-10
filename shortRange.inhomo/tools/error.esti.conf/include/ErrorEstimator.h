@@ -109,6 +109,17 @@ public:
       }
 };
 
+class f5
+{
+public:
+  double k;
+  double operator () (const double & x) const
+      {
+	double x2 = x*x;
+	return 1./(x2*x2*x) * sin(2.*M_PI*k*x);
+      }
+};
+
 class ErrorEstimatorFFT_Corr
 {
   const ForceKernel & fk;
@@ -120,17 +131,27 @@ class ErrorEstimatorFFT_Corr
   inline unsigned index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const;
   inline void     index1to3 (unsigned& input,
 			     unsigned& ix, unsigned& iy, unsigned& iz) const;
-  fftw_complex * f2k;
-  fftw_complex * s1r, * s1k;
-  fftw_complex * rhor, * rhok;
+  fftw_complex *f2k;
+  fftw_complex *s1r, *s1k;
+  fftw_complex *s2rx, *s2ry, *s2rz, *s2r;
+  fftw_complex *s2kx, *s2ky, *s2kz;
+  fftw_complex *rhor, *rhok;
   fftw_plan p_forward_rho, p_backward_rho;
-  fftw_plan p_forward_s1,  p_backward_s1;
+  fftw_plan p_backward_s1;
+  fftw_plan p_backward_s2x;
+  fftw_plan p_backward_s2y;
+  fftw_plan p_backward_s2z;
 private:
-  f13 f_inte;
-  Integral1D<f13, double> inte;
+  f5  f_inte5;
+  f13 f_inte13;
+  Integral1D<f5,  double> inte5;
+  Integral1D<f13, double> inte13;
 private:
   void makef2k (const double & sigma,
 		const double & rc) ;
+  void makeS2k (const double & epsilon,
+		const double & sigma,
+		const double & rc);
 public:
   ErrorEstimatorFFT_Corr (const ForceKernel & fk,
 			  const DensityProfile_Corr_PiecewiseConst & dp);
@@ -148,6 +169,8 @@ public:
   double integral_an1 (const int & n_,
 		       const double & k,
 		       const double & rc);
+  double integral_an5_numerical  (const double & k,
+				  const double & rc);
   double integral_an13_numerical (const double & k,
 				  const double & rc);
 };
