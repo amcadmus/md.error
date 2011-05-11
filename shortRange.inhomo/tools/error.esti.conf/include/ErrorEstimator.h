@@ -94,7 +94,7 @@ index1to3 (unsigned& input,
 //
 
 #include <fftw3.h>
-#include "specialfunctions.h"
+// #include "specialfunctions.h"
 #include "Integral1D.h"
 
 class f13 

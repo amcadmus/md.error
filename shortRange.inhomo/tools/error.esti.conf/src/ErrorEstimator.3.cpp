@@ -86,123 +86,123 @@ integral_an13_numerical (const double & k,
 			 1e-16);
 }
 
-double ErrorEstimatorFFT_Corr::
-integral_an1 (const int & n_,
-	      const double & k,
-	      const double & rc)
-{
-  int n = (n_ >> 1);
-  double erNjiecheng = 1.;
-  double erMjiecheng = 1.;
-  double fu1Njia1 = 1.;
-  double fu1Mjia1 = -1.;
-  double erPik = 2. * M_PI * k;
-  double erPik2N = 1.;
-  double erPik2Njian2Mjian1 = 1.;
-  double x2M = 1.;
-  double cosValue = cos(erPik * rc);
-  double sinValue = sin(erPik * rc);
+// double ErrorEstimatorFFT_Corr::
+// integral_an1 (const int & n_,
+// 	      const double & k,
+// 	      const double & rc)
+// {
+//   int n = (n_ >> 1);
+//   double erNjiecheng = 1.;
+//   double erMjiecheng = 1.;
+//   double fu1Njia1 = 1.;
+//   double fu1Mjia1 = -1.;
+//   double erPik = 2. * M_PI * k;
+//   double erPik2N = 1.;
+//   double erPik2Njian2Mjian1 = 1.;
+//   double x2M = 1.;
+//   double cosValue = cos(erPik * rc);
+//   double sinValue = sin(erPik * rc);
   
-  for (int i = 0; i < n+1; ++i){
-    fu1Njia1 *= -1.;
-  }
-  for (int i = 1; i <= 2*n; ++i){
-    erNjiecheng *= i;
-  }
-  for (int i = 1; i <= 2*n-1; ++i){
-    erPik2Njian2Mjian1 *= erPik;
-  }
-  erPik2N = erPik2Njian2Mjian1 * erPik;
+//   for (int i = 0; i < n+1; ++i){
+//     fu1Njia1 *= -1.;
+//   }
+//   for (int i = 1; i <= 2*n; ++i){
+//     erNjiecheng *= i;
+//   }
+//   for (int i = 1; i <= 2*n-1; ++i){
+//     erPik2Njian2Mjian1 *= erPik;
+//   }
+//   erPik2N = erPik2Njian2Mjian1 * erPik;
   
-  double sum = 0.;
-  for (int m = 0; m < n; ++m){
-    sum += (erPik2Njian2Mjian1 * fu1Mjia1 * erMjiecheng) / x2M * cosValue;
-    erPik2Njian2Mjian1 /= erPik;
-    erMjiecheng *= (2*m+1);
-    x2M *= rc;
-    sum += (erPik2Njian2Mjian1 * fu1Mjia1 * erMjiecheng) / x2M * sinValue;
-    erPik2Njian2Mjian1 /= erPik;
-    erMjiecheng *= (2*m+2);
-    x2M *= rc;
-    fu1Mjia1 *= -1;
-  }
-  double si, ci;
-  alglib::sinecosineintegrals (2. * M_PI * k * rc, si, ci);
-  // printf ("r:%e, si:%e, ci:%e\n", 2. * M_PI * k * rc, si, ci);
+//   double sum = 0.;
+//   for (int m = 0; m < n; ++m){
+//     sum += (erPik2Njian2Mjian1 * fu1Mjia1 * erMjiecheng) / x2M * cosValue;
+//     erPik2Njian2Mjian1 /= erPik;
+//     erMjiecheng *= (2*m+1);
+//     x2M *= rc;
+//     sum += (erPik2Njian2Mjian1 * fu1Mjia1 * erMjiecheng) / x2M * sinValue;
+//     erPik2Njian2Mjian1 /= erPik;
+//     erMjiecheng *= (2*m+2);
+//     x2M *= rc;
+//     fu1Mjia1 *= -1;
+//   }
+//   double si, ci;
+//   alglib::sinecosineintegrals (2. * M_PI * k * rc, si, ci);
+//   // printf ("r:%e, si:%e, ci:%e\n", 2. * M_PI * k * rc, si, ci);
 
-  return - fu1Njia1 * (sum + (0.5 * M_PI - si) * erPik2N) / erNjiecheng ;
-}
+//   return - fu1Njia1 * (sum + (0.5 * M_PI - si) * erPik2N) / erNjiecheng ;
+// }
 
   
 
-double ErrorEstimatorFFT_Corr::
-integral_an (const int & n_,
-	     const double & k,
-	     const double & rc)
-{
-  int n = (n_ >> 1);
-  int nterm = 20;
+// double ErrorEstimatorFFT_Corr::
+// integral_an (const int & n_,
+// 	     const double & k,
+// 	     const double & rc)
+// {
+//   int n = (n_ >> 1);
+//   int nterm = 20;
   
-  double sum = 0.;
+//   double sum = 0.;
 
-  double erMjiecheng = 1.;
-  double erNjiecheng = 1.;
-  double x2Mjia1 = 1.;
-  double erPik = 2. * M_PI * k;
-  double erPik1jia2Mjian2N = erPik;
-  double scale = -1.;
+//   double erMjiecheng = 1.;
+//   double erNjiecheng = 1.;
+//   double x2Mjia1 = 1.;
+//   double erPik = 2. * M_PI * k;
+//   double erPik1jia2Mjian2N = erPik;
+//   double scale = -1.;
   
-  for (int i = 1; i <= 2*n; ++i){
-    // erMjiecheng *= i;
-    x2Mjia1 *= rc;
-  }
-  erNjiecheng = erMjiecheng;
-  x2Mjia1 *= rc;
-  for (int i = 2; i <= n; ++i){
-    scale *= -1.;
-  }
-  scale *= -1.;
-  double fu1N = scale * -1.;
+//   for (int i = 1; i <= 2*n; ++i){
+//     // erMjiecheng *= i;
+//     x2Mjia1 *= rc;
+//   }
+//   erNjiecheng = erMjiecheng;
+//   x2Mjia1 *= rc;
+//   for (int i = 2; i <= n; ++i){
+//     scale *= -1.;
+//   }
+//   scale *= -1.;
+//   double fu1N = scale * -1.;
 
-  double cosValue = cos(erPik * rc);
-  double sinValue = sin(erPik * rc);
+//   double cosValue = cos(erPik * rc);
+//   double sinValue = sin(erPik * rc);
   
-  for (int i = n; i <= n + nterm; ++i){
-    sum += (scale * erMjiecheng) / (erPik1jia2Mjian2N * x2Mjia1) * cosValue;
-    erPik1jia2Mjian2N *= erPik;
-    erMjiecheng *= (2 * i + 1);
-    x2Mjia1 *= rc;
-    sum += (scale * erMjiecheng) / (erPik1jia2Mjian2N * x2Mjia1) * sinValue;
-    erPik1jia2Mjian2N *= erPik;
-    erMjiecheng *= (2 * i + 2);
-    x2Mjia1 *= rc;
-    scale *= -1.;
-  }
+//   for (int i = n; i <= n + nterm; ++i){
+//     sum += (scale * erMjiecheng) / (erPik1jia2Mjian2N * x2Mjia1) * cosValue;
+//     erPik1jia2Mjian2N *= erPik;
+//     erMjiecheng *= (2 * i + 1);
+//     x2Mjia1 *= rc;
+//     sum += (scale * erMjiecheng) / (erPik1jia2Mjian2N * x2Mjia1) * sinValue;
+//     erPik1jia2Mjian2N *= erPik;
+//     erMjiecheng *= (2 * i + 2);
+//     x2Mjia1 *= rc;
+//     scale *= -1.;
+//   }
   
-  return - fu1N * sum / erNjiecheng ;
+//   return - fu1N * sum / erNjiecheng ;
     
-  // if (n_ == 1){
-  //   double si, ci;
-  //   alglib::sinecosineintegrals (2. * M_PI * k * rc, si, ci);
-  //   // printf ("r:%e, si:%e, ci:%e\n", 2. * M_PI * k * rc, si, ci);
-  //   return 0.5 * M_PI - si;
-  // }
-  // else if (n_ == 2){
-  //   double twopikrc = 2 * M_PI * k * rc;
-  //   double si, ci;
-  //   alglib::sinecosineintegrals (twopikrc, si, ci);
-  //   return sin(twopikrc) / rc - 2. * M_PI * k * ci;
-  // }
-  // else {
-  //   double twopikrc = 2 * M_PI * k * rc;
-  //   double rcnm1 = pow(rc, n_-1.);
-  //   double anm2 = integral_an (n_-2, k, rc);
-  //   // printf ("n-2:%d, an-2:%e\n", n-2, anm2);
-  //   return (1. / (n_-1.) * sin(twopikrc) / rcnm1 +
-  // 	    2. * M_PI * k / ((n_-1.) * (n_-2.) * rcnm1 / rc) * cos(twopikrc) - 
-  // 	    4. * M_PI * M_PI * k * k  / ((n_-1.) * (n_-2.)) * anm2);
-  // }
-}
+//   // if (n_ == 1){
+//   //   double si, ci;
+//   //   alglib::sinecosineintegrals (2. * M_PI * k * rc, si, ci);
+//   //   // printf ("r:%e, si:%e, ci:%e\n", 2. * M_PI * k * rc, si, ci);
+//   //   return 0.5 * M_PI - si;
+//   // }
+//   // else if (n_ == 2){
+//   //   double twopikrc = 2 * M_PI * k * rc;
+//   //   double si, ci;
+//   //   alglib::sinecosineintegrals (twopikrc, si, ci);
+//   //   return sin(twopikrc) / rc - 2. * M_PI * k * ci;
+//   // }
+//   // else {
+//   //   double twopikrc = 2 * M_PI * k * rc;
+//   //   double rcnm1 = pow(rc, n_-1.);
+//   //   double anm2 = integral_an (n_-2, k, rc);
+//   //   // printf ("n-2:%d, an-2:%e\n", n-2, anm2);
+//   //   return (1. / (n_-1.) * sin(twopikrc) / rcnm1 +
+//   // 	    2. * M_PI * k / ((n_-1.) * (n_-2.) * rcnm1 / rc) * cos(twopikrc) - 
+//   // 	    4. * M_PI * M_PI * k * k  / ((n_-1.) * (n_-2.)) * anm2);
+//   // }
+// }
 
 
 void ErrorEstimatorFFT_Corr::

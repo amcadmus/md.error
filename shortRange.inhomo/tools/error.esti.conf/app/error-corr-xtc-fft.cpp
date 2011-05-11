@@ -37,8 +37,11 @@ int main(int argc, char * argv[])
   ErrorEstimatorFFT_Corr error (lj, dp);
 
   double k = 0.8660254037844386;
-  double tmp1 = error.integral_an1 (13, k, rcut);
-  double tmp2 = error.integral_an (13, k, rcut);
+  double tmp1, tmp2;
+  tmp1 = 0;
+  tmp2 = 0;
+  // double tmp1 = error.integral_an1 (13, k, rcut);
+  // double tmp2 = error.integral_an (13, k, rcut);
   double tmp3 = error.integral_an13_numerical (k, rcut);
   printf ("tmp1 (small) is %e, tmp2 (large) is %e, tmp3 (numerical) is %e\n",
 	  tmp1, tmp2, tmp3);

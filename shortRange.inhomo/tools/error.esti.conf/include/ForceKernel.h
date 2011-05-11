@@ -49,6 +49,7 @@ class Disperson6_Taylor : public Disperson6
   double u3p (const double & r) const;  
   mutable double gradF[3][3];
   mutable double hessianF[3][3][3];
+  mutable double matA[3][3];
 public:
   Disperson6_Taylor (const double & epsilon,
 		     const double & sigma,
@@ -62,6 +63,12 @@ public:
 		 double & fx,
 		 double & fy,
 		 double & fz) const;
+  double fdotf_taylor (const double & refx,
+		       const double & refy,
+		       const double & refz,
+		       const double & dx,
+		       const double & dy,
+		       const double & dz) const;
 };
 
 
