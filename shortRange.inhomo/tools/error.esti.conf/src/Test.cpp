@@ -38,9 +38,24 @@ operator () (const double & r,
   // 				sin(phi)*sin(global_Phi) * cos(theta - global_Theta))) *
   //     sin(theta);
   // r33
-  return 1./(r*r) * sinphi* cos(phi)* cos(phi) *
-      cos(-2*M_PI*global_k*r * (cos(phi)*cos(global_Phi) +
-  				sin(phi)*sin(global_Phi) * cos(theta - global_Theta)));
+  // return 1./(r*r) * sinphi* cos(phi)* cos(phi) *
+  //     cos(-2*M_PI*global_k*r * (cos(phi)*cos(global_Phi) +
+  // 				sin(phi)*sin(global_Phi) * cos(theta - global_Theta)));
+  // // r1
+  // return 1./(r*r*r) * sinphi*sinphi *
+  //     sin(-2*M_PI*global_k*r * (cos(phi)*cos(global_Phi) +
+  // 				sin(phi)*sin(global_Phi) * cos(theta - global_Theta))) *
+  //     cos(theta);
+  // // r2
+  // return 1./(r*r*r) * sinphi*sinphi *
+  //     sin(-2*M_PI*global_k*r * (cos(phi)*cos(global_Phi) +
+  // 				sin(phi)*sin(global_Phi) * cos(theta - global_Theta))) *
+  //     sin(theta);
+  // r3
+  return 1./(r*r*r) * sinphi*cos(phi) *
+      sin(-2*M_PI*global_k*r * (cos(phi)*cos(global_Phi) +
+  				sin(phi)*sin(global_Phi) * cos(theta - global_Theta))) ;
+  
 }
 
 double tmpf::
@@ -79,11 +94,26 @@ operator () (const double & r) const
   //     - 1./(r*r) * (M_PI) / sqrt(global_k*r) *
   //     sin(global_Phi * 2.) *
   //     sin(global_Theta) * gsl_sf_bessel_Jnu (2.5, 2 * M_PI * global_k * r);
-  // r33
+  // // r33
+  // return
+  //     1./(r*r) * (M_PI * 4./3.) / sqrt(global_k*r) *
+  //     ( 1./2. * gsl_sf_bessel_Jnu (0.5, 2 * M_PI * global_k * r) +
+  // 	(1./2. - 3./2. * cos(global_Phi) * cos(global_Phi)) *
+  // 	gsl_sf_bessel_Jnu (2.5, 2 * M_PI * global_k * r) );
+  // // r1
+  // return
+  //     - 1./(r*r*r) * (2. * M_PI) / sqrt(global_k*r) *
+  //     sin(global_Phi) *
+  //     cos(global_Theta) * gsl_sf_bessel_Jnu (1.5, 2 * M_PI * global_k * r);
+  // // r2
+  // return
+  //     - 1./(r*r*r) * (2. * M_PI) / sqrt(global_k*r) *
+  //     sin(global_Phi) *
+  //     sin(global_Theta) * gsl_sf_bessel_Jnu (1.5, 2 * M_PI * global_k * r);
+  // r3
   return
-      1./(r*r) * (M_PI * 4./3.) / sqrt(global_k*r) *
-      ( 1./2. * gsl_sf_bessel_Jnu (0.5, 2 * M_PI * global_k * r) +
-	(1./2. - 3./2. * cos(global_Phi) * cos(global_Phi)) *
-	gsl_sf_bessel_Jnu (2.5, 2 * M_PI * global_k * r) );
+      - 1./(r*r*r) * (2. * M_PI) / sqrt(global_k*r) *
+      cos(global_Phi) *
+      gsl_sf_bessel_Jnu (1.5, 2 * M_PI * global_k * r);
 }
 

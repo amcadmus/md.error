@@ -183,3 +183,61 @@ fdotf_taylor (const double & refx,
   return sum;
 }
 
+
+double Disperson6_Taylor::
+fdotf_oneSide_taylor (const double & refx,
+		      const double & refy,
+		      const double & refz,
+		      const double & dx,
+		      const double & dy,
+		      const double & dz) const
+{
+  double refr[3];
+  refr[0] = refx;
+  refr[1] = refy;
+  refr[2] = refz;
+  double dr[3];
+  dr[0] = dx;
+  dr[1] = dy;
+  dr[2] = dz;
+  
+  double r1 = sqrt(refx*refx + refy*refy + refz*refz);
+  double r2 = r1 * r1;
+  double r3 = r2 * r1;
+  double r4 = r2 * r2;
+  double u1pr = u1p(r1);
+  double u2pr = u2p(r1);
+  double u3pr = u3p(r1);
+  
+  double tmpa = u1pr * (u3pr / r2 - u2pr / r3 + u1pr / r4);
+  double tmpb = u1pr * (u2pr / r1 - u1pr / r2);
+  // double tmpc = u2pr * u2pr / r2 - u1pr * u1pr / r4;
+  // double tmpd = u1pr * u1pr / r2;
+
+  for (int ii = 0; ii < 3; ++ii){
+    vecB[ii] = u1pr * u2pr / r1 * refr[ii];
+  }
+  
+  for (int ii = 0; ii < 3; ++ii){
+    for (int jj = 0; jj < 3; ++jj){
+      matA[ii][jj] = (tmpa) * refr[ii] * refr[jj] ;
+    }
+  }
+  for (int ii = 0; ii < 3; ++ii){
+    matA[ii][ii] += (tmpb) ;
+  }
+
+  double sum = f2 (refx, refy, refz);
+  for (int ii = 0; ii < 3; ++ii){
+    sum += vecB[ii] * dr[ii];
+  }
+  for (int ii = 0; ii < 3; ++ii){
+    for (int jj = 0; jj < 3; ++jj){
+      sum += 0.5 * dr[ii] * matA[ii][jj] * dr[jj];
+    }
+  }
+
+  return sum;
+}
+
+

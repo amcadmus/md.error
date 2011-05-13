@@ -93,6 +93,7 @@ class DensityProfile_Corr_PiecewiseConst
   double zero;
   int corrBond, corrDim;
   int numCorr;
+  double corrCut;
   std::vector<double > mean;
   std::vector<std::vector<double > > corr;
 public:
@@ -115,6 +116,11 @@ public:
       {return mean[index3to1(ix, iy, iz)];}
   const double & getMean (const int & i) const
       {return mean[i];}
+  const double & getCorr (const int & ii,
+			  const int & dx,
+			  const int & dy,
+			  const int & dz) const
+      {return corr[ii][corrIndex3to1(dx, dy, dz)];}
   const double & getCorr (const int & ix,
 			  const int & iy,
 			  const int & iz,

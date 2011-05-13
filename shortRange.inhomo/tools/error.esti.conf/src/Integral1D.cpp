@@ -282,4 +282,8 @@ template class Integral1D<F1,double >;
 template class Integral1D<F1,float >;
 template class Integral1D<f13,double >;
 template class Integral1D<f5, double >;
+template class Integral1D<f15,double >;
 template class Integral1D<tmpf, double >;
+template class Integral1D<F_I3, double >;
+template class Integral1D<FF_I1, double >;
+template class Integral1D<FF_I5, double >;
