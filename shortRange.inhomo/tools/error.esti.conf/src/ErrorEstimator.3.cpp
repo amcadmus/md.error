@@ -277,8 +277,11 @@ formCorrMat (const DensityProfile_Corr_PiecewiseConst & dp)
   //     }
   //   }
   // }
+  std::vector<double > tmpcorr (corrDim, 0.);
+  int tmpcorrCount = 0;
   printf ("## integral loop\n");
   for (int ix = 0; ix < nx; ++ix) {
+    // printf ("%d\n", ix);
     for (int iy = 0; iy < ny; ++iy) {
       for (int iz = 0; iz < nz; ++iz) {
 	int tx, ty, tz;
@@ -298,13 +301,18 @@ formCorrMat (const DensityProfile_Corr_PiecewiseConst & dp)
 	      if (dx == 0 && dy == 0 && dz == 0) continue;
 	      double drz = dz * hz;
 	      double dr = sqrt (drx*drx + dry*dry + drz*drz);
-	      if (dr > corrCut) continue;
+	      // if (dr >= corrCut) continue;
 	      tz = iz - dz;
 	      if      (tz <   0) tz += nz;
 	      else if (tz >= nz) tz -= nz;
 	      double tRho = dp.getMean (tx, ty, tz);
 	      double tmp = (dp.getCorr(ii, -dx, -dy, -dz) -
 			    rRho * tRho) * volumeEle;
+	      if (ix == nx/2 &&
+		  dy == 0 && dz == 0){
+		tmpcorr[dx+corrBond] += dp.getCorr(ii, -dx, -dy, -dz) - rRho * tRho;
+		tmpcorrCount ++;
+	      }
 	      corrr[ii][0] += tmp;
 	      corr0r[ii][0] += drx * tmp;
 	      corr1r[ii][0] += dry * tmp;
@@ -320,6 +328,9 @@ formCorrMat (const DensityProfile_Corr_PiecewiseConst & dp)
 	}
       }
     }
+  }
+  for (int i = 0;i < corrDim; ++i){
+    printf ("%d %f\n", i - corrBond, tmpcorr[i] / tmpcorrCount);
   }
   
   printf ("## ffts\n");
@@ -406,24 +417,6 @@ estimate (const DensityProfile_Corr_PiecewiseConst & dp,
   
   printf ("# multiply on k space\n");
   for (int i = 0; i < nele; ++i){
-    double tmpr, tmpi;
-    // s1k[i][0] = f2k[i][0] * rhok[i][0] - f2k[i][1] * rhok[i][1];
-    // s1k[i][1] = f2k[i][1] * rhok[i][0] + f2k[i][0] * rhok[i][1];
-    // if (i == 0 || i == 1){
-    //   printf ("%d  %e  %e\n", i, f2k[i][0] ,f2k[i][1] );
-    // }
-    // tmpr = s2kx[i][0];
-    // tmpi = s2kx[i][1];
-    // s2kx[i][0] = tmpr * rhok[i][0] - tmpi * rhok[i][1];
-    // s2kx[i][1] = tmpi * rhok[i][0] + tmpr * rhok[i][1];
-    // tmpr = s2ky[i][0];
-    // tmpi = s2ky[i][1];
-    // s2ky[i][0] = tmpr * rhok[i][0] - tmpi * rhok[i][1];
-    // s2ky[i][1] = tmpi * rhok[i][0] + tmpr * rhok[i][1];
-    // tmpr = s2kz[i][0];
-    // tmpi = s2kz[i][1];
-    // s2kz[i][0] = tmpr * rhok[i][0] - tmpi * rhok[i][1];
-    // s2kz[i][1] = tmpi * rhok[i][0] + tmpr * rhok[i][1];
     s1k[i][0] = f2k[i][0];
     s1k[i][1] = f2k[i][1];    
     s3k[i][0] = f2k[i][0];
