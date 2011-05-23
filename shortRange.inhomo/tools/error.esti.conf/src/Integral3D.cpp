@@ -177,4 +177,13 @@ typedef double (*F3) (double, double, double );
 template class Integral3D<F3,double >;
 template class Integral3D<F3,float >;
 template class Integral3D<tmpf3, double >;
+template class Integral3D<InteNaive00, double >;
+template class Integral3D<InteNaive11, double >;
+template class Integral3D<InteNaive22, double >;
+template class Integral3D<InteNaive01, double >;
+template class Integral3D<InteNaive02, double >;
+template class Integral3D<InteNaive12, double >;
+template class Integral3D<InteNaive0, double >;
+template class Integral3D<InteNaive1, double >;
+template class Integral3D<InteNaive2, double >;
 

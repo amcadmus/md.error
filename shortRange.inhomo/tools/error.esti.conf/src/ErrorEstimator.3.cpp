@@ -17,7 +17,7 @@ ErrorEstimatorFFT_Corr (const ForceKernel & fk_,
   numCorr  = corrDim * corrDim * corrDim;
   corrCut = 2.;
 
-  double prec = 1e-6;
+  double prec = 1e-12;
   bond_f_i3 = 50;
   bond_ff_i1 = 50;
   bond_ff_i5 = 50;
@@ -195,39 +195,105 @@ integral_an15_numerical (const double & k,
 			 1e-17);
 }
 
-
 double ErrorEstimatorFFT_Corr::
 integral_f_i3_numerical (const double & k,
 			 const double & rc)
 {
+  F_I3 f_i3;
+  Integral1D<F_I3, double > inte_f_i3;
+  double prec = 1e-6;
   f_i3.k = k;
-  return inte_f_i3.cal_int (Integral1DInfo::Gauss4,
-			    f_i3,
-			    rc, bond_f_i3,
-			    prec_f_i3);
+  double tmpvalue, newprec;
+  tmpvalue = inte_f_i3.cal_int (Integral1DInfo::Gauss4,
+				f_i3,
+				rc, 50,
+				prec);
+  newprec = fabs(tmpvalue) * 1e-4;
+  // printf ("newprec: %e\n", newprec);
+  tmpvalue = inte_f_i3.cal_int (Integral1DInfo::Gauss4,
+				f_i3,
+				rc, 50,
+				newprec);
+  return tmpvalue;
 }
 
 double ErrorEstimatorFFT_Corr::
 integral_ff_i1_numerical (const double & k,
 			  const double & rc)
 {
+  FF_I1 ff_i1;
+  Integral1D<FF_I1, double > inte_ff_i1;
+  double prec = 1e-6;
   ff_i1.k = k;
-  return inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
-			    ff_i1,
-			    rc, bond_ff_i1,
-			    prec_ff_i1);
+  double tmpvalue, newprec;
+  tmpvalue =  inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
+				  ff_i1,
+				  rc, 50,
+				  prec);
+  newprec = fabs(tmpvalue) * 1e-4;
+  // printf ("newprec: %e\n", newprec);
+  tmpvalue =  inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
+				  ff_i1,
+				  rc, 50,
+				  newprec);  
+  return tmpvalue;
 }
 
 double ErrorEstimatorFFT_Corr::
 integral_ff_i5_numerical (const double & k,
 			  const double & rc)
 {
+  FF_I5 ff_i5;
+  Integral1D<FF_I5, double > inte_ff_i5;
+  double prec = 1e-6;
   ff_i5.k = k;
-  return inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
+  double tmpvalue, newprec;
+  tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
 			    ff_i5,
-			    rc, bond_ff_i5,
-			    prec_ff_i5);
+			    rc, 50,
+			    prec);
+  newprec = fabs(tmpvalue) * 1e-4;
+  // printf ("newprec: %e\n", newprec);
+  tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
+			    ff_i5,
+			    rc, 50,
+			    newprec);
+  return tmpvalue;
 }
+
+
+// double ErrorEstimatorFFT_Corr::
+// integral_f_i3_numerical (const double & k,
+// 			 const double & rc)
+// {
+//   f_i3.k = k;
+//   return inte_f_i3.cal_int (Integral1DInfo::Gauss4,
+// 			    f_i3,
+// 			    rc, bond_f_i3,
+// 			    prec_f_i3);
+// }
+
+// double ErrorEstimatorFFT_Corr::
+// integral_ff_i1_numerical (const double & k,
+// 			  const double & rc)
+// {
+//   ff_i1.k = k;
+//   return inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
+// 			    ff_i1,
+// 			    rc, bond_ff_i1,
+// 			    prec_ff_i1);
+// }
+
+// double ErrorEstimatorFFT_Corr::
+// integral_ff_i5_numerical (const double & k,
+// 			  const double & rc)
+// {
+//   ff_i5.k = k;
+//   return inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
+// 			    ff_i5,
+// 			    rc, bond_ff_i5,
+// 			    prec_ff_i5);
+// }
 
 
 void ErrorEstimatorFFT_Corr::
@@ -485,8 +551,8 @@ estimate (const DensityProfile_Corr_PiecewiseConst & dp,
     s2rz[i][1] /= volume;
     s2r[i][0] = s2rx[i][0] * s2rx[i][0] + s2ry[i][0] * s2ry[i][0] + s2rz[i][0] * s2rz[i][0];
     s2r[i][1] = s2rx[i][1] * s2rx[i][1] + s2ry[i][1] * s2ry[i][1] + s2rz[i][1] * s2rz[i][1];
-    s3r[i][0] /= -volume;
-    s3r[i][1] /= -volume;
+    s3r[i][0] /= volume;
+    s3r[i][1] /= volume;
   }
 }
 
@@ -658,7 +724,7 @@ makeS3k (const double & epsilon,
 	  b2k[posi][0] = 0;
 	  b2k[posi][1] = pre * 2. * M_PI / sqrt(k) * kz / k * (-i3);
 	  double an15 = integral_an15_numerical (k, rc);
-	  double ih = 1./k * (16.) * 24. * 24. * pre * an15;
+	  double ih = - 1./k * (16.) * 24. * 24. * pre * an15;
 	  //double ih = 0.;
 	  double i1 = integral_ff_i1_numerical (k, rc);
 	  double i5 = integral_ff_i5_numerical (k, rc);
