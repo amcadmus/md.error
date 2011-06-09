@@ -33,8 +33,11 @@ int main(int argc, char * argv[])
   AdaptRCut adprcut;
   adprcut.reinit (3., 10., 0.5, dp);
   adprcut.calError (dp);
-  adprcut.print_x (std::string("esti.x.out"));
+  adprcut.print_x  (std::string("esti.x.out"));
+  adprcut.calRCut  (2e-3);
+  adprcut.print_rc (std::string("rcut.x.out"));
   
+
   // error.estimate (dp, rcorr * ratio, rcut);
   // error.print_x (std::string("esti.x.out"));
   // error.print_xy(std::string("esti.xy.out"));

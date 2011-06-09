@@ -74,6 +74,8 @@ freeAll ()
     freeArrayComplex (&error2ry, nrc);
     freeArrayComplex (&error2rz, nrc);
     freeArrayComplex (&error, nrc);
+    free (rcut);
+    free (result_error);
     fftw_destroy_plan (p_forward_rho);
     for (int count = 0; count < nrc; ++count){
       fftw_destroy_plan (p_backward_error1[count]);
@@ -129,6 +131,8 @@ reinit (const double & rcmin,
   mallocArrayComplex (&error2ry, nrc, nele);
   mallocArrayComplex (&error2rz, nrc, nele);
   mallocArrayComplex (&error, nrc, nele);
+  rcut = (double *) malloc (sizeof(double) * nele);
+  result_error = (double *) malloc (sizeof(double) * nele);
 
   p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_MEASURE);
   p_backward_error1  = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
@@ -143,6 +147,17 @@ reinit (const double & rcmin,
   }
   
   malloced = true;
+
+  printf ("# reinit: start build k mat 1 ...");
+  fflush (stdout);
+  makeS1k (1., 1.);
+  printf (" done\n");  
+  fflush (stdout);
+  printf ("# reinit: start build k mat 2 ...");
+  fflush (stdout);
+  makeS2k (1., 1.);
+  printf (" done\n");  
+  fflush (stdout);
 }
 
 static void 
@@ -179,11 +194,6 @@ calError (const DensityProfile_Corr_PiecewiseConst & dp)
     rhok[i][1] *= scale;
   }  
 
-  printf ("# start build k mat 1\n");
-  makeS1k (1., 1.);
-  printf ("# start build k mat 2\n");
-  makeS2k (1., 1.);
-  
   array_multiply (error1k,  nrc, nele, s1k,  rhok);
   array_multiply (error2kx, nrc, nele, s2kx, rhok);
   array_multiply (error2ky, nrc, nele, s2ky, rhok);
@@ -207,15 +217,17 @@ calError (const DensityProfile_Corr_PiecewiseConst & dp)
       error2ry[count][i][1] /= volume;
       error2rz[count][i][1] /= volume;
       error[count][i][0] =
-	  error1r[count][i][0] +
-	  error2rx[count][i][0] * error2rx[count][i][0] +
-	  error2ry[count][i][0] * error2ry[count][i][0] +
-	  error2rz[count][i][0] * error2rz[count][i][0];
+	  sqrt (
+	      error1r[count][i][0] +
+	      error2rx[count][i][0] * error2rx[count][i][0] +
+	      error2ry[count][i][0] * error2ry[count][i][0] +
+	      error2rz[count][i][0] * error2rz[count][i][0] );
       error[count][i][1] =
-	  error1r[count][i][1] +
-	  error2rx[count][i][1] * error2rx[count][i][1] +
-	  error2ry[count][i][1] * error2ry[count][i][1] +
-	  error2rz[count][i][1] * error2rz[count][i][1];
+	  sqrt (
+	      error1r[count][i][1] +
+	      error2rx[count][i][1] * error2rx[count][i][1] +
+	      error2ry[count][i][1] * error2ry[count][i][1] +
+	      error2rz[count][i][1] * error2rz[count][i][1] );
     }
   }
 }
@@ -325,27 +337,58 @@ makeS2k (const double & epsilon,
 	  else locz = iz;
 	  double k = sqrt(kx*kx + ky*ky + kz*kz);
 	  int posi = index3to1 (locx, locy, locz);
-	  double rc = rcList[count];
-	  double rc6 = gsl_pow_6 (rc);
 	  if (k != 0){
 	    double an;
 	    if (count == nrc-1){
-	      an = integral_an5_numerical (k, rcList[count], 30, 1e-16);
+	      an = integral_an5_numerical (k, rcList[count], 30, 1e-16) * pre / k;
+	      s2kx[count][posi][1] = 2 * M_PI * kx * an;
+	      s2ky[count][posi][1] = 2 * M_PI * ky * an;
+	      s2kz[count][posi][1] = 2 * M_PI * kz * an;
 	    }
 	    else {
-	      an = integral_an5_numerical (k, rcList[count], 30, 1e-16);
+	      an = integral_an5_numerical (k, rcList[count], rcList[count+1], 1e-16) * pre / k;
+	      s2kx[count][posi][1] = s2kx[count+1][posi][1] + 2 * M_PI * kx * an;
+	      s2ky[count][posi][1] = s2ky[count+1][posi][1] + 2 * M_PI * ky * an;
+	      s2kz[count][posi][1] = s2kz[count+1][posi][1] + 2 * M_PI * kz * an;
 	    }
-	    an *= pre / k;
+	  }
+	}
+      }
+    }
+  }
+
+
+  for (int count = nrc-1; count >= 0; --count){
+    for (int ix = -nx/2; ix < nx - nx/2; ++ix){
+      kx = ix / boxsize[0];
+      int locx;
+      if (ix < 0) locx = ix + nx;
+      else locx = ix;
+      for (int iy = -ny/2; iy < ny - ny/2; ++iy){
+	ky = iy / boxsize[1];
+	int locy;
+	if (iy < 0) locy = iy + ny;
+	else locy = iy;
+	for (int iz = -nz/2; iz < nz - nz/2; ++iz){
+	  kz = iz / boxsize[2];
+	  int locz;
+	  if (iz < 0) locz = iz + nz;
+	  else locz = iz;
+	  double k = sqrt(kx*kx + ky*ky + kz*kz);
+	  int posi = index3to1 (locx, locy, locz);
+	  double rc = rcList[count];
+	  double rc6 = gsl_pow_6 (rc);
+	  if (k != 0){
 	    double erPiKR = 2. * M_PI * k * rc;
 	    double size = - 2. * M_PI * rc * rc * (4. * epsilon * sigma6 / rc6) *
 		(2. * cos(erPiKR) / erPiKR - 2. * sin(erPiKR) / (erPiKR*erPiKR));
 	    size /= k;
 	    s2kx[count][posi][0] = 0.;
-	    s2kx[count][posi][1] = 2 * M_PI * kx * an + size * kx;
+	    s2kx[count][posi][1] += size * kx;
 	    s2ky[count][posi][0] = 0.;
-	    s2ky[count][posi][1] = 2 * M_PI * ky * an + size * kx;
+	    s2ky[count][posi][1] += size * kx;
 	    s2kz[count][posi][0] = 0.;
-	    s2kz[count][posi][1] = 2 * M_PI * kz * an + size * kz;
+	    s2kz[count][posi][1] += size * kz;
 	    if (ix == -nx/2 ||
 		iy == -ny/2 ||
 		iz == -nz/2){
@@ -368,6 +411,56 @@ makeS2k (const double & epsilon,
 	}
       }
     }
+  }
+
+}
+
+void AdaptRCut::
+calRCutOnePoint (const double & prec,
+		 const unsigned & idx)
+{
+  unsigned posia = 0;
+  unsigned posib = nrc-1;
+  double rca = rcList[posia];
+  double rcb = rcList[posib];
+  double errora = error[posia][idx][0];
+  double errorb = error[posib][idx][0];
+  double diffa = errora - prec;
+  double diffb = errorb - prec;
+  if (diffa <= 0){
+    rcut[idx] = rca;
+    result_error[idx] = errora;
+  }
+  else if (diffb >= 0){
+    rcut[idx] = rcb;
+    result_error[idx] = errorb;
+  }
+  else {
+    while (posib - posia > 1) {
+      unsigned posic = (posib + posia) / 2;
+      double rcc = rcList[posic];
+      double errorc = error[posic][idx][0];
+      if (errorc > prec){
+	posia = posic;
+	rca = rcc;
+	errora = errorc;
+      }
+      else {
+	posib = posic;
+	rcb = rcc;
+	errorb = errorc;
+      }
+    }
+    rcut[idx] = rcb;
+    result_error[idx] = errorb;
+  }
+}   
+
+void AdaptRCut::
+calRCut  (const double & prec)
+{
+  for (int i = 0; i < nele; ++i){
+    calRCutOnePoint (prec, i);
   }
 }
 
@@ -392,6 +485,32 @@ print_x (const std::string & file) const
 	     (i + 0.5) * hx,
 	     error[4][index3to1(i,0,0)][0],
 	     error[4][index3to1(i,0,0)][1]
+	);
+  }
+  fclose (fp);
+}
+
+  
+  
+void AdaptRCut::    
+print_rc (const std::string & file) const 
+{
+  FILE * fp = fopen (file.c_str(), "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  for (int i = 0; i < nx; ++i){
+    // double sum = 0.;
+    // for (int j = 0; j < ny; ++j){
+    //   for (int k = 0; k < nz; ++k){
+    // 	sum += profile[index3to1(i, j, k)];
+    //   }
+    // }
+    fprintf (fp, "%f %e %e\n",
+	     (i + 0.5) * hx,
+	     rcut[index3to1(i,0,0)], result_error[index3to1(i,0,0)]
 	);
   }
   fclose (fp);

@@ -36,7 +36,6 @@ class AdaptRCut
   inline unsigned index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const;
   inline void     index1to3 (unsigned& input,
 			     unsigned& ix, unsigned& iy, unsigned& iz) const;
-  std::vector<double > rc;
 private:
   std::vector<double > rcList;
   int nrc;
@@ -48,6 +47,8 @@ private:
   fftw_complex **error2rx, **error2ry, **error2rz;
   fftw_complex **error2kx, **error2ky, **error2kz;
   fftw_complex **error;
+  double *rcut;
+  double *result_error;
   fftw_plan p_forward_rho;
   fftw_plan *p_backward_error1;
   fftw_plan *p_backward_error2x;
@@ -71,6 +72,8 @@ private:
 		const double & sigma);
   void makeS2k (const double & epsilon,
 		const double & sigma);
+  void calRCutOnePoint (const double & prec,
+			const unsigned & idx);
 public:
   AdaptRCut ();
   ~AdaptRCut ();
@@ -80,7 +83,9 @@ public:
 	       const double & rcstep,
 	       DensityProfile_Corr_PiecewiseConst & dp);
   void calError (const DensityProfile_Corr_PiecewiseConst & dp);
-  void print_x (const std::string & file) const;
+  void calRCut  (const double & prec);
+  void print_x  (const std::string & file) const;
+  void print_rc (const std::string & file) const;
 }
     ;
 
