@@ -274,6 +274,7 @@ cal_int (const Integral1DInfo::Method & method,
 
 
 #include "ErrorEstimator.h"
+#include "AdaptRCut.h"
 #include "Test.h"
 
 typedef double (*F1) ( double);
@@ -287,3 +288,6 @@ template class Integral1D<tmpf, double >;
 template class Integral1D<F_I3, double >;
 template class Integral1D<FF_I1, double >;
 template class Integral1D<FF_I5, double >;
+
+template class Integral1D<F5,  double >;
+template class Integral1D<F13, double >;

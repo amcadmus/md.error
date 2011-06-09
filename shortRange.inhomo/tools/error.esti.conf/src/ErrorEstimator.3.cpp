@@ -15,7 +15,7 @@ ErrorEstimatorFFT_Corr (const ForceKernel & fk_,
   corrBond = dp.getCorrBond();
   corrDim  = dp.getCorrDim();
   numCorr  = corrDim * corrDim * corrDim;
-  corrCut = 2.;
+  corrCut = 2.1;
 
   double prec = 1e-12;
   bond_f_i3 = 50;
@@ -367,13 +367,14 @@ formCorrMat (const DensityProfile_Corr_PiecewiseConst & dp)
 	      if (dx == 0 && dy == 0 && dz == 0) continue;
 	      double drz = dz * hz;
 	      double dr = sqrt (drx*drx + dry*dry + drz*drz);
-	      // if (dr >= corrCut) continue;
+	      if (dr >= corrCut) continue;
 	      tz = iz - dz;
 	      if      (tz <   0) tz += nz;
 	      else if (tz >= nz) tz -= nz;
 	      double tRho = dp.getMean (tx, ty, tz);
-	      double tmp = (dp.getCorr(ii, -dx, -dy, -dz) -
-			    rRho * tRho) * volumeEle;
+	      double tmp;
+	      tmp = (dp.getCorr(ii, -dx, -dy, -dz) -
+		     rRho * tRho) * volumeEle;
 	      if (ix == nx/2 &&
 		  dy == 0 && dz == 0){
 		tmpcorr[dx+corrBond] += dp.getCorr(ii, -dx, -dy, -dz) - rRho * tRho;
@@ -487,6 +488,8 @@ estimate (const DensityProfile_Corr_PiecewiseConst & dp,
     s1k[i][1] = f2k[i][1];    
     s3k[i][0] = f2k[i][0];
     s3k[i][1] = f2k[i][1];    
+    // s3k[i][0] = 0.;
+    // s3k[i][1] = 0.;
   }
   
   array_multiply (s1k,  nele, rhok);
