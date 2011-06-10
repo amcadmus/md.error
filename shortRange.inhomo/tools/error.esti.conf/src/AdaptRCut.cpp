@@ -527,7 +527,7 @@ save_rc (const std::string & file) const
 
   fprintf (fp, "%d %d %d\n", nx, ny, nz);
   for (int i = 0; i < nele; ++i){
-    fprintf (fp, "%f", rcut[i]);
+    fprintf (fp, "%f ", rcut[i]);
   }
 
   fclose (fp);
