@@ -516,6 +516,23 @@ print_rc (const std::string & file) const
   fclose (fp);
 }
 
-  
+void AdaptRCut::
+save_rc (const std::string & file) const
+{
+  FILE * fp = fopen (file.c_str(), "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  fprintf (fp, "%d %d %d\n", nx, ny, nz);
+  for (int i = 0; i < nele; ++i){
+    fprintf (fp, "%f", rcut[i]);
+  }
+
+  fclose (fp);
+}
+
+
   
 

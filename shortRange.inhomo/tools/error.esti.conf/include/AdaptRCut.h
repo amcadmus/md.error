@@ -86,6 +86,7 @@ public:
   void calRCut  (const double & prec);
   void print_x  (const std::string & file) const;
   void print_rc (const std::string & file) const;
+  void save_rc  (const std::string & file) const;
 }
     ;
 
