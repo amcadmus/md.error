@@ -22,6 +22,17 @@ calNonBondedInteraction_all (const IndexType		numAtom,
 			     ScalorType *		forcz,
 			     const TypeType *		type,
 			     const RectangularBox	box,
+			     const int			nimage,
+			     const ScalorType		rcut,
+			     mdError_t *		ptr_de);
+__global__ void
+calNonBondedInteraction_all (const IndexType		numAtom,
+			     const CoordType *		coord,
+			     ScalorType *		forcx,
+			     ScalorType *		forcy, 
+			     ScalorType *		forcz,
+			     const TypeType *		type,
+			     const RectangularBox	box,
 			     const ScalorType		rcut,
 			     mdError_t *		ptr_de);
 __global__ void

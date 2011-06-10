@@ -474,6 +474,9 @@ applyNonBondedInteraction  (MDSystem & sys,
 			    const ScalorType & rcut,
 			    MDTimer *timer )
 {
+  int nimage = (rcut - 0.00001) / sys.box.size.y;
+  nimage ++;
+  
   if (timer != NULL) timer->tic(mdTimeNonBondedInteraction);
   size_t applyNonBondedInteraction_AllPair_sbuffSize =
       (sizeof(CoordType) + sizeof(TypeType)) *
@@ -488,6 +491,7 @@ applyNonBondedInteraction  (MDSystem & sys,
 	  sys.ddata.forcz,
 	  sys.ddata.type, 
 	  sys.box,
+	  nimage,
 	  rcut,
 	  err.ptr_de);
   checkCUDAError ("InteractionEngine::applyInteraction nb");
@@ -2543,6 +2547,93 @@ calNonBondedInteraction (const IndexType		numAtom,
 
 
 
+__global__ void
+calNonBondedInteraction_all (const IndexType		numAtom,
+			     const CoordType *		coord,
+			     ScalorType *		forcx,
+			     ScalorType *		forcy, 
+			     ScalorType *		forcz,
+			     const TypeType *		type,
+			     const RectangularBox	box,
+			     const int			nimage,
+			     const ScalorType		rcut,
+			     mdError_t *		ptr_de)
+{
+  // RectangularBoxGeometry::normalizeSystem (box, &ddata);
+  IndexType bid = blockIdx.x + gridDim.x * blockIdx.y;
+  IndexType tid = threadIdx.x;
+  
+  IndexType numberAtom = numAtom;
+  IndexType ii = tid + bid * blockDim.x;
+  ScalorType fsumx (0.f), fsumy(0.f), fsumz(0.f);
+
+  extern __shared__ volatile char pub_sbuff[];
+
+  volatile CoordType * target =
+      (volatile CoordType *) pub_sbuff;
+  volatile TypeType * targettype =
+      (volatile TypeType *) &target[roundUp4(blockDim.x)];
+
+  __syncthreads();
+  
+  CoordType ref;
+  TypeType reftype;
+  if (ii < numberAtom){
+    ref = coord[ii];
+    reftype = type[ii];
+  }
+  ScalorType rcut2 = rcut * rcut;
+  
+  for (IndexType targetBlockId = 0;
+       targetBlockId * blockDim.x < numberAtom; ++targetBlockId){
+    IndexType jj = tid + targetBlockId * blockDim.x;
+    __syncthreads();
+    if (jj < numberAtom){
+      target[tid].x = coord[jj].x;
+      target[tid].y = coord[jj].y;
+      target[tid].z = coord[jj].z;
+      targettype[tid] = type[jj];
+    }
+    __syncthreads();
+    if (ii < numberAtom){
+      for (IndexType kk = 0; kk < blockDim.x; ++kk){
+	if (kk + targetBlockId * blockDim.x >= numberAtom) break;
+	ScalorType diffx = target[kk].x - ref.x;
+	shortestImage (box.size.x, box.sizei.x, &diffx);
+	IndexType fidx = AtomNBForceTable::calForceIndex (
+	    const_nonBondedInteractionTable,
+	    const_numAtomType[0],
+	    reftype,
+	    targettype[kk]);
+	for (int idy = -nimage; idy <= nimage; ++idy){
+	  for (int idz = -nimage; idz <= nimage; ++idz){
+	    ScalorType diffy = idy * box.size.y + target[kk].y - ref.y;
+	    ScalorType diffz = idz * box.size.z + target[kk].z - ref.z;
+	    if (idy == 0 && idz == 0 && kk + targetBlockId * blockDim.x == ii) continue;
+	    if ((diffx*diffx+diffy*diffy+diffz*diffz) < rcut2){
+	      // if (fidx != mdForceNULL) {
+	      ScalorType fx, fy, fz, dp;
+	      nbForcePoten (nonBondedInteractionType[fidx],
+			    &nonBondedInteractionParameter
+			    [nonBondedInteractionParameterPosition[fidx]],
+			    diffx, diffy, diffz,
+			    &fx, &fy, &fz, &dp);
+	      fsumx += fx;
+	      fsumy += fy;
+	      fsumz += fz;
+	      // }
+	    }
+	  }
+	}
+      }
+    }
+  }
+  if (ii < numberAtom){
+    forcx[ii] += fsumx;
+    forcy[ii] += fsumy;
+    forcz[ii] += fsumz;
+  }
+}
 
 
 

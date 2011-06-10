@@ -57,10 +57,15 @@ int main(int argc, char * argv[])
   mol.pushAtom (Topology::Atom (1.0, 0.0, 0));
   LennardJones6_12Parameter ljparam;
   // ScalorType rcut2 = sys.box.size.z / 2 - 1.f;
-  ScalorType rcut2 = rcut1 * 3;
-  if (rcut2 > sys.box.size.z / 2.f - 1.f) rcut2 = sys.box.size.z / 2 - 1.f;
+  ScalorType rcut2 = rcut1 * 4;
+  // if (rcut2 > sys.box.size.z / 2.f - 1.f) rcut2 = sys.box.size.z / 2 - 1.f;
+  // if (rcut2 > sys.box.size.z - .5f) rcut2 = sys.box.size.z - .5f;
   printf ("# rcut1 is %f\n", rcut1);
   printf ("# rcut2 is %f\n", rcut2);
+  int nimage = (rcut2 - 0.00001) / sys.box.size.y;
+  nimage ++;
+  printf ("#@ nimage is %d\n", nimage);
+
   ljparam.reinit (1.f, 1.f, 0.f, rcut1, rcut2);
   
   sysTop.addNonBondedInteraction (Topology::NonBondedInteraction(0, 0, ljparam));
