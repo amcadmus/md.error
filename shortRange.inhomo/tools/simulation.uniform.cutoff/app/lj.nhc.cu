@@ -32,7 +32,7 @@ int main(int argc, char * argv[])
   IndexType confFeq = 500;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.002;
-  ScalorType rcut = 8.0;
+  ScalorType rcut = 10.0;
   ScalorType nlistExten = 0.3;
   ScalorType refT = 0.70;
   ScalorType tauT = 1.;
@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
   ScalorType maxrcut = sysNbInter.maxRcut();
   ScalorType rlist = maxrcut + nlistExten;
   CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
-  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 10.f);
+  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 4.f);
   sys.normalizeDeviceData ();
   clist.rebuild (sys, NULL);
   nlist.rebuild (sys, clist, NULL);
