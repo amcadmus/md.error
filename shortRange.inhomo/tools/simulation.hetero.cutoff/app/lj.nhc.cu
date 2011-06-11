@@ -20,6 +20,9 @@
 #include "BondInteraction.h"
 #include "NonBondedInteraction.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 // #define NThreadsPerBlockCell	32
 // #define NThreadsPerBlockAtom	4
@@ -50,6 +53,14 @@ int main(int argc, char * argv[])
   printf ("# setting device to %d\n", atoi(argv[4]));
   cudaSetDevice (atoi(argv[4]));
   checkCUDAError ("set device");
+
+  char * resultDir = "result";
+  char command [1024];
+  sprintf (command, "rm -fr %s; mkdir -p %s", resultDir, resultDir);
+  system (command);
+  char timefilename [1024];
+  sprintf (timefilename, "%s/times.out", resultDir);
+  FILE * fp = fopen (timefilename, "w");
 
   MDSystem sys;
   sys.initConfig(filename);
@@ -150,6 +161,21 @@ int main(int argc, char * argv[])
       }
       inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
 
+      if ((i+1) % 100 == 0){
+        arcut.assign (sys);
+      }
+
+      if ((i+1) % confFeq == 0){
+	// printf ("write conf\n");
+      	sys.recoverDeviceData (&timer);
+      	sys.updateHostFromRecovered (&timer);
+      	// sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
+	char filename[1024];
+	sprintf (filename, "%s/posiForc_t%05.3f.out", resultDir, (i+1)*dt);
+	sys.writePosiForce (filename);
+	fprintf (fp, "%f\n", (i+1)*dt);
+      }
+      
       inte_vv.step2 (sys, dt, &timer);
       if ((i+1) % thermoFeq == 0){	
 	nhc.operator_L (0.5 * dt, sys, st, &timer);
@@ -181,13 +207,14 @@ int main(int argc, char * argv[])
 	fflush(stdout);
       }
 
-      if ((i+1) % confFeq == 0){
-	// printf ("write conf\n");
-      	sys.recoverDeviceData (&timer);
-      	sys.updateHostFromRecovered (&timer);
-      	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
-      }
+      // if ((i+1) % confFeq == 0){
+      // 	// printf ("write conf\n");
+      // 	sys.recoverDeviceData (&timer);
+      // 	sys.updateHostFromRecovered (&timer);
+      // 	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
+      // }
 
+      
       if ((i+1) % 100 == 0){
       	if (resh.calIndexTable (clist_resh, &timer)){
       	  sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
@@ -217,7 +244,7 @@ int main(int argc, char * argv[])
     return 1;
   }
   
-  
+  fclose (fp);
   return 0;
 }
 
