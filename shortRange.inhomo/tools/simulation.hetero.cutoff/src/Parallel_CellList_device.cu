@@ -4072,7 +4072,7 @@ buildCellNeighborhood (const IntVectorType numCell,
   if (numCell.y == 3) oneCellY = true;
   if (numCell.z == 3) oneCellZ = true;
 
-  HostVectorType boxSize;
+  dim3 boxSize;
   if (tid == 0){
     boxSize.x = globalBoxSize.x / nProcDimx;
     boxSize.y = globalBoxSize.y / nProcDimy;
@@ -4319,7 +4319,7 @@ buildCellNeighborhood (const IntVectorType numCell,
   if (numCell.y == 3) oneCellY = true;
   if (numCell.z == 3) oneCellZ = true;
 
-  HostVectorType boxSize;
+  dim3 boxSize;
   ScalorType scalorx, scalory, scalorz;
   if (tid == 0){
     boxSize.x = globalBoxSize.x / nProcDimx;

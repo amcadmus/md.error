@@ -31,6 +31,7 @@ struct DeviceCellList
 struct DeviceNeighborList
 {
   ScalorType  rlist;		/**< radius of neighbor list */
+  ScalorType  rlistExten;	/**< radius of neighbor list */
   IndexType   stride;           /**< stride of neighbor list, which is
 				 * the expected larger than or equal
 				 * to the number of Atoms */
@@ -172,6 +173,7 @@ __global__ void
 buildDeviceNeighborList_AllPair  (const IndexType		numAtom,
 				  const CoordType *		coord,
 				  const TypeType *		type,
+				  const ScalorType *		rcut,
 				  const RectangularBox		box,
 				  DeviceNeighborList		nlist,
 				  const IndexType *		nbForceTable,

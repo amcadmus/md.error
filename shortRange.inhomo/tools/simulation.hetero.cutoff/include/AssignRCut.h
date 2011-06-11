@@ -10,6 +10,7 @@ class AssignRCut
 {
   RectangularBox box;
   int  nx, ny, nz, nele;
+  ScalorType maxRCut;
   // double hx, hy, hz;
   ScalorType * hrcut;
   ScalorType * drcut;
@@ -25,6 +26,7 @@ public:
 	       const MDSystem & sys,
 	       const IndexType & NThread);
   void assign (MDSystem & sys);
+  ScalorType getMaxRCut () const {return maxRCut;}
 }
     ;
 

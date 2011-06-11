@@ -12,6 +12,7 @@
 #include "tmp.h"
 #include "Reshuffle_interface.h"
 #include "Displacement_interface.h"
+#include "AssignRCut.h"
 
 #include "Topology.h"
 #include "SystemBondedInteraction.h"
@@ -38,16 +39,16 @@ int main(int argc, char * argv[])
   ScalorType tauT = 1.;
   char * filename;
   
-  if (argc != 4){
-    printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
+  if (argc != 5){
+    printf ("Usage:\n%s conf.gro rcutfile nstep device\n", argv[0]);
     return 1;
   }
   if (argc != 1){
-    nstep = atoi(argv[2]);
+    nstep = atoi(argv[3]);
     filename = argv[1];
   }
-  printf ("# setting device to %d\n", atoi(argv[3]));
-  cudaSetDevice (atoi(argv[3]));
+  printf ("# setting device to %d\n", atoi(argv[4]));
+  cudaSetDevice (atoi(argv[4]));
   checkCUDAError ("set device");
 
   MDSystem sys;
@@ -63,6 +64,10 @@ int main(int argc, char * argv[])
 
   sys.initTopology (sysTop);
   sys.initDeviceData ();
+
+  AssignRCut arcut;
+  arcut.reinit (argv[2], sys, NThreadsPerBlockAtom);
+  arcut.assign (sys);
   
   SystemNonBondedInteraction sysNbInter;
   sysNbInter.reinit (sysTop);
@@ -72,9 +77,11 @@ int main(int argc, char * argv[])
   ScalorType maxrcut = sysNbInter.maxRcut();
   ScalorType rlist = maxrcut + nlistExten;
   CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
-  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 4.f);
+  CellList clist_resh (sys, 3., NThreadsPerBlockCell, NThreadsPerBlockAtom);
+  NeighborList nlist (sysNbInter, sys, rlist, nlistExten, NThreadsPerBlockAtom, 4.f);
   sys.normalizeDeviceData ();
   clist.rebuild (sys, NULL);
+  clist_resh.rebuild (sys, NULL);
   nlist.rebuild (sys, clist, NULL);
   Displacement_max disp (sys, NThreadsPerBlockAtom);
   disp.recordCoord (sys);
@@ -97,9 +104,10 @@ int main(int argc, char * argv[])
   Reshuffle resh (sys);
   
   timer.tic(mdTimeTotal);
-  if (resh.calIndexTable (clist, &timer)){
+  if (resh.calIndexTable (clist_resh, &timer)){
     sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
     clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+    clist_resh.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
     nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
     disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
   }
@@ -135,14 +143,12 @@ int main(int argc, char * argv[])
 	sys.normalizeDeviceData (&timer);
 	disp.recordCoord (sys);
 	clist.rebuild (sys, &timer);
-	inter.applyNonBondedInteraction (sys, clist, rcut, st, &timer);
+	clist_resh.rebuild (sys, &timer);
 	nlist.rebuild (sys, clist, &timer);
 	// printf ("done\n");
 	// fflush(stdout);
       }
-      else{
-	inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
-      }
+      inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
 
       inte_vv.step2 (sys, dt, &timer);
       if ((i+1) % thermoFeq == 0){	
@@ -176,19 +182,20 @@ int main(int argc, char * argv[])
       }
 
       if ((i+1) % confFeq == 0){
-	printf ("write conf\n");
+	// printf ("write conf\n");
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
       }
 
       if ((i+1) % 100 == 0){
-	if (resh.calIndexTable (clist, &timer)){
-	  sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
-	  clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-	  nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-	  disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
-	}
+      	if (resh.calIndexTable (clist_resh, &timer)){
+      	  sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
+      	  clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+      	  clist_resh.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+      	  nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+      	  disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
+      	}
       }
     }
     sys.endWriteXtc();

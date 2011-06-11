@@ -252,7 +252,8 @@ applyNonBondedInteraction  (MDSystem & sys,
 	  sys.ddata.forcx,
 	  sys.ddata.forcy,
 	  sys.ddata.forcz,
-	  sys.ddata.type, 
+	  sys.ddata.type,
+	  sys.ddata.rcut,
 	  sys.box,
 	  nlist.dnlist);
   }
@@ -328,7 +329,8 @@ applyNonBondedInteraction (MDSystem & sys,
 	    sys.ddata.forcx,
 	    sys.ddata.forcy,
 	    sys.ddata.forcz,
-	    sys.ddata.type, 
+	    sys.ddata.type,
+	    sys.ddata.rcut,
 	    sys.box,
 	    nlist.dnlist
 	    ,
@@ -371,10 +373,10 @@ applyNonBondedInteraction (MDSystem & sys,
   // printf ("apply Ec %f, Pc %f\n",
   // 	  energyCorr * volumei,
   // 	  pressureCorr * volumei * volumei);
-  applyEnergyPressureCorrection
-      <<<1, 1, 0>>> (st.ddata,
-			energyCorr * volumei,
-			pressureCorr * volumei * volumei);
+  // applyEnergyPressureCorrection
+  //     <<<1, 1, 0>>> (st.ddata,
+  // 			energyCorr * volumei,
+  // 			pressureCorr * volumei * volumei);
   cudaThreadSynchronize();
   if (timer != NULL) timer->toc(mdTimeNBInterStatistic);
 }
@@ -1074,6 +1076,7 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
 				  ScalorType *			forcy, 
 				  ScalorType *			forcz,
 				  const TypeType *		type,
+				  const ScalorType *		rcut,
 				  const RectangularBox		box,
 				  const DeviceNeighborList	nlist)
 {
@@ -1086,6 +1089,8 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
 
   if (ii < numAtom) {
     CoordType ref (tex1Dfetch(global_texRef_interaction_coord, ii));
+    ScalorType refrcut2 = rcut[ii];
+    refrcut2 = refrcut2 * refrcut2;
     ScalorType fx(0.f), fy(0.f), fz(0.f);
     for (IndexType jj = 0, nlistPosi = ii;
     	 jj < nlist.Nneighbor[ii];
@@ -1097,14 +1102,16 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
       ScalorType diffy ( target.y - ref.y );
       ScalorType diffz ( target.z - ref.z );
       shortestImage (box, &diffx, &diffy, &diffz);
-      nbForce (nonBondedInteractionType[nbForceIndex],
-	       &nonBondedInteractionParameter
-	       [nonBondedInteractionParameterPosition[nbForceIndex]],
-      	       diffx, diffy, diffz, 
-      	       &fx, &fy, &fz);
-      fsumx += fx;
-      fsumy += fy;
-      fsumz += fz;
+      if (diffx*diffx + diffy*diffy + diffz*diffz < refrcut2){
+	nbForce (nonBondedInteractionType[nbForceIndex],
+		 &nonBondedInteractionParameter
+		 [nonBondedInteractionParameterPosition[nbForceIndex]],
+		 diffx, diffy, diffz, 
+		 &fx, &fy, &fz);
+	fsumx += fx;
+	fsumy += fy;
+	fsumz += fz;
+      }
     }
     forcx[ii] += fsumx;
     forcy[ii] += fsumy;
@@ -1201,6 +1208,7 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
 				  ScalorType *			forcy, 
 				  ScalorType *			forcz,
 				  const TypeType *		type,
+				  const ScalorType *		rcut,
 				  const RectangularBox		box,
 				  const DeviceNeighborList	nlist,
 				  ScalorType *			statistic_nb_buff0,
@@ -1220,6 +1228,8 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
   if (ii < numAtom) {
     CoordType ref;
     ref = tex1Dfetch(global_texRef_interaction_coord, ii);
+    ScalorType refrcut2 = rcut[ii];
+    refrcut2 = refrcut2 * refrcut2;
     ScalorType fx(0.f), fy(0.f), fz(0.f);
     ScalorType dp;
     for (IndexType jj = 0, nlistPosi = ii;
@@ -1232,28 +1242,30 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
       ScalorType diffy ( target.y - ref.y );
       ScalorType diffz ( target.z - ref.z );
       shortestImage (box, &diffx, &diffy, &diffz);
-      nbForcePoten (nonBondedInteractionType[nbForceIndex],
-		    &nonBondedInteractionParameter
-		    [nonBondedInteractionParameterPosition[nbForceIndex]],
-      		    diffx, diffy, diffz, 
-      		    &fx, &fy, &fz, &dp);
-      // printf ("## %d\t%d\t%f\t%f\t%f\n",
-      // 	      ii, targetIdx,
-      // 	      ref.z, target.z, fz);
-      // printf ("%f, %f %f %f,  %f %f %f,  %f %f %f, %f\n",
-      // 	      sqrtf(diffx*diffx+diffy*diffy+diffz*diffz),
-      // 	      ref.x, ref.y, ref.z,
-      // 	      target.x, target.y, target.z,
-      // 	      diffx, diffy, diffz,
-      // 	      dp
-      // 	  );
-      myPoten += dp;
-      myVxx += fx * diffx;
-      myVyy += fy * diffy;
-      myVzz += fz * diffz;
-      fsumx += fx;
-      fsumy += fy;
-      fsumz += fz;
+      if (diffx*diffx + diffy*diffy + diffz*diffz < refrcut2){
+	nbForcePoten (nonBondedInteractionType[nbForceIndex],
+		      &nonBondedInteractionParameter
+		      [nonBondedInteractionParameterPosition[nbForceIndex]],
+		      diffx, diffy, diffz, 
+		      &fx, &fy, &fz, &dp);
+	// printf ("## %d\t%d\t%f\t%f\t%f\n",
+	// 	      ii, targetIdx,
+	// 	      ref.z, target.z, fz);
+	// printf ("%f, %f %f %f,  %f %f %f,  %f %f %f, %f\n",
+	// 	      sqrtf(diffx*diffx+diffy*diffy+diffz*diffz),
+	// 	      ref.x, ref.y, ref.z,
+	// 	      target.x, target.y, target.z,
+	// 	      diffx, diffy, diffz,
+	// 	      dp
+	// 	  );
+	myPoten += dp;
+	myVxx += fx * diffx;
+	myVyy += fy * diffy;
+	myVzz += fz * diffz;
+	fsumx += fx;
+	fsumy += fy;
+	fsumz += fz;
+      }
     }
     forcx[ii] += fsumx;
     forcy[ii] += fsumy;

@@ -98,6 +98,8 @@ public:
 			 int step,
 			 float time,
 			 MDTimer *timer=NULL);
+
+  void writePosiForce (const char * filename);
 }
     ;
 

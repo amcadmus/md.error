@@ -317,6 +317,8 @@ __host__ void cpyDeviceMDDataToDevice (const DeviceMDData * hdata,
   cudaMemcpy (ddata->coordNoiz, hdata->coordNoiz, sizei, cudaMemcpyDeviceToDevice);
   checkCUDAError ("cpyDeviceMDDataToDevice coordNoi");
   
+  cudaMemcpy (ddata->rcut, hdata->rcut, sizef, cudaMemcpyDeviceToDevice);
+
   cudaMemcpy (ddata->velox, hdata->velox, sizef, cudaMemcpyDeviceToDevice);
   cudaMemcpy (ddata->veloy, hdata->veloy, sizef, cudaMemcpyDeviceToDevice);
   cudaMemcpy (ddata->veloz, hdata->veloz, sizef, cudaMemcpyDeviceToDevice);
@@ -469,6 +471,8 @@ cpyDeviceMDDataElement (const DeviceMDData * ddata1,
   ddata2->coordNoix[indx2] = ddata1->coordNoix[indx1];
   ddata2->coordNoiy[indx2] = ddata1->coordNoiy[indx1];
   ddata2->coordNoiz[indx2] = ddata1->coordNoiz[indx1];
+
+  ddata2->rcut[indx2] = ddata1->rcut[indx1];
 
   ddata2->velox[indx2] = ddata1->velox[indx1];
   ddata2->veloy[indx2] = ddata1->veloy[indx1];

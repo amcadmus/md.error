@@ -282,6 +282,26 @@ void MDSystem::endWriteXtc()
   xdrfile_close(xdfile);
 }
 
+void MDSystem::
+writePosiForce (const char * filename)
+{
+  FILE * fp = fopen (filename, "w");
+  if (fp == NULL){
+    fprintf (stderr, "cannot open file %s", filename);
+    exit (1);
+  }
+  for (unsigned i = 0; i < hdata.numAtom; ++i){
+    fprint ("%.16e %.16e %.16e    %.16e %.16e %.16e\n",
+	    hdata.coord[i].x,
+	    hdata.coord[i].y,
+	    hdata.coord[i].z,
+	    hdata.forcx[i],
+	    hdata.forcy[i],
+	    hdata.forcz[i]);
+  }
+  fclose (fp);
+}
+
 
 void MDSystem::
 recoverDeviceData (MDTimer * timer)
@@ -310,6 +330,9 @@ recoverDeviceData (MDTimer * timer)
   Reshuffle_reshuffleArray
       <<<atomGridDim, myBlockDim>>>
       (ddata.coordNoiz, ddata.numAtom, backMapTable, recoveredDdata.coordNoiz);
+  Reshuffle_reshuffleArray
+      <<<atomGridDim, myBlockDim>>>
+      (ddata.rcut, ddata.numAtom, backMapTable, recoveredDdata.rcut);
   Reshuffle_reshuffleArray
       <<<atomGridDim, myBlockDim>>>
       (ddata.velox, ddata.numAtom, backMapTable, recoveredDdata.velox);
@@ -387,6 +410,9 @@ reshuffle (const IndexType * indexTable,
   Reshuffle_reshuffleArray
       <<<atomGridDim, myBlockDim>>>
       (bkDdata.coordNoiz, ddata.numAtom, indexTable, ddata.coordNoiz);
+  Reshuffle_reshuffleArray
+      <<<atomGridDim, myBlockDim>>>
+      (bkDdata.rcut, ddata.numAtom, indexTable, ddata.rcut);
   Reshuffle_reshuffleArray
       <<<atomGridDim, myBlockDim>>>
       (bkDdata.velox, ddata.numAtom, indexTable, ddata.velox);

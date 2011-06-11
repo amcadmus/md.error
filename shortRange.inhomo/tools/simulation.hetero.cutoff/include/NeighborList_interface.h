@@ -58,12 +58,14 @@ public:
   NeighborList (const SystemNonBondedInteraction & sysNbInter,
 		const MDSystem & sys,
 		const ScalorType & rlist,
+		const ScalorType & rlistExten,
 		const IndexType & NTread,
 		const ScalorType & DeviceNeighborListExpansion = 1);
   ~NeighborList();
   void reinit (const SystemNonBondedInteraction & sysNbInter,
 	       const MDSystem & sys,
 	       const ScalorType & rlist,
+	       const ScalorType & rlistExten,
 	       const IndexType & NTread,
 	       const ScalorType & DeviceNeighborListExpansion = 1);
   void rebuild (const MDSystem & sys,

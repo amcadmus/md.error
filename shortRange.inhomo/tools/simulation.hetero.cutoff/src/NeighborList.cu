@@ -328,6 +328,7 @@ __global__ void
 buildDeviceNeighborList_AllPair  (const IndexType		numAtom,
 				  const CoordType *		coord,
 				  const TypeType *		type,
+				  const ScalorType *		rcut,
 				  const RectangularBox		box,
 				  DeviceNeighborList		nlist,
 				  const IndexType *		nbForceTable,
@@ -362,9 +363,11 @@ buildDeviceNeighborList_AllPair  (const IndexType		numAtom,
   
   CoordType ref;
   TypeType reftype;
+  ScalorType refrlist;
   if (ii < numberAtom){
     ref = coord[ii];
     reftype = type[ii];
+    refrlist = rcut[ii] + nlist.rlistExten;
   }
 
   for (IndexType targetBlockId = 0;
@@ -385,7 +388,7 @@ buildDeviceNeighborList_AllPair  (const IndexType		numAtom,
 	ScalorType diffy = target[kk].y - ref.y;
 	ScalorType diffz = target[kk].z - ref.z;
 	RectangularBoxGeometry::shortestImage (box, &diffx, &diffy, &diffz);
-	if ((diffx*diffx+diffy*diffy+diffz*diffz) < nlist.rlist*nlist.rlist &&
+	if ((diffx*diffx+diffy*diffy+diffz*diffz) < refrlist*refrlist &&
 	    kk + targetBlockId * blockDim.x != ii){
 	  IndexType listIdx = Nneighbor * nlist.stride + ii;
 	  nlist.data[listIdx] = kk + targetBlockId * blockDim.x;

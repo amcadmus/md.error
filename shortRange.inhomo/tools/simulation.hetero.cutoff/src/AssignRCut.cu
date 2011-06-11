@@ -37,7 +37,7 @@ reinit (const char * filename,
     fprintf (stderr, "cannot open file %s\n", filename);
     exit(1);    
   }
-  fscanf (fp, "%d %d %d", &nx, &ny, &nz);
+  fscanf (fp, "%d %d %d\n", &nx, &ny, &nz);
   nele = nx * ny * nz;
   box = sys.box;
   // hx = sys.box.size.x / nx;
@@ -48,9 +48,16 @@ reinit (const char * filename,
   cudaMalloc ((void **) &drcut, sizeof(ScalorType ) * nele);
   checkCUDAError ("AssignRCut::reinit malloc drcut");
   malloced = true;
-  
+
+  maxRCut = 0.;
   for (int i = 0; i < nele; ++i){
-    fscanf (fp, "%lf", &hrcut[i]);
+    int c;
+    c = fscanf (fp, "%f", &hrcut[i]);
+    if (c != 1){
+      printf ("c is not 1\n");
+      exit (1);
+    }
+    if (hrcut[i] > maxRCut) maxRCut = hrcut[i];
   }
   cudaMemcpy (drcut, hrcut, sizeof(ScalorType ) * nele, cudaMemcpyHostToDevice);
   checkCUDAError ("AssignRCut::reinit cpy rcut");
