@@ -373,10 +373,10 @@ applyNonBondedInteraction (MDSystem & sys,
   // printf ("apply Ec %f, Pc %f\n",
   // 	  energyCorr * volumei,
   // 	  pressureCorr * volumei * volumei);
-  // applyEnergyPressureCorrection
-  //     <<<1, 1, 0>>> (st.ddata,
-  // 			energyCorr * volumei,
-  // 			pressureCorr * volumei * volumei);
+  applyEnergyPressureCorrection
+      <<<1, 1, 0>>> (st.ddata,
+  			energyCorr * volumei,
+  			pressureCorr * volumei * volumei);
   cudaThreadSynchronize();
   if (timer != NULL) timer->toc(mdTimeNBInterStatistic);
 }
