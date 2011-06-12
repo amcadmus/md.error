@@ -109,8 +109,8 @@ int main(int argc, char * argv[])
   sys.updateHostFromRecovered (&timer);
   sys.writeHostDataGro ("confstart.gro", 0, 0.f, &timer);
   printf ("# prepare ok, start to run\n");
-  printf ("#*     1     2           3         4            5       6                7        8   9\n");
-  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  NHC_Hamiltonian pressure box\n");
+  printf ("#*     1     2           3         4            5       6                7          8          9         10        11\n");
+  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  NHC_Hamiltonian pressureXX pressureYY pressureZZ s_tension\n");
 
   try{
     sys.initWriteXtc ("traj.xtc");
@@ -135,15 +135,12 @@ int main(int argc, char * argv[])
 	sys.normalizeDeviceData (&timer);
 	disp.recordCoord (sys);
 	clist.rebuild (sys, &timer);
-	inter.applyNonBondedInteraction (sys, clist, rcut, st, &timer);
 	nlist.rebuild (sys, clist, &timer);
 	// printf ("done\n");
 	// fflush(stdout);
       }
-      else{
-	inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
-      }
-
+      inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
+      
       inte_vv.step2 (sys, dt, &timer);
       if ((i+1) % thermoFeq == 0){	
 	nhc.operator_L (0.5 * dt, sys, st, &timer);
@@ -154,7 +151,10 @@ int main(int argc, char * argv[])
 
       if ((i+1) % thermoFeq == 0){
 	st.updateHost ();
-	printf ("%09d %07e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.2e %.2e %.2e %.2e\n",
+	ScalorType px = st.pressureXX (sys.box);
+	ScalorType py = st.pressureYY (sys.box);
+	ScalorType pz = st.pressureZZ (sys.box);
+	printf ("%09d %07e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e\n",
 		(i+1),  
 		(i+1) * dt, 
 		st.nonBondedEnergy(),
@@ -165,12 +165,8 @@ int main(int argc, char * argv[])
 		st.nonBondedEnergy() +
 		st.kineticEnergy() +
 		nhc.HamiltonianContribution (),
-		st.pressure(sys.box),
-		sys.box.size.x,
-		nhc.xi1,
-		nhc.vxi1,
-		nhc.xi2,
-		nhc.vxi1
+		px, py, pz,
+		(px - (py + pz) * 0.5) * sys.box.size.x * 0.5
 	    );
 	fflush(stdout);
       }
