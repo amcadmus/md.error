@@ -63,8 +63,9 @@ int main (int argc, char * argv[])
   std::cout << "# out file is " << filename_out << std::endl;
 
   for (unsigned i = 0; i < posi.size(); ++i){
-    if      (posi[i][0] <  box[0]) posi[i][0] += box[0];
+    if      (posi[i][0] <  0.    ) posi[i][0] += box[0];
     else if (posi[i][0] >= box[0]) posi[i][0] -= box[0];
+    
     posi[i][0] += shift;
   }
 
