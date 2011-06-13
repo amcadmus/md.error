@@ -24,7 +24,8 @@ rm -f conf.gro
 cp $confFile conf.gro
 workdir=`pwd`
 command="$workdir/tools/simulation.uniform.cutoff/lj.nhc conf.gro $nstep $device"
-echo command is: $command
+echo "command is: $command > gpu-md.out 2> gpu-md.perf"
+$command > gpu-md.out 2> gpu-md.perf
 
 
 
