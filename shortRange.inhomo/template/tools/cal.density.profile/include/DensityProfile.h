@@ -42,6 +42,7 @@ public:
 			     const unsigned & iy,
 			     const unsigned & iz) const
       {return profile[index3to1(ix, iy, iz)];}
+  const std::vector<double > & getProfile () const {return profile;}
   inline const double & getValue (const double & xx,
 				  const double & yy,
 				  const double & zz) const;

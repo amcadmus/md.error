@@ -109,7 +109,7 @@ deposit (const std::string & filename,
     else {
       if (time < start - time_prec) continue;
     }
-    std::cout << "loaded frame at time " << time << "ps   \r";  
+    std::cout << "#! loaded frame at time " << time << "ps   \r";  
     std::cout << std::flush;  
     for (unsigned i = 0; i < unsigned(natoms); ++i) {
       double tmp;
