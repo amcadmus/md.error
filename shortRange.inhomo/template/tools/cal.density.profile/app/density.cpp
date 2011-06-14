@@ -34,7 +34,7 @@ int main (int argc, char * argv[])
       ("nblock,n", po::value<unsigned > (&nblock)->default_value (16),  "num of block")
       ("start,s", po::value<float > (&start_t)->default_value (0.f),  "start time")
       ("end,e",   po::value<float > (&end_t)  ->default_value (0.f),  "end time, 0 is infinity")
-      ("bin-size,h",  po::value<double > (&h)->default_value (1.),  "bin size")
+      ("bin-size",  po::value<double > (&h)->default_value (1.),  "bin size")
       ("check-point-liquid-1", po::value<double > (&chl1)->default_value (60.), "liquid check point 1")
       ("check-point-liquid-2", po::value<double > (&chl2)->default_value (90.), "liquid check point 2")
       ("check-point-gas-1", po::value<double > (&chg1)->default_value (40. ), "gas check point 1")
@@ -45,7 +45,7 @@ int main (int argc, char * argv[])
   po::store(po::parse_command_line(argc, argv, desc), vm);
   po::notify (vm);
 
-  if (vm.count("help")){
+  if (vm.count("help") || vm.count("h")){
     std::cout << desc<< "\n";
     return 0;
   }
