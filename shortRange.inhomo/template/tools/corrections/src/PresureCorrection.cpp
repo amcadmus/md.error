@@ -64,27 +64,13 @@ reinit (const DensityProfile_PiecewiseConst & dp)
   // bessel_table_1[0] = 1e-8;
   // bessel_table_5[0] = 1e-8;
   gsl_sf_bessel_sequence_Jnu_e (0.5,
-  				GSL_PREC_DOUBLE,
+  				GSL_PREC_APPROX,
   				bessel_table_length,
   				bessel_table_1);
   gsl_sf_bessel_sequence_Jnu_e (2.5,
-  				GSL_PREC_DOUBLE,
+  				GSL_PREC_APPROX,
   				bessel_table_length,
   				bessel_table_5);
-
-  // double percetage = 0.;
-  // double step = 0.1;
-  // for (int i = 0; i < bessel_table_length; ++i){
-  //   if ((double (i+1) * 100. / double(bessel_table_length)) >= percetage){
-  //     percetage += step;
-  //     printf ("# cal bessel table %.1f %%   \r", percetage);
-  //     fflush (stdout);
-  //   }
-  //   double x = bessel_table_h * i;
-  //   bessel_table_1[i] = gsl_sf_bessel_Jnu (0.5, x);
-  //   bessel_table_5[i] = gsl_sf_bessel_Jnu (2.5, x);
-  // }
-  // printf ("\n");
 
   ff_i1.bessel_table = bessel_table_1;
   ff_i1.bessel_table_length = bessel_table_length;
@@ -233,21 +219,6 @@ double PresureCorrection::
 integral_ff_i1_numerical (const double & k,
 			  const double & rc)
 {
-  // double tmpvalue = 0.;
-  // int ndiv = 100;
-  // double h = (integral_upper - rc) / double(ndiv);
-  // double x0 = rc;
-  // double x1 = rc + h;
-  // double v0 = ff_i1 (x0);
-  // double v1;
-  // for (int i = 0; i < ndiv; ++i) {
-  //   v1 = ff_i1(x1);
-  //   tmpvalue += 0.5 * h * (v0 + v1);
-  //   v0 = v1;
-  //   x0 = x1;
-  //   x1 += h;
-  // }
-  // FF_I1 ff_i1;
   Integral1D<FF_I1, double > inte_ff_i1;
   double prec = 1e-7;
   ff_i1.k = k;
@@ -270,21 +241,6 @@ double PresureCorrection::
 integral_ff_i5_numerical (const double & k,
 			  const double & rc)
 {
-  // double tmpvalue = 0.;
-  // int ndiv = 100;
-  // double h = (integral_upper - rc) / double(ndiv);
-  // double x0 = rc;
-  // double x1 = rc + h;
-  // double v0 = ff_i5 (x0);
-  // double v1;
-  // for (int i = 0; i < ndiv; ++i) {
-  //   v1 = ff_i5(x1);
-  //   tmpvalue += 0.5 * h * (v0 + v1);
-  //   v0 = v1;
-  //   x0 = x1;
-  //   x1 += h;
-  // }
-  // FF_I5 ff_i5;
   Integral1D<FF_I5, double > inte_ff_i5;
   double prec = 1e-7;
   ff_i5.k = k;

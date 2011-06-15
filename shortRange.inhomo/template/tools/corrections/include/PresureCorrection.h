@@ -18,10 +18,6 @@ public:
       {
 	double xx = 2 * M_PI * k * x;
 	int posi = xx * bessel_table_hi;
-	// if (posi + 1 >= bessel_table_length) {
-	//   printf ("bessel_table_length wrong\n");
-	//   exit(1);
-	// }
 	return (-24.) / (gsl_pow_4(x) * sqrt(x)) *
 	    ((xx * bessel_table_hi - posi) *
 	     (bessel_table[posi+1] - bessel_table[posi]) +
@@ -43,10 +39,6 @@ public:
       {
 	double xx = 2 * M_PI * k * x;
 	int posi = xx * bessel_table_hi;
-	// if (posi + 1 >= bessel_table_length) {
-	//   printf ("bessel_table_length wrong\n");
-	//   exit(1);
-	// }
 	return (-24.) / (gsl_pow_4(x) * sqrt(x)) *
 	    ((xx * bessel_table_hi - posi) *
 	     (bessel_table[posi+1] - bessel_table[posi]) +
