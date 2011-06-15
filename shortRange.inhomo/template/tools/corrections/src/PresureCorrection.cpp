@@ -183,19 +183,20 @@ integral_ff_i1_numerical (const double & k,
 {
   FF_I1 ff_i1;
   Integral1D<FF_I1, double > inte_ff_i1;
-  double prec = 1e-3;
+  double prec = 1e-7;
   ff_i1.k = k;
   double tmpvalue, newprec;
   tmpvalue =  inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
 				  ff_i1,
-				  rc, 50,
+				  rc, 30,
 				  prec);
-  newprec = fabs(tmpvalue) * 1e-4;
-  // printf ("newprec: %e\n", newprec);
-  tmpvalue =  inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
-				  ff_i1,
-				  rc, 50,
-				  newprec);  
+  // printf ("value: %e\n", tmpvalue);
+  // newprec = fabs(tmpvalue) * 1e-4;
+  // // printf ("newprec: %e\n", newprec);
+  // tmpvalue =  inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
+  // 				  ff_i1,
+  // 				  rc, 30,
+  // 				  newprec);  
   return tmpvalue;
 }
 
@@ -205,19 +206,19 @@ integral_ff_i5_numerical (const double & k,
 {
   FF_I5 ff_i5;
   Integral1D<FF_I5, double > inte_ff_i5;
-  double prec = 1e-3;
+  double prec = 1e-7;
   ff_i5.k = k;
   double tmpvalue, newprec;
   tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
 			    ff_i5,
-			    rc, 50,
+			    rc, 30,
 			    prec);
-  newprec = fabs(tmpvalue) * 1e-4;
-  // printf ("newprec: %e\n", newprec);
-  tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
-			    ff_i5,
-			    rc, 50,
-			    newprec);
+  // newprec = fabs(tmpvalue) * 1e-4;
+  // // printf ("newprec: %e\n", newprec);
+  // tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
+  // 			    ff_i5,
+  // 			    rc, 30,
+  // 			    newprec);
   return tmpvalue;
 }
 
