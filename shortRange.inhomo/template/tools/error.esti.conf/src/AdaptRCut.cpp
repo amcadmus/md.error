@@ -107,14 +107,13 @@ reinit (const double & rcmin,
   hx = boxsize[0] / nx;
   hy = boxsize[1] / ny;
   hz = boxsize[2] / nz;
+  nele = nx * ny * nz;
 
   rcList.clear();  
   for (double tmprc = rcmin; tmprc <= rcmax; tmprc += rcstep){
     rcList.push_back(tmprc);
   }
   nrc = rcList.size();
-
-  nele = nx * ny * nz;
   
   rhor = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
   rhok = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
