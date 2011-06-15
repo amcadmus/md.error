@@ -107,11 +107,12 @@ freeAll ()
 }
 
 void PresureCorrection::
-naiveCorrection (const DensityProfile_PiecewiseConst & dp)
+naiveCorrection (const double & rc,
+		 const DensityProfile_PiecewiseConst & dp)
 {
   pxx = pyy = pzz = 0.;
 
-  double rcut1 = 5.;
+  double rcut1 = rc;
   double rcut2 = 10.;
   int dnx = (rcut2 - 1e-8) / hx + 1;
   int dny = (rcut2 - 1e-8) / hy + 1;
@@ -178,7 +179,8 @@ array_multiply (fftw_complex * a,
 }
 
 void PresureCorrection::
-correction (const DensityProfile_PiecewiseConst & dp)
+correction (const double & rc,
+	    const DensityProfile_PiecewiseConst & dp)
 {
   for (int i = 0; i < nele; ++i){
     rhor[i][0] = dp.getProfile()[i];
@@ -192,7 +194,7 @@ correction (const DensityProfile_PiecewiseConst & dp)
     rhok[i][1] *= scale;
   }  
 
-  makeKernel ();
+  makeKernel (rc);
 
   array_multiply (kxxk, nele, rhok);
   array_multiply (kyyk, nele, rhok);
@@ -261,10 +263,9 @@ integral_ff_i5_numerical (const double & k,
 
 
 void PresureCorrection::
-makeKernel ()
+makeKernel (const double & rc)
 {
   double pre = 1.;
-  double rc = 7.5;
 
   double kx, ky, kz;
   for (int ix = -nx/2; ix < nx - nx/2; ++ix){

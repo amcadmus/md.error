@@ -74,7 +74,7 @@ private:
   FF_I5 ff_i5;
 private:
   void freeAll ();
-  void makeKernel ();
+  void makeKernel (const double & rc);
   double integral_ff_i1_numerical (const double & k,
 				   const double & rc);
   double integral_ff_i5_numerical (const double & k,
@@ -84,8 +84,10 @@ public:
   PresureCorrection (const DensityProfile_PiecewiseConst & dp);
   ~PresureCorrection ();
   void reinit (const DensityProfile_PiecewiseConst & dp);
-  void naiveCorrection (const DensityProfile_PiecewiseConst & dp);
-  void correction (const DensityProfile_PiecewiseConst & dp);
+  void naiveCorrection (const double & rc,
+			const DensityProfile_PiecewiseConst & dp);
+  void correction (const double & rc,
+		   const DensityProfile_PiecewiseConst & dp);
 }
     ;
 

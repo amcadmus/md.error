@@ -26,11 +26,13 @@ int main (int argc, char * argv[])
 
   float start_t, end_t;
   double h;
+  double rcut;
   
   desc.add_options()
       ("help,h", "print this message")
       ("start,s", po::value<float > (&start_t)->default_value (0.f),  "start time")
       ("end,e",   po::value<float > (&end_t)  ->default_value (0.f),  "end time, 0 is infinity")
+      ("rcut,r",  po::value<double > (&rcut)->default_value (5.),  "rcut-off")
       ("bin-size",  po::value<double > (&h)->default_value (1.),  "bin size")
       ("file-name,f", po::value<std::string > (&filename)->default_value (std::string("traj.xtc"), "trajactory file name"));
 
@@ -48,7 +50,7 @@ int main (int argc, char * argv[])
   dp.print_x ("density.x.out");
 
   PresureCorrection pc (dp);
-  pc.correction (dp);
+  pc.correction (rcut, dp);
   printf ("pc is %e %e %e\n", pc.pxx, pc.pyy, pc.pzz);
   printf ("tension is %e\n", (pc.pxx - (pc.pyy + pc.pzz) * 0.5) * 0.5 * dp.getBox()[0]);
   
