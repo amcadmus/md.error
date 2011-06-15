@@ -42,10 +42,60 @@ reinit (const DensityProfile_PiecewiseConst & dp)
   p_backward_kyy = fftw_plan_dft_3d (nx, ny, nz, kyyk, kyyr, FFTW_BACKWARD, FFTW_MEASURE);
   p_backward_kzz = fftw_plan_dft_3d (nx, ny, nz, kzzk, kzzr, FFTW_BACKWARD, FFTW_MEASURE);
   
-  malloced = true;
-
   pxx = pyy = pzz = 0.;
 
+  integral_upper = 30.;
+  bessel_table_h = 1e-3;
+  bessel_table_hi = 1./bessel_table_h;
+  double maxk = ((nx*nx) / (boxsize[0]*boxsize[0]) +
+		 (ny*ny) / (boxsize[1]*boxsize[1]) +
+		 (nz*nz) / (boxsize[2]*boxsize[2]) );
+  maxk = sqrt(maxk);
+  bessel_table_length = int (2 * M_PI * maxk * integral_upper / bessel_table_h);
+  bessel_table_length += 2;
+  bessel_table_1 = (double *) malloc (sizeof(double) * bessel_table_length);
+  bessel_table_5 = (double *) malloc (sizeof(double) * bessel_table_length);
+  bessel_table_1[0] = 0.;
+  bessel_table_5[0] = 0.;
+  for (int i = 1; i < bessel_table_length; ++i){
+    bessel_table_1[i] = bessel_table_1[i-1] + bessel_table_h;
+    bessel_table_5[i] = bessel_table_5[i-1] + bessel_table_h;
+  }
+  // bessel_table_1[0] = 1e-8;
+  // bessel_table_5[0] = 1e-8;
+  gsl_sf_bessel_sequence_Jnu_e (0.5,
+  				GSL_PREC_DOUBLE,
+  				bessel_table_length,
+  				bessel_table_1);
+  gsl_sf_bessel_sequence_Jnu_e (2.5,
+  				GSL_PREC_DOUBLE,
+  				bessel_table_length,
+  				bessel_table_5);
+
+  // double percetage = 0.;
+  // double step = 0.1;
+  // for (int i = 0; i < bessel_table_length; ++i){
+  //   if ((double (i+1) * 100. / double(bessel_table_length)) >= percetage){
+  //     percetage += step;
+  //     printf ("# cal bessel table %.1f %%   \r", percetage);
+  //     fflush (stdout);
+  //   }
+  //   double x = bessel_table_h * i;
+  //   bessel_table_1[i] = gsl_sf_bessel_Jnu (0.5, x);
+  //   bessel_table_5[i] = gsl_sf_bessel_Jnu (2.5, x);
+  // }
+  // printf ("\n");
+
+  ff_i1.bessel_table = bessel_table_1;
+  ff_i1.bessel_table_length = bessel_table_length;
+  ff_i1.bessel_table_h  = bessel_table_h;
+  ff_i1.bessel_table_hi = bessel_table_hi;
+  ff_i5.bessel_table = bessel_table_5;
+  ff_i5.bessel_table_length = bessel_table_length;
+  ff_i5.bessel_table_h  = bessel_table_h;
+  ff_i5.bessel_table_hi = bessel_table_hi;  
+
+  malloced = true;
 }
 
 void PresureCorrection::
@@ -64,6 +114,8 @@ freeAll ()
     fftw_destroy_plan (p_backward_kxx);
     fftw_destroy_plan (p_backward_kyy);
     fftw_destroy_plan (p_backward_kzz);
+    free (bessel_table_1);
+    free (bessel_table_5);
     malloced = false;
   }
 }
@@ -181,15 +233,29 @@ double PresureCorrection::
 integral_ff_i1_numerical (const double & k,
 			  const double & rc)
 {
-  FF_I1 ff_i1;
+  // double tmpvalue = 0.;
+  // int ndiv = 100;
+  // double h = (integral_upper - rc) / double(ndiv);
+  // double x0 = rc;
+  // double x1 = rc + h;
+  // double v0 = ff_i1 (x0);
+  // double v1;
+  // for (int i = 0; i < ndiv; ++i) {
+  //   v1 = ff_i1(x1);
+  //   tmpvalue += 0.5 * h * (v0 + v1);
+  //   v0 = v1;
+  //   x0 = x1;
+  //   x1 += h;
+  // }
+  // FF_I1 ff_i1;
   Integral1D<FF_I1, double > inte_ff_i1;
   double prec = 1e-7;
   ff_i1.k = k;
   double tmpvalue, newprec;
   tmpvalue =  inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
-				  ff_i1,
-				  rc, 30,
-				  prec);
+  				  ff_i1,
+  				  rc, integral_upper,
+  				  prec);
   // printf ("value: %e\n", tmpvalue);
   // newprec = fabs(tmpvalue) * 1e-4;
   // // printf ("newprec: %e\n", newprec);
@@ -204,15 +270,29 @@ double PresureCorrection::
 integral_ff_i5_numerical (const double & k,
 			  const double & rc)
 {
-  FF_I5 ff_i5;
+  // double tmpvalue = 0.;
+  // int ndiv = 100;
+  // double h = (integral_upper - rc) / double(ndiv);
+  // double x0 = rc;
+  // double x1 = rc + h;
+  // double v0 = ff_i5 (x0);
+  // double v1;
+  // for (int i = 0; i < ndiv; ++i) {
+  //   v1 = ff_i5(x1);
+  //   tmpvalue += 0.5 * h * (v0 + v1);
+  //   v0 = v1;
+  //   x0 = x1;
+  //   x1 += h;
+  // }
+  // FF_I5 ff_i5;
   Integral1D<FF_I5, double > inte_ff_i5;
   double prec = 1e-7;
   ff_i5.k = k;
   double tmpvalue, newprec;
   tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
-			    ff_i5,
-			    rc, 30,
-			    prec);
+  				 ff_i5,
+  				 rc, integral_upper,
+  				 prec);
   // newprec = fabs(tmpvalue) * 1e-4;
   // // printf ("newprec: %e\n", newprec);
   // tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,

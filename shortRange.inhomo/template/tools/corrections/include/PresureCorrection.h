@@ -10,10 +10,24 @@ class FF_I1
 {
 public:
   double k;
+  double * bessel_table;
+  int bessel_table_length;
+  double bessel_table_h;
+  double bessel_table_hi;
   double operator () (const double & x) const
       {
+	double xx = 2 * M_PI * k * x;
+	int posi = xx * bessel_table_hi;
+	// if (posi + 1 >= bessel_table_length) {
+	//   printf ("bessel_table_length wrong\n");
+	//   exit(1);
+	// }
 	return (-24.) / (gsl_pow_4(x) * sqrt(x)) *
-	    gsl_sf_bessel_Jnu (0.5, 2 * M_PI * k * x);
+	    ((xx * bessel_table_hi - posi) *
+	     (bessel_table[posi+1] - bessel_table[posi]) +
+	     bessel_table[posi]);
+	// return (-24.) / (gsl_pow_4(x) * sqrt(x)) *
+	//     gsl_sf_bessel_Jnu (0.5, 2 * M_PI * k * x);
       }
 };
 
@@ -21,10 +35,24 @@ class FF_I5
 {
 public:
   double k;
+  double * bessel_table;
+  int bessel_table_length;
+  double bessel_table_h;
+  double bessel_table_hi;
   double operator () (const double & x) const
       {
+	double xx = 2 * M_PI * k * x;
+	int posi = xx * bessel_table_hi;
+	// if (posi + 1 >= bessel_table_length) {
+	//   printf ("bessel_table_length wrong\n");
+	//   exit(1);
+	// }
 	return (-24.) / (gsl_pow_4(x) * sqrt(x)) *
-	    gsl_sf_bessel_Jnu (2.5, 2 * M_PI * k * x);
+	    ((xx * bessel_table_hi - posi) *
+	     (bessel_table[posi+1] - bessel_table[posi]) +
+	     bessel_table[posi]);
+	// return (-24.) / (gsl_pow_4(x) * sqrt(x)) *
+	//     gsl_sf_bessel_Jnu (2.5, 2 * M_PI * k * x);
       }
 };
 
@@ -44,6 +72,12 @@ class PresureCorrection
   fftw_plan p_backward_kyy;
   fftw_plan p_backward_kzz;
   bool malloced;
+private:
+  double * bessel_table_1;
+  double * bessel_table_5;
+  int bessel_table_length;
+  double integral_upper;
+  double bessel_table_h, bessel_table_hi;
   FF_I1 ff_i1;
   FF_I5 ff_i5;
 private:
