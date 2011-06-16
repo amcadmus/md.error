@@ -30,6 +30,8 @@
 #define NThreadsPerBlockCell	160
 #define NThreadsPerBlockAtom	96
 
+#include "DensityProfile.h"
+
 int main(int argc, char * argv[])
 {
   IndexType nstep = 100000;
@@ -41,17 +43,26 @@ int main(int argc, char * argv[])
   ScalorType refT = 0.70;
   ScalorType tauT = 1.;
   char * filename;
+
+  IndexType rcutUpdateFeq = 1000;
+  IndexType rcutAssignFeq = 100;
+  IndexType densityProfileSamplingFeq = 200;
+  double refh = 1.;
+  double rcmin = 3.;
+  double rcmax = 10.;
+  double rcstep = .5;
+  double targetPrec = 0.01;
   
-  if (argc != 5){
-    printf ("Usage:\n%s conf.gro rcutfile nstep device\n", argv[0]);
+  if (argc != 4){
+    printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
     return 1;
   }
   if (argc != 1){
-    nstep = atoi(argv[3]);
+    nstep = atoi(argv[2]);
     filename = argv[1];
   }
-  printf ("# setting device to %d\n", atoi(argv[4]));
-  cudaSetDevice (atoi(argv[4]));
+  printf ("# setting device to %d\n", atoi(argv[3]));
+  cudaSetDevice (atoi(argv[3]));
   checkCUDAError ("set device");
 
   MDSystem sys;
@@ -68,9 +79,19 @@ int main(int argc, char * argv[])
   sys.initTopology (sysTop);
   sys.initDeviceData ();
 
-  AssignRCut arcut;
-  arcut.reinit (argv[2], sys, NThreadsPerBlockAtom);
-  arcut.assign (sys);
+  DensityProfile_PiecewiseConst dp;
+  printf ("# init DensityProfile_PiecewiseConst\n");
+  dp.reinit (sys.box.size.x, sys.box.size.y, sys.box.size.z, refh);
+  AdaptRCut arc;
+  printf ("# init AdaptRCut\n");
+  arc.reinit (rcmin, rcmax, rcstep, dp);
+  // arc.print_x ("error.x5.out");
+  AssignRCut assign_rcut;
+  printf ("# init AssignRCut\n");
+  assign_rcut.reinit (sys, arc, NThreadsPerBlockAtom);
+  assign_rcut.uniform (5.);
+  assign_rcut.print_x ("rcut.x.out");
+  assign_rcut.assign (sys);
   
   SystemNonBondedInteraction sysNbInter;
   sysNbInter.reinit (sysTop);
@@ -153,8 +174,10 @@ int main(int argc, char * argv[])
       }
       inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
 
-      if ((i+1) % 100 == 0){
-        arcut.assign (sys);
+      if ((i+2) % rcutAssignFeq == 0){
+	timer.tic (mdTimeAdaptRCut);
+        assign_rcut.assign (sys);
+	timer.toc (mdTimeAdaptRCut);
       }
       
       inte_vv.step2 (sys, dt, &timer);
@@ -187,6 +210,29 @@ int main(int argc, char * argv[])
 	fflush(stdout);
       }
 
+      if ((i+1) % densityProfileSamplingFeq == 0) {
+	timer.tic (mdTimeDensityProfile);
+	sys.updateHostFromDevice (NULL);
+	dp.deposite (sys.hdata.coord, sys.hdata.numAtom);
+	timer.toc (mdTimeDensityProfile);
+      }
+
+      if ((i+1) % rcutUpdateFeq == 0) {
+	// printf ("# update rcut\n");
+	timer.tic (mdTimeDensityProfile);
+	dp.calculate ();
+	dp.print_x ("density.x.out");
+	timer.toc (mdTimeDensityProfile);
+	timer.tic (mdTimeAdaptRCut);
+	arc.calError (dp);
+	arc.calRCut (targetPrec);
+	arc.print_x ("error.x5.out");
+	assign_rcut.getRCut (arc);
+	assign_rcut.print_x ("rcut.x.out");
+	timer.toc (mdTimeAdaptRCut);
+	dp.clearData ();
+      }
+      
       if ((i+1) % confFeq == 0){
       	// printf ("write conf\n");
       	sys.recoverDeviceData (&timer);

@@ -76,9 +76,9 @@ int main(int argc, char * argv[])
   sys.initTopology (sysTop);
   sys.initDeviceData ();
 
-  AssignRCut arcut;
-  arcut.reinit (argv[2], sys, NThreadsPerBlockAtom);
-  arcut.assign (sys);
+  // AssignRCut arcut;
+  // arcut.reinit (argv[2], sys, NThreadsPerBlockAtom);
+  // arcut.assign (sys);
   
   SystemNonBondedInteraction sysNbInter;
   sysNbInter.reinit (sysTop);
@@ -161,9 +161,9 @@ int main(int argc, char * argv[])
       }
       inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
 
-      if ((i+1) % 100 == 0){
-        arcut.assign (sys);
-      }
+      // if ((i+1) % 100 == 0){
+      //   arcut.assign (sys);
+      // }
 
       if ((i+1) % confFeq == 0){
 	// printf ("write conf\n");

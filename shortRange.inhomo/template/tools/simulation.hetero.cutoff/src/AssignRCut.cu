@@ -13,14 +13,12 @@ AssignRCut::
   freeAll();
 }
 
-
 void AssignRCut::
-reinit (const char * filename,
-	const MDSystem & sys,
-    	const IndexType & NThread)
+reinit (const MDSystem & sys,
+	const AdaptRCut & arc,
+	const IndexType & NThread)
 {
   freeAll ();
-  
   myBlockDim.y = 1;
   myBlockDim.z = 1;
   myBlockDim.x = NThread;
@@ -31,38 +29,37 @@ reinit (const char * filename,
     nob = sys.ddata.numAtom / myBlockDim.x + 1;
   }
   atomGridDim = toGridDim (nob);
-
-  FILE * fp = fopen (filename, "r");  
-  if (fp == NULL){
-    fprintf (stderr, "cannot open file %s\n", filename);
-    exit(1);    
-  }
-  fscanf (fp, "%d %d %d\n", &nx, &ny, &nz);
+  
+  nx = arc.getNx();
+  ny = arc.getNy();
+  nz = arc.getNz();
   nele = nx * ny * nz;
   box = sys.box;
-  // hx = sys.box.size.x / nx;
-  // hy = sys.box.size.y / ny;
-  // hz = sys.box.size.z / nz;
   
   hrcut = (ScalorType *) malloc (sizeof(ScalorType ) * nele);
   cudaMalloc ((void **) &drcut, sizeof(ScalorType ) * nele);
   checkCUDAError ("AssignRCut::reinit malloc drcut");
   malloced = true;
+}
 
-  maxRCut = 0.;
+void AssignRCut::
+getRCut (const AdaptRCut & arc)
+{
   for (int i = 0; i < nele; ++i){
-    int c;
-    c = fscanf (fp, "%f", &hrcut[i]);
-    if (c != 1){
-      printf ("c is not 1\n");
-      exit (1);
-    }
-    if (hrcut[i] > maxRCut) maxRCut = hrcut[i];
+    hrcut[i] = arc.getRCut()[i];
   }
-  cudaMemcpy (drcut, hrcut, sizeof(ScalorType ) * nele, cudaMemcpyHostToDevice);
-  checkCUDAError ("AssignRCut::reinit cpy rcut");
-  
-  fclose (fp);
+  cudaMemcpy (drcut, hrcut, sizeof(ScalorType) * nele, cudaMemcpyHostToDevice);
+  checkCUDAError ("AssignRCut::getRCut copy");
+}
+
+void AssignRCut::
+uniform (const double & rc)
+{
+  for (int i = 0; i < nele; ++i){
+    hrcut[i] = rc;
+  }
+  cudaMemcpy (drcut, hrcut, sizeof(ScalorType) * nele, cudaMemcpyHostToDevice);
+  checkCUDAError ("AssignRCut::getRCut copy");
 }
 
 void AssignRCut::
@@ -120,3 +117,26 @@ assign (MDSystem & sys)
 }
 
       
+void AssignRCut::    
+print_x (const char * file) const 
+{
+  FILE * fp = fopen (file, "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  for (int i = 0; i < nx; ++i){
+    // double sum = 0.;
+    // for (int j = 0; j < ny; ++j){
+    //   for (int k = 0; k < nz; ++k){
+    // 	sum += profile[index3to1(i, j, k)];
+    //   }
+    // }
+    fprintf (fp, "%f %e\n",
+	     (i + 0.5) * box.size.x / double(nx),
+	     hrcut [index3to1(i, 0, 0)]
+	);
+  }
+  fclose (fp);
+}

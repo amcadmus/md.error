@@ -5,11 +5,16 @@
 
 #include "common.h"
 #include "MDSystem_interface.h"
+#include "AdaptRCut.h"
 
 class AssignRCut 
 {
   RectangularBox box;
   int  nx, ny, nz, nele;
+  inline unsigned index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const;
+  inline void     index1to3 (unsigned& input,
+			     unsigned& ix, unsigned& iy, unsigned& iz) const;
+
   ScalorType maxRCut;
   // double hx, hy, hz;
   ScalorType * hrcut;
@@ -22,12 +27,32 @@ private:
 public:
   AssignRCut ();
   ~AssignRCut ();
-  void reinit (const char * filename,
-	       const MDSystem & sys,
+  void reinit (const MDSystem & sys,
+	       const AdaptRCut & arc,
 	       const IndexType & NThread);
+  void getRCut (const AdaptRCut & arc);
+  void uniform (const double & rc);
   void assign (MDSystem & sys);
   ScalorType getMaxRCut () const {return maxRCut;}
+  void print_x  (const char * file) const;
 }
     ;
+
+unsigned AssignRCut::
+index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const
+{
+  return iz + nz * (iy + ny * ix);
+}
+
+void AssignRCut::
+index1to3 (unsigned& input,
+	   unsigned& ix, unsigned& iy, unsigned& iz) const
+{
+  unsigned tmp = input;
+  iz = tmp % (nz);
+  tmp = (tmp - iz) / nz;
+  iy = tmp % (ny);
+  ix =  (tmp - iy) / ny;
+}
 
 #endif
