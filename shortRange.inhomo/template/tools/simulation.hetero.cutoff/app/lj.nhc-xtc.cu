@@ -44,9 +44,9 @@ int main(int argc, char * argv[])
   ScalorType tauT = 1.;
   char * filename;
 
-  IndexType rcutUpdateFeq = 1000;
-  IndexType rcutAssignFeq = 100;
   IndexType densityProfileSamplingFeq = 200;
+  IndexType rcutAssignFeq = 100;
+  IndexType rcutUpdateFeq = 1000;
   double refh = 1.;
   double rcmin = 3.;
   double rcmax = 10.;
