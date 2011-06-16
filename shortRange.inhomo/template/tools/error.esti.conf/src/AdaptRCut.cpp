@@ -75,6 +75,7 @@ freeAll ()
     freeArrayComplex (&error2rz, nrc);
     freeArrayComplex (&error, nrc);
     free (rcut);
+    free (rcutIndex);
     free (result_error);
     fftw_destroy_plan (p_forward_rho);
     for (int count = 0; count < nrc; ++count){
@@ -131,6 +132,7 @@ reinit (const double & rcmin,
   mallocArrayComplex (&error2rz, nrc, nele);
   mallocArrayComplex (&error, nrc, nele);
   rcut = (double *) malloc (sizeof(double) * nele);
+  rcutIndex = (int *) malloc (sizeof(int) * nele);
   result_error = (double *) malloc (sizeof(double) * nele);
 
   p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_MEASURE);
@@ -428,10 +430,12 @@ calRCutOnePoint (const double & prec,
   double diffb = errorb - prec;
   if (diffa <= 0){
     rcut[idx] = rca;
+    rcutIndex[idx] = posia;
     result_error[idx] = errora;
   }
   else if (diffb >= 0){
     rcut[idx] = rcb;
+    rcutIndex[idx] = posib;
     result_error[idx] = errorb;
   }
   else {
@@ -451,6 +455,7 @@ calRCutOnePoint (const double & prec,
       }
     }
     rcut[idx] = rcb;
+    rcutIndex[idx] = posib;
     result_error[idx] = errorb;
   }
 }   
@@ -520,6 +525,37 @@ save_rc (const std::string & file) const
 {
   FILE * fp = fopen (file.c_str(), "w");
   if (fp == NULL){
+    fprintf (stderr, "cannot open file %s\n", file.c_str());
+    exit (1);
+  }
+
+  fprintf (fp, "%d ", nrc);
+  for (int i = 0; i < nrc; ++i){
+    fprintf (fp, "%f ", rcList[i]);
+  }
+  fprintf (fp, "\n%f %f %f\n", boxsize[0], boxsize[1], boxsize[2]);
+  fprintf (fp, "%d %d %d\n", nx, ny, nz);
+  for (int i = 0; i < nele; ++i){
+    fprintf (fp, "%d ", rcutIndex[i]);
+  }
+  fprintf(fp, "\n");
+  
+  // fwrite (&nrc, sizeof(int), 1, fp);
+  // fwrite (rcList, sizeof(double), nrc, fp);
+  // fwrite (boxsize, sizeof(double), 3, fp);
+  // fwrite (&nx, sizeof(int), 1, fp);
+  // fwrite (&ny, sizeof(int), 1, fp);
+  // fwrite (&nz, sizeof(int), 1, fp);
+  // fwrite (rcutIndex, sizeof(int), nele, fp);
+  
+  fclose (fp);
+}
+
+void AdaptRCut::
+write_rc (const std::string & file) const
+{
+  FILE * fp = fopen (file.c_str(), "w");
+  if (fp == NULL){
     std::cerr << "cannot open file " << file << std::endl;
     exit(1);
   }
@@ -532,6 +568,4 @@ save_rc (const std::string & file) const
   fclose (fp);
 }
 
-
-  
 

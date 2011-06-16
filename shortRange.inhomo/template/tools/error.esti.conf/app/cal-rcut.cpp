@@ -36,6 +36,7 @@ int main(int argc, char * argv[])
   adprcut.print_x  (std::string("esti.x.out"));
   adprcut.calRCut  (2e-3);
   adprcut.print_rc (std::string("rcut.x.out"));
+  adprcut.write_rc (std::string("rcut.write"));
   adprcut.save_rc  (std::string("rcut.save"));
 
   // error.estimate (dp, rcorr * ratio, rcut);

@@ -48,6 +48,7 @@ private:
   fftw_complex **error2kx, **error2ky, **error2kz;
   fftw_complex **error;
   double *rcut;
+  int *rcutIndex;
   double *result_error;
   fftw_plan p_forward_rho;
   fftw_plan *p_backward_error1;
@@ -87,6 +88,7 @@ public:
   void print_x  (const std::string & file) const;
   void print_rc (const std::string & file) const;
   void save_rc  (const std::string & file) const;
+  void write_rc (const std::string & file) const;
 }
     ;
 
