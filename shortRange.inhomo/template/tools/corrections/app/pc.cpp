@@ -49,8 +49,8 @@ int main (int argc, char * argv[])
   dp.deposit (filename, start_t, end_t);
   dp.print_x ("density.x.out");
 
-  PresureCorrection pc (dp);
-  pc.correction (rcut, dp);
+  PresureCorrection pc (rcut, dp);
+  pc.correction (dp);
   printf ("pc is %e %e %e\n", pc.pxx, pc.pyy, pc.pzz);
   printf ("tension is %e\n", (pc.pxx - (pc.pyy + pc.pzz) * 0.5) * 0.5 * dp.getBox()[0]);
   

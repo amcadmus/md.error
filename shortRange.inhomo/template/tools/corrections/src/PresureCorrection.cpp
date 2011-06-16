@@ -2,10 +2,11 @@
 #include "Integral1D.h"
 
 PresureCorrection::
-PresureCorrection (const DensityProfile_PiecewiseConst & dp)
+PresureCorrection (const double & rc,
+		   const DensityProfile_PiecewiseConst & dp)
     : malloced (false)
 {
-  reinit (dp);
+  reinit (rc, dp);
 }
 
 PresureCorrection::
@@ -15,7 +16,8 @@ PresureCorrection::
 }
 
 void PresureCorrection::
-reinit (const DensityProfile_PiecewiseConst & dp)
+reinit (const double & rc,
+	const DensityProfile_PiecewiseConst & dp)
 {
   freeAll ();
   
@@ -27,21 +29,22 @@ reinit (const DensityProfile_PiecewiseConst & dp)
   hy = boxsize[1] / ny;
   hz = boxsize[2] / nz;
   nele = nx * ny * nz;
+  rcut = rc;
   
   rhor = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
   rhok = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
   kxxk = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
   kyyk = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
   kzzk = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
-  kxxr = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
-  kyyr = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
-  kzzr = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
+  convxx = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
+  convyy = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
+  convzz = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
 
   p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_MEASURE);
-  p_backward_kxx = fftw_plan_dft_3d (nx, ny, nz, kxxk, kxxr, FFTW_BACKWARD, FFTW_MEASURE);
-  p_backward_kyy = fftw_plan_dft_3d (nx, ny, nz, kyyk, kyyr, FFTW_BACKWARD, FFTW_MEASURE);
-  p_backward_kzz = fftw_plan_dft_3d (nx, ny, nz, kzzk, kzzr, FFTW_BACKWARD, FFTW_MEASURE);
-  
+  p_backward_kxx = fftw_plan_dft_3d (nx, ny, nz, convxx, convxx, FFTW_BACKWARD, FFTW_MEASURE);
+  p_backward_kyy = fftw_plan_dft_3d (nx, ny, nz, convyy, convyy, FFTW_BACKWARD, FFTW_MEASURE);
+  p_backward_kzz = fftw_plan_dft_3d (nx, ny, nz, convzz, convzz, FFTW_BACKWARD, FFTW_MEASURE);
+
   pxx = pyy = pzz = 0.;
 
   integral_upper = 30.;
@@ -82,6 +85,8 @@ reinit (const DensityProfile_PiecewiseConst & dp)
   ff_i5.bessel_table_hi = bessel_table_hi;  
 
   malloced = true;
+
+  makeKernel (rc);
 }
 
 void PresureCorrection::
@@ -91,11 +96,11 @@ freeAll ()
     free (rhor);
     free (rhok);
     free (kxxk);
-    free (kxxr);
     free (kyyk);
-    free (kyyr);
     free (kzzk);
-    free (kzzr);
+    free (convxx);
+    free (convyy);
+    free (convzz);
     fftw_destroy_plan (p_forward_rho);
     fftw_destroy_plan (p_backward_kxx);
     fftw_destroy_plan (p_backward_kyy);
@@ -107,12 +112,11 @@ freeAll ()
 }
 
 void PresureCorrection::
-naiveCorrection (const double & rc,
-		 const DensityProfile_PiecewiseConst & dp)
+naiveCorrection (const DensityProfile_PiecewiseConst & dp)
 {
   pxx = pyy = pzz = 0.;
 
-  double rcut1 = rc;
+  double rcut1 = rcut;
   double rcut2 = 10.;
   int dnx = (rcut2 - 1e-8) / hx + 1;
   int dny = (rcut2 - 1e-8) / hy + 1;
@@ -167,20 +171,18 @@ naiveCorrection (const double & rc,
 static void 
 array_multiply (fftw_complex * a,
 		const int n,
-		const fftw_complex * b) 
+		const fftw_complex * b,
+		const fftw_complex * c) 
 {
   for (int ii = 0; ii < n; ++ii){
     // double tmpr, tmpi;
-    double tmpr = a[ii][0];
-    double tmpi = a[ii][1];
-    a[ii][0] = tmpr * b[ii][0] - tmpi * b[ii][1];
-    a[ii][1] = tmpr * b[ii][1] + tmpi * b[ii][0];
+    a[ii][0] = c[ii][0] * b[ii][0] - c[ii][1] * b[ii][1];
+    a[ii][1] = c[ii][0] * b[ii][1] + c[ii][1] * b[ii][0];
   }
 }
 
 void PresureCorrection::
-correction (const double & rc,
-	    const DensityProfile_PiecewiseConst & dp)
+correction (const DensityProfile_PiecewiseConst & dp)
 {
   for (int i = 0; i < nele; ++i){
     rhor[i][0] = dp.getProfile()[i];
@@ -192,13 +194,11 @@ correction (const double & rc,
   for (int i = 0; i < nele; ++i){
     rhok[i][0] *= scale;
     rhok[i][1] *= scale;
-  }  
+  }
 
-  makeKernel (rc);
-
-  array_multiply (kxxk, nele, rhok);
-  array_multiply (kyyk, nele, rhok);
-  array_multiply (kzzk, nele, rhok);
+  array_multiply (convxx, nele, kxxk, rhok);
+  array_multiply (convyy, nele, kyyk, rhok);
+  array_multiply (convzz, nele, kzzk, rhok);
 
   fftw_execute (p_backward_kxx);
   fftw_execute (p_backward_kyy);
@@ -206,9 +206,9 @@ correction (const double & rc,
   
   double dvolume = hx * hy * hz;
   for (int i = 0; i < nele; ++i){
-    pxx += 0.5 * kxxr[i][0] * rhor[i][0] / volume * dvolume;
-    pyy += 0.5 * kyyr[i][0] * rhor[i][0] / volume * dvolume;
-    pzz += 0.5 * kzzr[i][0] * rhor[i][0] / volume * dvolume;
+    pxx += 0.5 * convxx[i][0] * rhor[i][0] / volume * dvolume;
+    pyy += 0.5 * convyy[i][0] * rhor[i][0] / volume * dvolume;
+    pzz += 0.5 * convzz[i][0] * rhor[i][0] / volume * dvolume;
   }
   pxx /= (volume);
   pyy /= (volume);
@@ -224,13 +224,13 @@ integral_ff_i1_numerical (const double & k,
   Integral1D<FF_I1, double > inte_ff_i1;
   double prec = 1e-7;
   ff_i1.k = k;
-  double tmpvalue, newprec;
+  double tmpvalue;
   tmpvalue =  inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
   				  ff_i1,
   				  rc, integral_upper,
   				  prec);
   // printf ("value: %e\n", tmpvalue);
-  // newprec = fabs(tmpvalue) * 1e-4;
+  // double newprec = fabs(tmpvalue) * 1e-4;
   // // printf ("newprec: %e\n", newprec);
   // tmpvalue =  inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
   // 				  ff_i1,
@@ -246,12 +246,12 @@ integral_ff_i5_numerical (const double & k,
   Integral1D<FF_I5, double > inte_ff_i5;
   double prec = 1e-7;
   ff_i5.k = k;
-  double tmpvalue, newprec;
+  double tmpvalue;
   tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
   				 ff_i5,
   				 rc, integral_upper,
   				 prec);
-  // newprec = fabs(tmpvalue) * 1e-4;
+  // double newprec = fabs(tmpvalue) * 1e-4;
   // // printf ("newprec: %e\n", newprec);
   // tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
   // 			    ff_i5,
