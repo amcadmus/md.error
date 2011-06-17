@@ -31,6 +31,7 @@ public:
   inline void     index1to3 (unsigned& input,
 			     unsigned& ix, unsigned& iy, unsigned& iz) const;
 public:
+  DensityProfile_PiecewiseConst ();
   DensityProfile_PiecewiseConst (const std::string & filename,
 				 const double & refh);
   void reinit_xtc (const std::string & filename,
@@ -53,6 +54,7 @@ public:
 public:
   void print_x  (const std::string & filename) const;
   void print_xy (const std::string & filename) const;
+  void load     (const std::string & filename) ;
 };
 
     

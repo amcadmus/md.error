@@ -2,6 +2,12 @@
 #include <string.h>
 
 DensityProfile_PiecewiseConst::
+DensityProfile_PiecewiseConst ()
+{
+}
+
+
+DensityProfile_PiecewiseConst::
 DensityProfile_PiecewiseConst (const std::string & filename,
 			       const double & refh)
 {
@@ -165,5 +171,30 @@ print_xy (const std::string & file) const
   }
 
   fclose (fp);
+}
+
+void DensityProfile_PiecewiseConst::
+load (const std::string & file)
+{
+  FILE * fp = fopen (file.c_str(), "r");
+  if (fp == NULL){
+    fprintf (stderr, "cannot open file %s\n", file.c_str());
+    exit (1); 
+  }
+  
+  boxsize.resize(3);
+  fscanf (fp, "%lf %lf %lf  ", &boxsize[0], &boxsize[1], &boxsize[2]);
+  fscanf (fp, "%d %d %d\n", &nx, &ny, &nz);
+  int nele = nx * ny * nz;
+  hx = boxsize[0] / nx;
+  hy = boxsize[1] / ny;
+  hz = boxsize[2] / nz;
+  profile.resize(nele);
+  
+  for (int i = 0; i < nele; ++i){
+    fscanf (fp, "%lf", &profile[i]); 
+  }
+  
+  fclose(fp);  
 }
 

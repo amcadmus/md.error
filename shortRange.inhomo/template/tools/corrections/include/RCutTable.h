@@ -18,6 +18,7 @@ public:
   void save_rc (const char * file) const;
   const std::vector<int    > & getProfileIndex () const {return rcutIndex;}
   const std::vector<double > & getRcList       () const {return rcList;}
+  std::vector<int > & getProfileIndex () {return rcutIndex;}
 };
 
 

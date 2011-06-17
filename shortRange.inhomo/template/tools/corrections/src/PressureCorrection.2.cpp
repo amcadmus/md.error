@@ -120,7 +120,11 @@ reinit (const RCutTable & arc,
 
   malloced = true;
 
+  printf ("# pressure correction making kernel ...\n");
+  fflush (stdout);
   makeKernel ();
+  printf ("# done\n");
+  fflush (stdout);
 }
 
 void PresureCorrection_RCutTable::
