@@ -49,6 +49,9 @@ public:
   IndexType		NatomType;
   IndexType *		nbForceTable;
   IndexType		nbForceTableLength;
+  SumVector<IndexType > sumNeighbor;
+  IndexType *		sumNeighbor_dresult;
+  IndexType 		sumNeighbor_hresult;
 private: // reshuffle backup
   IndexType *		bkdnlistData;
   IndexType *		bkdnlistNneighbor;
@@ -74,6 +77,7 @@ public:
   virtual void reshuffle (const IndexType * indexTable,
 			  const IndexType & numAtom,
 			  MDTimer *timer = NULL);
+  int calSumNeighbor();
 }
     ;
 

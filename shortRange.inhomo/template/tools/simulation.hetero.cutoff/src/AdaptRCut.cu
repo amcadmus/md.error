@@ -390,16 +390,16 @@ makeS2k (const double & epsilon,
 	    s2ky[count][posi][1] += size * kx;
 	    s2kz[count][posi][0] = 0.;
 	    s2kz[count][posi][1] += size * kz;
-	    if (ix == -nx/2 ||
-		iy == -ny/2 ||
-		iz == -nz/2){
-	      s2kx[count][posi][0] = 0.;
-	      s2kx[count][posi][1] = 0.;
-	      s2ky[count][posi][0] = 0.;
-	      s2ky[count][posi][1] = 0.;
-	      s2kz[count][posi][0] = 0.;
-	      s2kz[count][posi][1] = 0.;
-	    }
+	    // if (ix == -nx/2 ||
+	    // 	iy == -ny/2 ||
+	    // 	iz == -nz/2){
+	    //   s2kx[count][posi][0] = 0.;
+	    //   s2kx[count][posi][1] = 0.;
+	    //   s2ky[count][posi][0] = 0.;
+	    //   s2ky[count][posi][1] = 0.;
+	    //   s2kz[count][posi][0] = 0.;
+	    //   s2kz[count][posi][1] = 0.;
+	    // }
 	  }
 	  else {
 	    s2kx[count][posi][0] = 0.;

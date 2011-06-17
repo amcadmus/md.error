@@ -192,6 +192,7 @@ int main(int argc, char * argv[])
       }      
 
       if ((i+1) % thermoFeq == 0){
+	printf ("%d\n", nlist.calSumNeighbor ());
 	st.updateHost ();
 	ScalorType px = st.pressureXX (sys.box);
 	ScalorType py = st.pressureYY (sys.box);
