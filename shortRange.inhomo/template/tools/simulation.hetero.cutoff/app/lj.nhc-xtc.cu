@@ -85,7 +85,6 @@ int main(int argc, char * argv[])
   AdaptRCut arc;
   printf ("# init AdaptRCut\n");
   arc.reinit (rcmin, rcmax, rcstep, dp);
-  // arc.print_x ("error.x5.out");
   AssignRCut assign_rcut;
   printf ("# init AssignRCut\n");
   assign_rcut.reinit (sys, arc, NThreadsPerBlockAtom);
@@ -226,11 +225,11 @@ int main(int argc, char * argv[])
 	timer.tic (mdTimeAdaptRCut);
 	arc.calError (dp);
 	arc.calRCut (targetPrec);
-	arc.print_x ("error.x5.out");
+	arc.print_x ("error.x.out");
 	assign_rcut.getRCut (arc);
 	assign_rcut.print_x ("rcut.x.out");
 	timer.toc (mdTimeAdaptRCut);
-	dp.clearData ();
+	if (i != nstep - 1) dp.clearData ();
       }
       
       if ((i+1) % confFeq == 0){
@@ -268,6 +267,10 @@ int main(int argc, char * argv[])
     fprintf (stderr, "%s\n", e.what());
     return 1;
   }
+
+  
+  dp.save ("density.save");
+  arc.save_rc ("rcut.save");
   
   return 0;
 }

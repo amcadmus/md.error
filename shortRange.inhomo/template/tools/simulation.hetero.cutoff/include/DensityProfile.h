@@ -48,6 +48,8 @@ public:
 public:
   void print_x  (const std::string & filename) const;
   void print_xy (const std::string & filename) const;
+  void save (const char * file) const;
+  void load (const char * file);
 };
 
     

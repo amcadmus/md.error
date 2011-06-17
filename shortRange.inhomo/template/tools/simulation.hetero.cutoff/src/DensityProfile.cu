@@ -22,6 +22,9 @@ reinit (const ScalorType & bx,
   nx = unsigned (boxsize[0] / refh);
   ny = unsigned (boxsize[1] / refh);
   nz = unsigned (boxsize[2] / refh);
+  if ((nx - (nx/2)*2) == 0) nx++;
+  if ((ny - (ny/2)*2) == 0) ny++;
+  if ((nz - (nz/2)*2) == 0) nz++;
   nele = nx * ny * nz;
   hx = boxsize[0] / nx;
   hy = boxsize[1] / ny;
@@ -196,5 +199,50 @@ print_xy (const std::string & file) const
   }
 
   fclose (fp);
+}
+
+
+void DensityProfile_PiecewiseConst::
+save (const char * file) const
+{
+  FILE * fp = fopen (file, "w");
+  if (fp == NULL){
+    fprintf (stderr, "cannot open file %s\n", file);
+    exit (1);
+  }
+
+  fprintf (fp, "%f %f %f  ", boxsize[0], boxsize[1], boxsize[2]);
+  fprintf (fp, "%d %d %d\n", nx, ny, nz);
+  for (int i = 0; i < nele; ++i){
+    fprintf (fp, "%e ", profile[i]);
+  }
+
+  fclose(fp);
+}
+
+void DensityProfile_PiecewiseConst::
+load (const char * file)
+{
+  FILE * fp = fopen (file, "r");
+  if (fp == NULL){
+    fprintf (stderr, "cannot open file %s\n", file);
+    exit (1);
+  }
+
+  boxsize.resize(3);
+  fscanf (fp, "%lf %lf %lf  ", &boxsize[0], &boxsize[1], &boxsize[2]);
+  fscanf (fp, "%d %d %d\n", &nx, &ny, &nz);
+  nele = nx * ny * nz;
+  hx = boxsize[0] / nx;
+  hy = boxsize[1] / ny;
+  hz = boxsize[2] / nz;
+  profile.resize(nele);
+  ndata = 0;
+  
+  for (int i = 0; i < nele; ++i){
+    fscanf (fp, "%lf", &profile[i]);
+  }
+
+  fclose(fp);
 }
 
