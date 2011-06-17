@@ -274,8 +274,11 @@ cal_int (const Integral1DInfo::Method & method,
 
 
 #include "AdaptRCut.h"
+#include "PressureCorrection.h"
 
 typedef double (*F1) ( double);
 
 template class Integral1D<F5,  double >;
 template class Integral1D<F13, double >;
+template class Integral1D<FF_I1, double >;
+template class Integral1D<FF_I5, double >;

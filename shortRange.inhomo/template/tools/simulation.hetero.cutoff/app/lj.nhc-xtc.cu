@@ -19,6 +19,7 @@
 
 #include "BondInteraction.h"
 #include "NonBondedInteraction.h"
+#include "PressureCorrection.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -91,6 +92,9 @@ int main(int argc, char * argv[])
   assign_rcut.uniform (5.);
   assign_rcut.print_x ("rcut.x.out");
   assign_rcut.assign (sys);
+  PressureCorrection pc (arc, dp);
+  ScalorType pcxx, pcyy, pczz;
+  pcxx = pcyy = pczz = 0.;
   
   SystemNonBondedInteraction sysNbInter;
   sysNbInter.reinit (sysTop);
@@ -140,8 +144,8 @@ int main(int argc, char * argv[])
   sys.updateHostFromRecovered (&timer);
   sys.writeHostDataGro ("confstart.gro", 0, 0.f, &timer);
   printf ("# prepare ok, start to run\n");
-  printf ("#*     1     2           3         4            5       6                7          8          9         10        11\n");
-  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  NHC_Hamiltonian pressureXX pressureYY pressureZZ s_tension\n");
+  printf ("#*     1     2           3         4            5       6                7          8          9         10        11   12   13 14\n");
+  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  NHC_Hamiltonian pressureXX pressureYY pressureZZ s_tension pcxx pcyy tc\n");
 
   try{
     sys.initWriteXtc ("traj.xtc");
@@ -192,7 +196,7 @@ int main(int argc, char * argv[])
 	ScalorType px = st.pressureXX (sys.box);
 	ScalorType py = st.pressureYY (sys.box);
 	ScalorType pz = st.pressureZZ (sys.box);
-	printf ("%09d %07e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e\n",
+	printf ("%09d %05e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n",
 		(i+1),  
 		(i+1) * dt, 
 		st.nonBondedEnergy(),
@@ -204,7 +208,10 @@ int main(int argc, char * argv[])
 		st.kineticEnergy() +
 		nhc.HamiltonianContribution (),
 		px, py, pz,
-		(px - (py + pz) * 0.5) * sys.box.size.x * 0.5
+		(px - (py + pz) * 0.5) * sys.box.size.x * 0.5,
+		pcxx,
+		pcyy,
+		(pcxx - (pcyy + pczz) * 0.5) * sys.box.size.x * 0.5		
 	    );
 	fflush(stdout);
       }
@@ -228,6 +235,10 @@ int main(int argc, char * argv[])
 	arc.print_x ("error.x.out");
 	assign_rcut.getRCut (arc);
 	assign_rcut.print_x ("rcut.x.out");
+	pc.correction (arc, dp);
+	pcxx = pc.pxx;
+	pcyy = pc.pyy;
+	pczz = pc.pzz;
 	timer.toc (mdTimeAdaptRCut);
 	if (i != nstep - 1) dp.clearData ();
       }

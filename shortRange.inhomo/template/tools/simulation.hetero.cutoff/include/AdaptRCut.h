@@ -84,6 +84,8 @@ public:
   unsigned getNz () const {return nz;}
   std::vector<double > getBox () const {return boxsize;}
   const double * getRCut () const {return rcut;}
+  const std::vector<double > & getRcList () const {return rcList;}
+  const int * getProfileIndex () const {return rcutIndex;}
 public:
   void reinit (const double & rcmin,
 	       const double & rcmax,
