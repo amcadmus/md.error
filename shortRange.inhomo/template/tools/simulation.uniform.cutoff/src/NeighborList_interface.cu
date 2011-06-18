@@ -230,6 +230,9 @@ reinit (const SystemNonBondedInteraction & sysNbInter,
   myrlist = rlist;
   dnlist.rlist = myrlist;
   dnlist.stride = sys.ddata.numAtom;
+  sumNeighbor.reinit (sys.ddata.numAtom, NThreadForSum);
+  cudaMalloc ((void**) &sumNeighbor_dresult, sizeof(IndexType));
+  checkCUDAError ("NeighborList::reinit, sumNeighbor");
   
   // init neighbor list
   clearDeviceNeighborList ();
@@ -1901,4 +1904,21 @@ buildDeviceCellList_step2 (RectangularBox	box,
 //   sumVectorBlockBuffer_2 (sbuff);
 //   if (threadIdx.x == 0) judgeRebuild_buff[bid] = (sbuff[0] != 0);
 // }
+
+int NeighborList::
+calSumNeighbor ()
+{
+  cudaMemcpy (sumNeighbor.buff, dnlist.Nneighbor, dnlist.stride * sizeof(IndexType),
+	      cudaMemcpyDeviceToDevice);
+  sumNeighbor.sumBuff (sumNeighbor_dresult, 0);
+  cudaMemcpy (&sumNeighbor_hresult, sumNeighbor_dresult, sizeof(IndexType),
+	      cudaMemcpyDeviceToHost);
+  checkCUDAError ("NeighborList::calSumNeighbor");
+  return sumNeighbor_hresult;
+}
+
+
+
+
+
 

@@ -28,31 +28,31 @@
 // #define NThreadsPerBlockCell	32
 // #define NThreadsPerBlockAtom	4
 
-#define NThreadsPerBlockCell	160
+#define NThreadsPerBlockCell	96
 #define NThreadsPerBlockAtom	96
 
 #include "DensityProfile.h"
 
 int main(int argc, char * argv[])
 {
-  IndexType nstep = 100000;
+  IndexType nstep = 3000000;
   IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.005;
   ScalorType rcut = 10.0;
-  ScalorType nlistExten = 0.3;
-  ScalorType refT = 0.70;
-  ScalorType tauT = 1.;
+  ScalorType nlistExten = 0.5;
+  ScalorType refT = 0.85;
+  ScalorType tauT = 1.0;
   char * filename;
 
-  IndexType densityProfileSamplingFeq = 200;
-  IndexType rcutAssignFeq = 100;
-  IndexType rcutUpdateFeq = 1000;
-  double refh = 1.;
-  double rcmin = 3.;
-  double rcmax = 10.;
-  double rcstep = .5;
-  double targetPrec = 0.01;
+  IndexType densityProfileSamplingFeq = 40;
+  IndexType rcutAssignFeq = 40;
+  IndexType rcutUpdateFeq = 10000;
+  double refh = 1.0;
+  double rcmin = 03.0;
+  double rcmax = 10.0;
+  double rcstep = 0.5;
+  double targetPrec = 0.030;
   
   if (argc != 4){
     printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
@@ -192,12 +192,13 @@ int main(int argc, char * argv[])
       }      
 
       if ((i+1) % thermoFeq == 0){
-	printf ("%d\n", nlist.calSumNeighbor ());
+	timer.tic (mdTimeDataIO);
+	// printf ("%d\n", );
 	st.updateHost ();
 	ScalorType px = st.pressureXX (sys.box);
 	ScalorType py = st.pressureYY (sys.box);
 	ScalorType pz = st.pressureZZ (sys.box);
-	printf ("%09d %05e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n",
+	printf ("%09d %05e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.2e\n",
 		(i+1),  
 		(i+1) * dt, 
 		st.nonBondedEnergy(),
@@ -212,9 +213,11 @@ int main(int argc, char * argv[])
 		(px - (py + pz) * 0.5) * sys.box.size.x * 0.5,
 		pcxx,
 		pcyy,
-		(pcxx - (pcyy + pczz) * 0.5) * sys.box.size.x * 0.5		
+		(pcxx - (pcyy + pczz) * 0.5) * sys.box.size.x * 0.5,
+		double (nlist.calSumNeighbor ())
 	    );
 	fflush(stdout);
+	timer.toc (mdTimeDataIO);
       }
 
       if ((i+1) % densityProfileSamplingFeq == 0) {

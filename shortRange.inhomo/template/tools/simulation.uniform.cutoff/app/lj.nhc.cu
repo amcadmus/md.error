@@ -154,7 +154,7 @@ int main(int argc, char * argv[])
 	ScalorType px = st.pressureXX (sys.box);
 	ScalorType py = st.pressureYY (sys.box);
 	ScalorType pz = st.pressureZZ (sys.box);
-	printf ("%09d %07e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e\n",
+	printf ("%09d %07e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.2e\n",
 		(i+1),  
 		(i+1) * dt, 
 		st.nonBondedEnergy(),
@@ -166,7 +166,8 @@ int main(int argc, char * argv[])
 		st.kineticEnergy() +
 		nhc.HamiltonianContribution (),
 		px, py, pz,
-		(px - (py + pz) * 0.5) * sys.box.size.x * 0.5
+		(px - (py + pz) * 0.5) * sys.box.size.x * 0.5,
+                double (nlist.calSumNeighbor ())
 	    );
 	fflush(stdout);
       }
