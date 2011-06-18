@@ -30,7 +30,7 @@ int main (int argc, char * argv[])
       ("help,h", "print this message")
       ("start,s", po::value<float > (&start_t)->default_value (0.f),  "start time")
       ("end,e",   po::value<float > (&end_t)  ->default_value (0.f),  "end time, 0 is infinity")
-      ("bin-size,h",  po::value<double > (&h)->default_value (1.),  "bin size")
+      ("bin-size,b",  po::value<double > (&h)->default_value (1.),  "bin size")
       ("file-name,f", po::value<std::string > (&filename)->default_value (std::string("traj.xtc"), "trajactory file name"));
 
   po::variables_map vm;
