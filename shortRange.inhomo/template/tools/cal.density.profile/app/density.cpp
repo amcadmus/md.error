@@ -114,7 +114,8 @@ int main (int argc, char * argv[])
     denGas.push_back (rhog);
     denLiquid.push_back (rhol);
   }
-
+  printf ("\n");
+  
   avgLiquid.processData (denLiquid, nblock);
   avgGas.processData (denGas, nblock);
 
