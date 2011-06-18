@@ -49,6 +49,10 @@ public:
   const unsigned & getNx () const {return nx;}
   const unsigned & getNy () const {return ny;}
   const unsigned & getNz () const {return nz;}
+  // const double & getHx () const {return hx;}
+  // const double & getHy () const {return hy;}
+  // const double & getHz () const {return hz;}
+  const int & getNatoms () const {return natoms;}
   const std::vector<double > & getBox () const {return boxsize;}
 public:
   void print_x  (const std::string & filename) const;
