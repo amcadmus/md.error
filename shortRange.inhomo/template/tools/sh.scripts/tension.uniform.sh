@@ -20,6 +20,7 @@ tension=`echo $tension_line | awk '{print $1}'`
 tension_error=`echo $tension_line | awk '{print $2}'`
 
 rcut=`grep "rcut=" parameters.sh | cut -d '=' -f 2`
+make -C tools/analyze.simulation.suit -j 4 &> /dev/null
 tension_corr=`tools/analyze.simulation.suit/analyze -s $st_start -r $rcut | grep tension | awk '{print $3}'`
 tension_corr_print=`printf $print_format $tension_corr`
 
