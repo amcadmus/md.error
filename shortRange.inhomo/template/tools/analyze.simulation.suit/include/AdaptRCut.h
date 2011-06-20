@@ -94,6 +94,7 @@ public:
   void calError (const DensityProfile_PiecewiseConst & dp);
   void calRCut  (const double & prec);
   void uniformRCut (const double & rcut);
+public:
   void print_rc (const std::string & file) const;
   void print_error  (const std::string & file) const;
   void save_rc  (const std::string & file) const;
