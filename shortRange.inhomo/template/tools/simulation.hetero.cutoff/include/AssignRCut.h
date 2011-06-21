@@ -22,6 +22,7 @@ class AssignRCut
   bool malloced;
   dim3 myBlockDim;
   dim3 atomGridDim;
+  mutable FILE * fp_write;
 private:
   void freeAll ();
 public:
@@ -35,6 +36,9 @@ public:
   void assign (MDSystem & sys);
   ScalorType getMaxRCut () const {return maxRCut;}
   void print_x  (const char * file) const;
+  void init_write (const char * file) const;
+  void write (const ScalorType & time) const;
+  void end_write () const;
 }
     ;
 

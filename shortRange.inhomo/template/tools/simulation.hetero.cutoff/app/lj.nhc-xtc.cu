@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <fftw3.h>
 
 // #define NThreadsPerBlockCell	32
 // #define NThreadsPerBlockAtom	4
@@ -39,20 +40,20 @@ int main(int argc, char * argv[])
   IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.005;
-  ScalorType rcut = 10.0;
+  ScalorType rcut = 7.5;
   ScalorType nlistExten = 0.5;
-  ScalorType refT = 0.85;
+  ScalorType refT = 1.20;
   ScalorType tauT = 1.0;
   char * filename;
 
   IndexType densityProfileSamplingFeq = 40;
   IndexType rcutAssignFeq = 40;
-  IndexType rcutUpdateFeq = 10000;
+  IndexType rcutUpdateFeq = 1000;
   double refh = 1.0;
   double rcmin = 03.0;
   double rcmax = 10.0;
   double rcstep = 0.5;
-  double targetPrec = 0.030;
+  double targetPrec = 0.004;
   
   if (argc != 4){
     printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
@@ -89,7 +90,7 @@ int main(int argc, char * argv[])
   AssignRCut assign_rcut;
   printf ("# init AssignRCut\n");
   assign_rcut.reinit (sys, arc, NThreadsPerBlockAtom);
-  assign_rcut.uniform (5.);
+  assign_rcut.uniform (rcut);
   assign_rcut.print_x ("rcut.x.out");
   assign_rcut.assign (sys);
   PressureCorrection pc (arc, dp);
@@ -143,6 +144,8 @@ int main(int argc, char * argv[])
   sys.recoverDeviceData (&timer);
   sys.updateHostFromRecovered (&timer);
   sys.writeHostDataGro ("confstart.gro", 0, 0.f, &timer);
+  assign_rcut.init_write ("rcut.rtj");
+  
   printf ("# prepare ok, start to run\n");
   printf ("#*     1     2           3         4            5       6                7          8          9         10        11   12   13 14\n");
   printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  NHC_Hamiltonian pressureXX pressureYY pressureZZ s_tension pcxx pcyy tc\n");
@@ -193,7 +196,6 @@ int main(int argc, char * argv[])
 
       if ((i+1) % thermoFeq == 0){
 	timer.tic (mdTimeDataIO);
-	// printf ("%d\n", );
 	st.updateHost ();
 	ScalorType px = st.pressureXX (sys.box);
 	ScalorType py = st.pressureYY (sys.box);
@@ -252,6 +254,7 @@ int main(int argc, char * argv[])
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
+	assign_rcut.write ((i+1) * dt);
       }
       
       if ((i+1) % 100 == 0){
@@ -283,7 +286,7 @@ int main(int argc, char * argv[])
     return 1;
   }
 
-  
+  assign_rcut.end_write();
   dp.save ("density.save");
   arc.save_rc ("rcut.save");
   

@@ -140,3 +140,41 @@ print_x (const char * file) const
   }
   fclose (fp);
 }
+
+void AssignRCut::
+init_write (const char * file) const
+{
+  fp_write = fopen (file, "w");
+  if (fp_write == NULL){
+    fprintf (stderr, "cannot open file %s\n", file);
+    exit(1);
+  }
+  double tmpbox[3];
+  tmpbox[0] = box.size.x;
+  tmpbox[1] = box.size.y;
+  tmpbox[2] = box.size.z;
+  int tmpnn[3];
+  tmpnn[0] = nx;
+  tmpnn[1] = ny;
+  tmpnn[2] = nz;
+  
+  fwrite (tmpbox, sizeof(double), 3, fp_write);
+  fwrite (tmpnn,  sizeof(int),    3, fp_write);
+}
+
+void AssignRCut::
+end_write () const
+{
+  fclose (fp_write);
+}
+
+void AssignRCut::
+write (const ScalorType & time) const
+{
+  ScalorType tmptime = time;
+  fwrite (&tmptime, sizeof(ScalorType), 1,    fp_write);
+  fwrite (hrcut,    sizeof(ScalorType), nele, fp_write);
+}
+
+
+

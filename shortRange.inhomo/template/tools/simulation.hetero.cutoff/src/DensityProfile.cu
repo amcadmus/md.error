@@ -25,6 +25,7 @@ reinit (const ScalorType & bx,
   if ((nx - (nx/2)*2) == 0) nx++;
   if ((ny - (ny/2)*2) == 0) ny++;
   if ((nz - (nz/2)*2) == 0) nz++;
+  // nx = 147;
   nele = nx * ny * nz;
   hx = boxsize[0] / nx;
   hy = boxsize[1] / ny;

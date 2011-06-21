@@ -135,16 +135,16 @@ reinit (const double & rcmin,
   rcutIndex = (int *) malloc (sizeof(int) * nele);
   result_error = (double *) malloc (sizeof(double) * nele);
 
-  p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_MEASURE);
+  p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
   p_backward_error1  = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
   p_backward_error2x = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
   p_backward_error2y = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
   p_backward_error2z = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
   for (int count = 0; count < nrc; ++count){
-    p_backward_error1[count] = fftw_plan_dft_3d (nx, ny, nz, error1k[count], error1r[count], FFTW_BACKWARD,  FFTW_MEASURE);
-    p_backward_error2x[count] = fftw_plan_dft_3d (nx, ny, nz, error2kx[count], error2rx[count], FFTW_BACKWARD,  FFTW_MEASURE);
-    p_backward_error2y[count] = fftw_plan_dft_3d (nx, ny, nz, error2ky[count], error2ry[count], FFTW_BACKWARD,  FFTW_MEASURE);
-    p_backward_error2z[count] = fftw_plan_dft_3d (nx, ny, nz, error2kz[count], error2rz[count], FFTW_BACKWARD,  FFTW_MEASURE);
+    p_backward_error1[count] = fftw_plan_dft_3d (nx, ny, nz, error1k[count], error1r[count], FFTW_BACKWARD,  FFTW_PATIENT);
+    p_backward_error2x[count] = fftw_plan_dft_3d (nx, ny, nz, error2kx[count], error2rx[count], FFTW_BACKWARD,  FFTW_PATIENT);
+    p_backward_error2y[count] = fftw_plan_dft_3d (nx, ny, nz, error2ky[count], error2ry[count], FFTW_BACKWARD,  FFTW_PATIENT);
+    p_backward_error2z[count] = fftw_plan_dft_3d (nx, ny, nz, error2kz[count], error2rz[count], FFTW_BACKWARD,  FFTW_PATIENT);
   }
   
   malloced = true;
@@ -178,7 +178,6 @@ array_multiply (fftw_complex ** a,
     }
   }
 }
-
 
 void AdaptRCut::
 calError (const DensityProfile_PiecewiseConst & dp)

@@ -69,14 +69,14 @@ reinit (const AdaptRCut & arc,
   mallocArrayComplex (&convyy, nrc, nele);
   mallocArrayComplex (&convzz, nrc, nele);
   
-  p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_MEASURE);
+  p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
   p_backward_kxx = (fftw_plan *) malloc (sizeof(fftw_plan) * nrc);
   p_backward_kyy = (fftw_plan *) malloc (sizeof(fftw_plan) * nrc);
   p_backward_kzz = (fftw_plan *) malloc (sizeof(fftw_plan) * nrc);
   for (int i = 0; i < nrc; ++i){
-    p_backward_kxx[i] = fftw_plan_dft_3d (nx, ny, nz, convxx[i], convxx[i], FFTW_BACKWARD, FFTW_MEASURE);
-    p_backward_kyy[i] = fftw_plan_dft_3d (nx, ny, nz, convyy[i], convyy[i], FFTW_BACKWARD, FFTW_MEASURE);
-    p_backward_kzz[i] = fftw_plan_dft_3d (nx, ny, nz, convzz[i], convzz[i], FFTW_BACKWARD, FFTW_MEASURE);
+    p_backward_kxx[i] = fftw_plan_dft_3d (nx, ny, nz, convxx[i], convxx[i], FFTW_BACKWARD, FFTW_PATIENT);
+    p_backward_kyy[i] = fftw_plan_dft_3d (nx, ny, nz, convyy[i], convyy[i], FFTW_BACKWARD, FFTW_PATIENT);
+    p_backward_kzz[i] = fftw_plan_dft_3d (nx, ny, nz, convzz[i], convzz[i], FFTW_BACKWARD, FFTW_PATIENT);
   }
   
   pxx = pyy = pzz = 0.;
