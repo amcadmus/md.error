@@ -96,6 +96,7 @@ public:
   void print_x  (const std::string & file) const;
   void print_rc (const std::string & file) const;
   void save_rc  (const std::string & file) const;
+  void load_rc  (const std::string & file) ;
   void write_rc (const std::string & file) const;
 }
     ;
