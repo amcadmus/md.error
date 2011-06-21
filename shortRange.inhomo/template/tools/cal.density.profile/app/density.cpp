@@ -28,6 +28,7 @@ int main (int argc, char * argv[])
   double h;
   double chl1, chl2, chg1, chg2;
   unsigned nblock;
+  int prec_digit;
   
   desc.add_options()
       ("help,h", "print this message")
@@ -35,6 +36,7 @@ int main (int argc, char * argv[])
       ("start,s", po::value<float > (&start_t)->default_value (0.f),  "start time")
       ("end,e",   po::value<float > (&end_t)  ->default_value (0.f),  "end time, 0 is infinity")
       ("bin-size",  po::value<double > (&h)->default_value (1.),  "bin size")
+      ("precision,p",  po::value<int > (&prec_digit)->default_value (4),  "number of precision digits")
       ("check-point-liquid-1", po::value<double > (&chl1)->default_value (60.), "liquid check point 1")
       ("check-point-liquid-2", po::value<double > (&chl2)->default_value (90.), "liquid check point 2")
       ("check-point-gas-1", po::value<double > (&chg1)->default_value (40. ), "gas check point 1")
@@ -119,8 +121,11 @@ int main (int argc, char * argv[])
   avgLiquid.processData (denLiquid, nblock);
   avgGas.processData (denGas, nblock);
 
-  printf ("# gas    rho: %.6f ( %.6f )\n", avgGas.getAvg(),    avgGas.getAvgError());
-  printf ("# liquid rho: %.6f ( %.6f )\n", avgLiquid.getAvg(), avgLiquid.getAvgError());
+  char string[1024];
+  sprintf (string, "# gas    rho: %%.%df ( %%.%df ) \n", prec_digit, prec_digit);
+  printf  (string, avgGas.getAvg(),    avgGas.getAvgError());
+  sprintf (string, "# liquid rho: %%.%df ( %%.%df ) \n", prec_digit, prec_digit);
+  printf  (string, avgLiquid.getAvg(), avgLiquid.getAvgError());
   
   free(xx);
   xdrfile_close(fp);
