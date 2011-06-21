@@ -144,6 +144,7 @@ int main(int argc, char * argv[])
   sys.recoverDeviceData (&timer);
   sys.updateHostFromRecovered (&timer);
   sys.writeHostDataGro ("confstart.gro", 0, 0.f, &timer);
+  dp.init_write ("density.dtj");
   assign_rcut.init_write ("rcut.rtj");
   
   printf ("# prepare ok, start to run\n");
@@ -180,7 +181,7 @@ int main(int argc, char * argv[])
       }
       inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
 
-      if ((i+2) % rcutAssignFeq == 0){
+      if ((i) % rcutAssignFeq == 0){
 	timer.tic (mdTimeAdaptRCut);
         assign_rcut.assign (sys);
 	timer.toc (mdTimeAdaptRCut);
@@ -254,6 +255,7 @@ int main(int argc, char * argv[])
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
+	// dp.write ((i+1) * dt);
 	assign_rcut.write ((i+1) * dt);
       }
       
@@ -286,6 +288,7 @@ int main(int argc, char * argv[])
     return 1;
   }
 
+  dp.end_write();
   assign_rcut.end_write();
   dp.save ("density.save");
   arc.save_rc ("rcut.save");

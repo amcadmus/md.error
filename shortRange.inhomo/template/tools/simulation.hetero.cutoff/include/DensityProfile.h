@@ -16,8 +16,9 @@ class DensityProfile_PiecewiseConst
   std::vector<double > boxsize;
   unsigned nx, ny, nz, nele;
   double   hx, hy, hz;
-  std::vector<double > profile;
+  double * profile;
   int ndata;
+  mutable FILE * fp_write;
 public:
   inline unsigned index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const;
   inline void     index1to3 (unsigned& input,
@@ -32,6 +33,8 @@ public:
 		 const IndexType numAtom);
   void calculate ();
 public:
+  DensityProfile_PiecewiseConst();
+  ~DensityProfile_PiecewiseConst();
   const double & getProfile (const unsigned & ix,
 			     const unsigned & iy,
 			     const unsigned & iz) const
@@ -50,6 +53,9 @@ public:
   void print_xy (const std::string & filename) const;
   void save (const char * file) const;
   void load (const char * file);
+  void init_write (const char * file) const;
+  void end_write () const;
+  void write (const ScalorType & time) const;
 };
 
     

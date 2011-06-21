@@ -9,6 +9,21 @@
 //   reinit_xtc (filename, refh);
 // }
 
+DensityProfile_PiecewiseConst::
+DensityProfile_PiecewiseConst ()
+    : profile (NULL)
+{
+}
+
+DensityProfile_PiecewiseConst::
+~DensityProfile_PiecewiseConst ()
+{
+  if (profile != NULL){
+    free (profile);
+  }
+}
+
+
 void DensityProfile_PiecewiseConst::
 reinit (const ScalorType & bx,
 	const ScalorType & by,
@@ -31,16 +46,21 @@ reinit (const ScalorType & bx,
   hy = boxsize[1] / ny;
   hz = boxsize[2] / nz;
   
-  profile.clear();
-  profile.resize (nx * ny * nz, 0.);
-
+  if (profile != NULL){
+    free (profile);
+  }
+  profile = (double *) malloc  (nx * ny * nz * sizeof(double));
+  // for (unsigned i = 0; i < nele; ++i){
+  //   profile[i] = 0.;
+  // }
+  
   clearData ();
 }
 
 void DensityProfile_PiecewiseConst::
 clearData ()
 {
-  for (int i = 0; i < profile.size(); ++i){
+  for (unsigned i = 0; i < nele; ++i){
     profile[i] = 0.;
   }
   ndata = 0;
@@ -73,7 +93,7 @@ void DensityProfile_PiecewiseConst::
 calculate ()
 {
   double dvolume = hx * hy * hz;
-  for (unsigned i = 0; i < profile.size(); ++i){
+  for (unsigned i = 0; i < nele; ++i){
     profile[i] /= dvolume * ndata;
   }
 }
@@ -237,7 +257,10 @@ load (const char * file)
   hx = boxsize[0] / nx;
   hy = boxsize[1] / ny;
   hz = boxsize[2] / nz;
-  profile.resize(nele);
+  if (profile != NULL){
+    free (profile);
+  }
+  profile = (double *) malloc  (nx * ny * nz * sizeof(double));
   ndata = 0;
   
   for (int i = 0; i < nele; ++i){
@@ -246,4 +269,41 @@ load (const char * file)
 
   fclose(fp);
 }
+
+void DensityProfile_PiecewiseConst::
+init_write (const char * file) const
+{
+  fp_write = fopen (file, "w");
+  if (fp_write == NULL){
+    fprintf (stderr, "cannot open file %s\n", file);
+    exit(1);
+  }
+  double tmpbox[3];
+  tmpbox[0] = boxsize[0];
+  tmpbox[1] = boxsize[1];
+  tmpbox[2] = boxsize[2];
+  int tmpnn[3];
+  tmpnn[0] = nx;
+  tmpnn[1] = ny;
+  tmpnn[2] = nz;
+  
+  fwrite (tmpbox, sizeof(double), 3, fp_write);
+  fwrite (tmpnn,  sizeof(int),    3, fp_write);
+}
+
+void DensityProfile_PiecewiseConst::
+end_write () const
+{
+  fclose (fp_write);
+}
+
+void DensityProfile_PiecewiseConst::
+write (const ScalorType & time) const
+{
+  ScalorType tmptime = time;
+  fwrite (&tmptime, sizeof(ScalorType), 1,    fp_write);
+  fwrite (profile,  sizeof(double),     nele, fp_write);
+}
+
+
 
