@@ -94,7 +94,10 @@ public:
   void calError (const DensityProfile_PiecewiseConst & dp);
   void calRCut  (const double & prec);
   void print_x  (const std::string & file) const;
+  void print_error_avg (const DensityProfile_PiecewiseConst & dp,
+			const std::string & file) const ;
   void print_rc (const std::string & file) const;
+  void print_rc_avg (const std::string & file) const;
   void save_rc  (const std::string & file) const;
   void load_rc  (const std::string & file) ;
   void write_rc (const std::string & file) const;

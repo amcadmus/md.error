@@ -36,7 +36,7 @@
 
 int main(int argc, char * argv[])
 {
-  IndexType nstep = 3000000;
+  IndexType nstep = 10000;
   IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.005;
@@ -48,12 +48,12 @@ int main(int argc, char * argv[])
 
   IndexType densityProfileSamplingFeq = 40;
   IndexType rcutAssignFeq = 40;
-  IndexType rcutUpdateFeq = 1000;
+  IndexType rcutUpdateFeq = 2000;
   double refh = 1.0;
   double rcmin = 03.0;
   double rcmax = 10.0;
   double rcstep = 0.5;
-  double targetPrec = 0.004;
+  double targetPrec = 0.003;
   
   if (argc != 4){
     printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
@@ -292,6 +292,8 @@ int main(int argc, char * argv[])
   assign_rcut.end_write();
   dp.save ("density.save");
   arc.save_rc ("rcut.save");
+  arc.print_error_avg (dp, "a.error.x.out");
+  arc.print_rc_avg ("a.rcut.x.out");
   
   return 0;
 }

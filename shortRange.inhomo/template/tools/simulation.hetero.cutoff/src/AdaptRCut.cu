@@ -497,7 +497,43 @@ print_x (const std::string & file) const
   fclose (fp);
 }
 
-  
+
+void AdaptRCut::    
+print_error_avg (const DensityProfile_PiecewiseConst & dp,
+		 const std::string & file) const 
+{
+  FILE * fp = fopen (file.c_str(), "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  for (int i = 0; i < nx; ++i){
+    double sum = 0.;
+    double sumprofile = 0.;
+    for (int j = 0; j < ny; ++j){
+      for (int k = 0; k < nz; ++k){
+    	sum += result_error[index3to1(i,j,k)] *
+	    result_error[index3to1(i,j,k)] *
+	    dp.getProfile(i,j,k);
+	sumprofile += dp.getProfile (i,j,k);
+      }
+    }
+    sum /= sumprofile;
+    sum = sqrt(sum);
+    // fprintf (fp, "%f %e %e\n",
+    // 	     (i + 0.5) * hx,
+    // 	     error[4][index3to1(i,0,0)][0],
+    // 	     error[4][index3to1(i,0,0)][1]
+    // 	);
+    fprintf (fp, "%f %e %f\n",
+	     (i + 0.5) * hx,
+	     sum);
+  }
+  fclose (fp);
+}
+
+
   
 void AdaptRCut::    
 print_rc (const std::string & file) const 
@@ -522,6 +558,32 @@ print_rc (const std::string & file) const
   }
   fclose (fp);
 }
+
+
+void AdaptRCut::    
+print_rc_avg (const std::string & file) const 
+{
+  FILE * fp = fopen (file.c_str(), "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  for (int i = 0; i < nx; ++i){
+    double sum = 0.;
+    for (int j = 0; j < ny; ++j){
+      for (int k = 0; k < nz; ++k){
+    	sum += rcut[index3to1(i, j, k)];
+      }
+    }
+    sum /= ny * nz;
+    fprintf (fp, "%f %e\n",
+	     (i + 0.5) * hx, sum
+	);
+  }
+  fclose (fp);
+}
+
 
 void AdaptRCut::
 load_rc (const std::string & file)
@@ -561,6 +623,11 @@ load_rc (const std::string & file)
   rcutIndex = (int *) malloc (sizeof(int) * nele);
   result_error = (double *) malloc (sizeof(double) * nele);
 
+  for (int i = 0; i < nele; ++i){
+    fscanf (fp, "%d ", &rcutIndex[i]);
+    rcut[i] = rcList[rcutIndex[i]];
+  }
+  
   p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
   p_backward_error1  = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
   p_backward_error2x = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
