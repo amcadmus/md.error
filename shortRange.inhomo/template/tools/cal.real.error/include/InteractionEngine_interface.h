@@ -79,36 +79,16 @@ public:
   // 				  MDTimer *timer = NULL);
 
   void applyNonBondedInteraction (MDSystem & sys,
+				  MDTimer *timer = NULL,
+				  ScalorType rcut2 = 30.f);
+  void applyNonBondedInteraction (MDSystem & sys,
 				  const ScalorType & rcut,
-				  // const ExclusionList * excllist = NULL,
 				  MDTimer *timer = NULL);
   void applyNonBondedInteraction (MDSystem & sys,
 				  const ScalorType & rcut,
 				  MDStatistic & st,
-				  // const ExclusionList * excllist = NULL,
-				  MDTimer *timer = NULL);
-
-  void applyNonBondedInteraction (MDSystem & sys,
-				  const CellList & clist,
-				  const ScalorType & rcut,
-				  // const ExclusionList * excllist = NULL,
-				  MDTimer *timer = NULL);
-  void applyNonBondedInteraction (MDSystem & sys,
-				  const CellList & clist,
-				  const ScalorType & rcut,
-				  MDStatistic & st,
-				  // const ExclusionList * excllist = NULL,
 				  MDTimer *timer = NULL);
   
-  void applyNonBondedInteraction (MDSystem & sys,
-				  const NeighborList & nlist,
-				  const ExclusionList * excllist = NULL,
-				  MDTimer *timer = NULL);
-  void applyNonBondedInteraction (MDSystem & sys,
-				  const NeighborList & nlist,
-				  MDStatistic & st,
-				  const ExclusionList * excllist = NULL,
-				  MDTimer *timer = NULL);
 
   void calTwinRangeCorrection (const MDSystem &			sys,
 			       const CellList &			clist,

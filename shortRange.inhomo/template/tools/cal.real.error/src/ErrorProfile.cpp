@@ -92,6 +92,34 @@ print_x (const char * file) const
 }
 
 void ErrorProfile_PiecewiseConst::    
+print_x_avg (const char * file) const 
+{
+  FILE * fp = fopen (file, "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  for (unsigned i = 0; i < nx; ++i){
+    double sum = 0.;
+    int sumcount = 0;
+    for (unsigned j = 0; j < ny; ++j){
+      for (unsigned k = 0; k < nz; ++k){
+    	sum += profile[index3to1(i, j, k)] *
+	    profile[index3to1(i, j, k)] *
+	    count [index3to1(i, j, k)];
+	sumcount += count [index3to1(i, j, k)];
+      }
+    }
+    if (sumcount != 0) sum /= double(sumcount);
+    fprintf (fp, "%f %f\n", (i + 0.5) * hx, sqrt(sum));
+  }
+
+  fclose (fp);
+}
+
+
+void ErrorProfile_PiecewiseConst::    
 print_xy (const char * file) const 
 {
   FILE * fp = fopen (file, "w");

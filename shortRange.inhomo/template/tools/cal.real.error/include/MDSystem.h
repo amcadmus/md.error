@@ -57,6 +57,7 @@ public:
   IntScalorType * coordNoix;
   IntScalorType * coordNoiy;
   IntScalorType * coordNoiz;
+  ScalorType * rcut;
   ScalorType * velox;
   ScalorType * veloy;
   ScalorType * veloz;

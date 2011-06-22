@@ -36,6 +36,7 @@ public:
 public:
   void print_x  (const char * filename) const;
   void print_xy (const char * filename) const;
+  void print_x_avg (const char * filename) const;
 };
 
     

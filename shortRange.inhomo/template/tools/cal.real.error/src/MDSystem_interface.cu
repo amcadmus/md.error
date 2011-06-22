@@ -312,6 +312,9 @@ recoverDeviceData (MDTimer * timer)
       (ddata.coordNoiz, ddata.numAtom, backMapTable, recoveredDdata.coordNoiz);
   Reshuffle_reshuffleArray
       <<<atomGridDim, myBlockDim>>>
+      (ddata.rcut, ddata.numAtom, backMapTable, recoveredDdata.rcut);
+  Reshuffle_reshuffleArray
+      <<<atomGridDim, myBlockDim>>>
       (ddata.velox, ddata.numAtom, backMapTable, recoveredDdata.velox);
   Reshuffle_reshuffleArray
       <<<atomGridDim, myBlockDim>>>
