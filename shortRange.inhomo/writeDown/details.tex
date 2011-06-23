@@ -1,0 +1,794 @@
+\documentclass[aps,pre,preprint,unsortedaddress]{revtex4}
+% \documentclass[aps,jcp,groupedaddress,twocolumn,unsortedaddress]{revtex4}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[dvips]{graphicx}
+\usepackage{color}
+\usepackage{tabularx}
+
+\makeatletter
+\makeatother
+
+\newcommand{\recheck}[1]{{\color{red} #1}}
+\renewcommand{\v}[1]{\textbf{\textit{#1}}}
+\renewcommand{\d}[1]{\textsf{#1}}
+
+
+\begin{document}
+
+\title{The Error Estimate of Force Calculation in Heterogeneous and Correlated Molecular Systems}
+\author{Han Wang}
+\affiliation{LMAM and School of Mathematical
+  Sciences, Peking University}
+\author{Pingwen Zhang}
+% \email{pzhang@pku.edu.cn}
+\affiliation{LMAM and School of Mathematical
+  Sciences, Peking University}
+
+\begin{abstract}
+\end{abstract}
+
+\maketitle
+
+
+\section{Error estimate}
+The error of force as a function of position is 
+\begin{align} \nonumber
+  \langle\vert\Delta\v F(\v r)\vert^2\rangle
+  &= \big\langle\sum_{j,k}\v F^c(\v r - \v r_j)\cdot\v F^c(\v r - \v r_k)\big\rangle \\ \nonumber
+  &= \big\langle\sum_j\vert\v F^c(\v r - \v r_j)\vert^2\big\rangle +
+  \big\langle\sum_{j\neq k}\v F^c(\v r - \v r_j)\cdot\v F^c(\v r - \v r_k)\big\rangle \\ \label{eqn:tmp1}
+  &= \int_{\mathbb R^3}\vert\v F^c(\v r - \v r')\vert^2\rho(\v r')\,\d d\v r'
+  + \int_{\mathbb R^3\times\mathbb R^3}\v F^c(\v r - \v r')\cdot\v F^c(\v r - \v r'')\rho(\v r', \v r'')\,\d d\v r'\d d\v r'',
+\end{align}
+where $\v F^c$ is the complementary force defined by
+\begin{align}
+  \v F^c(\v r) =
+  \left\{
+  \begin{array}{ll}
+    0, & \vert\v r\vert\leq r_c; \\
+    \v F(\v r), & \vert\v r\vert > r_c.
+  \end{array}
+  \right.
+\end{align}
+The densities $\rho(\v r')$ and $\rho(\v r', \v r'')$ are related
+to the probability densities $p(\v r')$ and $p(\v r', \v r'')$ by
+\begin{align}
+  \rho(\v r') &= N\,p(\v r') \\
+  \rho(\v r', \v r'') &= N(N-1)\,p(\v r', \v r'')
+\end{align}
+The densities are periodically extented to the whole space $\mathbb
+R^3$.
+% The problem now this how to discretize the integrals in
+% \eqref{eqn:tmp1}. With the piecewise constant numerical integration
+% formulus, we have:
+Now, let
+\begin{align} \nonumber
+  \rho(\v r', \v r'')
+  & = N (N-1) \,p(\v r', \v r'') \\\nonumber
+  & = N (N-1) \big\{ p(\v r')p(\v r'') + [\,p(\v r', \v r'') -  p(\v r')p(\v r'')\,]\big\} \\\nonumber
+  &= \frac{N-1}N \rho(\v r')\rho(\v r'') + C (\v r', \v r'')\\ \label{eqn:tmp5}
+  &\approx \rho(\v r')\rho(\v r'') + C (\v r', \v r'')
+\end{align}
+the function
+\begin{align}
+C (\v r', \v r'') = N (N-1) [\,p(\v r', \v r'') -  p(\v r')p(\v r'')\,]
+\end{align}
+denotes the correlation between
+position $\v r'$ and $\v r''$. Therefore, \eqref{eqn:tmp1} becomes
+\begin{align} \nonumber
+  \langle\vert\Delta\v F^c(\v r)\vert^2\rangle
+  = &\,
+  \int_{\mathbb R^3}\vert\v F^c(\v r - \v r')\vert^2\rho(\v r')\,\d d\v r' \,+ \\\nonumber
+  &\,
+  \bigg[\int_{\mathbb R^3}\v F^c(\v r - \v r')\rho(\v r')\,\d d\v r'\,\bigg]^2 + \\\nonumber
+  &\,
+  \int_{\mathbb R^3\times\mathbb R^3}\v F^c(\v r - \v r')\cdot\v F^c(\v r - \v r'')\,C(\v r', \v r'')\,\d d\v r'\d d\v r'' \\\label{eqn:tmp5}
+  = &\,
+  \mathcal E_{\textrm{homo}}(\v r) + \mathcal E_{\textrm{hetero}}(\v r) + \mathcal E_{\textrm{corr}}(\v r)
+\end{align}
+This means the force error is a combination of a homogeneous
+contribution, a heterogeneous contribution and a correlational
+contribution. The heterogeneous force can be applied as a correction
+to the error:
+\begin{align}\label{eqn:tmp7}
+  \v F_{\textrm{hetero}} = \int_{\mathbb R^3}\v F^c(\v r - \v r')\rho(\v r')\,\d d\v r'
+\end{align}
+
+
+\subsection{The homogeneous error}
+
+The homogeneous error in \eqref{eqn:tmp5} can be calculated by:
+\begin{align}\nonumber
+  \mathcal E_{\textrm{homo}}(\v r)
+  & = \int_{\mathbb R^3}\vert\v F^c(\v r - \v r')\vert^2\rho(\v r')\,\d d\v r' \\ \nonumber
+  & = \sum_{\v n} \int_V \vert\v F^c(\v r - (\v r'+\v n))\vert^2\rho(\v r')\,\d d\v r'
+\end{align}
+So the error term is periodic, considering the Fourier transform of
+this term:
+\begin{align}\nonumber
+  \hat{\mathcal E}_{\textrm{homo}}(\v k)
+  & =
+  \int_V\mathcal E_{\textrm{homo}}(\v r)e^{-2\pi i\v k\cdot\v r}\,\d d\v r \\ \nonumber
+  & =
+  \int_V
+  \sum_{\v n} \int_V \vert\v F^c(\v r - (\v r'+\v n))\vert^2\rho(\v r')\,\d d\v r'\,
+  e^{-2\pi i\v k\cdot\v r}\,\d d\v r
+  % \\  \nonumber
+  % & =
+  % \int_V
+  % \sum_{\v n} \int_V \vert\v F^c(\v r - (\v r'+\v n))\vert^2\rho(\v r')\,\d d\v r'\,
+  % e^{-2\pi i\v k\cdot\v r}\,\d d\v r 
+\end{align}
+This is a Fourier transform of a convolution, so by omitting the details, we have
+\begin{align}
+  \hat{\mathcal E}_{\textrm{homo}}(\v k) = \hat K_{\textrm{homo}}(\v k)\,\hat\rho\,(\v k),
+\end{align}
+where $\hat K_{\textrm{homo}}(\v k)$ is the Fourier transform of
+convolution kernel of homogeneous error $K_{\textrm{homo}}(\v r) = \vert\v F^c(\v
+r)\vert^2$, namly:
+\begin{align}
+  \hat K_{\textrm{homo}}(\v k)
+  &=
+  \int_{\mathbb R^3}K_{\textrm{homo}}(\v r)e^{-2\pi i\v k\cdot\v r}\,\d d\v r
+\end{align}
+$\hat\rho\,(\v k)$ is the Fourier transform of the density, namely,
+\begin{align}
+  \hat\rho(\v k) = \int_V\rho(\v r)e^{-2\pi i\v k\cdot\v r}\,\d d\v r
+\end{align}
+Therefore,
+\begin{align}\label{eqn:tmp11}
+  \mathcal E_{\textrm{homo}}(\v r)
+  &=
+  \frac1V\sum_{-\infty}^\infty \hat{\mathcal E}_{\textrm{homo}}(\v k)\,e^{2\pi i\v k\cdot\v r}
+\end{align}
+
+All the Fourier transforms should be accelerated by fast Fourier
+transform (FFT). Consider the lattice points in real space and
+reciprocal space:
+\begin{align}
+  \v r_{i_1, i_2, i_3} & =
+  \frac{i_1}{K_1}\v a_1 + 
+  \frac{i_2}{K_2}\v a_2 + 
+  \frac{i_3}{K_3}\v a_3, \\
+  \v k_{k_1, k_2, k_3} & =
+  k_1\v a_1^\ast +
+  k_2\v a_2^\ast +
+  k_3\v a_3^\ast,
+\end{align}
+where $\v a_\alpha$ are box vectors, and $\v a_\alpha^\ast$ are
+reciprocal box vectors defined by $\v a_\alpha\cdot\v a_\beta^\ast =
+\delta_{\alpha\beta}$. By a piecewise constant approximation of
+\eqref{eqn:tmp11}, we have
+\begin{align}\nonumber
+  \mathcal E_{\textrm{homo}}(\v r_{i_1,i_2,i_3})
+  & \approx
+  \frac1V\sum_{k_1=-\infty}^\infty\sum_{k_2=-\infty}^\infty\sum_{k_3=-\infty}^\infty
+  \hat{\mathcal E}_{\textrm{homo}}(\v k_{k_1,k_2,k_3})
+  % e^{2\pi i\v k_{k_1,k_2,k_3}\cdot\v r_{i_1,i_2,i_3}}
+  \exp\bigg[
+  2\pi i\bigg(
+  \frac{k_1i_1}{K_1} + \frac{k_2i_2}{K_2} + \frac{k_3i_3}{K_3}
+  \bigg)
+  \bigg] \\
+  & \approx
+  \frac1V\sum_{k_1=0}^{K_1}\sum_{k_2=0}^{K_2}\sum_{k_3=0}^{K_3}
+  \hat{K}_{\textrm{homo}}(\v k'_{k_1,k_2,k_3})\:
+  \hat{\rho}(\v k_{k_1,k_2,k_3})
+  % e^{2\pi i\v k_{k_1,k_2,k_3}\cdot\v r_{i_1,i_2,i_3}}
+  \exp\bigg[
+  2\pi i\bigg(
+  \frac{k_1i_1}{K_1} + \frac{k_2i_2}{K_2} + \frac{k_3i_3}{K_3}
+  \bigg)
+  \bigg]   
+\end{align}
+The prime on $\v k_{k_1,k_2,k_3}$ means that we should use the
+periodic image $k_\alpha - K_\alpha$ instead of $k_\alpha$ when $k_\alpha \geq
+K_\alpha/2$. Also by piecewise constant approximation, The Fourier
+transform of density is 
+\begin{align}\nonumber
+  \hat\rho(\v k_{k_1,k_2,k_3})
+  &=
+  \int_V\rho(\v r)e^{-2\pi i\v k_{k_1,k_2,k_3}\cdot\v r}\,\d d\v r \\
+  & =
+  \frac{V}{K_1K_2K_3}
+  \sum_{i_1=0}^{K_1}\sum_{i_2=0}^{K_2}\sum_{i_2=0}^{K_2}
+  \rho(\v r_{i_1,i_2,i_3})
+  \exp\bigg[
+  -2\pi i\bigg(
+  \frac{k_1i_1}{K_1} + \frac{k_2i_2}{K_2} + \frac{k_3i_3}{K_3}
+  \bigg)
+  \bigg]
+\end{align}
+Since the in most cases the force is isotropoic, then the homogeneous
+kernel is isotrpoic, so it is a function of the absolute value of $\v
+r$: $K_{\textrm{homo}}(\v r) = K_{\textrm{homo}}(r)$. The Fourier
+transform of this kind of kernel can be simplified as
+\begin{align}
+  \hat{K}_{\textrm{homo}}(\v k_{k_1,k_2,k_3})
+  =
+  \int_{\mathbb R^3}K_{\textrm{homo}}(r)e^{-2\pi i\v k\cdot\v r}\d d\v r
+  =
+  \int_{r_c}^\infty \frac{2 r}k\, K_{\textrm{homo}}(r) \sin(2\pi kr)\,\d dr
+\end{align}
+This is now calculated numerically. (\recheck{Probably there exists an
+analytical solution.})
+
+
+\subsection{The heterogeneous error}
+From \eqref{eqn:tmp7},
+% by denoting the force by the heterogeneous kernel $\v K_{\textrm{hetero}}$,
+% \begin{align}\nonumber
+%   \v F_{\textrm{hetero}}
+%   &=
+%   \int_{\mathbb R^3}\v F^c(\v r - \v r')\rho(\v r')\,\d d\v r'\\
+%   &=
+%   \int_{\mathbb R^3}\v K_{\textrm{hetero}}(\v r - \v r')\rho(\v r')\,\d d\v r'  
+% \end{align}
+all the same as the homogeneous error
+\begin{align}
+  \hat{\v F}_{\textrm{hetero}}(\v k) = \hat{\v F}^c(\v k)\,\hat\rho(\v k).
+\end{align}
+Since
+\begin{align}
+  \v F^c(\v r) = - \nabla U^c(\v r),
+\end{align}
+where $U^c(\v r)$ is the truncated potential. The Fourier transform of
+heterogeneous kernel is
+\begin{align}\nonumber
+  -\hat{\v F}^c(\v k) 
+  & =
+  \int_{\Omega_c}\nabla U(\v r) e^{-2\pi i\v k\cdot\v r}\d d\v r \\ \label{eqn:tmp19}
+  & =
+  \int_{\partial\Omega_c}U(\v r) e^{-2\pi i\v k\cdot\v r} \v n\d dS
+  + 2\pi i \v k\int_{\Omega_c} U^c(\v r) e^{-2\pi i\v k\cdot\v r}\,\d d\v r
+\end{align}
+For the first integral, set up a spherical constant system so that the
+$z$-axis is along the vector $\v k$, then
+\begin{align}
+  \int_{\partial\Omega_c}U(\v r) e^{-2\pi i\v k\cdot\v r} \v n\,\d dS
+  & =
+  - \int_0^{2\pi}\int_0^{\pi}
+  U(r_c) e^{-2\pi k r_c\cos\phi}
+\left(
+\begin{aligned}[m]
+  &\sin\phi\cos\theta\\
+  &\sin\phi\sin\theta\\
+  &\cos\phi
+\end{aligned}
+\right)
+r_c^2\sin\phi\:
+\d d\phi\,
+\d d\theta
+\end{align}
+By the symmetricity, the first two component of the integral are 0. So
+the first integral of \eqref{eqn:tmp19} is along the direction of
+$k$. The maganitude of this integral is:
+\begin{align}\nonumber
+  &- \int_0^{2\pi}\int_0^{\pi}
+  U(r_c) e^{-2\pi k r_c\cos\phi}
+  \cos\phi\,
+  r_c^2\sin\phi\:
+  \d d\phi\,
+  \d d\theta\\\nonumber
+  = &
+  -2\pi r_c^2\,U(r_c)
+  \int_0^\pi\sin\phi\cos\phi
+  \big[\cos(2\pi kr\cos\phi) - i\sin(2\pi kr\cos\phi)\big]
+  \,\d d\phi \\\nonumber
+  = &
+  -2\pi r_c^2\,U(r_c)
+  \int_{-1}^1 x \big[\cos(2\pi krx) - i\sin(2\pi krx)\big]
+  \,\d dx \\ \nonumber
+  = &\;
+  -2\pi i\, r_c^2\,U(r_c)
+  \int_{-1}^1 -x\sin(2\pi krx)
+  \,\d dx \\ 
+  = &\;
+  -2\pi i\, r_c^2\,U(r_c)
+  \bigg[\,
+  \frac{2\cos(2\pi kr)}{2\pi kr}
+  -\frac{2\sin(2\pi kr)}{(2\pi kr)^2}
+  \,\bigg]
+\end{align}
+Therefore, \eqref{eqn:tmp19} becomes
+\begin{align}\nonumber
+  -\hat{\v F}^c(\v k) 
+  & =
+  \int_{\partial\Omega_c}U(\v r) e^{-2\pi i\v k\cdot\v r} \v n\d dS
+  + 2\pi i \v k\int_{\Omega_c} U^c(\v r) e^{-2\pi i\v k\cdot\v r}\,\d d\v r\\ \nonumber
+  & = 
+  -2\pi i\, r_c^2\,U(r_c)
+  \bigg[\,
+  \frac{2\cos(2\pi kr)}{2\pi kr}
+  -\frac{2\sin(2\pi kr)}{(2\pi kr)^2}
+  \,\bigg] \,\frac{\v k}k +
+  2\pi i \v k
+  \int_{r_c}^\infty \frac{2r}k\,U(r)\sin(2\pi kr)\d d\v r \\
+  & =
+  2\pi\frac{\v k}k\, i\,
+  \bigg\{
+  \int_{r_c}^\infty 2r\,U(r)\sin(2\pi kr)\d d\v r
+  - r_c^2\,U(r_c)
+  \bigg[\,
+  \frac{2\cos(2\pi kr)}{2\pi kr}
+  -\frac{2\sin(2\pi kr)}{(2\pi kr)^2}
+  \,\bigg] 
+  \bigg\}
+\end{align}
+
+
+
+\section{Energy and pressure corrections}
+The energy correction and pressure correction of the system are:
+\begin{align}
+  E^c &= \bigg\langle \sum_{i\neq j} U^c(\v r_i - \v r_j) \bigg\rangle\\
+  \v P^c &= \frac1{V} \bigg\langle \sum_{i\neq j}\,\frac12\, (\v r_i - \v r_j) \otimes \v F^c(\v r_i - \v r_j) \bigg\rangle
+\end{align}
+For simplicity, let us consider the general form the the corrections:
+\begin{align}
+  Q = \bigg\langle \sum_{i\neq j} K(\v r_i - \v r_j) \bigg\rangle
+\end{align}
+For energy correction, the kernel $K$ is $U^c$, while for the pressure
+correction, the kernel is $\v r\otimes\v F^c$.
+Let
+\begin{align}
+  \rho(\v r', \v r'') =
+  \bigg\langle
+  \sum_{i\neq j}\delta(\v r' - \v r_i)\delta(\v r'' - \v r_j)
+  \bigg\rangle,
+\end{align}
+then, by using \eqref{eqn:tmp5}, we have 
+\begin{align}\nonumber
+  Q
+  &= \bigg\langle \sum_{i\neq j} K(\v r_i - \v r_j) \bigg\rangle\\\nonumber
+  & = \int K(\v r' - \v r'') \rho(\v r', \v r'') \d d\v r'\d d\v r'' \\\nonumber
+  & = \int K(\v r' - \v r'')
+  \big[
+  \rho(\v r') \rho(\v r'') + C(\v r', \v r'')
+  \big]
+  \d d\v r'\d d\v r''
+\end{align}
+Assuming $C(\v r', \v r'')$ vanishes when $\vert\v r' - \v r''\vert \geq r_c$, then
+\begin{align} \nonumber
+  Q 
+  & = \int K(\v r' - \v r'')
+  \rho(\v r') \rho(\v r'') 
+  \d d\v r'\d d\v r'' \\
+  & = \int
+  \Big[
+  \int K(\v r' - \v r'') \rho(\v r'')\,\d d\v r''
+  \Big]
+  \rho(\v r')\,\d d\v r'
+\end{align}
+
+The Fourier transform of the convolution $\int K(\v r' - \v r'')
+\rho(\v r'')\,\d d\v r''$ can be easily calculated by $\hat K(\v
+k)\,\hat \rho(\v k)$.  The Fourier transform of the energy correction
+kernel, which is almost the same as the homogeneous error kernel
+$K_{\textrm{homo}}$, can be easily calculated. The Fourier transform
+of the pressure correction kernel requires more efforts.  For the
+dispersion interaction, the $\alpha\beta$ component of the pressure
+correction kernel can be written as
+\begin{align}
+  \{\v r\otimes\v F^c\}_{\alpha\beta} = r_\alpha r_\beta \,G^c(r) \qquad \alpha, \beta = 1, 2, 3
+\end{align}
+To calculate this Fourier transoform, we consider the spherical
+coordinate by letting
+\begin{align} \nonumber
+  r_1 &= r\sin\phi\cos\theta \\\nonumber
+  r_2 &= r\sin\phi\sin\theta \\\nonumber
+  r_3 &= r\cos\phi
+\end{align}
+and 
+\begin{align} \nonumber
+  k_1 &= k\sin\Phi\cos\Theta \\\nonumber
+  k_2 &= k\sin\Phi\sin\Theta \\\nonumber
+  k_3 &= k\cos\Phi
+\end{align}
+
+For $\alpha = 1,\ \beta = 1$,
+\begin{align}\nonumber
+  [\,r_1r_1\,G^c(r)\,]^{\wedge} 
+  &= \int_{\mathbb R^3} r_1r_1\,G^c(r)\, e^{-2\pi i\v k\cdot\v r}\d d\v r \\\nonumber
+  &= \int_{r_c}^\infty \d dr \int_{0}^{2\pi} \d d\theta \int_0^\pi\d d\phi\:
+  r^2\sin\phi \,r^2 \sin^2\phi\cos^2\theta\,G(r)\,
+  e^{-2\pi k r[\sin\phi\sin\Phi\cos(\theta - \Theta) + \cos\phi\cos\Phi]} \\
+  &= \int_{r_c}^\infty \d dr \int_{0}^{2\pi} \d d\theta \int_0^\pi\d d\phi\:
+  r^4\sin^3\phi\,G(r)\,e^{-2\pi i kr\cos\phi\cos\Phi}
+  \cos^2\theta\,e^{-2\pi i kr\sin\phi\sin\Phi\cos(\theta- \Theta)}
+\end{align}
+Let $c = 2\pi kr\sin\phi\sin\Phi$, consider the integral of $\theta$
+\begin{align}\nonumber
+  \int_0^{2\pi} \cos^2\theta\,e^{-ci\cos(\theta - \Theta)}\d d\theta
+  & =
+  \int_{0-\Theta}^{2\pi-\Theta} \cos^2(t + \Theta) \, e^{-ci\cos t}\d dt \\\nonumber
+  & = 
+  \int_0^{2\pi}\cos^2(t + \Theta)\, e^{-ci\cos t} \d dt \\\nonumber
+  & = 
+  \int_0^{2\pi}\frac{1 + \cos[2(t + \Theta)]}2 \, e^{-ci\cos t} \d dt \\\nonumber  
+  & = 
+  \int_0^{2\pi}
+  \Big(
+  \frac12 + \frac12\cos 2t\cos 2\Theta - \frac12\sin 2t\sin 2\Theta
+  \Big)
+  \, e^{-ci\cos t} \d d t
+\end{align}
+Using
+\begin{align}\label{eqn:tmp31}
+  \int_0^{2\pi} \frac12 \,e^{-ci\cos t}\d dt &= \pi J_0(-c) \\\label{eqn:tmp32}
+  \int_0^{2\pi} \frac12\cos 2t \,e^{-ci\cos t}\d dt &= -\pi J_2(-c) \\\label{eqn:tmp33}
+  \int_0^{2\pi} \frac12\sin 2t \,e^{-ci\cos t}\d dt &= 0 
+\end{align}
+where $J_\nu(c)$ is the Bessel function, the integral definition of which is
+\begin{align}
+  J_\nu(x) =
+  \frac
+  {\big({\frac x2}\big)^\nu}
+  {\Gamma(\nu + \frac12)\sqrt\pi}
+  \int_{-1}^1e^{ixs}(1-s^2)^{\nu-\frac12}\d ds
+\end{align}
+So
+\begin{align}
+  J_\nu(-x) = (-1)^\nu J_\nu(x)
+\end{align}
+
+Consider the integral of \eqref{eqn:tmp31} over $\phi$, letting $b = -2\pi kr$,
+\begin{align}\label{eqn:tmp34}
+  \int_0^\pi
+  \sin^3\phi\, e^{bi\cos\phi\cos\Phi}\,\pi J_0(b\sin\phi\sin\Phi)\,
+  \d d\phi
+\end{align}
+We need the conclusion:
+\begin{align}
+  \int_0^\pi
+  e^{ib\cos\phi\cos\Phi}
+  J_{\nu-\frac12}(b\sin\phi\sin\Phi)\,
+  C_r^\nu(\cos\phi)\,
+  \sin^{\nu + \frac12}\phi
+  \,\d d\phi
+  =
+  \Big(\frac{2\pi}{b}\Big)^{\frac12}
+  i^r
+  \sin^{\nu - \frac12}\Phi\,
+  C_r^\nu(\cos\Phi)\,
+  J_{\nu + r}(b)
+\end{align}
+where $C_r^\nu(x)$ is the Gegenbauer function, the first several
+Gegenbauer functions and the interative definition are
+\begin{align}
+  C_0^\alpha (x) &= 1 \\
+  C_1^\alpha(x) &= 2\alpha x\\
+  C_2^\alpha(x) &= 2\alpha(\alpha + 1) x^2 - \alpha\\
+  C_n^\alpha(x) & = \frac{1}{n}\,\Big[
+  2x(n+\alpha-1)C_{n-1}^\alpha(x) - (n+2\alpha-2)C_{n-2}^\alpha(x)
+  \Big].
+\end{align}
+Note $C_2^{1/2} = -1/2 + 3/2\,x^2$, we have
+\begin{align}
+  \sin^3\phi = \sin\phi(1-\cos^2\phi)=
+  \sin\phi\,\frac23\,\Big[
+  C_0^{\frac12}(\cos\phi) - C_2^{\frac12}(\cos\phi)
+  \Big]
+\end{align}
+\eqref{eqn:tmp34} is equal to
+\begin{align}\nonumber
+  &\int_0^\pi
+  \frac23\pi\sin\phi\,
+  \Big[
+  C_0^{\frac12}(\cos\phi) - C_2^{\frac12}(\cos\phi)
+  \Big]
+  \, e^{bi\cos\phi\cos\Phi}\, J_0(b\sin\phi\sin\Phi)\,
+  \d d\phi   \\ \nonumber
+  = \,&
+  \frac23\, \pi\,
+  \Big( \frac{2\pi}b \Big )^{\frac12}
+  \Big[\,
+  J_{\frac12}(b) - \frac12\,J_{\frac52}(b) +
+  \frac32\,\cos^2\Phi\, J_{\frac52}(b)
+  \,\Big] \\ \nonumber
+  = \,&
+  \frac23\, \pi\,
+  \sqrt{ \frac1{kr} }(-i)
+  \Big[\,
+  iJ_{\frac12}(2\pi kr) -  \frac12\,i\,J_{\frac52}(2\pi kr) +
+  \frac32\,i\,\cos^2\Phi\, J_{\frac52}(2\pi kr)
+  \,\Big] \\
+  = \,&
+  \pi\,
+  \sqrt{ \frac1{kr} }\,
+  \Big[\,
+  \frac23\,J_{\frac12}(2\pi kr) -  \frac13\,J_{\frac52}(2\pi kr) +
+  \cos^2\Phi\, J_{\frac52}(2\pi kr)
+  \,\Big] 
+\end{align}
+
+Consider the integral of \eqref{eqn:tmp32} is
+\begin{align}\nonumber
+  &-\int_0^\pi
+  \sin^3\phi\, e^{bi\cos\phi\cos\Phi}\,\pi J_2(b\sin\phi\sin\Phi)\,
+  \d d\phi \\ \nonumber
+  = &\, 
+  -\pi \Big( \frac{2\pi}b \Big )^{\frac12}\,
+  \sin^2\Phi\,
+  J_{\frac52}(b) \\
+  = &\, 
+  -\pi \sqrt{ \frac1{kr} }\,
+  \sin^2\Phi\,
+  J_{\frac52}(2\pi kr) 
+\end{align}
+
+Therefore,
+\begin{align}\nonumber
+  &[\,r_1r_1\,G^c(r)\,]^{\wedge} \\
+  =\,&
+  \int_{r_c}^\infty \d dr\, r^4 G(r)\,
+  \pi \sqrt{ \frac1{kr} }\,
+  \Big[\,
+  \frac23\,J_{\frac12}(2\pi kr) -
+  \big(\,
+  \frac13 -
+  \cos^2\Phi +
+  \sin^2\Phi\cos2\Theta
+  \big)\, J_{\frac52}(2\pi kr)
+  \,\Big] 
+\end{align}
+Similarly, we have
+\begin{align}\nonumber
+  &[\,r_2 r_2\,G^c(r)\,]^{\wedge} \\
+  =\,&
+  \int_{r_c}^\infty \d dr\, r^4 G(r)\,
+  \pi \sqrt{ \frac1{kr} }\,
+  \Big[\,
+  \frac23\,J_{\frac12}(2\pi kr) -
+  \big(\,
+  \frac13 -
+  \cos^2\Phi -
+  \sin^2\Phi\cos2\Theta
+  \big)\, J_{\frac52}(2\pi kr)
+  \,\Big] 
+\end{align}
+
+For $\alpha = 3,\ \beta = 3$,
+\begin{align}\nonumber
+  [\,r_3 r_3\,G^c(r)\,]^{\wedge} 
+  &= \int_{\mathbb R^3} r_3 r_3\,G^c(r)\, e^{-2\pi i\v k\cdot\v r}\d d\v r \\\nonumber
+  &= \int_{r_c}^\infty \d dr \int_{0}^{2\pi} \d d\theta \int_0^\pi\d d\phi\:
+  r^2\sin\phi \,r^2 \cos^2\phi\,G(r)\,
+  e^{-2\pi k r[\sin\phi\sin\Phi\cos(\theta - \Theta) + \cos\phi\cos\Phi]} \\
+  &= \int_{r_c}^\infty \d dr \int_{0}^{2\pi} \d d\theta \int_0^\pi\d d\phi\:
+  r^4\sin\phi\cos^2\phi\,G(r)\,e^{-2\pi i kr\cos\phi\cos\Phi}
+  \,e^{-2\pi i kr\sin\phi\sin\Phi\cos(\theta- \Theta)}
+\end{align}
+Since
+\begin{align}\nonumber
+  \int_0^{2\pi} e^{-c i\cos(\theta - \Theta)} \d d\theta
+  &=
+  \int_0^{2\pi} e^{-c i\cos t} \d dt \\\nonumber
+  &=
+  2\pi J_0(-c)\\
+  & =
+  2\pi J_0(-2\pi kr\sin\phi\sin\Phi)
+\end{align}
+And
+\begin{align}\nonumber
+  &
+  \int_0^\pi 2\pi \,\sin\phi\cos^2\phi\,
+  J_0(b\sin\phi\sin\Phi) e^{b\cos\phi\cos\Phi} \,\d d\phi \\\nonumber
+  = \,&
+  \int_0^\pi 2\pi \,\sin\phi \:\frac23\,
+  \Big[\,
+  \frac12 C_0^{\frac12} (\cos\phi) + C_2^{\frac12}(\cos\phi)
+  \,\Big]
+  J_0(b\sin\phi\sin\Phi) e^{b\cos\phi\cos\Phi} \,\d d\phi \\ \nonumber
+  = \,&
+  2\pi \Big(\frac{2\pi}c \Big)^{\frac12} \:\frac23\:
+  \Big[\,
+  \frac12 C_0^{\frac12}(\cos\Phi) J_{\frac12}(b) -
+  C_2^{\frac12} (\cos\Phi) J_{\frac52}(b)
+  \,\Big] \\
+  = \,&
+  \frac43 \pi \,\sqrt{\frac1{kr}}\:
+  \Big[\,
+  \frac12 J_{\frac12}(2\pi kr) +
+  \big(\,
+  \frac12 - \frac32 \cos^2\Phi
+  \big)
+  J_{\frac52}(2\pi kr)
+  \,\Big]
+\end{align}
+Therefore,
+\begin{align}
+  [\,r_3 r_3\,G^c(r)\,]^{\wedge} 
+  =
+  \int_{r_c}^\infty \d dr\: \frac43\,\pi\,r^4 G(r)\,
+  \sqrt{ \frac1{kr} }\,
+  \Big[\,
+  \frac12 J_{\frac12}(2\pi kr) +
+  \big(\,
+  \frac12 - \frac32 \cos^2\Phi
+  \big)
+  J_{\frac52}(2\pi kr)
+  \,\Big]
+\end{align}
+
+For $\alpha = 1,\ \beta = 2$,
+\begin{align}\nonumber
+  [\,r_1 r_2\,G^c(r)\,]^{\wedge} 
+  &= \int_{\mathbb R^3} r_1 r_2\,G^c(r)\, e^{-2\pi i\v k\cdot\v r}\d d\v r \\\nonumber
+  &= \int_{r_c}^\infty \d dr \int_{0}^{2\pi} \d d\theta \int_0^\pi\d d\phi\:
+  r^2\sin\phi \,r^2 \sin^2\phi \sin\theta\cos\theta \,G(r)\,
+  e^{-2\pi k r[\sin\phi\sin\Phi\cos(\theta - \Theta) + \cos\phi\cos\Phi]} \\
+  &= \int_{r_c}^\infty \d dr \int_{0}^{2\pi} \d d\theta \int_0^\pi\d d\phi\:
+  r^4\sin^3\phi\,G(r)\,e^{-2\pi i kr\cos\phi\cos\Phi}
+  \sin\theta\cos\theta\,e^{-2\pi i kr\sin\phi\sin\Phi\cos(\theta- \Theta)}
+\end{align}
+Since
+\begin{align}\nonumber
+  \int_0^{2\pi}\sin\theta\cos\theta e^{-c i\cos(\theta - \Theta)} \d d\theta
+  & =
+  \int_0^{2\pi}\sin(t+\Theta)\cos(t+\Theta)
+  e^{-c i \cos t} \d dt \\\nonumber
+  &=
+  \int_0^{2\pi}
+  \Big[\,
+  \frac12 \sin 2t\cos 2\Theta + \frac12\cos 2t\sin 2\Theta
+  \,\Big]
+  e^{-c i\cos t} \d dt \\\nonumber
+  &=
+  -\pi \sin 2\Theta J_2(-2\pi kr\sin\phi\sin\Phi)
+\end{align}
+And
+\begin{align}\nonumber
+  &
+  \int_0^\pi -\pi \sin 2\Theta\,
+  \sin^3\phi\,
+  J_2(b\sin\phi\sin\Phi) e^{b\cos\phi\cos\Phi} \,\d d\phi \\\nonumber
+  = \,&
+  -\pi\sin 2\Theta\,
+  \big(
+  \frac{2\pi}{c}
+  \big)^{\frac12}
+  \sin^2\Phi \,J_{\frac52}(b) \\\nonumber
+  = \,&
+  -\pi\sin 2\Theta\,
+  \sqrt{\frac1{kr}}\:
+  \sin^2\Phi \,J_{\frac52}(2\pi kr) 
+\end{align}
+Therefore,
+\begin{align}
+  [\,r_1 r_2\,G^c(r)\,]^{\wedge} 
+  =
+  -\int_{r_c}^\infty
+  \d dr\,
+  r^4G(r)\,\pi\,
+  \sqrt{\frac1{kr}}\:
+  \sin^2\Phi\sin 2\Theta\,J_{\frac52}(2\pi kr)\,
+\end{align}
+
+
+
+
+
+For $\alpha = 1,\ \beta = 3$,
+\begin{align}\nonumber
+  [\,r_1 r_3\,G^c(r)\,]^{\wedge} 
+  &= \int_{\mathbb R^3} r_1 r_3\,G^c(r)\, e^{-2\pi i\v k\cdot\v r}\d d\v r \\\nonumber
+  &= \int_{r_c}^\infty \d dr \int_{0}^{2\pi} \d d\theta \int_0^\pi\d d\phi\:
+  r^2\sin\phi \,r^2 \sin\phi\cos\theta\cos\phi  \,G(r)\,
+  e^{-2\pi k r[\sin\phi\sin\Phi\cos(\theta - \Theta) + \cos\phi\cos\Phi]} \\
+  &= \int_{r_c}^\infty \d dr \int_{0}^{2\pi} \d d\theta \int_0^\pi\d d\phi\:
+  r^4\sin^2\phi\cos\phi\,G(r)\,e^{-2\pi i kr\cos\phi\cos\Phi}
+  \cos\theta\,e^{-2\pi i kr\sin\phi\sin\Phi\cos(\theta- \Theta)}
+\end{align}
+Since
+\begin{align}\nonumber
+  \int_0^{2\pi}\cos\theta e^{-c i\cos(\theta - \Theta)} \d d\theta
+  &=
+  \int_0^{2\pi}\cos(t+\Theta) e^{-c i\cos t} \d d t\\\nonumber
+  & =
+  \int_0^{2\pi}
+  \big[
+   \cos t\cos \Theta - \sin t\sin \Theta
+  \,\big]
+  e^{-c i\cos t} \d dt \\\nonumber
+  &=
+  2\pi i  \cos \Theta J_1(-2\pi kr\sin\phi\sin\Phi)
+\end{align}
+And
+\begin{align}\nonumber
+  &
+  \int_0^\pi
+  2\pi i \cos \Theta\,
+  \sin^2\phi\cos\phi\,
+  J_1(b\sin\phi\sin\Phi) e^{b\cos\phi\cos\Phi} \,\d d\phi \\\nonumber
+  = \,&
+  \int_0^\pi
+  2\pi i \cos \Theta\,
+  \frac13\sin^2\phi\, C_1^{\frac32}(\cos\phi)
+  J_1(b\sin\phi\sin\Phi) e^{b\cos\phi\cos\Phi} \,\d d\phi \\\nonumber
+  = \,&
+  2\pi i \cos \Theta\,
+  \big(
+  \frac{2\pi}{c}
+  \big)^{\frac12}
+  \sin\Phi\, \frac 13\,i\, C_1^{\frac32}(\cos\Phi)
+  J_{\frac52}(b) \\\nonumber
+  = \,&
+  -2 \pi\,
+  \sqrt{\frac1{kr}}\:
+  \sin\Phi\cos\Phi\cos\Theta \,J_{\frac52}(2\pi kr) 
+\end{align}
+Therefore,
+\begin{align}
+  [\,r_1 r_3\,G^c(r)\,]^{\wedge} 
+  =
+  -\int_{r_c}^\infty
+  \d dr\,
+  r^4G(r)\,\pi\,
+  \sqrt{\frac1{kr}}\:
+  \sin2\Phi\cos\Theta\,J_{\frac52}(2\pi kr)\,
+\end{align}
+Similarly,
+\begin{align}
+  [\,r_2 r_3\,G^c(r)\,]^{\wedge} 
+  =
+  -\int_{r_c}^\infty
+  \d dr\,
+  r^4G(r)\,\pi\,
+  \sqrt{\frac1{kr}}\:
+  \sin2\Phi\sin\Theta\,J_{\frac52}(2\pi kr)\,
+\end{align}
+
+
+
+
+
+\newpage
+
+
+
+
+\section{Results}
+
+
+
+
+
+
+\begin{table}
+  \centering
+  \begin{tabular*}{0.95\textwidth}{@{\extracolsep{\fill}}c|l|ccccccc}\hline\hline
+    $T^\ast$ & \textrm{method} &$r^\ast_{c}$ & $\mathcal E^\ast_{\textrm{target}}$  & $\rho^\ast_{\textrm{liq}}$ & $\rho^\ast_{\textrm{vap}}$ & $\gamma^\ast_{\textrm{sim}}$ & $\gamma^\ast_{\textrm{tail}}$ & $\gamma^\ast$ \\\hline
+    & \textrm{unifom} & 5.0     & -       & 0.0024 (0) & 0.8364 (1) & 1.001 (7) & 0.120 & 1.121 (7) \\
+    & \textrm{adapt}  & -       & 0.030   & 0.0024 (0) & 0.8358 (1) & 0.999 (9) & 0.138 & 1.137 (9) \\
+0.70& \textrm{unifom} & 7.5     & -       & 0.0022 (0) & 0.8405 (1) & 1.081 (8) & 0.054 & 1.135 (8) \\
+    & \textrm{adapt}  & -       & 0.006   & 0.0021 (0) & 0.8405 (1) & 1.098 (9) & 0.063 & 1.161 (9) \\
+    & \textrm{ref}    & -       & -       & 0.0020 (0) & 0.8414 (1) & 1.081(11) & -     & 1.141(11) \\    \hline
+    & \textrm{unifom} & 5.0     & -       & 0.0112 (1) & 0.7681 (2) & 0.707 (7) & 0.094 & 0.801 (7) \\
+    & \textrm{adapt}  & -       & 0.030   & 0.0115 (1) & 0.7665 (2) & 0.673 (5) & 0.116 & 0.789 (5) \\
+0.85& \textrm{unifom} & 7.5     & -       & 0.0102 (1) & 0.7741 (2) & 0.776 (7) & 0.044 & 0.819 (7) \\
+    & \textrm{adapt}  & -       & 0.006   & 0.0101 (1) & 0.7737 (2) & 0.752(10) & 0.054 & 0.806(10) \\
+    & \textrm{ref}    & -       & -       & 0.0098 (0) & 0.7750 (1) & 0.818(15) & -     & 0.818(15) \\    \hline
+    & \textrm{unifom} & 5.0     & -       & 0.0635 (4) & 0.6258 (6) & 0.234 (8) & 0.044 & 0.279 (8) \\
+    & \textrm{adapt}  & -       & 0.020   & 0.0667 (4) & 0.6219 (5) & 0.207(10) & 0.053 & 0.260(10) \\
+1.10& \textrm{unifom} & 7.5     & -       & 0.0573 (4) & 0.6373 (5) & 0.281 (6) & 0.023 & 0.303 (6) \\
+    & \textrm{adapt}  & -       & 0.004   & 0.0594 (4) & 0.6345 (5) & 0.275 (6) & 0.054 & 0.303 (6) \\
+    & \textrm{ref}    & -       & -       & 0.0553 (0) & 0.6383 (1) & 0.302(11) & -     & 0.302(11) \\    \hline
+    & \textrm{unifom} & 5.0     & -       & 0.1187 (6) & 0.5376(10) & 0.082 (6) & 0.019 & 0.102 (6) \\
+    & \textrm{adapt}  & -       & 0.015   & 0.1391 (8) & 0.5262(16) & 0.054 (8) & 0.021 & 0.075 (8) \\
+1.20& \textrm{unifom} & 7.5     & -       & 0.1057 (7) & 0.5588(10) & 0.120 (8) & 0.012 & 0.132 (8) \\
+    & \textrm{adapt}  & -       & 0.003   & 0.1063 (9) & 0.5550 (8) & 0.113 (5) & 0.015 & 0.129 (5) \\
+    & \textrm{ref}    & -       & -       & 0.0942 (0) & 0.5627 (2) & 0.156(14) & -     & 0.156(14) \\    \hline    \hline    
+  \end{tabular*}
+\end{table}
+
+
+% \newpage
+
+% \bibliography{ref}{}
+% \bibliographystyle{unsrt}
+
+
+\end{document}
