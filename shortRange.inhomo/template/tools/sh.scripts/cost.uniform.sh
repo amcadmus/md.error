@@ -3,7 +3,7 @@
 source parameters.sh
 
 st_start=5000
-print_format="%.2e"
+print_format="%.1e"
 
 step_start=`echo $st_start / $dt | bc -l | cut -d '.' -f 1`
 nstart=`echo "$step_start / $thermoFeq" | bc `
