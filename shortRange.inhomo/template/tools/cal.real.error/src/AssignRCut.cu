@@ -15,6 +15,23 @@ AssignRCut::
 
 void AssignRCut::
 reinit (const MDSystem & sys,
+	const IndexType & NThread)
+{
+  myBlockDim.y = 1;
+  myBlockDim.z = 1;
+  myBlockDim.x = NThread;
+  IndexType nob;
+  if (sys.ddata.numAtom % myBlockDim.x == 0){
+    nob = sys.ddata.numAtom / myBlockDim.x;
+  } else {
+    nob = sys.ddata.numAtom / myBlockDim.x + 1;
+  }
+  atomGridDim = toGridDim (nob);
+}
+
+
+void AssignRCut::
+reinit (const MDSystem & sys,
 	const AdaptRCut & arc,
 	const IndexType & NThread)
 {
@@ -176,5 +193,45 @@ write (const ScalorType & time) const
   fwrite (hrcut,    sizeof(ScalorType), nele, fp_write);
 }
 
+void AssignRCut::
+init_read (const char * file)
+{
+  fp_read = fopen (file, "r");
+  if (fp_read == NULL){
+    fprintf (stderr, "cannot open file %s\n", file);
+    exit(1);
+  }
+  double tmpbox[3];
+  int tmpnn[3];
+  
+  fread (tmpbox, sizeof(double), 3, fp_read);
+  fread (tmpnn,  sizeof(int),    3, fp_read);
 
+  nx = nn[0];
+  ny = nn[1];
+  nz = nn[2];
+  nele = nx * ny * nz;
+  setBoxSize (tmpbox[0], tmpbox[1], tmpbox[2], boxsize);
+
+  freeAll();
+  hrcut = (ScalorType *) malloc (sizeof(ScalorType ) * nele);
+  cudaMalloc ((void **) &drcut, sizeof(ScalorType ) * nele);
+  checkCUDAError ("AssignRCut::reinit malloc drcut");
+  malloced = true;
+}
+
+void AssignRCut::
+read (ScalorType & time) 
+{
+  fread (&time, sizeof(ScalorType), 1,    fp_read);
+  fread (hrcut, sizeof(ScalorType), nele, fp_read);
+  cudaMemcpy (drcut, hrcut, sizeof(ScalorType) * nele, cudaMemcpyHostToDevice);
+  checkCUDAError ("AssignRCut::getRCut copy");
+}
+
+void AssignRCut::
+end_read () const
+{
+  fclose (fp_read);
+}
 

@@ -20,6 +20,7 @@ class AssignRCut
   dim3 myBlockDim;
   dim3 atomGridDim;
   mutable FILE * fp_write;
+  mutable FILE * fp_read;
 private:
   void freeAll ();
 public:
@@ -32,10 +33,13 @@ public:
   void uniform (const double & rc);
   void assign (MDSystem & sys);
 public:
-  void print_x  (const char * file) const;
-  void init_write (const char * file) const;
-  void write (const ScalorType & time) const;
-  void end_write () const;
+  void print_x		 (const char * file) const;
+  void init_write	 (const char * file) const;
+  void write		 (const ScalorType & time) const;
+  void end_write	 () const;
+  void init_read	 (const char * file);
+  void read		 (ScalorType & time);
+  void end_read		 () const
 }
     ;
 
