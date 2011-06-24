@@ -104,8 +104,8 @@ int main(int argc, char * argv[])
   
   ScalorType maxrcut = sysNbInter.maxRcut();
   ScalorType rlist = maxrcut + nlistExten;
-  CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
-  CellList clist_resh (sys, 3., NThreadsPerBlockCell, NThreadsPerBlockAtom);
+  CellList clist (sys, rcmax+nlistExten, NThreadsPerBlockCell, NThreadsPerBlockAtom);
+  CellList clist_resh (sys, rcmin, NThreadsPerBlockCell, NThreadsPerBlockAtom);
   NeighborList nlist (sysNbInter, sys, rlist, nlistExten, NThreadsPerBlockAtom, 4.f);
   sys.normalizeDeviceData ();
   clist.rebuild (sys, NULL);
