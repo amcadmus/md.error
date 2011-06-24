@@ -52,17 +52,6 @@ int main (int argc, char * argv[])
   arc.uniformRCut (rcut);
   arc.print_error_avg (dp, "a.error.x.out");
 
-  PressureCorrection pc;
-  pc.reinit (arc, dp);
-  pc.correction (arc, dp);
-  printf ("pc is %e %e %e\n", pc.pxx, pc.pyy, pc.pzz);
-  printf ("tension is %e\n", (pc.pxx - (pc.pyy + pc.pzz) * 0.5) * 0.5 * dp.getBox()[0]);
-  
-  // PresureCorrection pc (rcut, dp);
-  // pc.correction (dp);
-  // printf ("pc is %e %e %e\n", pc.pxx, pc.pyy, pc.pzz);
-  // printf ("tension is %e\n", (pc.pxx - (pc.pyy + pc.pzz) * 0.5) * 0.5 * dp.getBox()[0]);
-  
   return 0;
 }
 

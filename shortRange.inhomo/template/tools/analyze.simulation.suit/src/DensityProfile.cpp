@@ -6,6 +6,58 @@
 
 void DensityProfile_PiecewiseConst::
 reinit_conf (const std::string & filename,
+	     const int & nx_,
+	     const int & ny_,
+	     const int & nz_)
+{
+  std::vector<int > resdindex;
+  std::vector<std::string >  resdname;
+  std::vector<std::string >  atomname;
+  std::vector<int > atomindex;
+  std::vector<std::vector<double > > posi;
+  std::vector<std::vector<double > > velo;
+
+  GroFileManager::read (filename,
+  			resdindex, resdname, atomname, atomindex,
+  			posi, velo, boxsize);
+  nx = nx_;
+  ny = ny_;
+  nz = nz_;
+  hx = boxsize[0] / nx;
+  hy = boxsize[1] / ny;
+  hz = boxsize[2] / nz;
+  nele = nx * ny * nz;
+  
+  profile.clear();
+  profile.resize (nx * ny * nz, 0.);
+
+  for (unsigned i = 0; i < posi.size(); ++i) {
+    double tmp;
+    tmp = posi[i][0];
+    if      (posi[i][0] >= boxsize[0]) tmp -= boxsize[0];
+    else if (posi[i][0] <  0)          tmp += boxsize[0];
+    unsigned ix = unsigned (tmp / hx);
+    tmp = posi[i][1];
+    if      (posi[i][1] >= boxsize[1]) tmp -= boxsize[1];
+    else if (posi[i][1] <  0)          tmp += boxsize[1];
+    unsigned iy = unsigned (tmp / hy);
+    tmp = posi[i][2];
+    if      (posi[i][2] >= boxsize[2]) tmp -= boxsize[2];
+    else if (posi[i][2] <  0)          tmp += boxsize[2];
+    unsigned iz = unsigned (tmp / hz);
+    profile[index3to1(ix, iy, iz)] += 1.;
+  }
+
+  double dvolume = hx * hy * hz;
+
+  for (unsigned i = 0; i < profile.size(); ++i){
+    profile[i] /= dvolume;
+  }
+}
+
+
+void DensityProfile_PiecewiseConst::
+reinit_conf (const std::string & filename,
 	     const double & refh)
 {
   std::vector<int > resdindex;
@@ -21,6 +73,9 @@ reinit_conf (const std::string & filename,
   nx = unsigned (boxsize[0] / refh);
   ny = unsigned (boxsize[1] / refh);
   nz = unsigned (boxsize[2] / refh);
+  if ((nx - (nx/2)*2) == 0) nx++;
+  if ((ny - (ny/2)*2) == 0) ny++;
+  if ((nz - (nz/2)*2) == 0) nz++;
   hx = boxsize[0] / nx;
   hy = boxsize[1] / ny;
   hz = boxsize[2] / nz;

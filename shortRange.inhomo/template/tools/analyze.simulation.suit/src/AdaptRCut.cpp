@@ -490,6 +490,88 @@ uniformRCut (const double & rc)
 }
 
 
+void AdaptRCut::
+load_rc (const std::string & file,
+	 const DensityProfile_PiecewiseConst & dp)
+{
+  FILE * fp = fopen (file.c_str(), "r");
+  if (fp == NULL){
+    fprintf (stderr, "cannot open file %s\n", file.c_str());
+    exit (1);
+  }
+  fscanf (fp, "%d", &nrc);
+  rcList.resize (nrc);
+  for (int i = 0; i < nrc; ++i){
+    fscanf (fp, "%lf", &rcList[i]);
+  }
+  boxsize.resize (3);
+  fscanf (fp, "%lf %lf %lf", &boxsize[0], &boxsize[1], &boxsize[2]);
+  fscanf (fp, "%d %d %d", &nx, &ny, &nz);
+  nele = nx * ny * nz;
+  hx = boxsize[0] / nx;
+  hy = boxsize[1] / ny;
+  hz = boxsize[2] / nz;
+
+  freeAll();
+
+  rhor = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
+  rhok = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
+  mallocArrayComplex (&s1k,  nrc, nele);
+  mallocArrayComplex (&s2kx, nrc, nele);
+  mallocArrayComplex (&s2ky, nrc, nele);
+  mallocArrayComplex (&s2kz, nrc, nele);
+  mallocArrayComplex (&error1k,  nrc, nele);
+  mallocArrayComplex (&error2kx, nrc, nele);
+  mallocArrayComplex (&error2ky, nrc, nele);
+  mallocArrayComplex (&error2kz, nrc, nele);
+  mallocArrayComplex (&error1r,  nrc, nele);
+  mallocArrayComplex (&error2rx, nrc, nele);
+  mallocArrayComplex (&error2ry, nrc, nele);
+  mallocArrayComplex (&error2rz, nrc, nele);
+  mallocArrayComplex (&error, nrc, nele);
+  rcut = (double *) malloc (sizeof(double) * nele);
+  rcutIndex = (int *) malloc (sizeof(int) * nele);
+  result_error = (double *) malloc (sizeof(double) * nele);
+
+  for (int i = 0; i < nele; ++i){
+    fscanf (fp, "%d ", &rcutIndex[i]);
+    rcut[i] = rcList[rcutIndex[i]];
+  }
+  
+  p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
+  p_backward_error1  = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  p_backward_error2x = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  p_backward_error2y = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  p_backward_error2z = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  for (int count = 0; count < nrc; ++count){
+    p_backward_error1[count] = fftw_plan_dft_3d (nx, ny, nz, error1k[count], error1r[count], FFTW_BACKWARD,  FFTW_PATIENT);
+    p_backward_error2x[count] = fftw_plan_dft_3d (nx, ny, nz, error2kx[count], error2rx[count], FFTW_BACKWARD,  FFTW_PATIENT);
+    p_backward_error2y[count] = fftw_plan_dft_3d (nx, ny, nz, error2ky[count], error2ry[count], FFTW_BACKWARD,  FFTW_PATIENT);
+    p_backward_error2z[count] = fftw_plan_dft_3d (nx, ny, nz, error2kz[count], error2rz[count], FFTW_BACKWARD,  FFTW_PATIENT);
+  }
+  
+  malloced = true;
+
+  printf ("# reinit: start build k mat 1 ...");
+  fflush (stdout);
+  makeS1k (1., 1.);
+  printf (" done\n");  
+  fflush (stdout);
+  printf ("# reinit: start build k mat 2 ...");
+  fflush (stdout);
+  makeS2k (1., 1.);
+  printf (" done\n");  
+  fflush (stdout);
+
+  calError (dp);
+
+  for (int ii = 0; ii < nele; ++ii){
+    result_error[ii] = error[rcutIndex[ii]][ii][0];
+  }
+}
+
+
+
 // void AdaptRCut::
 // print_error_uni_rc (const std::string & file,
 // 		    const double & rcut) const
@@ -577,6 +659,8 @@ print_error_avg (const DensityProfile_PiecewiseConst & dp,
     // 	     error[4][index3to1(i,0,0)][0],
     // 	     error[4][index3to1(i,0,0)][1]
     // 	);
+    fprintf (fp, "%f", (i + 0.5) * hx);
+    fprintf (fp, "%e", sum);
     fprintf (fp, "%f %e\n",
 	     (i + 0.5) * hx,
 	     sum);

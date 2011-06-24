@@ -38,6 +38,10 @@ public:
 		const float & end);
   void reinit_conf (const std::string & filename,
 		    const double & refh);
+  void reinit_conf (const std::string & filename,
+		    const int & nx,
+		    const int & ny,
+		    const int & nz);
 public:
   const double & getProfile (const unsigned & ix,
 			     const unsigned & iy,

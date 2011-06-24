@@ -101,6 +101,8 @@ public:
 			const std::string & file) const;
   void save_rc  (const std::string & file) const;
   void write_rc (const std::string & file) const;
+  void load_rc  (const std::string & file,
+		 const DensityProfile_PiecewiseConst & dp);
 }
     ;
 
