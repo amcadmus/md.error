@@ -35,9 +35,11 @@ int main(int argc, char * argv[])
 {
   char * filename;
   char rcutsavename [1024];
-
-  if (argc != 6){
-    printf ("Usage:\n%s conf.gro rcut.save device refh rcut2\n", argv[0]);
+  char xtcname[] = "traj.xtc";
+  float start_t;
+  
+  if (argc != 7){
+    printf ("Usage:\n%s conf.gro rcut.rtj device refh rcut2 start_t\n", argv[0]);
     return 1;
   }
   filename = argv[1];
@@ -46,6 +48,7 @@ int main(int argc, char * argv[])
   cudaSetDevice (atoi(argv[3]));
   checkCUDAError ("set device");
   double refh = atof (argv[4]);
+  start_t = atof (argv[6]);
 
   MDSystem sys;
   sys.initConfig(filename);
@@ -74,45 +77,64 @@ int main(int argc, char * argv[])
   InteractionEngine inter (sys, NThreadsPerBlockAtom);
   inter.registNonBondedInteraction (sysNbInter);
 
-  inter.clearInteraction (sys);
-  inter.applyNonBondedInteraction (sys, rcut2);    
+  AssignRCut assign;
+  assign.reinit (sys, NThreadsPerBlockAtom);
+  assign.init_read (rcutsavename);
 
+  int step;
+  int natoms= 0;
+  float time, timercut, prec;
+  matrix gbox;  
+  rvec * xx;
+  xx = (rvec *) malloc (sizeof(rvec) * sys.hdata.numAtom);
+  XDRFILE * fpxtc = xdrfile_open (xtcname, "r");
+  if (fpxtc == NULL){
+    fprintf (stderr, "cannot open file %s\n", xtcname);
+    return 1;;
+  }
   std::vector<double > boxsize (3);
   boxsize[0] = sys.box.size.x;
   boxsize[1] = sys.box.size.y;
   boxsize[2] = sys.box.size.z;
-
   ErrorProfile_PiecewiseConst ep (boxsize, refh);
-  AdaptRCut arc;
-  arc.load_rc (std::string(rcutsavename));
-  AssignRCut assign;
-  assign.reinit (sys, arc, NThreadsPerBlockAtom);
-  assign.getRCut (arc);
-  assign.assign (sys);
-
-  inter.clearInteraction (sys);
-  inter.applyNonBondedInteraction (sys, NULL, rcut2);
-  cpyDeviceMDDataToHost (&sys.ddata, &sys.hdata);
-
   std::vector<std::vector<double > > coord, force;
-
-  for (unsigned i = 0; i < sys.hdata.numAtom; ++i){
-    std::vector<double > tmp(3);
-    tmp[0] = sys.hdata.coord[i].x;
-    tmp[1] = sys.hdata.coord[i].y;
-    tmp[2] = sys.hdata.coord[i].z;
-    coord.push_back (tmp);
-    tmp[0] = sys.hdata.forcx[i];
-    tmp[1] = sys.hdata.forcy[i];
-    tmp[2] = sys.hdata.forcz[i];
-    force.push_back (tmp);
+  coord.resize (sys.hdata.numAtom, std::vector<double > (3, 0.));
+  force.resize (sys.hdata.numAtom, std::vector<double > (3, 0.));
+  read_xtc (fpxtc, natoms, &step, &time, gbox, xx, &prec);
+  while (read_xtc (fpxtc, natoms, &step, &time, gbox, xx, &prec) == 0){
+    assign.read (timercut);
+    if (fabs (time - timercut) > 1e-4) {
+      printf ("inconsistent trajactories\n");
+      exit (1);
+    }
+    if (time < start_t - 1e-4) continue;
+    printf ("loaded frame at time %f ps       \r", time);
+    fflush (stdout);
+    assign.assign (sys);
+    for (unsigned i = 0; i < sys.hdata.numAtom; ++i){
+      sys.hdata.coord[i].x = xx[i][0];
+      sys.hdata.coord[i].y = xx[i][1];
+      sys.hdata.coord[i].z = xx[i][2];
+    }
+    cpyHostMDDataToDevice (&sys.hdata, &sys.ddata);
+    inter.clearInteraction (sys);
+    inter.applyNonBondedInteraction (sys, NULL, rcut2);
+    cpyDeviceMDDataToHost (&sys.ddata, &sys.hdata);
+    for (unsigned i = 0; i < sys.hdata.numAtom; ++i){
+      coord[i][0] = sys.hdata.coord[i].x;
+      coord[i][1] = sys.hdata.coord[i].y;
+      coord[i][2] = sys.hdata.coord[i].z;
+      force[i][0] = sys.hdata.forcx[i];
+      force[i][1] = sys.hdata.forcy[i];
+      force[i][2] = sys.hdata.forcz[i];
+    }
+    ep.deposit (coord, force);
   }
-
-  ep.deposit (coord, force);
+  
   ep.calculate();
-  // ep.print_x (("real.x.out"));
+  ep.print_x (("real.x.out"));
   ep.print_x_avg (("a.real.x.out"));
-  // ep.print_xy (("real.xy.out"));
+  // ep.print_xy (("real.xy.out"));  
   
   return 0;
 }

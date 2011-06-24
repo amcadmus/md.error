@@ -37,9 +37,12 @@ public:
   void init_write	 (const char * file) const;
   void write		 (const ScalorType & time) const;
   void end_write	 () const;
+public:
+  void reinit (const MDSystem & sys,
+	       const IndexType & NThread);
   void init_read	 (const char * file);
   void read		 (ScalorType & time);
-  void end_read		 () const
+  void end_read		 () const;
 }
     ;
 

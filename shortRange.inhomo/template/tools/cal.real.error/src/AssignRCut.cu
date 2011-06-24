@@ -203,15 +203,24 @@ init_read (const char * file)
   }
   double tmpbox[3];
   int tmpnn[3];
+  int status;
   
-  fread (tmpbox, sizeof(double), 3, fp_read);
-  fread (tmpnn,  sizeof(int),    3, fp_read);
+  status = fread (tmpbox, sizeof(double), 3, fp_read);
+  if (status != 3){
+    printf ("format error\n");
+    exit(1);
+  }
+  status = fread (tmpnn,  sizeof(int),    3, fp_read);
+  if (status != 3){
+    printf ("format error\n");
+    exit(1);
+  }
 
-  nx = nn[0];
-  ny = nn[1];
-  nz = nn[2];
+  nx = tmpnn[0];
+  ny = tmpnn[1];
+  nz = tmpnn[2];
   nele = nx * ny * nz;
-  setBoxSize (tmpbox[0], tmpbox[1], tmpbox[2], boxsize);
+  setBoxSize (tmpbox[0], tmpbox[1], tmpbox[2], box);
 
   freeAll();
   hrcut = (ScalorType *) malloc (sizeof(ScalorType ) * nele);
@@ -223,8 +232,17 @@ init_read (const char * file)
 void AssignRCut::
 read (ScalorType & time) 
 {
-  fread (&time, sizeof(ScalorType), 1,    fp_read);
-  fread (hrcut, sizeof(ScalorType), nele, fp_read);
+  int status;
+  status = fread (&time, sizeof(ScalorType), 1,    fp_read);
+  if (status != 1){
+    printf ("format error\n");
+    exit(1);
+  }
+  status = fread (hrcut, sizeof(ScalorType), nele, fp_read);
+  if (status != nele){
+    printf ("format error\n");
+    exit(1);
+  }
   cudaMemcpy (drcut, hrcut, sizeof(ScalorType) * nele, cudaMemcpyHostToDevice);
   checkCUDAError ("AssignRCut::getRCut copy");
 }
