@@ -526,7 +526,7 @@ print_error_avg (const DensityProfile_PiecewiseConst & dp,
     // 	     error[4][index3to1(i,0,0)][0],
     // 	     error[4][index3to1(i,0,0)][1]
     // 	);
-    fprintf (fp, "%f %e %f\n",
+    fprintf (fp, "%f %e\n",
 	     (i + 0.5) * hx,
 	     sum);
   }
