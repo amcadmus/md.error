@@ -255,7 +255,7 @@ int main(int argc, char * argv[])
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
-	// dp.write ((i+1) * dt);
+	dp.write ((i+1) * dt);
 	assign_rcut.write ((i+1) * dt);
       }
       
