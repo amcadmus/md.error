@@ -24,21 +24,14 @@ int main (int argc, char * argv[])
   std::string filename;
   po::options_description desc ("Allow options");  
 
-  float start_t, end_t;
   double h;
   double rcut;
-  double rcmin, rcmax, rcstep;
   
   desc.add_options()
       ("help,h", "print this message")
-      ("start,s", po::value<float > (&start_t)->default_value (0.f),  "start time")
-      ("end,e",   po::value<float > (&end_t)  ->default_value (0.f),  "end time, 0 is infinity")
       ("rcut,r", po::value<double >(&rcut)->default_value(5.), "cut-off radius")
-      ("rcmin", po::value<double >(&rcmin)->default_value(03.0), "min cut-off radius")
-      ("rcmax", po::value<double >(&rcmax)->default_value(10.0), "max cut-off radius")
-      ("rcstep", po::value<double >(&rcstep)->default_value(0.5), "step of cut-off radius increase")
-      ("bin-size",  po::value<double > (&h)->default_value (1.),  "bin size")
-      ("file-name,f", po::value<std::string > (&filename)->default_value (std::string("traj.xtc"), "trajactory file name"));
+      ("bin-size,b",  po::value<double > (&h)->default_value (1.),  "bin size")
+      ("file-name,f", po::value<std::string > (&filename)->default_value (std::string("confout.gro"), "conf file name"));
 
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -50,15 +43,14 @@ int main (int argc, char * argv[])
   }
 
   DensityProfile_PiecewiseConst dp;
-  dp.reinit_xtc (filename, h);
-  dp.deposit (filename, start_t, end_t);
-  dp.print_x ("density.x.out");
+  dp.reinit_conf (filename, h);
+  // dp.print_x ("density.x.out");
 
   AdaptRCut arc;
-  arc.reinit (rcmin, rcmax, rcstep, dp);
+  arc.reinit (rcut, rcut, 1, dp);
   arc.calError (dp);
   arc.uniformRCut (rcut);
-  arc.print_error ("error.x.out");
+  arc.print_error_avg (dp, "a.error.x.out");
 
   PressureCorrection pc;
   pc.reinit (arc, dp);

@@ -36,6 +36,8 @@ public:
   void deposit (const std::string & filename,
 		const float & start,
 		const float & end);
+  void reinit_conf (const std::string & filename,
+		    const double & refh);
 public:
   const double & getProfile (const unsigned & ix,
 			     const unsigned & iy,

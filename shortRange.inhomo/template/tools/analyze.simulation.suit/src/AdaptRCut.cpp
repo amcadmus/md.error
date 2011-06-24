@@ -549,6 +549,40 @@ print_error (const std::string & file) const
   fclose (fp);
 }
 
+void AdaptRCut::    
+print_error_avg (const DensityProfile_PiecewiseConst & dp,
+		 const std::string & file) const 
+{
+  FILE * fp = fopen (file.c_str(), "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  for (int i = 0; i < nx; ++i){
+    double sum = 0.;
+    double sumprofile = 0.;
+    for (int j = 0; j < ny; ++j){
+      for (int k = 0; k < nz; ++k){
+    	sum += result_error[index3to1(i,j,k)] *
+	    result_error[index3to1(i,j,k)] *
+	    dp.getProfile(i,j,k);
+	sumprofile += dp.getProfile (i,j,k);
+      }
+    }
+    sum /= sumprofile;
+    sum = sqrt(sum);
+    // fprintf (fp, "%f %e %e\n",
+    // 	     (i + 0.5) * hx,
+    // 	     error[4][index3to1(i,0,0)][0],
+    // 	     error[4][index3to1(i,0,0)][1]
+    // 	);
+    fprintf (fp, "%f %e\n",
+	     (i + 0.5) * hx,
+	     sum);
+  }
+  fclose (fp);
+}
   
   
 void AdaptRCut::    

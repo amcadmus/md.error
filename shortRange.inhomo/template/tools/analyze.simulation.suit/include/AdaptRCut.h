@@ -96,7 +96,9 @@ public:
   void uniformRCut (const double & rcut);
 public:
   void print_rc (const std::string & file) const;
-  void print_error  (const std::string & file) const;
+  void print_error     (const std::string & file) const;
+  void print_error_avg (const DensityProfile_PiecewiseConst & dp,
+			const std::string & file) const;
   void save_rc  (const std::string & file) const;
   void write_rc (const std::string & file) const;
 }

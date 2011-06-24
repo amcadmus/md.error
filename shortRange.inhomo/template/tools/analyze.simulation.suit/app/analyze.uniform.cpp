@@ -52,13 +52,13 @@ int main (int argc, char * argv[])
   DensityProfile_PiecewiseConst dp;
   dp.reinit_xtc (filename, h);
   dp.deposit (filename, start_t, end_t);
-  dp.print_x ("density.x.out");
+  // dp.print_x ("density.x.out");
 
   AdaptRCut arc;
   arc.reinit (rcmin, rcmax, rcstep, dp);
   arc.calError (dp);
   arc.uniformRCut (rcut);
-  arc.print_error ("error.x.out");
+  // arc.print_error ("error.x.out");
 
   PressureCorrection pc;
   pc.reinit (arc, dp);
