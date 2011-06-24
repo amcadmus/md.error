@@ -110,9 +110,9 @@ int main(int argc, char * argv[])
 
   ep.deposit (coord, force);
   ep.calculate();
-  ep.print_x (("real.x.out"));
+  // ep.print_x (("real.x.out"));
   ep.print_x_avg (("a.real.x.out"));
-  ep.print_xy (("real.xy.out"));
+  // ep.print_xy (("real.xy.out"));
   
   return 0;
 }
