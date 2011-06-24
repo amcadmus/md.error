@@ -157,7 +157,7 @@ int main(int argc, char * argv[])
     sys.updateHostFromRecovered (&timer);
     sys.writeHostDataXtc (0, 0*dt, &timer);
     for (i = 0; i < nstep; ++i){
-      if (i%10 == 0){
+      if (i%1 == 0){
 	tfremover.remove (sys, &timer);
       }
       
