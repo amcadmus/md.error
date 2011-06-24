@@ -50,7 +50,7 @@ int main (int argc, char * argv[])
   arc.reinit (rcut, rcut, 1, dp);
   arc.calError (dp);
   arc.uniformRCut (rcut);
-  arc.print_error_avg (dp, "a.error.x.out");
+  arc.print_error_avg (dp, "a.error.conf.x.out");
 
   return 0;
 }

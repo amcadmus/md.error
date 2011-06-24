@@ -61,7 +61,7 @@ int main (int argc, char * argv[])
 
   AdaptRCut arc;
   arc.load_rc (rcutfilename, dp);
-  arc.print_error_avg (dp, "a1.error.x.out");
+  arc.print_error_avg (dp, "a.error.conf.x.out");
 
   return 0;
 }
