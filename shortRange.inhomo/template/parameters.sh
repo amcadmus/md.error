@@ -6,7 +6,7 @@ nstep=2000000
 confFeq=2000
 thermoFeq=100
 rcut=10.0
-nlistExten=0.3
+nlistExten=0.49
 
 refT=0.7
 tauT=1.0
@@ -15,9 +15,9 @@ NTCell=96
 NTAtom=96
 
 # adapt rcut parameters
-densityProfileSamplingFeq=100
-rcutAssignFeq=10
-rcutUpdateFeq=10000
+densityProfileSamplingFeq=40
+rcutAssignFeq=40
+rcutUpdateFeq=20000
 refh=1.0
 rcmin=03.0
 rcmax=10.0
