@@ -36,6 +36,9 @@ class AdaptRCut
   inline unsigned index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const;
   inline void     index1to3 (unsigned& input,
 			     unsigned& ix, unsigned& iy, unsigned& iz) const;
+  inline int  index3to1 (int  ix, int  iy, int  iz) const;
+  inline void index1to3 (int& input,
+			 int& ix, int& iy, int& iz) const;
 private:
   std::vector<double > rcList;
   int nrc;
@@ -93,6 +96,7 @@ public:
 	       DensityProfile_PiecewiseConst & dp);
   void calError (const DensityProfile_PiecewiseConst & dp);
   void calRCut  (const double & prec);
+  void refineRCut ();
   void print_x  (const std::string & file) const;
   void print_error_avg (const DensityProfile_PiecewiseConst & dp,
 			const std::string & file) const ;
@@ -117,6 +121,25 @@ index1to3 (unsigned& input,
 	   unsigned& ix, unsigned& iy, unsigned& iz) const
 {
   unsigned tmp = input;
+  iz = tmp % (nz);
+  tmp = (tmp - iz) / nz;
+  iy = tmp % (ny);
+  ix =  (tmp - iy) / ny;
+}
+
+
+
+int AdaptRCut::
+index3to1 (int  ix, int  iy, int  iz) const
+{
+  return iz + nz * (iy + ny * ix);
+}
+
+void AdaptRCut::
+index1to3 (int& input,
+	   int& ix, int& iy, int& iz) const
+{
+  int tmp = input;
   iz = tmp % (nz);
   tmp = (tmp - iz) / nz;
   iy = tmp % (ny);

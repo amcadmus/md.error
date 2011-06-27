@@ -467,6 +467,43 @@ calRCut  (const double & prec)
   }
 }
 
+void AdaptRCut::
+refineRCut () 
+{
+  int * rcutIndex_bk = (int *) malloc (sizeof(int) * nele);
+  for (int i = 0; i < nele; ++i){
+    rcutIndex_bk[i] = 0;
+  }
+
+  for (int i = 0; i < nele; ++i){
+    int ix, iy, iz;
+    index1to3 (i, ix, iy, iz);
+    for (int dx = -1; dx <= 1; ++dx){
+      int jx = ix + dx;
+      if      (jx <  0 ) jx += nx;
+      else if (jx >= nx) jx -= nx;
+      for (int dy = -1; dy <= 1; ++dy){
+	int jy = iy + dy;
+	if      (jy <  0 ) jy += ny;
+	else if (jy >= ny) jy -= ny;
+	for (int dz = -1; dz <= 1; ++dz){
+	  int jz = iz + dz;
+	  if      (jz <  0 ) jz += nz;
+	  else if (jz >= nz) jz -= nz;
+	  if (rcutIndex[index3to1(jx, jy, jz)] > rcutIndex_bk[i]){
+	    rcutIndex_bk[i] = rcutIndex[index3to1(jx, jy, jz)];
+	  }
+	}
+      }
+    }
+  }
+
+  for (int i = 0; i < nele; ++i){
+    rcutIndex[i] = rcutIndex_bk[i];
+    rcut[i] = rcList[rcutIndex[i]];
+    result_error[i] = error[rcutIndex[i]][i][0];
+  }
+}
 
 void AdaptRCut::    
 print_x (const std::string & file) const 

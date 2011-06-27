@@ -40,20 +40,21 @@ int main(int argc, char * argv[])
   IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.005;
-  ScalorType rcut = 7.5;
-  ScalorType nlistExten = 0.5;
-  ScalorType refT = 1.20;
+  ScalorType rcut = 5.0;
+  ScalorType nlistExten = 0.49;
+  ScalorType refT = 1.10;
   ScalorType tauT = 1.0;
   char * filename;
 
   IndexType densityProfileSamplingFeq = 40;
   IndexType rcutAssignFeq = 40;
   IndexType rcutUpdateFeq = 2000;
+  IndexType numRefine = 0;
   double refh = 1.0;
   double rcmin = 03.0;
   double rcmax = 10.0;
   double rcstep = 0.5;
-  double targetPrec = 0.003;
+  double targetPrec = 0.020;
   
   if (argc != 4){
     printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
@@ -239,6 +240,9 @@ int main(int argc, char * argv[])
 	timer.tic (mdTimeAdaptRCut);
 	arc.calError (dp);
 	arc.calRCut (targetPrec);
+	for (IndexType jj = 0; jj < numRefine; ++jj){
+	  arc.refineRCut ();
+	}
 	arc.print_x ("error.x.out");
 	assign_rcut.getRCut (arc);
 	assign_rcut.print_x ("rcut.x.out");
