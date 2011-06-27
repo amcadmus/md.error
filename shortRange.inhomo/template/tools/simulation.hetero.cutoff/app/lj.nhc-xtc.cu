@@ -49,7 +49,7 @@ int main(int argc, char * argv[])
   IndexType densityProfileSamplingFeq = 40;
   IndexType rcutAssignFeq = 40;
   IndexType rcutUpdateFeq = 2000;
-  IndexType numRefine = 0;
+  IndexType rcutNumRefine = 0;
   double refh = 1.0;
   double rcmin = 03.0;
   double rcmax = 10.0;
@@ -240,7 +240,7 @@ int main(int argc, char * argv[])
 	timer.tic (mdTimeAdaptRCut);
 	arc.calError (dp);
 	arc.calRCut (targetPrec);
-	for (IndexType jj = 0; jj < numRefine; ++jj){
+	for (IndexType jj = 0; jj < rcutNumRefine; ++jj){
 	  arc.refineRCut ();
 	}
 	arc.print_x ("error.x.out");

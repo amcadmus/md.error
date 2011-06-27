@@ -18,6 +18,7 @@ NTAtom=96
 densityProfileSamplingFeq=40
 rcutAssignFeq=40
 rcutUpdateFeq=20000
+rcutNumRefine=2
 refh=1.0
 rcmin=03.0
 rcmax=10.0

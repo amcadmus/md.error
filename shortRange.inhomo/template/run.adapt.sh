@@ -14,6 +14,7 @@ function set_parameter () {
     sed -e "/ScalorType dt/s/=.*/= $dt;/g" |\
     sed -e "/IndexType rcutUpdateFeq/s/=.*/= $rcutUpdateFeq;/g"|\
     sed -e "/IndexType rcutAssignFeq/s/=.*/= $rcutAssignFeq;/g"|\
+    sed -e "/IndexType rcutNumRefine/s/=.*/= $rcutNumRefine;/g"|\
     sed -e "/IndexType densityProfileSamplingFeq/s/=.*/= $densityProfileSamplingFeq;/g"|\
     sed -e "/double refh/s/=.*/= $refh;/g"|\
     sed -e "/double rcmin/s/=.*/= $rcmin;/g"|\
