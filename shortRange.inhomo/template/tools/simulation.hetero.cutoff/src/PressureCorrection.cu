@@ -214,7 +214,8 @@ correction (const AdaptRCut & arc,
 
 double PressureCorrection::
 integral_ff_i1_numerical (const double & k,
-			  const double & rc)
+			  const double & rc,
+			  const double & rc2)
 {
   Integral1D<FF_I1, double > inte_ff_i1;
   double prec = 1e-7;
@@ -222,7 +223,7 @@ integral_ff_i1_numerical (const double & k,
   double tmpvalue;
   tmpvalue =  inte_ff_i1.cal_int (Integral1DInfo::Gauss4,
   				  ff_i1,
-  				  rc, integral_upper,
+  				  rc, rc2,
   				  prec);
   // printf ("value: %e\n", tmpvalue);
   // double newprec = fabs(tmpvalue) * 1e-4;
@@ -236,7 +237,8 @@ integral_ff_i1_numerical (const double & k,
 
 double PressureCorrection::
 integral_ff_i5_numerical (const double & k,
-			  const double & rc)
+			  const double & rc,
+			  const double & rc2)
 {
   Integral1D<FF_I5, double > inte_ff_i5;
   double prec = 1e-7;
@@ -244,7 +246,7 @@ integral_ff_i5_numerical (const double & k,
   double tmpvalue;
   tmpvalue = inte_ff_i5.cal_int (Integral1DInfo::Gauss4,
   				 ff_i5,
-  				 rc, integral_upper,
+  				 rc, rc2,
   				 prec);
   // double newprec = fabs(tmpvalue) * 1e-4;
   // // printf ("newprec: %e\n", newprec);
@@ -264,7 +266,7 @@ makeKernel ()
 
   double kx, ky, kz;
   for (int count = nrc-1; count >= 0; --count){
-      printf ("# rc is %f   \r", rcList[count]);
+    printf ("# rc is %f   \r", rcList[count]);
     for (int ix = -nx/2; ix < nx - nx/2; ++ix){
       kx = ix / boxsize[0];
       int locx;
@@ -299,25 +301,42 @@ makeKernel ()
 	      theta_k = acos(tmp);
 	      if (ky < 0) theta_k = 2. * M_PI - theta_k;
 	    }
-	    double rc = rcList[count];
-	    double i1 = integral_ff_i1_numerical (k, rc);
-	    double i5 = integral_ff_i5_numerical (k, rc);
 	    double tmpscale = pre * M_PI / sqrt(k);
 	    double cp = cos(phi_k);
 	    double sp = sin(phi_k);
 	    // double ct = cos(theta_k);
 	    // double st = sin(theta_k);
-	    kxxk[count][posi][0] = tmpscale * (
-		2./3. * i1 +
-		(-1./3. + cp*cp - sp*sp*cos(theta_k*2)) * i5);
+	    if (count == nrc - 1){
+	      double rc = rcList[count];
+	      double i1 = integral_ff_i1_numerical (k, rc, integral_upper);
+	      double i5 = integral_ff_i5_numerical (k, rc, integral_upper);
+	      kxxk[count][posi][0] = tmpscale * (
+		  2./3. * i1 +
+		  (-1./3. + cp*cp - sp*sp*cos(theta_k*2)) * i5);
+	      kyyk[count][posi][0] = tmpscale * (
+		  2./3. * i1 +
+		  (-1./3. + cp*cp + sp*sp*cos(theta_k*2)) * i5);
+	      kzzk[count][posi][0] = tmpscale * 4./3. *
+		  (0.5*i1 + (0.5 - 1.5 * cp*cp) * i5);
+	    }
+	    else {
+	      double i1 = integral_ff_i1_numerical (k, rcList[count], rcList[count+1]);
+	      double i5 = integral_ff_i5_numerical (k, rcList[count], rcList[count+1]);
+	      kxxk[count][posi][0] = kxxk[count+1][posi][0] + 
+		  tmpscale * (
+		      2./3. * i1 +
+		      (-1./3. + cp*cp - sp*sp*cos(theta_k*2)) * i5);
+	      kyyk[count][posi][0] = kyyk[count+1][posi][0] +
+		  tmpscale * (
+		      2./3. * i1 +
+		      (-1./3. + cp*cp + sp*sp*cos(theta_k*2)) * i5);
+	      kzzk[count][posi][0] = kzzk[count+1][posi][0] +
+		  tmpscale * 4./3. *
+		  (0.5 * i1 + (0.5 - 1.5 * cp * cp) * i5);
+	    }
 	    kxxk[count][posi][1] = 0;
-	    kyyk[count][posi][0] = tmpscale * (
-		2./3. * i1 +
-		(-1./3. + cp*cp + sp*sp*cos(theta_k*2)) * i5);
 	    kyyk[count][posi][1] = 0;
-	    kzzk[count][posi][0] = tmpscale * 4./3. *
-		(0.5*i1 + (0.5 - 1.5 * cp*cp) * i5);
-	    kzzk[count][posi][1] = 0;
+	    kzzk[count][posi][1] = 0;	      
 	  }
 	  else {
 	    kxxk[count][posi][0] = 0;

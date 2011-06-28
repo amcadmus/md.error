@@ -503,6 +503,8 @@ refineRCut ()
     rcut[i] = rcList[rcutIndex[i]];
     result_error[i] = error[rcutIndex[i]][i][0];
   }
+
+  free (rcutIndex_bk);
 }
 
 void AdaptRCut::    

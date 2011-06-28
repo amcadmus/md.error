@@ -82,13 +82,15 @@ private:
   void freeAll ();
   void makeKernel ();
   double integral_ff_i1_numerical (const double & k,
-				   const double & rc);
+				   const double & rc,
+				   const double & rc2);
   double integral_ff_i5_numerical (const double & k,
-				   const double & rc);
+				   const double & rc,
+				   const double & rc2);
 public:
   double pxx, pyy, pzz;
   PressureCorrection (const AdaptRCut & arc,
-		     const DensityProfile_PiecewiseConst & dp);
+		      const DensityProfile_PiecewiseConst & dp);
   ~PressureCorrection ();
   void reinit (const AdaptRCut & arc,
 	       const DensityProfile_PiecewiseConst & dp);
