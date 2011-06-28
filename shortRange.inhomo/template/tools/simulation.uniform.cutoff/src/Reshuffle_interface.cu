@@ -11,6 +11,7 @@ reinit (const MDSystem & sys)
   clear();
   cudaMalloc ((void**)&indexTable, sizeof(IndexType) * sys.hdata.numAtom);
   checkCUDAError ("Reshuffle::reinit");
+  malloced = true;
 }
 
 Reshuffle::

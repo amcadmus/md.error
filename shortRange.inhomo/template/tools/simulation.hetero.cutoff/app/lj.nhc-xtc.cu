@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
   Topology::Molecule mol;
   mol.pushAtom (Topology::Atom (1.0, 0.0, 0));
   LennardJones6_12Parameter ljparam;
-  ljparam.reinit (1.f, 1.f, 0.f, rcut);
+  ljparam.reinit (1.f, 1.f, 0.f, rcmax);
   sysTop.addNonBondedInteraction (Topology::NonBondedInteraction(0, 0, ljparam));
   sysTop.addMolecules (mol, sys.hdata.numAtom);
 
@@ -103,9 +103,8 @@ int main(int argc, char * argv[])
   ScalorType energyCorr = sysNbInter.energyCorrection ();
   ScalorType pressureCorr = sysNbInter.pressureCorrection ();
   
-  ScalorType maxrcut = sysNbInter.maxRcut();
-  ScalorType rlist = maxrcut + nlistExten;
-  CellList clist (sys, rcmax+nlistExten, NThreadsPerBlockCell, NThreadsPerBlockAtom);
+  ScalorType rlist = rcmax + nlistExten;
+  CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
   CellList clist_resh (sys, rcmin, NThreadsPerBlockCell, NThreadsPerBlockAtom);
   NeighborList nlist (sysNbInter, sys, rlist, nlistExten, NThreadsPerBlockAtom, 4.f);
   sys.normalizeDeviceData ();

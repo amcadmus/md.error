@@ -173,7 +173,6 @@ int main(int argc, char * argv[])
       }
 
       if ((i+1) % confFeq == 0){
-	printf ("write conf\n");
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);

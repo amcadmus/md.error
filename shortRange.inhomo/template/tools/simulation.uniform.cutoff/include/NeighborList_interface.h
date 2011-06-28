@@ -49,6 +49,7 @@ public:
   IndexType		NatomType;
   IndexType *		nbForceTable;
   IndexType		nbForceTableLength;
+  bool			mallocedSumNeighbor;
   SumVector<IndexType > sumNeighbor;
   IndexType *		sumNeighbor_dresult;
   IndexType 		sumNeighbor_hresult;

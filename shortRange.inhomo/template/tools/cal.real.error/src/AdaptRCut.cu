@@ -333,7 +333,7 @@ makeS2k (const double & epsilon,
 	    s2kx[count][posi][0] = 0.;
 	    s2kx[count][posi][1] += size * kx;
 	    s2ky[count][posi][0] = 0.;
-	    s2ky[count][posi][1] += size * kx;
+	    s2ky[count][posi][1] += size * ky;
 	    s2kz[count][posi][0] = 0.;
 	    s2kz[count][posi][1] += size * kz;
 	    // if (ix == -nx/2 ||

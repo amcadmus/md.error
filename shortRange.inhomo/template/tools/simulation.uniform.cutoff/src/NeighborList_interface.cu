@@ -50,6 +50,10 @@ clearNonBondedForce ()
 void NeighborList::
 clear()
 {
+  if (mallocedSumNeighbor){
+    cudaFree (sumNeighbor_dresult);
+    mallocedSumNeighbor = false;
+  }
   clearDeviceNeighborList();
   clearNonBondedForce();
   unbindGlobalTexture ();
@@ -230,9 +234,10 @@ reinit (const SystemNonBondedInteraction & sysNbInter,
   myrlist = rlist;
   dnlist.rlist = myrlist;
   dnlist.stride = sys.ddata.numAtom;
-  sumNeighbor.reinit (sys.ddata.numAtom, NThreadForSum);
+  sumNeighbor.reinit (dnlist.stride, NThreadForSum);
   cudaMalloc ((void**) &sumNeighbor_dresult, sizeof(IndexType));
   checkCUDAError ("NeighborList::reinit, sumNeighbor");
+  mallocedSumNeighbor = true;
   
   // init neighbor list
   clearDeviceNeighborList ();
@@ -318,7 +323,8 @@ NeighborList (const SystemNonBondedInteraction & sysNbInter,
 	      const ScalorType & DeviceNeighborListExpansion)
     : mallocedDeviceNeighborList (false),
       mallocedNonBondedForceTable (false),
-      initedGlobalTexture (false)
+      initedGlobalTexture (false),
+      mallocedSumNeighbor (false)
 {
   reinit (sysNbInter, sys, rlist, NTread, DeviceNeighborListExpansion);
 }

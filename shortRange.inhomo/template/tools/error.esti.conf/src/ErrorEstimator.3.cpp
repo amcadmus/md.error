@@ -650,7 +650,7 @@ makeS2k (const double & epsilon,
 	  s2kx[posi][0] = 0.;
 	  s2kx[posi][1] = 2 * M_PI * kx * an + size * kx;
 	  s2ky[posi][0] = 0.;
-	  s2ky[posi][1] = 2 * M_PI * ky * an + size * kx;
+	  s2ky[posi][1] = 2 * M_PI * ky * an + size * ky;
 	  s2kz[posi][0] = 0.;
 	  s2kz[posi][1] = 2 * M_PI * kz * an + size * kz;
 	  if (ix == -nx/2 ||
