@@ -137,6 +137,9 @@ int main(int argc, char * argv[])
   ep.print_x_avg (("a.real.x.out"));
   // ep.print_xy (("real.xy.out"));
   
+  free (xx);
+  xdrfile_close (fpxtc);
+  
   return 0;
 }
 
