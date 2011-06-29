@@ -60,9 +60,9 @@ getForceCorr (const ScalorType & x,
   else if (tmpy >= box.size.y) tmpy -= box.size.y;
   if      (tmpz <  0         ) tmpz += box.size.z;
   else if (tmpz >= box.size.z) tmpz -= box.size.z;
-  IndexType idx = index3to1(tmpx / box.size.x,
-			    tmpy / box.size.y,
-			    tmpz / box.size.z);
+  IndexType idx = index3to1(tmpx / box.size.x * nx,
+			    tmpy / box.size.y * ny ,
+			    tmpz / box.size.z * nz);
   fcx = hfcx[idx];
   fcy = hfcy[idx];
   fcz = hfcz[idx];

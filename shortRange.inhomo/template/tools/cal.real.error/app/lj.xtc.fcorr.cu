@@ -98,6 +98,7 @@ int main(int argc, char * argv[])
   std::vector<std::vector<double > > coord, force;
   coord.resize (sys.hdata.numAtom, std::vector<double > (3, 0.));
   force.resize (sys.hdata.numAtom, std::vector<double > (3, 0.));
+  read_xtc (fpxtc, natoms, &step, &time, gbox, xx, &prec);
   while (read_xtc (fpxtc, natoms, &step, &time, gbox, xx, &prec) == 0){
     afc.read (afctime);
     if (fabs (time - afctime) > 1e-4) {
@@ -124,6 +125,7 @@ int main(int argc, char * argv[])
       afc.getForceCorr (coord[i][0], coord[i][1], coord[i][2],
 			cfx, cfy, cfz);
       force[i][0] = sys.hdata.forcx[i] - cfx;
+      // force[i][0] = sys.hdata.forcx[i] ;
       force[i][1] = sys.hdata.forcy[i] - cfy;
       force[i][2] = sys.hdata.forcz[i] - cfz;
     }
