@@ -14,8 +14,6 @@ class AssignForceCorr
   inline unsigned index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const;
   inline void     index1to3 (unsigned& input,
 			     unsigned& ix, unsigned& iy, unsigned& iz) const;
-
-  ScalorType maxRCut;
   ScalorType * hfcx, * hfcy, *hfcz;
   ScalorType * dfcx, * dfcy, *dfcz;
   bool malloced;
@@ -33,11 +31,11 @@ public:
   void getForceCorr (const ForceCorr & arc);
   void zero ();
   void assign (MDSystem & sys);
-  ScalorType getMaxRCut () const {return maxRCut;}
+public:
   void print_x  (const char * file) const;
-  // void init_write (const char * file) const;
-  // void write (const ScalorType & time) const;
-  // void end_write () const;
+  void init_write (const char * file) const;
+  void write (const ScalorType & time) const;
+  void end_write () const;
 }
     ;
 

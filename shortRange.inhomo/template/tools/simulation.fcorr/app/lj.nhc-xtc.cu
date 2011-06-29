@@ -49,6 +49,7 @@ int main(int argc, char * argv[])
   IndexType densityProfileSamplingFeq = 40;
   IndexType assignForceCorrFeq = 40;
   IndexType updateForceCorrFeq = 2000;
+  char afcname[] = "fc.ctj";
 
   if (argc != 4){
     printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
@@ -143,6 +144,7 @@ int main(int argc, char * argv[])
     sys.recoverDeviceData (&timer);
     sys.updateHostFromRecovered (&timer);
     sys.writeHostDataXtc (0, 0*dt, &timer);
+    afc.init_write (afcname);
     for (i = 0; i < nstep; ++i){
       if (i%1 == 0){
 	tfremover.remove (sys, &timer);
@@ -222,6 +224,7 @@ int main(int argc, char * argv[])
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
+	afc.write ((i+1)*dt);
       }
       
       if ((i+1) % 100 == 0){
@@ -254,6 +257,8 @@ int main(int argc, char * argv[])
 
   // dp.end_write();
   dp.save ("density.save");
+
+  afc.end_write();
   
   return 0;
 }
