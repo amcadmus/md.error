@@ -12,6 +12,9 @@ ErrorProfile_PiecewiseConst (const std::vector<double > &box,
   nx = unsigned (boxsize[0] / refh);
   ny = unsigned (boxsize[1] / refh);
   nz = unsigned (boxsize[2] / refh);
+  if ((nx - (nx/2)*2) == 0) nx++;
+  if ((ny - (ny/2)*2) == 0) ny++;
+  if ((nz - (nz/2)*2) == 0) nz++;
   hx = boxsize[0] / nx;
   hy = boxsize[1] / ny;
   hz = boxsize[2] / nz;

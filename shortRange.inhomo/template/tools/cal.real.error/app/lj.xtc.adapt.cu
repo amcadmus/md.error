@@ -110,13 +110,13 @@ int main(int argc, char * argv[])
     if (time < start_t - 1e-4) continue;
     printf ("loaded frame at time %f ps       \r", time);
     fflush (stdout);
-    assign.assign (sys);
     for (unsigned i = 0; i < sys.hdata.numAtom; ++i){
       sys.hdata.coord[i].x = xx[i][0];
       sys.hdata.coord[i].y = xx[i][1];
       sys.hdata.coord[i].z = xx[i][2];
     }
     cpyHostMDDataToDevice (&sys.hdata, &sys.ddata);
+    assign.assign (sys);
     inter.clearInteraction (sys);
     inter.applyNonBondedInteraction (sys, NULL, rcut2);
     cpyDeviceMDDataToHost (&sys.ddata, &sys.hdata);
@@ -128,6 +128,35 @@ int main(int argc, char * argv[])
       force[i][1] = sys.hdata.forcy[i];
       force[i][2] = sys.hdata.forcz[i];
     }
+    // {
+    //   int i = 179;
+    //   double fsumx, fsumy, fsumz;
+    //   fsumx = fsumy = fsumz = 0.;
+    //   for (int jj = 0; jj < sys.hdata.numAtom; ++jj){
+    // 	double diffx = coord[i][0] - coord[jj][0];
+    // 	if      (diffx < -0.5 * sys.box.size.x) diffx += sys.box.size.x;
+    // 	else if (diffx >= 0.5 * sys.box.size.x) diffx -= sys.box.size.x;
+    // 	for (int idy = -2; idy <= 2; ++idy){
+    // 	  for (int idz = -2; idz <= 2; ++idz){
+    // 	    double diffy = coord[i][1] - coord[jj][1] - idy * sys.box.size.y;
+    // 	    double diffz = coord[i][2] - coord[jj][2] - idz * sys.box.size.z;
+    // 	    if (idy == 0 && idz == 0 && jj == i) continue;
+    // 	    ScalorType dr2 = diffx*diffx+diffy*diffy+diffz*diffz;
+    // 	    if ((dr2 <= 30*30) && (dr2 >= 5*5)){
+    // 	      double boolScalor = 4.f;
+    // 	      double ri2 = 1.f/dr2;
+    // 	      double sri2 = ri2;
+    // 	      ScalorType sri6 = sri2*sri2*sri2;
+    // 	      boolScalor *= (6.f * sri6 - 12.f * sri6*sri6) * ri2;
+    // 	      fsumx += diffx * boolScalor;
+    // 	      fsumy += diffy * boolScalor;
+    // 	      fsumz += diffz * boolScalor;
+    // 	    }
+    // 	  }
+    // 	}
+    //   }
+    //   printf ("%f\n", fsumx);
+    // }
     ep.deposit (coord, force);
   }
   

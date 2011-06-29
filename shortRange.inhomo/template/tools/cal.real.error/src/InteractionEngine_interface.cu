@@ -2508,10 +2508,10 @@ calNonBondedInteraction_all (const IndexType		numAtom,
 	      // if (fidx != mdForceNULL) {
 	      ScalorType fx, fy, fz, dp;
 	      nbForcePoten (nonBondedInteractionType[fidx],
-			    &nonBondedInteractionParameter
-			    [nonBondedInteractionParameterPosition[fidx]],
-			    diffx, diffy, diffz,
-			    &fx, &fy, &fz, &dp);
+	      		    &nonBondedInteractionParameter
+	      		    [nonBondedInteractionParameterPosition[fidx]],
+	      		    diffx, diffy, diffz,
+	      		    &fx, &fy, &fz, &dp);
 	      fsumx += fx;
 	      fsumy += fy;
 	      fsumz += fz;
