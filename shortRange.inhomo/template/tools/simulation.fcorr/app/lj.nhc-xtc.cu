@@ -43,7 +43,7 @@ int main(int argc, char * argv[])
   ScalorType nlistExten = 0.49;
   ScalorType refT = 1.10;
   ScalorType tauT = 1.0;
-  ScalorType refh = 1.0;
+  double refh = 1.0;
   char * filename;
 
   IndexType densityProfileSamplingFeq = 40;
