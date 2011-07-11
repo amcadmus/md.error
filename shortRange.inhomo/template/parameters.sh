@@ -14,12 +14,14 @@ tauT=1.0
 NTCell=96
 NTAtom=96
 
-# adapt rcut parameters
+# density profile parameters
+refh=1.0
 densityProfileSamplingFeq=40
+
+# adapt rcut parameters
 rcutAssignFeq=40
 rcutUpdateFeq=20000
 rcutNumRefine=2
-refh=1.0
 rcmin=03.0
 rcmax=10.0
 rcstep=0.5
