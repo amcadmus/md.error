@@ -52,9 +52,9 @@ int main (int argc, char * argv[])
 
   int nlattice = int(L / refh) + 1;
   refh = L / (nlattice);
-  std::cout << "lattice size is " << refh << std::endl;
-  std::cout << "nlattice is     " << nlattice << std::endl;
-  std::cout << "box is          " << L << std::endl;
+  std::cout << "# lattice size is " << refh << std::endl;
+  std::cout << "# nlattice is     " << nlattice << std::endl;
+  std::cout << "# box is          " << L << std::endl;
   
   for (int ix = 0; ix < nlattice; ++ix){
     for (int iy = 0; iy < nlattice; ++iy){
@@ -82,7 +82,7 @@ int main (int argc, char * argv[])
   }
 
   unsigned natom = posi.size();
-  std::cout << "natom is        " << natom << std::endl;
+  std::cout << "# natom is        " << natom << std::endl;
   unsigned count = 1;
   for (unsigned i = 0; i < natom; ++i){
     velo.push_back(zero);
