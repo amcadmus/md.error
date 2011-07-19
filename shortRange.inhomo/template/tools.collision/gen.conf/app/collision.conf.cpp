@@ -103,6 +103,8 @@ int main (int argc, char * argv[])
   Lz = 3. * dmax;
   std::cout << "# rmax is " << rmax << std::endl;
   std::cout << "# dmax is " << dmax << std::endl;
+  std::cout << "# x value is " << xx << std::endl;
+  std::cout << "# u value is " << uu << std::endl;
   
   double XX = xx * dmax;
   std::vector<double > newcenter0(3), newcenter1(3);
