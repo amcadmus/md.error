@@ -28,7 +28,7 @@ int main (int argc, char * argv[])
   desc.add_options()
       ("help,h", "print this message")
       ("box-size,L", po::value<double > (&L)    ->default_value (84.553),  "box size.")
-      ("lattice,h",  po::value<double > (&refh) ->default_value (1.5658),  "lattice size.")
+      ("lattice,l",  po::value<double > (&refh) ->default_value (1.5658),  "lattice size.")
       ("r-ball,r",   po::value<double > (&rball)->default_value (13.5)  ,  "radius of the cluster.")
       ("file-name,f",	po::value<std::string > (&filename)->	default_value (std::string("confout.gro"), "file to output"));
   
@@ -64,17 +64,18 @@ int main (int argc, char * argv[])
 	tmp[1] = (iy + 0.25) * refh;
 	tmp[2] = (iz + 0.25) * refh;
 	for (unsigned i = 0; i < 4; ++i){
+	  std::vector<double > tmp1(tmp);
 	  if (i != 3){
-	    if (i != 0) tmp[0] += 0.5 * refh;
-	    if (i != 1) tmp[1] += 0.5 * refh;
-	    if (i != 2) tmp[2] += 0.5 * refh;
+	    if (i != 0) tmp1[0] += 0.5 * refh;
+	    if (i != 1) tmp1[1] += 0.5 * refh;
+	    if (i != 2) tmp1[2] += 0.5 * refh;
 	  }
-	  double drx = tmp[0] - L * 0.5;
-	  double dry = tmp[1] - L * 0.5;
-	  double drz = tmp[2] - L * 0.5;
+	  double drx = tmp1[0] - L * 0.5;
+	  double dry = tmp1[1] - L * 0.5;
+	  double drz = tmp1[2] - L * 0.5;
 	  double diff = sqrt (drx * drx + dry * dry + drz * drz);
 	  if (diff < rball){
-	    posi.push_back (tmp);
+	    posi.push_back (tmp1);
 	  }
 	}
       }
