@@ -23,7 +23,7 @@
 // #define NThreadsPerBlockCell	32
 // #define NThreadsPerBlockAtom	4
 
-#define NThreadsPerBlockCell	160
+#define NThreadsPerBlockCell	128
 #define NThreadsPerBlockAtom	96
 
 int main(int argc, char * argv[])
@@ -33,10 +33,11 @@ int main(int argc, char * argv[])
   IndexType thermoFeq = 100;
   ScalorType dt = 0.002;
   ScalorType rcut = 10.0;
-  ScalorType nlistExten = 0.3;
-  ScalorType nlistSizeFactor = 4.f;
+  ScalorType nlistExten = 0.49;
+  ScalorType nlistSizeFactor = 4.0;
+  IndexType  clistDivision = 1;
   ScalorType refT = 0.70;
-  ScalorType tauT = 1.;
+  ScalorType tauT = 1.0;
   char * filename;
   
   if (argc != 4){
@@ -72,7 +73,12 @@ int main(int argc, char * argv[])
   
   ScalorType maxrcut = sysNbInter.maxRcut();
   ScalorType rlist = maxrcut + nlistExten;
-  CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
+  CellList clist (sys,
+		  rlist,
+		  NThreadsPerBlockCell,
+		  NThreadsPerBlockAtom,
+		  7,
+		  clistDivision);
   NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, nlistSizeFactor);
   sys.normalizeDeviceData ();
   clist.rebuild (sys, NULL);
