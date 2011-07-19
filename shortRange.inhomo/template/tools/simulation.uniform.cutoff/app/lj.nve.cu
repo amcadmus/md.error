@@ -23,18 +23,18 @@
 // #define NThreadsPerBlockCell	32
 // #define NThreadsPerBlockAtom	4
 
-#define NThreadsPerBlockCell	128
+#define NThreadsPerBlockCell	96
 #define NThreadsPerBlockAtom	96
 
 int main(int argc, char * argv[])
 {
   IndexType nstep = 100000;
-  IndexType confFeq = 500;
+  IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.002;
-  ScalorType rcut = 10.0;
+  ScalorType rcut = 2.5;
   ScalorType nlistExten = 0.49;
-  ScalorType nlistSizeFactor = 4.0;
+  ScalorType nlistSizeFactor = 100.0;
   IndexType  clistDivision = 1;
   char * filename;
   
@@ -95,7 +95,6 @@ int main(int argc, char * argv[])
   RandomGenerator_MT19937::init_genrand (seed);
 
   VelocityVerlet inte_vv (sys, NThreadsPerBlockAtom);
-  VelocityRescale inte_vr (sys, NThreadsPerBlockAtom, refT, 0.1);
   
   Reshuffle resh (sys);
   
@@ -112,8 +111,8 @@ int main(int argc, char * argv[])
   sys.updateHostFromRecovered (&timer);
   sys.writeHostDataGro ("confstart.gro", 0, 0.f, &timer);
   printf ("# prepare ok, start to run\n");
-  printf ("#*     1     2           3         4            5       6                7          8          9         10        11\n");
-  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  NHC_Hamiltonian pressureXX pressureYY pressureZZ s_tension\n");
+  printf ("#*     1     2           3         4            5       6           7          8          9        10\n");
+  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  pressureXX pressureYY pressureZZ s_tension\n");
 
   try{
     sys.initWriteXtc ("traj.xtc");
@@ -156,7 +155,7 @@ int main(int argc, char * argv[])
 	ScalorType px = st.pressureXX (sys.box);
 	ScalorType py = st.pressureYY (sys.box);
 	ScalorType pz = st.pressureZZ (sys.box);
-	printf ("%09d %07e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.2e\n",
+	printf ("%09d %07e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.2e\n",
 		(i+1),  
 		(i+1) * dt, 
 		st.nonBondedEnergy(),
@@ -164,9 +163,6 @@ int main(int argc, char * argv[])
 		st.kineticEnergy() * 2. / 3. / (double (sys.hdata.numAtom) - 3.),
 		st.nonBondedEnergy() +
 		st.kineticEnergy(),
-		st.nonBondedEnergy() +
-		st.kineticEnergy() +
-		nhc.HamiltonianContribution (),
 		px, py, pz,
 		(px - (py + pz) * 0.5) * sys.box.size.x * 0.5,
                 double (nlist.calSumNeighbor ())
