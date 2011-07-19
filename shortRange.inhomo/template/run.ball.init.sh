@@ -10,6 +10,7 @@ function set_parameter () {
     sed -e "/ScalorType rcut/s/=.*/= $ball_rcut;/g" |\
     sed -e "/ScalorType nlistExten/s/=.*/= $ball_nlistExten;/g" |\
     sed -e "/ScalorType nlistSizeFactor/s/=.*/= $ball_nlistSizeFactor;/g" |\
+    sed -e "/IndexType  clistDivision/s/=.*/= $ball_clistDivision;/g" |\
     sed -e "/ScalorType refT/s/=.*/= $ball_refT;/g" |\
     sed -e "/ScalorType tauT/s/=.*/= $ball_tauT;/g" |\
     sed -e "/ScalorType dt/s/=.*/= $ball_dt;/g" |\
