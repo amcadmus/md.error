@@ -34,6 +34,7 @@ int main(int argc, char * argv[])
   ScalorType dt = 0.002;
   ScalorType rcut = 10.0;
   ScalorType nlistExten = 0.3;
+  ScalorType nlistSizeFactor = 4.f;
   ScalorType refT = 0.70;
   ScalorType tauT = 1.;
   char * filename;
@@ -72,7 +73,7 @@ int main(int argc, char * argv[])
   ScalorType maxrcut = sysNbInter.maxRcut();
   ScalorType rlist = maxrcut + nlistExten;
   CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
-  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 4.f);
+  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, nlistSizeFactor);
   sys.normalizeDeviceData ();
   clist.rebuild (sys, NULL);
   nlist.rebuild (sys, clist, NULL);
