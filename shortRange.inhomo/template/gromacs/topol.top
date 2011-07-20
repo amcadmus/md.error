@@ -1,0 +1,8 @@
+#include "lj.itp"
+
+[ system ]
+mols  
+
+[ molecules ]
+mola 10792
+molb 10792
