@@ -25,12 +25,20 @@ rm -f conf.gro
 if test -f $collsion_init_conf; then
     echo "# the init ball conf exists, generate collision conf."
     make -C tools.collision/gen.conf/ -j4 &>> make.log
-    tools.collision/gen.conf/collision.conf -x $collision_x -u $collision_u
+    tools.collision/gen.conf/collision.conf -x $collision_x -u $collision_u --ball-conf $collision_init_conf
     mv confout.gro conf.gro
 else
     echo "# the init ball conf does not exist, exit"
     exit
 fi
+natom=`head conf.gro -n 2 | tail -n 1`
+natom2=`echo "$natom/2" | bc`
+sed -e "s/mola.*/mola $natom2/g" gromacs/topol.top | sed -e "s/molb.*/molb $natom2/g" > tmp.top
+mv -f tmp.top gromacs/topol.top
+cd gromacs
+ln -s ../conf.gro .
+ln -s ../traj.xtc .
+cd ..
 workdir=`pwd`
 command="$workdir/tools/simulation.uniform.cutoff/lj.nve conf.gro $collision_nstep $device"
 echo "command is: $command > gpu-md.out 2> gpu-md.perf"
