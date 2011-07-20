@@ -67,6 +67,10 @@ int main (int argc, char * argv[])
   double cma[3] = {0,0,0};
   double cmb[3] = {0,0,0};
   XDRFILE * fp = xdrfile_open (filename.c_str(), "r");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << filename << std::endl;
+    return 1;
+  }
   int natoms;
   char fname [1024];
   strncpy (fname, filename.c_str(), 1024);
