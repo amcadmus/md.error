@@ -600,7 +600,7 @@ print_rc (const std::string & file) const
     // }
     fprintf (fp, "%f %e %e\n",
 	     (i + 0.5) * hx,
-	     rcut[index3to1(i,0,0)], result_error[index3to1(i,0,0)]
+	     rcut[index3to1(i,ny/2,nz/2)], result_error[index3to1(i,ny/2,nz/2)]
 	);
   }
   fclose (fp);

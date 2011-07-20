@@ -216,37 +216,37 @@ rebuild (const MDSystem &	sys,
   
   if (timer != NULL) timer->tic(mdTimeBuildCellList);
   
-  IntVectorType tmpNCell;
-  bool buildNew = DecideNumCell (sys, mycellSize, mybdir, mydivide, tmpNCell);
+  // IntVectorType tmpNCell;
+  // bool buildNew = DecideNumCell (sys, mycellSize, mybdir, mydivide, tmpNCell);
   
-  if (isempty()){
-    if (buildNew){
-      printf ("# box size change too much, build cell list\n");
-      mallocDeviceCellList (tmpNCell, sys.box.size);
-      naivelyBuildDeviceCellList (sys);
-    }
-    else {
-      return ;
-    }
-  }
-  else {
-    if (buildNew){
-      if (tmpNCell.x != dclist.NCell.x ||
-	  tmpNCell.y != dclist.NCell.y ||
-	  tmpNCell.z != dclist.NCell.z ){
-	printf ("# box size change too much, rebuild cell list\n");
-	clearDeviceCellList ();
-	mallocDeviceCellList (tmpNCell, sys.box.size);
-	naivelyBuildDeviceCellList (sys);
-      }
-      else{
-	buildDeviceCellList (sys);
-      }
-    }
-    else {
-      clearDeviceCellList ();
-    }
-  }
+  // if (isempty()){
+  //   if (buildNew){
+  //     printf ("# box size change too much, build cell list\n");
+  //     mallocDeviceCellList (tmpNCell, sys.box.size);
+  //     naivelyBuildDeviceCellList (sys);
+  //   }
+  //   else {
+  //     return ;
+  //   }
+  // }
+  // else {
+  //   if (buildNew){
+  //     if (tmpNCell.x != dclist.NCell.x ||
+  // 	  tmpNCell.y != dclist.NCell.y ||
+  // 	  tmpNCell.z != dclist.NCell.z ){
+  // 	printf ("# box size change too much, rebuild cell list\n");
+  // 	clearDeviceCellList ();
+  // 	mallocDeviceCellList (tmpNCell, sys.box.size);
+  // 	naivelyBuildDeviceCellList (sys);
+  //     }
+  //     else{
+  // 	buildDeviceCellList (sys);
+  //     }
+  //   }
+  //   else {
+  //     clearDeviceCellList ();
+  //   }
+  // }
   if (timer != NULL) timer->toc(mdTimeBuildCellList);
 }
 

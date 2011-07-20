@@ -12,31 +12,47 @@
 #include "tmp.h"
 #include "Reshuffle_interface.h"
 #include "Displacement_interface.h"
+#include "AssignRCut.h"
 
 #include "Topology.h"
 #include "SystemBondedInteraction.h"
 
 #include "BondInteraction.h"
 #include "NonBondedInteraction.h"
+#include "PressureCorrection.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <fftw3.h>
 
 // #define NThreadsPerBlockCell	32
 // #define NThreadsPerBlockAtom	4
 
-#define NThreadsPerBlockCell	160
+#define NThreadsPerBlockCell	256
 #define NThreadsPerBlockAtom	96
+
+#include "DensityProfile.h"
 
 int main(int argc, char * argv[])
 {
-  IndexType nstep = 100000;
-  IndexType confFeq = 100000;
+  IndexType nstep = 10000;
+  IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
-  ScalorType dt = 0.0001;
+  ScalorType dt = 0.002;
   ScalorType rcut = 5.0;
-  ScalorType nlistExten = 0.3;
-  ScalorType refT = 0.70;
-  ScalorType tauT = 1.;
+  ScalorType nlistExten = 0.49;
+  ScalorType nlistSizeFactor = 100.f;
   char * filename;
+
+  IndexType densityProfileSamplingFeq = 10;
+  IndexType rcutAssignFeq = 10;
+  IndexType rcutUpdateFeq = 200;
+  IndexType rcutNumRefine = 1;
+  double refh = 1.5;
+  double rcmin = 02.5;
+  double rcmax = 05.0;
+  double rcstep = 0.5;
   
   if (argc != 4){
     printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
@@ -56,26 +72,39 @@ int main(int argc, char * argv[])
   Topology::System sysTop;
   Topology::Molecule mol;
   mol.pushAtom (Topology::Atom (1.0, 0.0, 0));
-  ScalorType capValue = 1000;
-  LennardJones6_12CapParameter ljparam;
-  ljparam.reinit (1.f, 1.f, 0.f, rcut, capValue);
+  LennardJones6_12Parameter ljparam;
+  ljparam.reinit (1.f, 1.f, 0.f, rcmax);
   sysTop.addNonBondedInteraction (Topology::NonBondedInteraction(0, 0, ljparam));
   sysTop.addMolecules (mol, sys.hdata.numAtom);
 
   sys.initTopology (sysTop);
   sys.initDeviceData ();
+
+  DensityProfile_PiecewiseConst dp;
+  printf ("# init DensityProfile_PiecewiseConst\n");
+  dp.reinit (sys.box.size.x, sys.box.size.y, sys.box.size.z, refh);
+  AdaptRCut arc;
+  printf ("# init AdaptRCut\n");
+  arc.reinit (rcmin, rcmax, rcstep, dp);
+  AssignRCut assign_rcut;
+  printf ("# init AssignRCut\n");
+  assign_rcut.reinit (sys, arc, NThreadsPerBlockAtom);
+  assign_rcut.uniform (rcut);
+  assign_rcut.print_x ("rcut.x.out");
+  assign_rcut.assign (sys);
   
   SystemNonBondedInteraction sysNbInter;
   sysNbInter.reinit (sysTop);
   ScalorType energyCorr = sysNbInter.energyCorrection ();
   ScalorType pressureCorr = sysNbInter.pressureCorrection ();
   
-  ScalorType maxrcut = sysNbInter.maxRcut();
-  ScalorType rlist = maxrcut + nlistExten;
+  ScalorType rlist = rcmax + nlistExten;
   CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
-  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 3.f);
+  CellList clist_resh (sys, rcmin, NThreadsPerBlockCell, NThreadsPerBlockAtom);
+  NeighborList nlist (sysNbInter, sys, rlist, nlistExten, NThreadsPerBlockAtom, nlistSizeFactor);
   sys.normalizeDeviceData ();
   clist.rebuild (sys, NULL);
+  clist_resh.rebuild (sys, NULL);
   nlist.rebuild (sys, clist, NULL);
   Displacement_max disp (sys, NThreadsPerBlockAtom);
   disp.recordCoord (sys);
@@ -91,27 +120,28 @@ int main(int argc, char * argv[])
   RandomGenerator_MT19937::init_genrand (seed);
 
   VelocityVerlet inte_vv (sys, NThreadsPerBlockAtom);
-  VelocityRescale inte_vr (sys, NThreadsPerBlockAtom, refT, 0.1);
-  NoseHoover_Chains2 nhc;
-  nhc.reinit (sys, NThreadsPerBlockAtom, refT, tauT);
 
-  Reshuffle resh (sys);
+  // Reshuffle resh (sys);
   
   timer.tic(mdTimeTotal);
-  if (resh.calIndexTable (clist, &timer)){
-    sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
-    clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-    nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-    disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
-  }
+  // if (resh.calIndexTable (clist_resh, &timer)){
+  //   sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
+  //   clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+  //   clist_resh.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+  //   nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+  //   disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
+  // }
   
   printf ("# prepare ok, start to run\n");
   sys.recoverDeviceData (&timer);
   sys.updateHostFromRecovered (&timer);
   sys.writeHostDataGro ("confstart.gro", 0, 0.f, &timer);
+  dp.init_write ("density.dtj");
+  assign_rcut.init_write ("rcut.rtj");
+  
   printf ("# prepare ok, start to run\n");
-  printf ("#*     1     2           3         4            5       6                7        8   9\n");
-  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  NHC_Hamiltonian pressure box\n");
+  printf ("#*     1     2           3         4            5       6       7\n");
+  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  Npairs\n");
 
   try{
     sys.initWriteXtc ("traj.xtc");
@@ -119,11 +149,10 @@ int main(int argc, char * argv[])
     sys.updateHostFromRecovered (&timer);
     sys.writeHostDataXtc (0, 0*dt, &timer);
     for (i = 0; i < nstep; ++i){
-      if (i%10 == 0){
+      if (i%1 == 0){
 	tfremover.remove (sys, &timer);
       }
       
-      nhc.operator_L (0.5 * dt, sys, &timer);
       inte_vv.step1 (sys, dt, &timer);
 
       st.clearDevice();
@@ -136,26 +165,31 @@ int main(int argc, char * argv[])
 	sys.normalizeDeviceData (&timer);
 	disp.recordCoord (sys);
 	clist.rebuild (sys, &timer);
-	inter.applyNonBondedInteraction (sys, clist, rcut, st, &timer);
+	clist_resh.rebuild (sys, &timer);
 	nlist.rebuild (sys, clist, &timer);
 	// printf ("done\n");
 	// fflush(stdout);
       }
-      else{
-	inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
-      }
 
-      inte_vv.step2 (sys, dt, &timer);
+      if ((i) % rcutAssignFeq == 0){
+	timer.tic (mdTimeAdaptRCut);
+        assign_rcut.assign (sys);
+	timer.toc (mdTimeAdaptRCut);
+      }
+      
       if ((i+1) % thermoFeq == 0){	
-	nhc.operator_L (0.5 * dt, sys, st, &timer);
+	inter.applyNonBondedInteraction (sys, nlist, st, NULL, &timer);
+	inte_vv.step2 (sys, dt, st, &timer);
       }
       else {
-	nhc.operator_L (0.5 * dt, sys, &timer);	
+	inter.applyNonBondedInteraction (sys, nlist, NULL, &timer);
+	inte_vv.step2 (sys, dt, &timer);
       }      
 
       if ((i+1) % thermoFeq == 0){
+	timer.tic (mdTimeDataIO);
 	st.updateHost ();
-	printf ("%09d %07e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.2e %.2e %.2e %.2e\n",
+	printf ("%09d %07e %.7e %.7e %.7e %.7e %.5e\n",
 		(i+1),  
 		(i+1) * dt, 
 		st.nonBondedEnergy(),
@@ -163,33 +197,57 @@ int main(int argc, char * argv[])
 		st.kineticEnergy() * 2. / 3. / (double (sys.hdata.numAtom) - 3.),
 		st.nonBondedEnergy() +
 		st.kineticEnergy(),
-		st.nonBondedEnergy() +
-		st.kineticEnergy() +
-		nhc.HamiltonianContribution (),
-		st.pressure(sys.box),
-		sys.box.size.x,
-		nhc.xi1,
-		nhc.vxi1,
-		nhc.xi2,
-		nhc.vxi1
+		double (nlist.calSumNeighbor ())
 	    );
 	fflush(stdout);
+	timer.toc (mdTimeDataIO);
       }
 
+      if ((i+1) % densityProfileSamplingFeq == 0) {
+	timer.tic (mdTimeDensityProfile);
+	sys.updateHostFromDevice (NULL);
+	dp.deposite (sys.hdata.coord, sys.hdata.numAtom);
+	timer.toc (mdTimeDensityProfile);
+      }
+
+      if ((i+1) % rcutUpdateFeq == 0) {
+	// printf ("# update rcut\n");
+	timer.tic (mdTimeDensityProfile);
+	dp.calculate ();
+	dp.print_x ("density.x.out");
+	timer.toc (mdTimeDensityProfile);
+	timer.tic (mdTimeAdaptRCut);
+	arc.calError (dp);
+	double emax = arc.maxError();
+	arc.calRCut (emax);
+	for (IndexType jj = 0; jj < rcutNumRefine; ++jj){
+	  arc.refineRCut ();
+	}
+	arc.print_x ("error.x.out");
+	assign_rcut.getRCut (arc);
+	assign_rcut.print_x ("rcut.x.out");
+	timer.toc (mdTimeAdaptRCut);
+	if (i != nstep - 1) dp.clearData ();
+      }
+      
       if ((i+1) % confFeq == 0){
+      	// printf ("write conf\n");
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
+	dp.write ((i+1) * dt);
+	assign_rcut.write ((i+1) * dt);
       }
-
-      if ((i+1) % 100 == 0){
-	if (resh.calIndexTable (clist, &timer)){
-	  sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
-	  clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-	  nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-	  disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
-	}
-      }
+      
+      // if ((i+1) % 100 == 0){
+      // 	if (resh.calIndexTable (clist_resh, &timer)){
+      // 	  sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
+      // 	  clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+      // 	  clist_resh.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+      // 	  nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+      // 	  disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
+      // 	}
+      // }
     }
     sys.endWriteXtc();
     sys.recoverDeviceData (&timer);
@@ -209,7 +267,13 @@ int main(int argc, char * argv[])
     fprintf (stderr, "%s\n", e.what());
     return 1;
   }
-  
+
+  dp.end_write();
+  assign_rcut.end_write();
+  dp.save ("density.save");
+  arc.save_rc ("rcut.save");
+  arc.print_error_avg (dp, "a.error.x.out");
+  arc.print_rc ("rcut.x.out");
   
   return 0;
 }
