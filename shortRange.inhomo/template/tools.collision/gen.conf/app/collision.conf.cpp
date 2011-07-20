@@ -99,20 +99,20 @@ int main (int argc, char * argv[])
   double rthreadhold = 30;
   analyze (posi, velo, rmax, rthreadhold, center);
   double dmax = 2.*rmax;
-  Ly = 2. * dmax;
-  Lz = 3. * dmax;
   std::cout << "# rmax is " << rmax << std::endl;
   std::cout << "# dmax is " << dmax << std::endl;
   std::cout << "# x value is " << xx << std::endl;
   std::cout << "# u value is " << uu << std::endl;
   
   double tmpdmax = 28;
-  double XX = xx * 28;
+  Ly = 2. * tmpdmax;
+  Lz = 3. * tmpdmax;
+  double XX = xx * tmpdmax;
   std::vector<double > newcenter0(3), newcenter1(3);
-  newcenter0[0] = dmax;
+  newcenter0[0] = tmpdmax;
   newcenter0[1] = 0.5 * Ly;
   newcenter0[2] = 0.5 * Lz + 0.5 * XX;
-  newcenter1[0] = Lx - dmax;
+  newcenter1[0] = Lx - tmpdmax;
   newcenter1[1] = 0.5 * Ly;
   newcenter1[2] = 0.5 * Lz - 0.5 * XX;
   
