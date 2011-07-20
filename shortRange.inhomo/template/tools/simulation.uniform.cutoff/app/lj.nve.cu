@@ -155,7 +155,7 @@ int main(int argc, char * argv[])
 	ScalorType px = st.pressureXX (sys.box);
 	ScalorType py = st.pressureYY (sys.box);
 	ScalorType pz = st.pressureZZ (sys.box);
-	printf ("%09d %07e %.7e %.7e %.7e %.7e %.2e\n",
+	printf ("%09d %07e %.7e %.7e %.7e %.7e %.5e\n",
 		(i+1),  
 		(i+1) * dt, 
 		st.nonBondedEnergy(),
