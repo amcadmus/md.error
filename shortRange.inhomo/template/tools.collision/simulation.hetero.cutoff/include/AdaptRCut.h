@@ -95,6 +95,7 @@ public:
 	       const double & rcstep,
 	       DensityProfile_PiecewiseConst & dp);
   void calError (const DensityProfile_PiecewiseConst & dp);
+  double maxError () const;
   void calRCut  (const double & prec);
   void refineRCut ();
   void print_x  (const std::string & file) const;

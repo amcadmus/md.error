@@ -54,7 +54,6 @@ int main(int argc, char * argv[])
   double rcmin = 03.0;
   double rcmax = 10.0;
   double rcstep = 0.5;
-  double targetPrec = 0.020;
   
   if (argc != 4){
     printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
@@ -238,7 +237,8 @@ int main(int argc, char * argv[])
 	timer.toc (mdTimeDensityProfile);
 	timer.tic (mdTimeAdaptRCut);
 	arc.calError (dp);
-	arc.calRCut (targetPrec);
+	double emax = arc.maxError();
+	arc.calRCut (emax);
 	for (IndexType jj = 0; jj < rcutNumRefine; ++jj){
 	  arc.refineRCut ();
 	}

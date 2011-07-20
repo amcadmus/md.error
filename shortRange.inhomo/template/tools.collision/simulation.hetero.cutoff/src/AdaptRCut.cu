@@ -232,7 +232,15 @@ calError (const DensityProfile_PiecewiseConst & dp)
   }
 }
 
-
+double AdaptRCut::
+maxError () const 
+{
+  double max = 0;
+  for (int i = 0; i < nele; ++i){
+    if (error[nrc-1][i][0] > max) max = error[nrc-1][i][0];
+  }
+  return max;
+}
 
 double AdaptRCut::
 integral_an13_numerical (const double & k,
