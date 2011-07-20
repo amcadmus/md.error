@@ -106,7 +106,8 @@ int main (int argc, char * argv[])
   std::cout << "# x value is " << xx << std::endl;
   std::cout << "# u value is " << uu << std::endl;
   
-  double XX = xx * dmax;
+  double tmpdmax = 28;
+  double XX = xx * 28;
   std::vector<double > newcenter0(3), newcenter1(3);
   newcenter0[0] = dmax;
   newcenter0[1] = 0.5 * Ly;
