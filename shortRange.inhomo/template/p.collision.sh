@@ -1,6 +1,6 @@
 device=0
 
-NTCell=96
+NTCell=256
 NTAtom=96
 
 # ball generation ##################################
@@ -27,10 +27,22 @@ collision_dt=0.002
 collision_nstep=100000
 collision_confFeq=2000
 collision_thermoFeq=100
-collision_rcut=2.5
+collision_rcut=5.0
 collision_nlistExten=0.49
 collision_nlistSizeFactor=100.0
 collision_clistDivision=1
 
-collision_x=0.00
-collision_u=0.00
+collision_x=0.36
+collision_u=3.17
+
+# density profile parameters
+refh=1.0
+densityProfileSamplingFeq=10
+
+# adapt rcut parameters
+rcutAssignFeq=10
+rcutUpdateFeq=200
+rcutNumRefine=2
+rcmin=02.5
+rcmax=05.0
+rcstep=0.25
