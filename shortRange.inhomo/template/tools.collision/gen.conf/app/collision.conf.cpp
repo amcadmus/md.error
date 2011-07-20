@@ -115,6 +115,12 @@ int main (int argc, char * argv[])
   newcenter1[0] = Lx - tmpdmax;
   newcenter1[1] = 0.5 * Ly;
   newcenter1[2] = 0.5 * Lz - 0.5 * XX;
+  std::cout << "new center 0 is " << newcenter0[0]
+	    << " " << newcenter0[1]
+	    << " " << newcenter0[2] << std::endl;
+  std::cout << "new center 1 is " << newcenter1[0]
+	    << " " << newcenter1[1]
+	    << " " << newcenter1[2] << std::endl;
   
   std::vector<std::vector<double > > posi_1, velo_1;
   std::vector<double > shift (3);
