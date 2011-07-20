@@ -111,8 +111,8 @@ int main(int argc, char * argv[])
   sys.updateHostFromRecovered (&timer);
   sys.writeHostDataGro ("confstart.gro", 0, 0.f, &timer);
   printf ("# prepare ok, start to run\n");
-  printf ("#*     1     2           3         4            5       6           7          8          9        10\n");
-  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  pressureXX pressureYY pressureZZ s_tension\n");
+  printf ("#*     1     2           3         4            5       6      7\n");
+  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  Npair\n");
 
   try{
     sys.initWriteXtc ("traj.xtc");
@@ -155,7 +155,7 @@ int main(int argc, char * argv[])
 	ScalorType px = st.pressureXX (sys.box);
 	ScalorType py = st.pressureYY (sys.box);
 	ScalorType pz = st.pressureZZ (sys.box);
-	printf ("%09d %07e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.2e\n",
+	printf ("%09d %07e %.7e %.7e %.7e %.7e %.2e\n",
 		(i+1),  
 		(i+1) * dt, 
 		st.nonBondedEnergy(),
@@ -163,8 +163,6 @@ int main(int argc, char * argv[])
 		st.kineticEnergy() * 2. / 3. / (double (sys.hdata.numAtom) - 3.),
 		st.nonBondedEnergy() +
 		st.kineticEnergy(),
-		px, py, pz,
-		(px - (py + pz) * 0.5) * sys.box.size.x * 0.5,
                 double (nlist.calSumNeighbor ())
 	    );
 	fflush(stdout);
