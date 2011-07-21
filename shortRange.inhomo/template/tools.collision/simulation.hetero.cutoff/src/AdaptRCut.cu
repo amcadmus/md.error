@@ -608,6 +608,28 @@ print_rc (const std::string & file) const
 
 
 void AdaptRCut::    
+print_rc_xy (const std::string & file) const 
+{
+  FILE * fp = fopen (file.c_str(), "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  for (int i = 0; i < nx; ++i){
+    for (int k = 0; k < nz; ++k){
+      fprintf (fp, "%f %f %e %e\n",
+	       (i + 0.5) * hx, (k + 0.5) * hz,
+	       rcut[index3to1(i,ny/2,k)], result_error[index3to1(i,ny/2,k)]
+	  );
+    }
+    printf (fp, "\n");
+  }
+  fclose (fp);
+}
+
+
+void AdaptRCut::    
 print_rc_avg (const std::string & file) const 
 {
   FILE * fp = fopen (file.c_str(), "w");

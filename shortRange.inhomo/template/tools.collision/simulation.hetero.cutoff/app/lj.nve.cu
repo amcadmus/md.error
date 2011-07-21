@@ -274,6 +274,7 @@ int main(int argc, char * argv[])
   arc.save_rc ("rcut.save");
   arc.print_error_avg (dp, "a.error.x.out");
   arc.print_rc ("rcut.x.out");
+  arc.print_rc_xy ("rcut.xy.out");
   
   return 0;
 }
