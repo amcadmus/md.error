@@ -36,23 +36,23 @@
 
 int main(int argc, char * argv[])
 {
-  IndexType nstep = 10000;
+  IndexType nstep = 100000;
   IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.002;
   ScalorType rcut = 5.0;
   ScalorType nlistExten = 0.49;
-  ScalorType nlistSizeFactor = 100.f;
+  ScalorType nlistSizeFactor = 100.0;
   char * filename;
 
   IndexType densityProfileSamplingFeq = 10;
   IndexType rcutAssignFeq = 10;
   IndexType rcutUpdateFeq = 200;
   IndexType rcutNumRefine = 1;
-  double refh = 1.5;
+  double refh = 1.0;
   double rcmin = 02.5;
   double rcmax = 05.0;
-  double rcstep = 0.5;
+  double rcstep = 0.25;
   
   if (argc != 4){
     printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
@@ -274,7 +274,7 @@ int main(int argc, char * argv[])
   arc.save_rc ("rcut.save");
   arc.print_error_avg (dp, "a.error.x.out");
   arc.print_rc ("rcut.x.out");
-  arc.print_rc_xy ("rcut.xy.out");
+  // arc.print_rc_xy ("rcut.xy.out");
   
   return 0;
 }
