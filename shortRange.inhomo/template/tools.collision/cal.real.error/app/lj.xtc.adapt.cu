@@ -158,11 +158,18 @@ int main(int argc, char * argv[])
     //   printf ("%f\n", fsumx);
     // }
     ep.deposit (coord, force);
+    ep.calculate();
+    char timefile[1024];
+    int zhengshu = int(time);
+    int xiaoshu  = int((time - zhengshu) * 100.);
+    sprintf (timefile, "error.t%04d.%02d.out", zhengshu, xiaoshu);
+    ep.print_xy (timefile);
+    ep.clear();
   }
   
-  ep.calculate();
-  ep.print_x (("real.x.out"));
-  ep.print_x_avg (("a.real.x.out"));
+  // ep.calculate();
+  // ep.print_x (("real.x.out"));
+  // ep.print_x_avg (("a.real.x.out"));
   // ep.print_xy (("real.xy.out"));  
   
   return 0;
