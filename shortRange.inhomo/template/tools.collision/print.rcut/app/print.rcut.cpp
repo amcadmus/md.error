@@ -63,7 +63,9 @@ int main (int argc, char * argv[])
       if (time < start_t - time_prec) continue;
     }
     char timefile[1024];
-    sprintf (timefile, "rcut.t%.3e.out", time);
+    int zhengshu = int(time);
+    int xiaoshu  = int((time - zhengshu) * 100.);
+    sprintf (timefile, "rcut.t%04d.%02d.out", zhengshu, xiaoshu);
     assign.print_xy (timefile);
   }
   
