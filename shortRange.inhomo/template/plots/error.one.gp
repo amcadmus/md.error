@@ -10,9 +10,9 @@ set xlabel "x"
 set xrange [ 0 : 150 ] noreverse nowriteback
 set ylabel "y" 
 set yrange [ 0:140 ] noreverse nowriteback
+set cbrange [0:0.04]
 set pm3d implicit at b
 set size ratio 0.88
-set zrange [0:006]
 
 set term gif
 set out ''
