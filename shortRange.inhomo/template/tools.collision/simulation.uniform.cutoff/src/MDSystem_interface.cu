@@ -357,25 +357,25 @@ void MDSystem::endWriteTrr()
   freeAPointer ((void **)&xdtrrf);
 }
 
-void MDSystem::
-writePosiForce (const char * filename)
-{
-  FILE * fp = fopen (filename, "w");
-  if (fp == NULL){
-    fprintf (stderr, "cannot open file %s\n", filename);
-    exit (1);
-  }
-  for (unsigned i = 0; i < hdata.numAtom; ++i){
-    fprintf (fp, "%.8e %.8e %.8e    %.8e %.8e %.8e\n",
-	     hdata.coord[i].x,
-	     hdata.coord[i].y,
-	     hdata.coord[i].z,
-	     hdata.forcx[i],
-	     hdata.forcy[i],
-	     hdata.forcz[i]);
-  }
-  fclose (fp);
-}
+// void MDSystem::
+// writePosiForce (const char * filename)
+// {
+//   FILE * fp = fopen (filename, "w");
+//   if (fp == NULL){
+//     fprintf (stderr, "cannot open file %s\n", filename);
+//     exit (1);
+//   }
+//   for (unsigned i = 0; i < hdata.numAtom; ++i){
+//     fprintf (fp, "%.8e %.8e %.8e    %.8e %.8e %.8e\n",
+// 	     hdata.coord[i].x,
+// 	     hdata.coord[i].y,
+// 	     hdata.coord[i].z,
+// 	     hdata.forcx[i],
+// 	     hdata.forcy[i],
+// 	     hdata.forcz[i]);
+//   }
+//   fclose (fp);
+// }
 
 void MDSystem::
 recoverDeviceData (MDTimer * timer)
