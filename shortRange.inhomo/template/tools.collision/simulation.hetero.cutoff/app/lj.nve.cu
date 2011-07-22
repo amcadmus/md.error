@@ -145,6 +145,7 @@ int main(int argc, char * argv[])
 
   try{
     sys.initWriteXtc ("traj.xtc");
+    sys.initWriteTrr ("traj.trr");
     sys.recoverDeviceData (&timer);
     sys.updateHostFromRecovered (&timer);
     sys.writeHostDataXtc (0, 0*dt, &timer);
@@ -235,6 +236,7 @@ int main(int argc, char * argv[])
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
+      	sys.writeHostDataTrr (i+1, (i+1)*dt, &timer);
 	dp.write ((i+1) * dt);
 	assign_rcut.write ((i+1) * dt);
       }
@@ -250,6 +252,7 @@ int main(int argc, char * argv[])
       // }
     }
     sys.endWriteXtc();
+    sys.endWriteTrr();
     sys.recoverDeviceData (&timer);
     sys.updateHostFromRecovered (&timer);
     sys.writeHostDataGro ("confout.gro", nstep, nstep*dt, &timer);
