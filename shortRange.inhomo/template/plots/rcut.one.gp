@@ -7,11 +7,12 @@ set style data pm3d
 set style function pm3d
 set ticslevel 0
 set xlabel "x" 
-set xrange [ 0 : 150 ] noreverse nowriteback
+set xrange [ 20 : 130 ] noreverse nowriteback
 set ylabel "y" 
-set yrange [ 0:140 ] noreverse nowriteback
+set yrange [ 20:120 ] noreverse nowriteback
 set pm3d implicit at b
-set size ratio 0.88
+#set size ratio 0.88
+set size ratio 0.90
 
 set term gif
 set out ''
