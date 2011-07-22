@@ -18,8 +18,8 @@ function set_parameter () {
 }
 
 
-set_parameter tools/simulation.uniform.cutoff/app/lj.nve.cu
-make -j4 -C tools/simulation.uniform.cutoff/ &> make.log
+set_parameter tools.collision/simulation.uniform.cutoff/app/lj.nve.cu
+make -j4 -C tools.collision/simulation.uniform.cutoff/ &> make.log
 
 rm -f conf.gro
 if test -f $collsion_init_conf; then
@@ -40,7 +40,7 @@ ln -s ../conf.gro .
 ln -s ../traj.xtc .
 cd ..
 workdir=`pwd`
-command="$workdir/tools/simulation.uniform.cutoff/lj.nve conf.gro $collision_nstep $device"
+command="$workdir/tools.collision/simulation.uniform.cutoff/lj.nve conf.gro $collision_nstep $device"
 echo "command is: $command > gpu-md.out 2> gpu-md.perf"
 $command > gpu-md.out 2> gpu-md.perf
 
