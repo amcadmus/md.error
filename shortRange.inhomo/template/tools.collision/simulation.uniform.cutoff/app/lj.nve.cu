@@ -23,7 +23,7 @@
 // #define NThreadsPerBlockCell	32
 // #define NThreadsPerBlockAtom	4
 
-#define NThreadsPerBlockCell	96
+#define NThreadsPerBlockCell	256
 #define NThreadsPerBlockAtom	96
 
 int main(int argc, char * argv[])
@@ -32,7 +32,7 @@ int main(int argc, char * argv[])
   IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.002;
-  ScalorType rcut = 2.5;
+  ScalorType rcut = 5.0;
   ScalorType nlistExten = 0.49;
   ScalorType nlistSizeFactor = 100.0;
   IndexType  clistDivision = 1;

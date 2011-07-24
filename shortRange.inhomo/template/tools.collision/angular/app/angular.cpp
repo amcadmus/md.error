@@ -44,7 +44,7 @@ int main (int argc, char * argv[])
       ("help,h", "print this message")
       ("start,s", po::value<float > (&start_t)->default_value (0.f),  "start time")
       ("end,e",   po::value<float > (&end_t)  ->default_value (0.f),  "end time, 0 is infinity")
-      ("out-file,o", po::value<std::string > (&fileout)->default_value (std::string("angluar.out"), "output file name"))
+      ("out-file,o", po::value<std::string > (&fileout)->default_value (std::string("angular.out"), "output file name"))
       ("file-name,f", po::value<std::string > (&filename)->default_value (std::string("traj.trr"), "trajactory file name"));
 
   po::variables_map vm;
