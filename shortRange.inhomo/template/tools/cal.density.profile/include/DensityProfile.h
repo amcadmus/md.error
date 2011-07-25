@@ -56,6 +56,7 @@ public:
   const std::vector<double > & getBox () const {return boxsize;}
 public:
   void print_x  (const std::string & filename) const;
+  void print_avg_x (const std::string & filename) const;
   void print_xy (const std::string & filename) const;
 };
 

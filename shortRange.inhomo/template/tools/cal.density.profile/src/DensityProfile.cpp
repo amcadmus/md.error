@@ -167,6 +167,29 @@ print_x (const std::string & file) const
 }
 
 void DensityProfile_PiecewiseConst::    
+print_avg_x (const std::string & file) const 
+{
+  FILE * fp = fopen (file.c_str(), "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  for (unsigned i = 0; i < nx; ++i){
+    double sum = 0.;
+    for (unsigned j = 0; j < ny; ++j){
+      for (unsigned k = 0; k < nz; ++k){
+    	sum += profile[index3to1(i, j, k)];
+      }
+    }
+    fprintf (fp, "%f %f\n", (i + 0.5) * hx, sum / ny / nz);
+    // fprintf (fp, "%f %f\n", (i + 0.5) * hx, profile[index3to1(i, 0, 0)]);
+  }
+
+  fclose (fp);
+}
+
+void DensityProfile_PiecewiseConst::    
 print_xy (const std::string & file) const 
 {
   FILE * fp = fopen (file.c_str(), "w");

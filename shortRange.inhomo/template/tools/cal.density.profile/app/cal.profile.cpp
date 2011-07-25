@@ -45,6 +45,7 @@ int main (int argc, char * argv[])
   DensityProfile_PiecewiseConst dp (filename, h);
   dp.deposit (filename, start_t, end_t);
   dp.print_x ("density.x.out");
+  dp.print_avg_x ("a.density.x.out");
   
   return 0;
 }
