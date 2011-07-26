@@ -18,6 +18,7 @@ rm -f tmp.st
 tension_line=`avg_jk  -v col=11 gpu-md.st | grep -v '#'`
 tension=`echo $tension_line | awk '{print $1}'`
 tension_error=`echo $tension_line | awk '{print $2}'`
+tension_error=`echo "$tension_error * 2" | bc -l`
 
 tension_corr=`avg_jk  -v col=14 gpu-md.st | grep -v '#' | awk '{print $1}'`
 tension_corr_print=`printf $print_format $tension_corr`

@@ -123,9 +123,9 @@ int main (int argc, char * argv[])
 
   char string[1024];
   sprintf (string, "# gas    rho: %%.%df ( %%.%df ) \n", prec_digit, prec_digit);
-  printf  (string, avgGas.getAvg(),    avgGas.getAvgError());
+  printf  (string, avgGas.getAvg(),    avgGas.getAvgError() * 2.);
   sprintf (string, "# liquid rho: %%.%df ( %%.%df ) \n", prec_digit, prec_digit);
-  printf  (string, avgLiquid.getAvg(), avgLiquid.getAvgError());
+  printf  (string, avgLiquid.getAvg(), avgLiquid.getAvgError() * 2.);
   
   free(xx);
   xdrfile_close(fp);

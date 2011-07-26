@@ -18,6 +18,7 @@ rm -f tmp.st
 tension_line=`avg_jk  -v col=11 gpu-md.st | grep -v '#'`
 tension=`echo $tension_line | awk '{print $1}'`
 tension_error=`echo $tension_line | awk '{print $2}'`
+tension_error=`echo "$tension_error * 2" | bc -l`
 
 rcut=`grep "rcut=" parameters.sh | cut -d '=' -f 2`
 make -C tools/analyze.simulation.suit -j 4 &> /dev/null
