@@ -22,11 +22,33 @@ mallocArrayComplex (fftw_complex *** a,
 }
 
 static void
+mallocArrayComplex (cufftComplex *** a,
+		    const unsigned & nrc,
+		    const unsigned & nele)
+{
+  *a = (cufftComplex **) malloc (sizeof(cufftComplex *) * nrc);
+  for (unsigned i = 0; i < nrc; ++i){
+    cudaMalloc ((void**)&((*a)[i]), sizeof(cufftComplex) * nele);
+  }
+}
+
+static void
 freeArrayComplex (fftw_complex *** a,
 		  const unsigned & nrc)
 {
   for (unsigned i = 0; i < nrc; ++i){
     free ((*a)[i]);
+  }
+  free (*a);
+  *a = NULL;
+}
+
+static void
+freeArrayComplex (cufftComplex *** a,
+		  const unsigned & nrc)
+{
+  for (unsigned i = 0; i < nrc; ++i){
+    cudaFree ((*a)[i]);
   }
   free (*a);
   *a = NULL;
@@ -59,35 +81,59 @@ void AdaptRCut::
 freeAll ()
 {
   if (malloced) {
-    free (rhok);
-    free (rhor);
+    // free (rhok);
+    // free (rhor);
     freeArrayComplex (&s1k,  nrc);
     freeArrayComplex (&s2kx, nrc);
     freeArrayComplex (&s2ky, nrc);
     freeArrayComplex (&s2kz, nrc);
-    freeArrayComplex (&error1k,  nrc);
-    freeArrayComplex (&error2kx, nrc);
-    freeArrayComplex (&error2ky, nrc);
-    freeArrayComplex (&error2kz, nrc);
-    freeArrayComplex (&error1r,  nrc);
-    freeArrayComplex (&error2rx, nrc);
-    freeArrayComplex (&error2ry, nrc);
-    freeArrayComplex (&error2rz, nrc);
-    freeArrayComplex (&error, nrc);
+    // freeArrayComplex (&error1k,  nrc);
+    // freeArrayComplex (&error2kx, nrc);
+    // freeArrayComplex (&error2ky, nrc);
+    // freeArrayComplex (&error2kz, nrc);
+    // freeArrayComplex (&error1r,  nrc);
+    // freeArrayComplex (&error2rx, nrc);
+    // freeArrayComplex (&error2ry, nrc);
+    // freeArrayComplex (&error2rz, nrc);
+    // freeArrayComplex (&error, nrc);
+
+    free (copyBuff);
+    cudaFree (d_rhor);
+    cudaFree (d_rhok);
+    freeArrayComplex (&d_s1k,  nrc);
+    freeArrayComplex (&d_s2kx, nrc);
+    freeArrayComplex (&d_s2ky, nrc);
+    freeArrayComplex (&d_s2kz, nrc);
+    freeArrayComplex (&d_error1k,  nrc);
+    freeArrayComplex (&d_error2kx, nrc);
+    freeArrayComplex (&d_error2ky, nrc);
+    freeArrayComplex (&d_error2kz, nrc);
+    freeArrayComplex (&d_error1r,  nrc);
+    freeArrayComplex (&d_error2rx, nrc);
+    freeArrayComplex (&d_error2ry, nrc);
+    freeArrayComplex (&d_error2rz, nrc);
+    // freeArrayComplex (&d_error, nrc);
+    cudaFree (d_error);
+    cufftDestroy(plan);
+    
     free (rcut);
     free (rcutIndex);
     free (result_error);
-    fftw_destroy_plan (p_forward_rho);
-    for (int count = 0; count < nrc; ++count){
-      fftw_destroy_plan (p_backward_error1[count]);
-      fftw_destroy_plan (p_backward_error2x[count]);
-      fftw_destroy_plan (p_backward_error2y[count]);
-      fftw_destroy_plan (p_backward_error2z[count]);
-    }
-    free (p_backward_error1);
-    free (p_backward_error2x);
-    free (p_backward_error2y);
-    free (p_backward_error2z);
+    cudaFree (d_rcutIndex);
+    cudaFree (d_result_error);
+    
+    // fftw_destroy_plan (p_forward_rho);
+    // for (int count = 0; count < nrc; ++count){
+    //   fftw_destroy_plan (p_backward_error1[count]);
+    //   fftw_destroy_plan (p_backward_error2x[count]);
+    //   fftw_destroy_plan (p_backward_error2y[count]);
+    //   fftw_destroy_plan (p_backward_error2z[count]);
+    // }
+    // free (p_backward_error1);
+    // free (p_backward_error2x);
+    // free (p_backward_error2y);
+    // free (p_backward_error2z);
+    
     malloced = false;
   }
 }
@@ -116,131 +162,283 @@ reinit (const double & rcmin,
   }
   nrc = rcList.size();
   
-  rhor = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
-  rhok = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
+  // rhor = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
+  // rhok = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
   mallocArrayComplex (&s1k,  nrc, nele);
   mallocArrayComplex (&s2kx, nrc, nele);
   mallocArrayComplex (&s2ky, nrc, nele);
   mallocArrayComplex (&s2kz, nrc, nele);
-  mallocArrayComplex (&error1k,  nrc, nele);
-  mallocArrayComplex (&error2kx, nrc, nele);
-  mallocArrayComplex (&error2ky, nrc, nele);
-  mallocArrayComplex (&error2kz, nrc, nele);
-  mallocArrayComplex (&error1r,  nrc, nele);
-  mallocArrayComplex (&error2rx, nrc, nele);
-  mallocArrayComplex (&error2ry, nrc, nele);
-  mallocArrayComplex (&error2rz, nrc, nele);
-  mallocArrayComplex (&error, nrc, nele);
-  rcut = (double *) malloc (sizeof(double) * nele);
-  rcutIndex = (int *) malloc (sizeof(int) * nele);
-  result_error = (double *) malloc (sizeof(double) * nele);
+  // mallocArrayComplex (&error1k,  nrc, nele);
+  // mallocArrayComplex (&error2kx, nrc, nele);
+  // mallocArrayComplex (&error2ky, nrc, nele);
+  // mallocArrayComplex (&error2kz, nrc, nele);
+  // mallocArrayComplex (&error1r,  nrc, nele);
+  // mallocArrayComplex (&error2rx, nrc, nele);
+  // mallocArrayComplex (&error2ry, nrc, nele);
+  // mallocArrayComplex (&error2rz, nrc, nele);
+  // mallocArrayComplex (&error, nrc, nele);
 
-  p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
-  p_backward_error1  = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
-  p_backward_error2x = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
-  p_backward_error2y = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
-  p_backward_error2z = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
-  for (int count = 0; count < nrc; ++count){
-    p_backward_error1[count] = fftw_plan_dft_3d (nx, ny, nz, error1k[count], error1r[count], FFTW_BACKWARD,  FFTW_PATIENT);
-    p_backward_error2x[count] = fftw_plan_dft_3d (nx, ny, nz, error2kx[count], error2rx[count], FFTW_BACKWARD,  FFTW_PATIENT);
-    p_backward_error2y[count] = fftw_plan_dft_3d (nx, ny, nz, error2ky[count], error2ry[count], FFTW_BACKWARD,  FFTW_PATIENT);
-    p_backward_error2z[count] = fftw_plan_dft_3d (nx, ny, nz, error2kz[count], error2rz[count], FFTW_BACKWARD,  FFTW_PATIENT);
-  }
+  copyBuff = (cufftComplex *) malloc (sizeof(cufftComplex) * nele);
+  cudaMalloc ((void**)&d_rhor, sizeof(cufftComplex) * nele);
+  cudaMalloc ((void**)&d_rhok, sizeof(cufftComplex) * nele);
+  mallocArrayComplex (&d_s1k,  nrc, nele);
+  mallocArrayComplex (&d_s2kx, nrc, nele);
+  mallocArrayComplex (&d_s2ky, nrc, nele);
+  mallocArrayComplex (&d_s2kz, nrc, nele);
+  mallocArrayComplex (&d_error1k,  nrc, nele);
+  mallocArrayComplex (&d_error2kx, nrc, nele);
+  mallocArrayComplex (&d_error2ky, nrc, nele);
+  mallocArrayComplex (&d_error2kz, nrc, nele);
+  mallocArrayComplex (&d_error1r,  nrc, nele);
+  mallocArrayComplex (&d_error2rx, nrc, nele);
+  mallocArrayComplex (&d_error2ry, nrc, nele);
+  mallocArrayComplex (&d_error2rz, nrc, nele);
+  // mallocArrayComplex (&d_error, nrc, nele);
+  cudaMalloc ((void**)&d_error, nele*nrc*sizeof(cufftComplex));
+  cufftPlan3d (&plan, nx, ny, nz, CUFFT_C2C);
+
+  rcut = (double *) malloc (sizeof(double) * nele);
+  rcutIndex = (unsigned *) malloc (sizeof(unsigned) * nele);
+  result_error = (float *) malloc (sizeof(float) * nele);
+  cudaMalloc ((void**)&d_rcutIndex, sizeof(unsigned) * nele);
+  cudaMalloc ((void**)&d_result_error, sizeof(float) * nele);
+
+  // p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
+  // p_backward_error1  = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  // p_backward_error2x = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  // p_backward_error2y = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  // p_backward_error2z = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  // for (int count = 0; count < nrc; ++count){
+  //   p_backward_error1[count] = fftw_plan_dft_3d (nx, ny, nz, error1k[count], error1r[count], FFTW_BACKWARD,  FFTW_PATIENT);
+  //   p_backward_error2x[count] = fftw_plan_dft_3d (nx, ny, nz, error2kx[count], error2rx[count], FFTW_BACKWARD,  FFTW_PATIENT);
+  //   p_backward_error2y[count] = fftw_plan_dft_3d (nx, ny, nz, error2ky[count], error2ry[count], FFTW_BACKWARD,  FFTW_PATIENT);
+  //   p_backward_error2z[count] = fftw_plan_dft_3d (nx, ny, nz, error2kz[count], error2rz[count], FFTW_BACKWARD,  FFTW_PATIENT);
+  // }
   
   malloced = true;
 
   printf ("# reinit: start build k mat 1 ...");
   fflush (stdout);
   makeS1k (1., 1.);
+  size_t sizec = sizeof(cufftComplex) * nele;
+  for (int count = 0; count < nrc; ++ count){
+    for (int i = 0; i < nele; ++i){
+      copyBuff[i].x = s1k[count][i][0];
+      copyBuff[i].y = s1k[count][i][1];
+    }
+    cudaMemcpy (d_s1k[count], copyBuff, sizec, cudaMemcpyHostToDevice);
+  }
   printf (" done\n");  
   fflush (stdout);
   printf ("# reinit: start build k mat 2 ...");
   fflush (stdout);
   makeS2k (1., 1.);
+  for (int count = 0; count < nrc; ++ count){
+    for (int i = 0; i < nele; ++i){
+      copyBuff[i].x = s2kx[count][i][0];
+      copyBuff[i].y = s2kx[count][i][1];
+    }
+    cudaMemcpy (d_s2kx[count], copyBuff, sizec, cudaMemcpyHostToDevice);
+    for (int i = 0; i < nele; ++i){
+      copyBuff[i].x = s2ky[count][i][0];
+      copyBuff[i].y = s2ky[count][i][1];
+    }
+    cudaMemcpy (d_s2ky[count], copyBuff, sizec, cudaMemcpyHostToDevice);
+    for (int i = 0; i < nele; ++i){
+      copyBuff[i].x = s2kz[count][i][0];
+      copyBuff[i].y = s2kz[count][i][1];
+    }
+    cudaMemcpy (d_s2kz[count], copyBuff, sizec, cudaMemcpyHostToDevice);
+  }
   printf (" done\n");  
   fflush (stdout);
 }
 
-static void 
-array_multiply (fftw_complex ** a,
-		const int nrc,
+// static void 
+// array_multiply (fftw_complex ** a,
+// 		const int nrc,
+// 		const int nele,
+// 		fftw_complex ** b,
+// 		fftw_complex * c) 
+// {
+//   for (int count = 0; count < nrc; ++count){
+//     for (int ii = 0; ii < nele; ++ii){
+//       // double tmpr, tmpi;
+//       a[count][ii][0] =
+// 	  c[ii][0] * b[count][ii][0] - c[ii][1] * b[count][ii][1];
+//       a[count][ii][1] =
+// 	  c[ii][0] * b[count][ii][1] + c[ii][1] * b[count][ii][0];
+//     }
+//   }
+// }
+
+__global__ static void 
+array_multiply (cufftComplex *a,
 		const int nele,
-		fftw_complex ** b,
-		fftw_complex * c) 
+		cufftComplex *b,
+		cufftComplex *c)
 {
-  for (int count = 0; count < nrc; ++count){
-    for (int ii = 0; ii < nele; ++ii){
-      // double tmpr, tmpi;
-      a[count][ii][0] =
-	  c[ii][0] * b[count][ii][0] - c[ii][1] * b[count][ii][1];
-      a[count][ii][1] =
-	  c[ii][0] * b[count][ii][1] + c[ii][1] * b[count][ii][0];
-    }
+  unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+  unsigned tid = threadIdx.x;
+  unsigned ii = tid + bid * blockDim.x;
+
+  if (ii < nele){
+      a[ii].x =
+	  c[ii].x * b[ii].x - c[ii].y * b[ii].y;
+      a[ii].y =
+	  c[ii].x * b[ii].y + c[ii].y * b[ii].x;
   }
 }
+
+__global__ static void 
+formErrorEr1 (const int count,
+	      const int nele,
+	      const float volumei,
+	      const cufftComplex * error1r,
+	      cufftComplex * error)
+{
+  unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+  unsigned tid = threadIdx.x;
+  unsigned ii = tid + bid * blockDim.x;
+  unsigned start = count * nele;
+
+  if (ii < nele){
+    error[start+ii].x = error1r[ii].x * volumei;
+    error[start+ii].y = error1r[ii].y * volumei;
+  }
+}
+
+__global__ static void
+formErrorEr2 (const int count,
+	      const int nele,
+	      const float volumei,
+	      const cufftComplex * error2rx,
+	      const cufftComplex * error2ry,
+	      const cufftComplex * error2rz,
+	      cufftComplex * error)
+{
+  unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+  unsigned tid = threadIdx.x;
+  unsigned ii = tid + bid * blockDim.x;
+  unsigned start = count * nele;
+
+  if (ii < nele){
+    float tx0 = error2rx[ii].x * volumei;
+    float ty0 = error2ry[ii].x * volumei;
+    float tz0 = error2rz[ii].x * volumei;
+    float tx1 = error2rx[ii].y * volumei;
+    float ty1 = error2ry[ii].y * volumei;
+    float tz1 = error2rz[ii].y * volumei;    
+    error[start+ii].x += tx0*tx0 + ty0*ty0 + tz0*tz0;
+    error[start+ii].y += tx1*tx1 + ty1*ty1 + tz1*tz1;
+  }
+}
+  
+__global__ static void
+formErrorSqrt (const int nele,
+	       cufftComplex * error)
+{
+  unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+  unsigned tid = threadIdx.x;
+  unsigned ii = tid + bid * blockDim.x;
+
+  if (ii < nele){
+    error[ii].x = sqrtf(error[ii].x);
+    error[ii].y = sqrtf(error[ii].y);
+  }
+}
+
+#include "error.h"
 
 void AdaptRCut::
 calError (const DensityProfile_PiecewiseConst & dp)
 {
-  for (int i = 0; i < nele; ++i){
-    rhor[i][0] = dp.getProfile(i);
-    rhor[i][1] = 0.;
-  }
-  fftw_execute (p_forward_rho);
   double volume = boxsize[0] * boxsize[1] * boxsize[2];
   double scale = volume / nele;
+  size_t sizec = sizeof(cufftComplex) * nele;
   for (int i = 0; i < nele; ++i){
-    rhok[i][0] *= scale;
-    rhok[i][1] *= scale;
-  }  
+    copyBuff[i].x = dp.getProfile(i) * scale;
+    copyBuff[i].y = 0.;
+  }
+  cudaMemcpy (d_rhor, copyBuff, sizec, cudaMemcpyHostToDevice);
+  cufftExecC2C (plan, d_rhor, d_rhok, CUFFT_FORWARD);
+  checkCUDAError ("AdaptRCut::calError: rhor -> rhok");
 
-  array_multiply (error1k,  nrc, nele, s1k,  rhok);
-  array_multiply (error2kx, nrc, nele, s2kx, rhok);
-  array_multiply (error2ky, nrc, nele, s2ky, rhok);
-  array_multiply (error2kz, nrc, nele, s2kz, rhok);
+  unsigned blockSize = 128;
+  unsigned nblock = unsigned(nele) / blockSize + 1;
+  for (int count = 0; count < nrc; ++count){
+    array_multiply <<<nblock, blockSize>>>
+	(d_error1k [count], nele, d_s1k [count], d_rhok);
+    array_multiply <<<nblock, blockSize>>>
+	(d_error2kx[count], nele, d_s2kx[count], d_rhok);
+    array_multiply <<<nblock, blockSize>>>
+	(d_error2ky[count], nele, d_s2ky[count], d_rhok);
+    array_multiply <<<nblock, blockSize>>>
+	(d_error2kz[count], nele, d_s2kz[count], d_rhok);
+  }
+  checkCUDAError ("AdaptRCut::calError: ek = sk * rhok");
 
   for (int count = 0; count < nrc; ++count){
-    fftw_execute (p_backward_error1[count]);
-    fftw_execute (p_backward_error2x[count]);
-    fftw_execute (p_backward_error2y[count]);
-    fftw_execute (p_backward_error2z[count]);
+    cufftExecC2C (plan, d_error1k [count], d_error1r [count], CUFFT_FORWARD);
+    cufftExecC2C (plan, d_error2kx[count], d_error2rx[count], CUFFT_FORWARD);
+    cufftExecC2C (plan, d_error2ky[count], d_error2ry[count], CUFFT_FORWARD);
+    cufftExecC2C (plan, d_error2kz[count], d_error2rz[count], CUFFT_FORWARD);
   }
+  checkCUDAError ("AdaptRCut::calError: ek -> er");
 
   for (int count = 0; count < nrc; ++count){
-    for (int i = 0; i < nele; ++i){
-      error1r[count][i][0] /= volume;
-      error1r[count][i][1] /= volume;
-      error2rx[count][i][0] /= volume;
-      error2ry[count][i][0] /= volume;
-      error2rz[count][i][0] /= volume;
-      error2rx[count][i][1] /= volume;
-      error2ry[count][i][1] /= volume;
-      error2rz[count][i][1] /= volume;
-      error[count][i][0] =
-	  sqrt (
-	      error1r[count][i][0] +
-	      error2rx[count][i][0] * error2rx[count][i][0] +
-	      error2ry[count][i][0] * error2ry[count][i][0] +
-	      error2rz[count][i][0] * error2rz[count][i][0] );
-      error[count][i][1] =
-	  sqrt (
-	      error1r[count][i][1] +
-	      error2rx[count][i][1] * error2rx[count][i][1] +
-	      error2ry[count][i][1] * error2ry[count][i][1] +
-	      error2rz[count][i][1] * error2rz[count][i][1] );
-    }
+    formErrorEr1 <<<nblock, blockSize>>>
+	(count, nele, 1./volume, d_error1r[count], d_error);
   }
+  checkCUDAError ("AdaptRCut::calError: cal error e1");
+  for (int count = 0; count < nrc; ++count){
+    formErrorEr2 <<<nblock, blockSize>>>
+	(count, nele, 1./volume,
+	 d_error2rx[count],
+	 d_error2ry[count],
+	 d_error2rz[count],
+	 d_error);
+  }
+  checkCUDAError ("AdaptRCut::calError: cal error e2");
+  formErrorSqrt <<<nele*nrc/blockSize+1, blockSize>>>
+      (nele*nrc, d_error);
+  checkCUDAError ("AdaptRCut::calError: cal error sqrt");
+  
+  // for (int count = 0; count < nrc; ++count){
+  //   for (int i = 0; i < nele; ++i){
+  //     error1r[count][i][0] /= volume;
+  //     error1r[count][i][1] /= volume;
+  //     error2rx[count][i][0] /= volume;
+  //     error2ry[count][i][0] /= volume;
+  //     error2rz[count][i][0] /= volume;
+  //     error2rx[count][i][1] /= volume;
+  //     error2ry[count][i][1] /= volume;
+  //     error2rz[count][i][1] /= volume;
+  //     error[count][i][0] =
+  // 	  sqrt (
+  // 	      error1r[count][i][0] +
+  // 	      error2rx[count][i][0] * error2rx[count][i][0] +
+  // 	      error2ry[count][i][0] * error2ry[count][i][0] +
+  // 	      error2rz[count][i][0] * error2rz[count][i][0] );
+  //     error[count][i][1] =
+  // 	  sqrt (
+  // 	      error1r[count][i][1] +
+  // 	      error2rx[count][i][1] * error2rx[count][i][1] +
+  // 	      error2ry[count][i][1] * error2ry[count][i][1] +
+  // 	      error2rz[count][i][1] * error2rz[count][i][1] );
+  //   }
+  // }
 }
 
-double AdaptRCut::
-maxError () const 
-{
-  double max = 0;
-  for (int i = 0; i < nele; ++i){
-    if (error[nrc-1][i][0] > max) max = error[nrc-1][i][0];
-  }
-  return max;
-}
+// double AdaptRCut::
+// maxError () const 
+// {
+//   double max = 0;
+//   for (int i = 0; i < nele; ++i){
+//     if (error[nrc-1][i][0] > max) max = error[nrc-1][i][0];
+//   }
+//   return max;
+// }
 
 double AdaptRCut::
 integral_an13_numerical (const double & k,
@@ -423,62 +621,123 @@ makeS2k (const double & epsilon,
 
 }
 
-void AdaptRCut::
-calRCutOnePoint (const double & prec,
-		 const unsigned & idx)
+// void AdaptRCut::
+// calRCutOnePoint (const double & prec,
+// 		 const unsigned & idx)
+// {
+//   unsigned posia = 0;
+//   unsigned posib = nrc-1;
+//   double rca = rcList[posia];
+//   double rcb = rcList[posib];
+//   double errora = error[posia][idx][0];
+//   double errorb = error[posib][idx][0];
+//   double diffa = errora - prec;
+//   double diffb = errorb - prec;
+//   if (diffa <= 0){
+//     rcut[idx] = rca;
+//     rcutIndex[idx] = posia;
+//     result_error[idx] = errora;
+//   }
+//   else if (diffb >= 0){
+//     rcut[idx] = rcb;
+//     rcutIndex[idx] = posib;
+//     result_error[idx] = errorb;
+//   }
+//   else {
+//     while (posib - posia > 1) {
+//       unsigned posic = (posib + posia) / 2;
+//       double rcc = rcList[posic];
+//       double errorc = error[posic][idx][0];
+//       if (errorc > prec){
+// 	posia = posic;
+// 	rca = rcc;
+// 	errora = errorc;
+//       }
+//       else {
+// 	posib = posic;
+// 	rcb = rcc;
+// 	errorb = errorc;
+//       }
+//     }
+//     rcut[idx] = rcb;
+//     rcutIndex[idx] = posib;
+//     result_error[idx] = errorb;
+//   }
+// }   
+
+__global__ void static
+calRCut_d (const unsigned nrc,
+	 const unsigned nele,
+	 const cufftComplex *error,
+	 const float prec,
+	 unsigned * rcutIndex,
+	 float * result_error)
 {
-  unsigned posia = 0;
-  unsigned posib = nrc-1;
-  double rca = rcList[posia];
-  double rcb = rcList[posib];
-  double errora = error[posia][idx][0];
-  double errorb = error[posib][idx][0];
-  double diffa = errora - prec;
-  double diffb = errorb - prec;
-  if (diffa <= 0){
-    rcut[idx] = rca;
-    rcutIndex[idx] = posia;
-    result_error[idx] = errora;
-  }
-  else if (diffb >= 0){
-    rcut[idx] = rcb;
-    rcutIndex[idx] = posib;
-    result_error[idx] = errorb;
-  }
-  else {
-    while (posib - posia > 1) {
-      unsigned posic = (posib + posia) / 2;
-      double rcc = rcList[posic];
-      double errorc = error[posic][idx][0];
-      if (errorc > prec){
-	posia = posic;
-	rca = rcc;
-	errora = errorc;
-      }
-      else {
-	posib = posic;
-	rcb = rcc;
-	errorb = errorc;
-      }
+  unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+  unsigned tid = threadIdx.x;
+  unsigned ii = tid + bid * blockDim.x;
+
+  if (ii < nele){
+    unsigned posia = 0;
+    unsigned posib = nrc-1;
+    float errora = error[posia * nele + ii].x;
+    float errorb = error[posib * nele + ii].x;
+    float diffa = errora - prec;
+    float diffb = errorb - prec;
+    if (diffa <= 0){
+      rcutIndex[ii] = posia;
+      result_error[ii] = errora;
     }
-    rcut[idx] = rcb;
-    rcutIndex[idx] = posib;
-    result_error[idx] = errorb;
-  }
-}   
+    else if (diffb >= 0){
+      rcutIndex[ii] = posib;
+      result_error[ii] = errorb;
+    }
+    else {
+      while (posib - posia > 1) {
+	unsigned posic = (posib + posia) / 2;
+	double errorc = error[posic * nele + ii].x;
+	if (errorc > prec){
+	  posia = posic;
+	  errora = errorc;
+	}
+	else {
+	  posib = posic;
+	  errorb = errorc;
+	}
+      }
+      rcutIndex[ii] = posib;
+      result_error[ii] = errorb;
+    }
+  }   
+}		       
+
 
 void AdaptRCut::
 calRCut  (const double & prec)
 {
+  // for (int i = 0; i < nele; ++i){
+  //   calRCutOnePoint (prec, i);
+  // }
+  unsigned blockSize = 128;
+  unsigned nblock = unsigned(nele) / blockSize + 1;
+  calRCut_d <<<nblock, blockSize>>>
+      (nrc, nele, d_error, prec, d_rcutIndex, d_result_error);
+  checkCUDAError ("AdaptRCut::calRCut, decide cutoff");
+  cudaMemcpy (rcutIndex, d_rcutIndex, nele * sizeof(unsigned), cudaMemcpyDeviceToHost);
+  cudaMemcpy (result_error, d_result_error, nele * sizeof(float), cudaMemcpyDeviceToHost);
+  checkCUDAError ("AdaptRCut::calRCut, copy back to host");
   for (int i = 0; i < nele; ++i){
-    calRCutOnePoint (prec, i);
+    rcut[i] = rcList[rcutIndex[i]];
   }
 }
+
+
 
 void AdaptRCut::
 refineRCut () 
 {
   int * rcutIndex_bk = (int *) malloc (sizeof(int) * nele);
+  // float * result_error_bk = (float*) malloc (sizeof(float) * nele);
   for (int i = 0; i < nele; ++i){
     rcutIndex_bk[i] = 0;
   }
@@ -509,7 +768,7 @@ refineRCut ()
   for (int i = 0; i < nele; ++i){
     rcutIndex[i] = rcutIndex_bk[i];
     rcut[i] = rcList[rcutIndex[i]];
-    result_error[i] = error[rcutIndex[i]][i][0];
+    // result_error[i] = error[rcutIndex[i]][i][0];
   }
 
   free (rcutIndex_bk);
@@ -673,41 +932,41 @@ load_rc (const std::string & file)
 
   freeAll();
 
-  rhor = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
-  rhok = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
+  // rhor = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
+  // rhok = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
   mallocArrayComplex (&s1k,  nrc, nele);
   mallocArrayComplex (&s2kx, nrc, nele);
   mallocArrayComplex (&s2ky, nrc, nele);
   mallocArrayComplex (&s2kz, nrc, nele);
-  mallocArrayComplex (&error1k,  nrc, nele);
-  mallocArrayComplex (&error2kx, nrc, nele);
-  mallocArrayComplex (&error2ky, nrc, nele);
-  mallocArrayComplex (&error2kz, nrc, nele);
-  mallocArrayComplex (&error1r,  nrc, nele);
-  mallocArrayComplex (&error2rx, nrc, nele);
-  mallocArrayComplex (&error2ry, nrc, nele);
-  mallocArrayComplex (&error2rz, nrc, nele);
-  mallocArrayComplex (&error, nrc, nele);
+  // mallocArrayComplex (&error1k,  nrc, nele);
+  // mallocArrayComplex (&error2kx, nrc, nele);
+  // mallocArrayComplex (&error2ky, nrc, nele);
+  // mallocArrayComplex (&error2kz, nrc, nele);
+  // mallocArrayComplex (&error1r,  nrc, nele);
+  // mallocArrayComplex (&error2rx, nrc, nele);
+  // mallocArrayComplex (&error2ry, nrc, nele);
+  // mallocArrayComplex (&error2rz, nrc, nele);
+  // mallocArrayComplex (&error, nrc, nele);
   rcut = (double *) malloc (sizeof(double) * nele);
-  rcutIndex = (int *) malloc (sizeof(int) * nele);
-  result_error = (double *) malloc (sizeof(double) * nele);
+  rcutIndex = (unsigned *) malloc (sizeof(unsigned) * nele);
+  result_error = (float *) malloc (sizeof(float) * nele);
 
   for (int i = 0; i < nele; ++i){
     fscanf (fp, "%d ", &rcutIndex[i]);
     rcut[i] = rcList[rcutIndex[i]];
   }
   
-  p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
-  p_backward_error1  = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
-  p_backward_error2x = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
-  p_backward_error2y = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
-  p_backward_error2z = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
-  for (int count = 0; count < nrc; ++count){
-    p_backward_error1[count] = fftw_plan_dft_3d (nx, ny, nz, error1k[count], error1r[count], FFTW_BACKWARD,  FFTW_PATIENT);
-    p_backward_error2x[count] = fftw_plan_dft_3d (nx, ny, nz, error2kx[count], error2rx[count], FFTW_BACKWARD,  FFTW_PATIENT);
-    p_backward_error2y[count] = fftw_plan_dft_3d (nx, ny, nz, error2ky[count], error2ry[count], FFTW_BACKWARD,  FFTW_PATIENT);
-    p_backward_error2z[count] = fftw_plan_dft_3d (nx, ny, nz, error2kz[count], error2rz[count], FFTW_BACKWARD,  FFTW_PATIENT);
-  }
+  // p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
+  // p_backward_error1  = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  // p_backward_error2x = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  // p_backward_error2y = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  // p_backward_error2z = (fftw_plan*) malloc (sizeof(fftw_plan) * nrc);
+  // for (int count = 0; count < nrc; ++count){
+  //   p_backward_error1[count] = fftw_plan_dft_3d (nx, ny, nz, error1k[count], error1r[count], FFTW_BACKWARD,  FFTW_PATIENT);
+  //   p_backward_error2x[count] = fftw_plan_dft_3d (nx, ny, nz, error2kx[count], error2rx[count], FFTW_BACKWARD,  FFTW_PATIENT);
+  //   p_backward_error2y[count] = fftw_plan_dft_3d (nx, ny, nz, error2ky[count], error2ry[count], FFTW_BACKWARD,  FFTW_PATIENT);
+  //   p_backward_error2z[count] = fftw_plan_dft_3d (nx, ny, nz, error2kz[count], error2rz[count], FFTW_BACKWARD,  FFTW_PATIENT);
+  // }
   
   malloced = true;
 

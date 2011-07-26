@@ -7,6 +7,11 @@
 #include "DensityProfile.h"
 #include <vector>
 
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <cufft.h>
+
+
 class F13 
 {
 public:
@@ -43,21 +48,36 @@ private:
   std::vector<double > rcList;
   int nrc;
   bool malloced;
-  fftw_complex *rhor, *rhok;
   fftw_complex **s1k;
   fftw_complex **s2kx, **s2ky, **s2kz;
-  fftw_complex **error1r, **error1k;
-  fftw_complex **error2rx, **error2ry, **error2rz;
-  fftw_complex **error2kx, **error2ky, **error2kz;
-  fftw_complex **error;
+  // fftw_complex *rhor, *rhok;
+  // fftw_complex **error1r, **error1k;
+  // fftw_complex **error2rx, **error2ry, **error2rz;
+  // fftw_complex **error2kx, **error2ky, **error2kz;
+  // fftw_complex **error;
+
+  cufftComplex *copyBuff;
+  cufftComplex *d_rhor;
+  cufftComplex *d_rhok;
+  cufftComplex **d_s1k;
+  cufftComplex **d_s2kx, **d_s2ky, **d_s2kz;
+  cufftComplex **d_error1r, **d_error1k;
+  cufftComplex **d_error2rx, **d_error2ry, **d_error2rz;
+  cufftComplex **d_error2kx, **d_error2ky, **d_error2kz;
+  cufftComplex *d_error;
+  cufftHandle plan;
+  
   double *rcut;
-  int *rcutIndex;
-  double *result_error;
-  fftw_plan p_forward_rho;
-  fftw_plan *p_backward_error1;
-  fftw_plan *p_backward_error2x;
-  fftw_plan *p_backward_error2y;
-  fftw_plan *p_backward_error2z;
+  unsigned *rcutIndex;
+  float *result_error;
+  unsigned *d_rcutIndex;
+  float *d_result_error;
+  
+  // fftw_plan p_forward_rho;
+  // fftw_plan *p_backward_error1;
+  // fftw_plan *p_backward_error2x;
+  // fftw_plan *p_backward_error2y;
+  // fftw_plan *p_backward_error2z;
   F5  f_inte5;
   F13 f_inte13;
   Integral1D<F5,  double> inte5;
@@ -88,7 +108,7 @@ public:
   std::vector<double > getBox () const {return boxsize;}
   const double * getRCut () const {return rcut;}
   const std::vector<double > & getRcList () const {return rcList;}
-  const int * getProfileIndex () const {return rcutIndex;}
+  const unsigned * getProfileIndex () const {return rcutIndex;}
 public:
   void reinit (const double & rcmin,
 	       const double & rcmax,

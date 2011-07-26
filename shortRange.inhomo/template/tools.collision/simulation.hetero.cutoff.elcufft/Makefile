@@ -7,7 +7,7 @@
 # boost-include-path=	/people/thnfs/homes/wanghan/local/include/boost-1_36
 # boost-lib-path=		/people/thnfs/homes/wanghan/local/lib
 # boost-lib-option=	-lboost_program_options
-link-options=		/home/wanghan/local/lib/libxdrfile.a -lmpi -lmpi_cxx -L/usr/lib/openmpi/ -L/usr/lib64/openmpi/lib -lfftw3 -lgsl -lgslcblas
+link-options=		/home/wanghan/local/lib/libxdrfile.a -lmpi -lmpi_cxx -L/usr/lib/openmpi/ -L/usr/lib64/openmpi/lib -lfftw3 -lgsl -lgslcblas -lcufft
 link-path=		-L /home/wanghan/local/lib
 
 include_dirs = 	./include ~/local/include  ~/local/include/xdrfile/
@@ -63,7 +63,7 @@ CXXFLAGS += 	$(CFLAGS)
 CU:=		nvcc
 #CUFLAGS +=	$(CFLAGS)  -arch sm_12 -deviceemu
 #CUFLAGS +=	$(addprefix -I ,$(include_dirs)) -DCOORD_IN_ONE_VEC -arch sm_11 -O2
-CUFLAGS +=	$(CFLAGS) --compiler-options -fno-strict-aliasing --compiler-options -fpermissive -arch sm_11 -DUNIX
+CUFLAGS +=	$(CFLAGS) --compiler-options -fno-strict-aliasing --compiler-options -fpermissive -arch sm_11 -DUNIX 
 
 target:		$(application_target) $(libtarget)
 
