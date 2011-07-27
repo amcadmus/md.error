@@ -133,6 +133,10 @@ freeAll ()
     // free (p_backward_error2x);
     // free (p_backward_error2y);
     // free (p_backward_error2z);
+
+    for (int i = 0; i < NSTREAM; ++i){
+      cudaStreamDestroy(stream[i]);
+    }
     
     malloced = false;
   }
@@ -146,7 +150,11 @@ reinit (const double & rcmin,
 	DensityProfile_PiecewiseConst & dp)
 {
   freeAll ();
-  
+
+  for (int i = 0; i < NSTREAM; ++i){
+    cudaStreamCreate(&stream[i]);
+  }
+
   boxsize = dp.getBox();
   nx = dp.getNx();
   ny = dp.getNy();
@@ -155,7 +163,8 @@ reinit (const double & rcmin,
   hy = boxsize[1] / ny;
   hz = boxsize[2] / nz;
   nele = nx * ny * nz;
-
+  printf ("# AdaptRCut nx, ny, nz are %d %d %d\n", nx, ny, nz);
+  
   rcList.clear();  
   for (double tmprc = rcmin; tmprc <= rcmax; tmprc += rcstep){
     rcList.push_back(tmprc);
@@ -735,20 +744,56 @@ calRCut  (const double & prec)
   }
 }
 
-
-
-void AdaptRCut::
-refineRCut () 
+__device__ void
+index1to3_d (int input,
+	     int nx, int ny, int nz,
+	     int* ix, int* iy, int* iz)
 {
-  int * rcutIndex_bk = (int *) malloc (sizeof(int) * nele);
-  // float * result_error_bk = (float*) malloc (sizeof(float) * nele);
-  for (int i = 0; i < nele; ++i){
-    rcutIndex_bk[i] = 0;
-  }
+  int tmp = input;
+  *iz = tmp % (nz);
+  tmp = (tmp - *iz) / nz;
+  *iy = tmp % (ny);
+  *ix = (tmp - *iy) / ny;
+}
 
-  for (int i = 0; i < nele; ++i){
+__device__ int
+index3to1_d (int nx, int ny, int nz,
+	     int ix, int iy, int iz) 
+{
+  return iz + nz * (iy + ny * ix);
+}
+
+
+// __global__ static void
+// refineRCut_1 (const int nele,
+// 	      unsigned * rcutIndex_bk)
+// {
+//   unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+//   unsigned tid = threadIdx.x;
+//   unsigned ii = tid + bid * blockDim.x;
+
+//   if (ii < nele){
+//     rcutIndex_bk[ii] = 0;
+//   }
+// }
+
+
+__global__ static void
+refineRCut_d0 (const int nx,
+	       const int ny,
+	       const int nz,
+	       const int nele,
+	       const unsigned * rcutIndex,
+	       unsigned * rcutIndex_bk)
+{
+  unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+  unsigned tid = threadIdx.x;
+  unsigned ii = tid + bid * blockDim.x;
+  
+  if (ii < nele){
+    rcutIndex_bk[ii] = 0;
     int ix, iy, iz;
-    index1to3 (i, ix, iy, iz);
+    index1to3_d (ii, nx, ny, nz, &ix, &iy, &iz);
     for (int dx = -1; dx <= 1; ++dx){
       int jx = ix + dx;
       if      (jx <  0 ) jx += nx;
@@ -761,22 +806,97 @@ refineRCut ()
 	  int jz = iz + dz;
 	  if      (jz <  0 ) jz += nz;
 	  else if (jz >= nz) jz -= nz;
-	  if (rcutIndex[index3to1(jx, jy, jz)] > rcutIndex_bk[i]){
-	    rcutIndex_bk[i] = rcutIndex[index3to1(jx, jy, jz)];
+	  if (rcutIndex[index3to1_d(nx, ny, nz, jx, jy, jz)] > rcutIndex_bk[ii]){
+	    rcutIndex_bk[ii] = rcutIndex[index3to1_d(nx, ny, nz, jx, jy, jz)];
 	  }
 	}
       }
     }
   }
-
-  for (int i = 0; i < nele; ++i){
-    rcutIndex[i] = rcutIndex_bk[i];
-    rcut[i] = rcList[rcutIndex[i]];
-    // result_error[i] = error[rcutIndex[i]][i][0];
-  }
-
-  free (rcutIndex_bk);
 }
+
+__global__ static void
+refineRCut_d1 (const int nx,
+	       const int ny,
+	       const int nz,
+	       const int nele,
+	       unsigned * rcutIndex,
+	       const unsigned * rcutIndex_bk)
+{
+  unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+  unsigned tid = threadIdx.x;
+  unsigned ii = tid + bid * blockDim.x;
+
+  if (ii < nele){
+    rcutIndex[ii] = rcutIndex_bk[ii];
+  }
+}
+
+
+void AdaptRCut::
+refineRCut ()
+{
+  unsigned * rcutIndex_bk;
+  cudaMalloc ((void**)&rcutIndex_bk, sizeof (unsigned) * nele);
+  checkCUDAError ("AdaptRCut::refineRCut, malloc rcutIndex_bk");
+  unsigned blockSize = 128;
+  unsigned nblock = unsigned(nele) / blockSize + 1;
+  refineRCut_d0
+      <<<nblock, blockSize>>>
+      (nx, ny, nz, nele, d_rcutIndex, rcutIndex_bk);
+  refineRCut_d1
+      <<<nblock, blockSize>>>
+      (nx, ny, nz, nele, d_rcutIndex, rcutIndex_bk);
+  checkCUDAError ("AdaptRCut::refineRCut, decide cutoff");
+  cudaFree (rcutIndex_bk);
+  checkCUDAError ("AdaptRCut::refineRCut, free rcutIndex_bk");
+  cudaMemcpy (rcutIndex, d_rcutIndex, nele * sizeof(unsigned), cudaMemcpyDeviceToHost);
+  checkCUDAError ("AdaptRCut::refineRCut, copy back to host");
+  for (int i = 0; i < nele; ++i){
+    rcut[i] = rcList[rcutIndex[i]];
+  }
+}
+
+// void AdaptRCut::
+// refineRCut () 
+// {
+//   int * rcutIndex_bk = (int *) malloc (sizeof(int) * nele);
+//   // float * result_error_bk = (float*) malloc (sizeof(float) * nele);
+//   for (int i = 0; i < nele; ++i){
+//     rcutIndex_bk[i] = 0;
+//   }
+
+//   for (int i = 0; i < nele; ++i){
+//     int ix, iy, iz;
+//     index1to3 (i, ix, iy, iz);
+//     for (int dx = -1; dx <= 1; ++dx){
+//       int jx = ix + dx;
+//       if      (jx <  0 ) jx += nx;
+//       else if (jx >= nx) jx -= nx;
+//       for (int dy = -1; dy <= 1; ++dy){
+// 	int jy = iy + dy;
+// 	if      (jy <  0 ) jy += ny;
+// 	else if (jy >= ny) jy -= ny;
+// 	for (int dz = -1; dz <= 1; ++dz){
+// 	  int jz = iz + dz;
+// 	  if      (jz <  0 ) jz += nz;
+// 	  else if (jz >= nz) jz -= nz;
+// 	  if (rcutIndex[index3to1(jx, jy, jz)] > rcutIndex_bk[i]){
+// 	    rcutIndex_bk[i] = rcutIndex[index3to1(jx, jy, jz)];
+// 	  }
+// 	}
+//       }
+//     }
+//   }
+
+//   for (int i = 0; i < nele; ++i){
+//     rcutIndex[i] = rcutIndex_bk[i];
+//     rcut[i] = rcList[rcutIndex[i]];
+//     // result_error[i] = error[rcutIndex[i]][i][0];
+//   }
+
+//   free (rcutIndex_bk);
+// }
 
 void AdaptRCut::    
 print_x (const std::string & file) const 

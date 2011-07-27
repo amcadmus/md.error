@@ -32,6 +32,7 @@ public:
       }
 };
 
+#define NSTREAM 8
 
 class AdaptRCut 
 {
@@ -56,6 +57,8 @@ private:
   // fftw_complex **error2kx, **error2ky, **error2kz;
   // fftw_complex **error;
 
+  cudaStream_t stream[NSTREAM];
+
   cufftComplex *copyBuff;
   cufftComplex *d_rhor;
   cufftComplex *d_rhok;
@@ -65,7 +68,7 @@ private:
   cufftComplex **d_error2rx, **d_error2ry, **d_error2rz;
   cufftComplex **d_error2kx, **d_error2ky, **d_error2kz;
   cufftComplex *d_error;
-  cufftHandle plan;
+  cufftHandle plan[NSTREAM];
   
   double *rcut;
   unsigned *rcutIndex;

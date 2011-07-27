@@ -36,7 +36,7 @@
 
 int main(int argc, char * argv[])
 {
-  IndexType nstep = 100000;
+  IndexType nstep = 50000;
   IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.002;
@@ -53,7 +53,7 @@ int main(int argc, char * argv[])
   double rcmin = 02.5;
   double rcmax = 05.0;
   double rcstep = 0.25;
-  double prec = 0.03;
+  double prec = 0.030;
   
   if (argc != 4){
     printf ("Usage:\n%s conf.gro nstep device\n", argv[0]);
