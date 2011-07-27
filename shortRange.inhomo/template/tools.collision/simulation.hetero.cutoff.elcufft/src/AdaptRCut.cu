@@ -524,6 +524,12 @@ makeS1k (const double & epsilon,
 	      s1k[count][posi][0] = s1k[count+1][posi][0] + 2. / k * pref * an;
 	      s1k[count][posi][1] = 0.;	    
 	    }
+	    if (ix == -nx/2 ||
+	    	iy == -ny/2 ||
+	    	iz == -nz/2){
+	      s1k[count][posi][0] = 0.;
+	      s1k[count][posi][1] = 0.;
+	    }
 	  }
 	  else {
 	    s1k[count][posi][0] =
