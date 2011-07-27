@@ -43,7 +43,7 @@ densityProfileSamplingFeq=10
 # adapt rcut parameters
 rcutAssignFeq=10
 rcutUpdateFeq=200
-rcutNumRefine=2
+rcutNumRefine=1
 rcmin=02.5
 rcmax=05.0
 rcstep=0.25
