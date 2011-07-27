@@ -125,13 +125,13 @@ int main(int argc, char * argv[])
   // Reshuffle resh (sys);
   
   timer.tic(mdTimeTotal);
-  // if (resh.calIndexTable (clist_resh, &timer)){
-  //   sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
-  //   clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-  //   clist_resh.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-  //   nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-  //   disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
-  // }
+  if (resh.calIndexTable (clist_resh, &timer)){
+    sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
+    clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+    clist_resh.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+    nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+    disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
+  }
   
   printf ("# prepare ok, start to run\n");
   sys.recoverDeviceData (&timer);
@@ -242,15 +242,15 @@ int main(int argc, char * argv[])
 	assign_rcut.write ((i+1) * dt);
       }
       
-      // if ((i+1) % 100 == 0){
-      // 	if (resh.calIndexTable (clist_resh, &timer)){
-      // 	  sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
-      // 	  clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-      // 	  clist_resh.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-      // 	  nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
-      // 	  disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
-      // 	}
-      // }
+      if ((i+1) % 100 == 0){
+      	if (resh.calIndexTable (clist_resh, &timer)){
+      	  sys.reshuffle   (resh.indexTable, sys.hdata.numAtom, &timer);
+      	  clist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+      	  clist_resh.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+      	  nlist.reshuffle (resh.indexTable, sys.hdata.numAtom, &timer);  
+      	  disp.reshuffle  (resh.indexTable, sys.hdata.numAtom, &timer);  
+      	}
+      }
     }
     sys.endWriteXtc();
     sys.endWriteTrr();
