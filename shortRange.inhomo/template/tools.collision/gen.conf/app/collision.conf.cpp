@@ -58,7 +58,7 @@ void analyze (std::vector<std::vector<double > > & posi,
   
 int main (int argc, char * argv[])
 {
-  double Lx, Ly_times, Lz_times;
+  double Lx, Ly, Lz;
   double xx, uu;
   
   std::string inputfile;
@@ -67,9 +67,9 @@ int main (int argc, char * argv[])
 
   desc.add_options()
       ("help,h", "print this message")
-      ("Lx", po::value<double > (&Lx)->default_value (150),  "box size x.")
-      ("Ly-times", po::value<double > (&Ly_times)->default_value (2),  "box size y.")
-      ("Lz-times", po::value<double > (&Lz_times)->default_value (5),  "box size z.")
+      ("Lx", po::value<double > (&Lx)->default_value (128),  "box size x.")
+      ("Ly", po::value<double > (&Ly)->default_value (64),  "box size y.")
+      ("Lz", po::value<double > (&Lz)->default_value (128),  "box size z.")
       ("x-value,x", po::value<double > (&xx)->default_value (0.),  "value of x.")
       ("u-value,u", po::value<double > (&uu)->default_value (1.58),"value of u.")
       ("ball-conf",	po::value<std::string > (&inputfile)->	default_value (std::string("ball.init.gro"), "inital ball conf."))
@@ -105,8 +105,8 @@ int main (int argc, char * argv[])
   std::cout << "# u value is " << uu << std::endl;
   
   double tmpdmax = 28;
-  double Ly = Ly_times * tmpdmax;
-  double Lz = Lz_times * tmpdmax;
+  // double Ly = Ly_times * tmpdmax;
+  // double Lz = Lz_times * tmpdmax;
   double XX = xx * tmpdmax;
   std::vector<double > newcenter0(3), newcenter1(3);
   newcenter0[0] = tmpdmax;
