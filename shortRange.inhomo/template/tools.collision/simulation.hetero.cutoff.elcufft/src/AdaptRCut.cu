@@ -275,8 +275,8 @@ reinit (const double & rcmin,
 __global__ static void 
 array_multiply (cufftComplex *a,
 		const int nele,
-		cufftComplex *b,
-		cufftComplex *c)
+		const cufftComplex *b,
+		const cufftComplex *c)
 {
   unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
   unsigned tid = threadIdx.x;
@@ -379,10 +379,10 @@ calError (const DensityProfile_PiecewiseConst & dp)
   checkCUDAError ("AdaptRCut::calError: ek = sk * rhok");
 
   for (int count = 0; count < nrc; ++count){
-    cufftExecC2C (plan, d_error1k [count], d_error1r [count], CUFFT_FORWARD);
-    cufftExecC2C (plan, d_error2kx[count], d_error2rx[count], CUFFT_FORWARD);
-    cufftExecC2C (plan, d_error2ky[count], d_error2ry[count], CUFFT_FORWARD);
-    cufftExecC2C (plan, d_error2kz[count], d_error2rz[count], CUFFT_FORWARD);
+    cufftExecC2C (plan, d_error1k [count], d_error1r [count], CUFFT_INVERSE);
+    cufftExecC2C (plan, d_error2kx[count], d_error2rx[count], CUFFT_INVERSE);
+    cufftExecC2C (plan, d_error2ky[count], d_error2ry[count], CUFFT_INVERSE);
+    cufftExecC2C (plan, d_error2kz[count], d_error2rz[count], CUFFT_INVERSE);
   }
   checkCUDAError ("AdaptRCut::calError: ek -> er");
 
@@ -400,7 +400,11 @@ calError (const DensityProfile_PiecewiseConst & dp)
 	 d_error);
   }
   checkCUDAError ("AdaptRCut::calError: cal error e2");
-  formErrorSqrt <<<nele*nrc/blockSize+1, blockSize>>>
+  dim3 tmpNBlock;
+  tmpNBlock.x = nrc;
+  tmpNBlock.y = nblock;
+  // printf ("tmpNBlock is %d\n", tmpNBlock);
+  formErrorSqrt <<<tmpNBlock, blockSize>>>
       (nele*nrc, d_error);
   checkCUDAError ("AdaptRCut::calError: cal error sqrt");
   
@@ -667,11 +671,11 @@ makeS2k (const double & epsilon,
 
 __global__ void static
 calRCut_d (const unsigned nrc,
-	 const unsigned nele,
-	 const cufftComplex *error,
-	 const float prec,
-	 unsigned * rcutIndex,
-	 float * result_error)
+	   const unsigned nele,
+	   const cufftComplex *error,
+	   const float prec,
+	   unsigned * rcutIndex,
+	   float * result_error)
 {
   unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
   unsigned tid = threadIdx.x;
