@@ -23,7 +23,9 @@ enum mdTimeItem {
   mdTimeAngleInterStatistic	= 12,
   mdTimeDataTransfer		= 13,
   mdTimeJudgeRebuild		= 19,
-  mdTimeDataIO			= 20
+  mdTimeDataIO			= 20,
+  mdTimeAdaptRCut		= 21,
+  mdTimeDensityProfile		= 22
 };
 
 typedef enum mdTimeItem mdTimeItem_t;

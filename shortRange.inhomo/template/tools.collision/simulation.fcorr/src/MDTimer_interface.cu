@@ -65,6 +65,12 @@ void MDTimer::printRecord (FILE * fp)
   fprintf(fp, "Data transfer:                       %1.3e s   %3.1f %\n",
 	  0.001 * timeRecord[mdTimeDataTransfer],
 	  100 * timeRecord[mdTimeDataTransfer] / timeRecord[mdTimeTotal]);
+  fprintf(fp, "Cal. density profile:                %1.3e s   %3.1f %\n",
+	  0.001 * timeRecord[mdTimeDensityProfile],
+	  100 * timeRecord[mdTimeDensityProfile] / timeRecord[mdTimeTotal]);
+  fprintf(fp, "Adapt rcut:                          %1.3e s   %3.1f %\n",
+	  0.001 * timeRecord[mdTimeAdaptRCut],
+	  100 * timeRecord[mdTimeAdaptRCut] / timeRecord[mdTimeTotal]);
   fprintf(fp, "Data IO:                             %1.3e s   %3.1f %\n",
 	  0.001 * timeRecord[mdTimeDataIO],
 	  100 * timeRecord[mdTimeDataIO] / timeRecord[mdTimeTotal]);

@@ -38,9 +38,10 @@ int main(int argc, char * argv[])
   IndexType nstep = 10000;
   IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
-  ScalorType dt = 0.005;
+  ScalorType dt = 0.002;
   ScalorType rcut = 5.0;
   ScalorType nlistExten = 0.49;
+  ScalorType nlistSizeFactor = 100.0;
   double refh = 1.0;
   char * filename;
 
@@ -96,7 +97,7 @@ int main(int argc, char * argv[])
   ScalorType maxrcut = sysNbInter.maxRcut();
   ScalorType rlist = maxrcut + nlistExten;
   CellList clist (sys, rlist, NThreadsPerBlockCell, NThreadsPerBlockAtom);
-  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, 4.f);
+  NeighborList nlist (sysNbInter, sys, rlist, NThreadsPerBlockAtom, nlistSizeFactor);
   sys.normalizeDeviceData ();
   clist.rebuild (sys, NULL);
   nlist.rebuild (sys, clist, NULL);
