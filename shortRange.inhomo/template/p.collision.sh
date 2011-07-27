@@ -31,6 +31,7 @@ collision_rcut=5.0
 collision_nlistExten=0.49
 collision_nlistSizeFactor=100.0
 collision_clistDivision=1
+collision_prec=0.030
 
 collision_x=0.36
 collision_u=3.17
