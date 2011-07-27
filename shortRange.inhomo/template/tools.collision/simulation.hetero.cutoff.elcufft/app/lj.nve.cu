@@ -122,7 +122,7 @@ int main(int argc, char * argv[])
 
   VelocityVerlet inte_vv (sys, NThreadsPerBlockAtom);
 
-  // Reshuffle resh (sys);
+  Reshuffle resh (sys);
   
   timer.tic(mdTimeTotal);
   if (resh.calIndexTable (clist_resh, &timer)){
