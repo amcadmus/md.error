@@ -114,7 +114,9 @@ freeAll ()
     freeArrayComplex (&d_error2rz, nrc);
     // freeArrayComplex (&d_error, nrc);
     cudaFree (d_error);
-    cufftDestroy(plan);
+    for (int i = 0; i < NSTREAM; ++i){
+      cufftDestroy(plan[i]);
+    }
     
     free (rcut);
     free (rcutIndex);
@@ -204,8 +206,11 @@ reinit (const double & rcmin,
   mallocArrayComplex (&d_error2rz, nrc, nele);
   // mallocArrayComplex (&d_error, nrc, nele);
   cudaMalloc ((void**)&d_error, nele*nrc*sizeof(cufftComplex));
-  cufftPlan3d (&plan, nx, ny, nz, CUFFT_C2C);
-
+  for (int i = 0; i < NSTREAM; ++i){
+    cufftPlan3d (&plan[i], nx, ny, nz, CUFFT_C2C);
+    cufftSetStream (plan[i], stream[i]);
+  }
+  
   rcut = (double *) malloc (sizeof(double) * nele);
   rcutIndex = (unsigned *) malloc (sizeof(unsigned) * nele);
   result_error = (float *) malloc (sizeof(float) * nele);
@@ -370,7 +375,7 @@ calError (const DensityProfile_PiecewiseConst & dp)
     copyBuff[i].y = 0.;
   }
   cudaMemcpy (d_rhor, copyBuff, sizec, cudaMemcpyHostToDevice);
-  cufftExecC2C (plan, d_rhor, d_rhok, CUFFT_FORWARD);
+  cufftExecC2C (plan[0], d_rhor, d_rhok, CUFFT_FORWARD);
   checkCUDAError ("AdaptRCut::calError: rhor -> rhok");
 
   unsigned blockSize = 128;
@@ -388,20 +393,20 @@ calError (const DensityProfile_PiecewiseConst & dp)
   checkCUDAError ("AdaptRCut::calError: ek = sk * rhok");
 
   for (int count = 0; count < nrc; ++count){
-    cufftExecC2C (plan, d_error1k [count], d_error1r [count], CUFFT_INVERSE);
-    cufftExecC2C (plan, d_error2kx[count], d_error2rx[count], CUFFT_INVERSE);
-    cufftExecC2C (plan, d_error2ky[count], d_error2ry[count], CUFFT_INVERSE);
-    cufftExecC2C (plan, d_error2kz[count], d_error2rz[count], CUFFT_INVERSE);
+    cufftExecC2C (plan[(4*count+0)%NSTREAM], d_error1k [count], d_error1r [count], CUFFT_INVERSE);
+    cufftExecC2C (plan[(4*count+1)%NSTREAM], d_error2kx[count], d_error2rx[count], CUFFT_INVERSE);
+    cufftExecC2C (plan[(4*count+2)%NSTREAM], d_error2ky[count], d_error2ry[count], CUFFT_INVERSE);
+    cufftExecC2C (plan[(4*count+3)%NSTREAM], d_error2kz[count], d_error2rz[count], CUFFT_INVERSE);
   }
   checkCUDAError ("AdaptRCut::calError: ek -> er");
 
   for (int count = 0; count < nrc; ++count){
-    formErrorEr1 <<<nblock, blockSize>>>
+    formErrorEr1 <<<nblock, blockSize, 0, stream[count%NSTREAM]>>>
 	(count, nele, 1./volume, d_error1r[count], d_error);
   }
   checkCUDAError ("AdaptRCut::calError: cal error e1");
   for (int count = 0; count < nrc; ++count){
-    formErrorEr2 <<<nblock, blockSize>>>
+    formErrorEr2 <<<nblock, blockSize, 0, stream[count%NSTREAM]>>>
 	(count, nele, 1./volume,
 	 d_error2rx[count],
 	 d_error2ry[count],
@@ -413,6 +418,7 @@ calError (const DensityProfile_PiecewiseConst & dp)
   tmpNBlock.x = nrc;
   tmpNBlock.y = nblock;
   // printf ("tmpNBlock is %d\n", tmpNBlock);
+  cudaThreadSynchronize();
   formErrorSqrt <<<tmpNBlock, blockSize>>>
       (nele*nrc, d_error);
   checkCUDAError ("AdaptRCut::calError: cal error sqrt");
