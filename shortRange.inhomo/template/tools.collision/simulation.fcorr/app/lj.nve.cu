@@ -132,14 +132,16 @@ int main(int argc, char * argv[])
   sys.writeHostDataGro ("confstart.gro", 0, 0.f, &timer);
   
   printf ("# prepare ok, start to run\n");
-  printf ("#*     1     2           3         4            5       6                7          8          9         10        11\n");
-  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  NHC_Hamiltonian pressureXX pressureYY pressureZZ s_tension\n");
+  printf ("#*     1     2           3         4            5       6       7\n");
+  printf ("#* nstep  time  nonBondedE  kineticE  temperature  totalE  Npairs\n");
 
   try{
     sys.initWriteXtc ("traj.xtc");
+    sys.initWriteTrr ("traj.trr");
     sys.recoverDeviceData (&timer);
     sys.updateHostFromRecovered (&timer);
     sys.writeHostDataXtc (0, 0*dt, &timer);
+    sys.writeHostDataTrr (0, 0*dt, &timer);
     afc.init_write (afcname);
     for (i = 0; i < nstep; ++i){
       if (i%1 == 0){
@@ -223,6 +225,7 @@ int main(int argc, char * argv[])
       	sys.recoverDeviceData (&timer);
       	sys.updateHostFromRecovered (&timer);
       	sys.writeHostDataXtc (i+1, (i+1)*dt, &timer);
+      	sys.writeHostDataTrr (i+1, (i+1)*dt, &timer);
 	afc.write ((i+1)*dt);
       }
       
@@ -236,6 +239,7 @@ int main(int argc, char * argv[])
       }
     }
     sys.endWriteXtc();
+    sys.endWriteTrr();
     sys.recoverDeviceData (&timer);
     sys.updateHostFromRecovered (&timer);
     sys.writeHostDataGro ("confout.gro", nstep, nstep*dt, &timer);
