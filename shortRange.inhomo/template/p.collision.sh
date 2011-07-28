@@ -47,3 +47,6 @@ rcutNumRefine=1
 rcmin=02.5
 rcmax=05.0
 rcstep=0.25
+
+assignForceCorrFeq=10
+updateForceCorrFeq=200
