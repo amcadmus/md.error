@@ -7,6 +7,10 @@
 #include "DensityProfile.h"
 #include <vector>
 
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <cufft.h>
+
 class F13 
 {
 public:
@@ -42,14 +46,24 @@ class ForceCorr
 private:
   bool malloced;
   double rc;
-  fftw_complex *rhor, *rhok;
+
+  cufftComplex *copyBuff;
+  cufftComplex *d_rhor;
+  cufftComplex *d_rhok;
+  cufftComplex *d_s2kx, *d_s2ky, *d_s2kz;
+  cufftComplex *d_error2kx, *d_error2ky, *d_error2kz;
+  cufftHandle plan;
+public:
+  cufftComplex *d_error2rx, *d_error2ry, *d_error2rz;
+private:
+  // fftw_complex *rhor, *rhok;
   fftw_complex *s2kx, *s2ky, *s2kz;
-  fftw_complex *error2rx, *error2ry, *error2rz;
-  fftw_complex *error2kx, *error2ky, *error2kz;
-  fftw_plan p_forward_rho;
-  fftw_plan p_backward_error2x;
-  fftw_plan p_backward_error2y;
-  fftw_plan p_backward_error2z;
+  // fftw_complex *error2rx, *error2ry, *error2rz;
+  // fftw_complex *error2kx, *error2ky, *error2kz;
+  // fftw_plan p_forward_rho;
+  // fftw_plan p_backward_error2x;
+  // fftw_plan p_backward_error2y;
+  // fftw_plan p_backward_error2z;
   F5  f_inte5;
   F13 f_inte13;
   Integral1D<F5,  double> inte5;
@@ -74,12 +88,12 @@ public:
   unsigned getNy () const {return ny;}
   unsigned getNz () const {return nz;}
   std::vector<double > getBox () const {return boxsize;}
-  fftw_complex * getForceCorrX () {return error2rx;}
-  fftw_complex * getForceCorrY () {return error2ry;}
-  fftw_complex * getForceCorrZ () {return error2rz;}
-  const fftw_complex * getForceCorrX () const {return error2rx;}
-  const fftw_complex * getForceCorrY () const {return error2ry;}
-  const fftw_complex * getForceCorrZ () const {return error2rz;}
+  // fftw_complex * getForceCorrX () {return error2rx;}
+  // fftw_complex * getForceCorrY () {return error2ry;}
+  // fftw_complex * getForceCorrZ () {return error2rz;}
+  // const fftw_complex * getForceCorrX () const {return error2rx;}
+  // const fftw_complex * getForceCorrY () const {return error2ry;}
+  // const fftw_complex * getForceCorrZ () const {return error2rz;}
 public:
   void reinit (const double & rc,
 	       DensityProfile_PiecewiseConst & dp);

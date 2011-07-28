@@ -7,7 +7,7 @@
 # boost-include-path=	/people/thnfs/homes/wanghan/local/include/boost-1_36
 # boost-lib-path=		/people/thnfs/homes/wanghan/local/lib
 # boost-lib-option=	-lboost_program_options
-link-options=		/home/wanghan/local/lib/libxdrfile.a -lmpi -lmpi_cxx -L/usr/lib/openmpi/ -L/usr/lib64/openmpi/lib -lfftw3 -lgsl -lgslcblas
+link-options=		/home/wanghan/local/lib/libxdrfile.a -lmpi -lmpi_cxx -L/usr/lib/openmpi/ -L/usr/lib64/openmpi/lib -lfftw3 -lgsl -lgslcblas -lcufft
 link-path=		-L /home/wanghan/local/lib
 
 include_dirs = 	./include ~/local/include  ~/local/include/xdrfile/

@@ -214,7 +214,7 @@ int main(int argc, char * argv[])
 	timer.toc (mdTimeDensityProfile);
 	timer.tic (mdTimeAdaptRCut);
 	fc.calError (dp);
-	fc.print_x ("fc.x.out");
+	// fc.print_x ("fc.x.out");
 	afc.getForceCorr (fc);
 	afc.print_x ("afc.x.out");
 	timer.toc (mdTimeAdaptRCut);

@@ -51,21 +51,36 @@ void ForceCorr::
 freeAll ()
 {
   if (malloced) {
-    free (rhok);
-    free (rhor);
+    // free (rhok);
+    // free (rhor);
+    cudaFree (copyBuff);
+    cudaFree (d_rhor);
+    cudaFree (d_rhok);
+    cudaFree (d_s2kx);
+    cudaFree (d_s2ky);
+    cudaFree (d_s2kz);
+    cudaFree (d_error2kx);
+    cudaFree (d_error2rx);
+    cudaFree (d_error2ky);
+    cudaFree (d_error2ry);
+    cudaFree (d_error2kz);
+    cudaFree (d_error2rz);
+    cufftDestroy (plan);
+    
     freeArrayComplex (&s2kx);
     freeArrayComplex (&s2ky);
     freeArrayComplex (&s2kz);
-    freeArrayComplex (&error2kx);
-    freeArrayComplex (&error2ky);
-    freeArrayComplex (&error2kz);
-    freeArrayComplex (&error2rx);
-    freeArrayComplex (&error2ry);
-    freeArrayComplex (&error2rz);
-    fftw_destroy_plan (p_forward_rho);
-    fftw_destroy_plan (p_backward_error2x);
-    fftw_destroy_plan (p_backward_error2y);
-    fftw_destroy_plan (p_backward_error2z);
+    // freeArrayComplex (&error2kx);
+    // freeArrayComplex (&error2ky);
+    // freeArrayComplex (&error2kz);
+    // freeArrayComplex (&error2rx);
+    // freeArrayComplex (&error2ry);
+    // freeArrayComplex (&error2rz);
+    // fftw_destroy_plan (p_forward_rho);
+    // fftw_destroy_plan (p_backward_error2x);
+    // fftw_destroy_plan (p_backward_error2y);
+    // fftw_destroy_plan (p_backward_error2z);
+    
     malloced = false;
   }
 }
@@ -88,78 +103,177 @@ reinit (const double & rc_,
   nele = nx * ny * nz;
   printf ("# ForceCorr nx, ny, nz are %d %d %d\n", nx, ny, nz);
 
-  rhor = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
-  rhok = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
+  size_t sizec = sizeof(cufftComplex) * nele;
+  cudaMalloc ((void**)&copyBuff, sizec);
+  cudaMalloc ((void**)&d_rhor, sizec);
+  cudaMalloc ((void**)&d_rhok, sizec);
+  cudaMalloc ((void**)&d_s2kx, sizec);
+  cudaMalloc ((void**)&d_s2ky, sizec);
+  cudaMalloc ((void**)&d_s2kz, sizec);
+  cudaMalloc ((void**)&d_error2rx, sizec);
+  cudaMalloc ((void**)&d_error2kx, sizec);
+  cudaMalloc ((void**)&d_error2ry, sizec);
+  cudaMalloc ((void**)&d_error2ky, sizec);
+  cudaMalloc ((void**)&d_error2rz, sizec);
+  cudaMalloc ((void**)&d_error2kz, sizec);
+  cufftPlan3d (&plan, nx, ny, nz, CUFFT_C2C);
+
+  // rhor = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
+  // rhok = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
   mallocArrayComplex (&s2kx, nele);
   mallocArrayComplex (&s2ky, nele);
   mallocArrayComplex (&s2kz, nele);
-  mallocArrayComplex (&error2kx, nele);
-  mallocArrayComplex (&error2ky, nele);
-  mallocArrayComplex (&error2kz, nele);
-  mallocArrayComplex (&error2rx, nele);
-  mallocArrayComplex (&error2ry, nele);
-  mallocArrayComplex (&error2rz, nele);
+  // mallocArrayComplex (&error2kx, nele);
+  // mallocArrayComplex (&error2ky, nele);
+  // mallocArrayComplex (&error2kz, nele);
+  // mallocArrayComplex (&error2rx, nele);
+  // mallocArrayComplex (&error2ry, nele);
+  // mallocArrayComplex (&error2rz, nele);
 
-  p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
-  p_backward_error2x = fftw_plan_dft_3d (nx, ny, nz, error2kx, error2rx, FFTW_BACKWARD,  FFTW_PATIENT);
-  p_backward_error2y = fftw_plan_dft_3d (nx, ny, nz, error2ky, error2ry, FFTW_BACKWARD,  FFTW_PATIENT);
-  p_backward_error2z = fftw_plan_dft_3d (nx, ny, nz, error2kz, error2rz, FFTW_BACKWARD,  FFTW_PATIENT);
+  // p_forward_rho = fftw_plan_dft_3d (nx, ny, nz, rhor, rhok, FFTW_FORWARD,  FFTW_PATIENT);
+  // p_backward_error2x = fftw_plan_dft_3d (nx, ny, nz, error2kx, error2rx, FFTW_BACKWARD,  FFTW_PATIENT);
+  // p_backward_error2y = fftw_plan_dft_3d (nx, ny, nz, error2ky, error2ry, FFTW_BACKWARD,  FFTW_PATIENT);
+  // p_backward_error2z = fftw_plan_dft_3d (nx, ny, nz, error2kz, error2rz, FFTW_BACKWARD,  FFTW_PATIENT);
   
   malloced = true;
 
   printf ("# reinit: start build k mat 2 ...");
   fflush (stdout);
   makeS2k (1., 1.);
+  for (int i = 0; i < nele; ++i){
+    copyBuff[i].x = s2kx[i][0];
+    copyBuff[i].y = s2kx[i][1];
+  }
+  cudaMemcpy (d_s2kx, copyBuff, sizec, cudaMemcpyHostToDevice);
+  for (int i = 0; i < nele; ++i){
+    copyBuff[i].x = s2ky[i][0];
+    copyBuff[i].y = s2ky[i][1];
+  }
+  cudaMemcpy (d_s2ky, copyBuff, sizec, cudaMemcpyHostToDevice);
+  for (int i = 0; i < nele; ++i){
+    copyBuff[i].x = s2kz[i][0];
+    copyBuff[i].y = s2kz[i][1];
+  }
+  cudaMemcpy (d_s2kz, copyBuff, sizec, cudaMemcpyHostToDevice);
   printf (" done\n");  
   fflush (stdout);
 }
 
-static void 
-array_multiply (fftw_complex * a,
+// static void 
+// array_multiply (fftw_complex * a,
+// 		const int nele,
+// 		fftw_complex * b,
+// 		fftw_complex * c) 
+// {
+//   for (int ii = 0; ii < nele; ++ii){
+//     // double tmpr, tmpi;
+//     a[ii][0] =
+// 	c[ii][0] * b[ii][0] - c[ii][1] * b[ii][1];
+//     a[ii][1] =
+// 	c[ii][0] * b[ii][1] + c[ii][1] * b[ii][0];
+//   }
+// }
+
+__global__ static void 
+array_multiply (cufftComplex *a,
 		const int nele,
-		fftw_complex * b,
-		fftw_complex * c) 
+		const cufftComplex *b,
+		const cufftComplex *c)
 {
-  for (int ii = 0; ii < nele; ++ii){
-    // double tmpr, tmpi;
-    a[ii][0] =
-	c[ii][0] * b[ii][0] - c[ii][1] * b[ii][1];
-    a[ii][1] =
-	c[ii][0] * b[ii][1] + c[ii][1] * b[ii][0];
+  unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+  unsigned tid = threadIdx.x;
+  unsigned ii = tid + bid * blockDim.x;
+
+  if (ii < nele){
+      a[ii].x =
+	  c[ii].x * b[ii].x - c[ii].y * b[ii].y;
+      a[ii].y =
+	  c[ii].x * b[ii].y + c[ii].y * b[ii].x;
   }
 }
+
+__global__ static void
+formError (const int nele,
+	   const float volumei,
+	   cufftComplex * error2rx,
+	   cufftComplex * error2ry,
+	   cufftComplex * error2rz)
+{
+  unsigned bid = blockIdx.x + gridDim.x * blockIdx.y;
+  unsigned tid = threadIdx.x;
+  unsigned ii = tid + bid * blockDim.x;
+
+  if (ii < nele){
+    error2rx[ii].x *= volumei;
+    error2ry[ii].x *= volumei;
+    error2rz[ii].x *= volumei;
+    error2rx[ii].y *= volumei;
+    error2ry[ii].y *= volumei;
+    error2rz[ii].y *= volumei;    
+  }
+}
+
+#include "error.h"
 
 void ForceCorr::
 calError (const DensityProfile_PiecewiseConst & dp)
 {
-  for (int i = 0; i < nele; ++i){
-    rhor[i][0] = dp.getProfile(i);
-    rhor[i][1] = 0.;
-  }
-  fftw_execute (p_forward_rho);
   double volume = boxsize[0] * boxsize[1] * boxsize[2];
   double scale = volume / nele;
+  size_t sizec = sizeof(cufftComplex) * nele;
   for (int i = 0; i < nele; ++i){
-    rhok[i][0] *= scale;
-    rhok[i][1] *= scale;
-  }  
-
-  array_multiply (error2kx, nele, s2kx, rhok);
-  array_multiply (error2ky, nele, s2ky, rhok);
-  array_multiply (error2kz, nele, s2kz, rhok);
-
-  fftw_execute (p_backward_error2x);
-  fftw_execute (p_backward_error2y);
-  fftw_execute (p_backward_error2z);
-
-  for (int i = 0; i < nele; ++i){
-    error2rx[i][0] /= volume;
-    error2ry[i][0] /= volume;
-    error2rz[i][0] /= volume;
-    error2rx[i][1] /= volume;
-    error2ry[i][1] /= volume;
-    error2rz[i][1] /= volume;
+    copyBuff[i].x = dp.getProfile(i) * scale;
+    copyBuff[i].y = 0.;
   }
+  cudaMemcpy (d_rhor, copyBuff, sizec, cudaMemcpyHostToDevice);
+  cufftExecC2C (plan, d_rhor, d_rhok, CUFFT_FORWARD);
+  checkCUDAError ("AdaptRCut::calError: rhor -> rhok");
+  // for (int i = 0; i < nele; ++i){
+  //    rhor[i][0] = dp.getProfile(i);
+  //    rhor[i][1] = 0.;
+  //  }
+  //  fftw_execute (p_forward_rho);
+  //  double volume = boxsize[0] * boxsize[1] * boxsize[2];
+  //  double scale = volume / nele;
+  //  for (int i = 0; i < nele; ++i){
+  //    rhok[i][0] *= scale;
+  //    rhok[i][1] *= scale;
+  //  }  
+
+  unsigned blockSize = 128;
+  unsigned nblock = unsigned(nele) / blockSize + 1;
+  array_multiply <<<nblock, blockSize>>>
+      (d_error2kx, nele, d_s2kx, d_rhok);
+  array_multiply <<<nblock, blockSize>>>
+      (d_error2ky, nele, d_s2ky, d_rhok);
+  array_multiply <<<nblock, blockSize>>>
+      (d_error2kz, nele, d_s2kz, d_rhok);
+  checkCUDAError ("AdaptRCut::calError: ek = sk * rhok");
+  // array_multiply (error2kx, nele, s2kx, rhok);
+  // array_multiply (error2ky, nele, s2ky, rhok);
+  // array_multiply (error2kz, nele, s2kz, rhok);
+
+  cufftExecC2C (plan, d_error2kx, d_error2rx, CUFFT_INVERSE);
+  cufftExecC2C (plan, d_error2ky, d_error2ry, CUFFT_INVERSE);
+  cufftExecC2C (plan, d_error2kz, d_error2rz, CUFFT_INVERSE);
+  checkCUDAError ("AdaptRCut::calError: ek -> er");
+  // fftw_execute (p_backward_error2x);
+  // fftw_execute (p_backward_error2y);
+  // fftw_execute (p_backward_error2z);
+
+  formError <<<nblock, blockSize>>>
+      (nele, 1./volume,
+       d_error2rx,
+       d_error2ry,
+       d_error2rz);
+  // for (int i = 0; i < nele; ++i){
+  //   error2rx[i][0] /= volume;
+  //   error2ry[i][0] /= volume;
+  //   error2rz[i][0] /= volume;
+  //   error2rx[i][1] /= volume;
+  //   error2ry[i][1] /= volume;
+  //   error2rz[i][1] /= volume;
+  // }
 }
 
 
@@ -284,36 +398,36 @@ makeS2k (const double & epsilon,
 
 
 
-void ForceCorr::    
-print_x (const std::string & file) const 
-{
-  FILE * fp = fopen (file.c_str(), "w");
-  if (fp == NULL){
-    std::cerr << "cannot open file " << file << std::endl;
-    exit(1);
-  }
+// void ForceCorr::    
+// print_x (const std::string & file) const 
+// {
+//   FILE * fp = fopen (file.c_str(), "w");
+//   if (fp == NULL){
+//     std::cerr << "cannot open file " << file << std::endl;
+//     exit(1);
+//   }
 
-  for (int i = 0; i < nx; ++i){
-    // double sum = 0.;
-    // for (int j = 0; j < ny; ++j){
-    //   for (int k = 0; k < nz; ++k){
-    // 	sum += profile[index3to1(i, j, k)];
-    //   }
-    // }
-    // fprintf (fp, "%f %e %e\n",
-    // 	     (i + 0.5) * hx,
-    // 	     error[4][index3to1(i,0,0)][0],
-    // 	     error[4][index3to1(i,0,0)][1]
-    // 	);
-    fprintf (fp, "%f %e %e %e %e %e %e\n",
-	     (i + 0.5) * hx,
-	     error2rx[index3to1(i,0,0)][0], error2rx[index3to1(i,0,0)][1],
-	     error2ry[index3to1(i,0,0)][0], error2ry[index3to1(i,0,0)][1],
-	     error2rz[index3to1(i,0,0)][0], error2rz[index3to1(i,0,0)][1]
-	     );
-  }
-  fclose (fp);
-}
+//   for (int i = 0; i < nx; ++i){
+//     // double sum = 0.;
+//     // for (int j = 0; j < ny; ++j){
+//     //   for (int k = 0; k < nz; ++k){
+//     // 	sum += profile[index3to1(i, j, k)];
+//     //   }
+//     // }
+//     // fprintf (fp, "%f %e %e\n",
+//     // 	     (i + 0.5) * hx,
+//     // 	     error[4][index3to1(i,0,0)][0],
+//     // 	     error[4][index3to1(i,0,0)][1]
+//     // 	);
+//     fprintf (fp, "%f %e %e %e %e %e %e\n",
+// 	     (i + 0.5) * hx,
+// 	     error2rx[index3to1(i,0,0)][0], error2rx[index3to1(i,0,0)][1],
+// 	     error2ry[index3to1(i,0,0)][0], error2ry[index3to1(i,0,0)][1],
+// 	     error2rz[index3to1(i,0,0)][0], error2rz[index3to1(i,0,0)][1]
+// 	     );
+//   }
+//   fclose (fp);
+// }
 
 
 // void ForceCorr::    
