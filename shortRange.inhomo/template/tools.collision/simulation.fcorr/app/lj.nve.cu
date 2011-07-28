@@ -45,9 +45,9 @@ int main(int argc, char * argv[])
   double refh = 1.0;
   char * filename;
 
-  IndexType densityProfileSamplingFeq = 40;
-  IndexType assignForceCorrFeq = 40;
-  IndexType updateForceCorrFeq = 2000;
+  IndexType densityProfileSamplingFeq = 10;
+  IndexType assignForceCorrFeq = 10;
+  IndexType updateForceCorrFeq = 200;
   char afcname[] = "fc.ctj";
 
   if (argc != 4){

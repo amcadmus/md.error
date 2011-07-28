@@ -37,9 +37,9 @@ reinit (const ScalorType & bx,
   nx = unsigned (boxsize[0] / refh);
   ny = unsigned (boxsize[1] / refh);
   nz = unsigned (boxsize[2] / refh);
-  if ((nx - (nx/2)*2) == 0) nx++;
-  if ((ny - (ny/2)*2) == 0) ny++;
-  if ((nz - (nz/2)*2) == 0) nz++;
+  if ((nx - (nx/2)*2) == 1) nx++;
+  if ((ny - (ny/2)*2) == 1) ny++;
+  if ((nz - (nz/2)*2) == 1) nz++;
   // nx = 147;
   nele = nx * ny * nz;
   hx = boxsize[0] / nx;

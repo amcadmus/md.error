@@ -86,6 +86,7 @@ reinit (const double & rc_,
   hy = boxsize[1] / ny;
   hz = boxsize[2] / nz;
   nele = nx * ny * nz;
+  printf ("# ForceCorr nx, ny, nz are %d %d %d\n", nx, ny, nz);
 
   rhor = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
   rhok = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * nele);
@@ -257,6 +258,16 @@ makeS2k (const double & epsilon,
 	  s2ky[posi][1] += size * ky;
 	  s2kz[posi][0] = 0.;
 	  s2kz[posi][1] += size * kz;
+	  if (ix == -nx/2 ||
+	      iy == -ny/2 ||
+	      iz == -nz/2){
+	    s2kx[posi][0] = 0.;
+	    s2kx[posi][1] = 0.;
+	    s2ky[posi][0] = 0.;
+	    s2ky[posi][1] = 0.;
+	    s2kz[posi][0] = 0.;
+	    s2kz[posi][1] = 0.;
+	  }
 	}
 	else {
 	  s2kx[posi][0] = 0.;
