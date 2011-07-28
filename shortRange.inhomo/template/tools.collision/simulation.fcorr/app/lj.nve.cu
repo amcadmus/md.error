@@ -42,9 +42,9 @@ int main(int argc, char * argv[])
   ScalorType rcut = 5.0;
   ScalorType nlistExten = 0.49;
   ScalorType nlistSizeFactor = 100.0;
-  double refh = 1.0;
   char * filename;
 
+  double refh = 1.0;
   IndexType densityProfileSamplingFeq = 10;
   IndexType assignForceCorrFeq = 10;
   IndexType updateForceCorrFeq = 200;
