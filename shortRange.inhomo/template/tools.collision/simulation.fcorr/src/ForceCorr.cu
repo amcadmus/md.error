@@ -53,7 +53,7 @@ freeAll ()
   if (malloced) {
     // free (rhok);
     // free (rhor);
-    cudaFree (copyBuff);
+    free (copyBuff);
     cudaFree (d_rhor);
     cudaFree (d_rhok);
     cudaFree (d_s2kx);
@@ -104,7 +104,8 @@ reinit (const double & rc_,
   printf ("# ForceCorr nx, ny, nz are %d %d %d\n", nx, ny, nz);
 
   size_t sizec = sizeof(cufftComplex) * nele;
-  cudaMalloc ((void**)&copyBuff, sizec);
+  copyBuff = (cufftComplex *) malloc (sizec);
+  // cudaMalloc ((void**)&copyBuff, sizec);
   cudaMalloc ((void**)&d_rhor, sizec);
   cudaMalloc ((void**)&d_rhok, sizec);
   cudaMalloc ((void**)&d_s2kx, sizec);

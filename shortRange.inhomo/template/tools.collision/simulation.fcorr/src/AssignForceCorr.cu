@@ -39,6 +39,9 @@ reinit (const MDSystem & sys,
   hfcx = (ScalorType *) malloc (sizeof(ScalorType ) * nele);
   hfcy = (ScalorType *) malloc (sizeof(ScalorType ) * nele);
   hfcz = (ScalorType *) malloc (sizeof(ScalorType ) * nele);
+  for (int i = 0; i < nele; ++i){
+    hfcx[i] = hfcy[i] = hfcz[i] = 0.;
+  }
   cudaMalloc ((void **) &dfcx, sizeof(ScalorType ) * nele);
   cudaMalloc ((void **) &dfcy, sizeof(ScalorType ) * nele);
   cudaMalloc ((void **) &dfcz, sizeof(ScalorType ) * nele);
