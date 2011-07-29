@@ -1,0 +1,8 @@
+# the init ball conf exists, generate collision conf.
+# rmax is 14.1361
+# dmax is 28.2723
+# x value is 0.6
+# u value is 2.2
+new center 0 is 28 32 72.4
+new center 1 is 100 32 55.6
+command is: /home/wanghan/study/shortRange.inhomo/result/collision-x0.60-u2.20-rc5.0-2/tools.collision/simulation.uniform.cutoff/lj.nve conf.gro 100000 0 > gpu-md.out 2> gpu-md.perf

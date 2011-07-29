@@ -1,0 +1,18 @@
+# the init ball conf exists, generate collision conf.
+# rmax is 14.1361
+# dmax is 28.2723
+# x value is 0.6
+# u value is 2.2
+new center 0 is 28 32 72.4
+new center 1 is 100 32 55.6
+command is: /home/wanghan/study/shortRange.inhomo/result/fcorrColl-x0.60-u2.20-rc2.5-14/tools.collision/simulation.fcorr/lj.nve conf.gro 100000 1 > gpu-md.out 2> gpu-md.perf
+# the init ball conf exists, generate collision conf.
+# rmax is 14.1361
+# dmax is 28.2723
+# x value is 0.6
+# u value is 2.2
+new center 0 is 28 32 72.4
+new center 1 is 100 32 55.6
+ln: failed to create symbolic link `./conf.gro': File exists
+ln: failed to create symbolic link `./traj.xtc': File exists
+command is: /home/wanghan/study/shortRange.inhomo/result/fcorrColl-x0.60-u2.20-rc2.5-14/tools.collision/simulation.fcorr/lj.nve conf.gro 100000 1 > gpu-md.out 2> gpu-md.perf

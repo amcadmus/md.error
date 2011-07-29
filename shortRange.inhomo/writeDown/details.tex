@@ -1,4 +1,4 @@
-\documentclass[aps,pre,preprint,unsortedaddress]{revtex4}
+\documentclass[aps,pre,preprint]{revtex4}
 % \documentclass[aps,jcp,groupedaddress,twocolumn,unsortedaddress]{revtex4}
 
 \usepackage{amsmath}
@@ -250,7 +250,7 @@ $z$-axis is along the vector $\v k$, then
   \int_{\partial\Omega_c}U(\v r) e^{-2\pi i\v k\cdot\v r} \v n\,\d dS
   & =
   - \int_0^{2\pi}\int_0^{\pi}
-  U(r_c) e^{-2\pi k r_c\cos\phi}
+  U(r_c) e^{-2\pi i k r_c\cos\phi}
 \left(
 \begin{aligned}[m]
   &\sin\phi\cos\theta\\
@@ -267,7 +267,7 @@ the first integral of \eqref{eqn:tmp19} is along the direction of
 $k$. The maganitude of this integral is:
 \begin{align}\nonumber
   &- \int_0^{2\pi}\int_0^{\pi}
-  U(r_c) e^{-2\pi k r_c\cos\phi}
+  U(r_c) e^{-2\pi i\, k r_c\cos\phi}
   \cos\phi\,
   r_c^2\sin\phi\:
   \d d\phi\,
@@ -275,21 +275,21 @@ $k$. The maganitude of this integral is:
   = &
   -2\pi r_c^2\,U(r_c)
   \int_0^\pi\sin\phi\cos\phi
-  \big[\cos(2\pi kr\cos\phi) - i\sin(2\pi kr\cos\phi)\big]
+  \big[\cos(2\pi kr_c\cos\phi) - i\sin(2\pi kr_c\cos\phi)\big]
   \,\d d\phi \\\nonumber
   = &
   -2\pi r_c^2\,U(r_c)
-  \int_{-1}^1 x \big[\cos(2\pi krx) - i\sin(2\pi krx)\big]
+  \int_{-1}^1 x \big[\cos(2\pi kr_cx) - i\sin(2\pi kr_cx)\big]
   \,\d dx \\ \nonumber
   = &\;
   -2\pi i\, r_c^2\,U(r_c)
-  \int_{-1}^1 -x\sin(2\pi krx)
+  \int_{-1}^1 -x\sin(2\pi kr_cx)
   \,\d dx \\ 
   = &\;
   -2\pi i\, r_c^2\,U(r_c)
   \bigg[\,
-  \frac{2\cos(2\pi kr)}{2\pi kr}
-  -\frac{2\sin(2\pi kr)}{(2\pi kr)^2}
+  \frac{2\cos(2\pi kr_c)}{2\pi kr_c}
+  -\frac{2\sin(2\pi kr_c)}{(2\pi kr_c)^2}
   \,\bigg]
 \end{align}
 Therefore, \eqref{eqn:tmp19} becomes
@@ -323,7 +323,7 @@ Therefore, \eqref{eqn:tmp19} becomes
 \section{Energy and pressure corrections}
 The energy correction and pressure correction of the system are:
 \begin{align}
-  E^c &= \bigg\langle \sum_{i\neq j} U^c(\v r_i - \v r_j) \bigg\rangle\\
+  E^c &= \bigg\langle \sum_{i\neq j} \frac12 \,U^c(\v r_i - \v r_j) \bigg\rangle\\
   \v P^c &= \frac1{V} \bigg\langle \sum_{i\neq j}\,\frac12\, (\v r_i - \v r_j) \otimes \v F^c(\v r_i - \v r_j) \bigg\rangle
 \end{align}
 For simplicity, let us consider the general form the the corrections:
@@ -750,37 +750,117 @@ Similarly,
 
 
 
-\section{Results}
+\section{Results and discussions}
+
+\subsection{Liquid-vapor coexistence simulation of the Lennard-Jones fluid}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig/t0.85-n16000-rc07.5uni/confout.eps}
+  \caption{The snapshot of the 16000 Lennard-Jones particle system at
+    $T^\ast=0.85$ with a uniform cut-off radius of $r_c^\ast = 7.5$.}
+  \label{fig:tmp1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[]{fig/t0.85-n16000-rc07.5uni/confout-02.eps}
+  \includegraphics[]{fig/t0.85-n16000-rc07.5uni/error.uniform.eps}
+  \caption{The error distribution of the 16000 Lennard-Jones particle
+    system at $T^\ast=0.85$ with a uniform cut-off radius of $r_c^\ast
+    = 7.5$.}
+  \label{fig:tmp2}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[]{fig/t0.85-n16000-adapt-e0.0045-extend/rcut.adapt.eps}
+  \caption{The adapted cut-off radius of the 16000 Lennard-Jones
+    particle system at $T^\ast=0.85$.}
+  \label{fig:tmp2}
+\end{figure}
 
 
+\begin{figure}
+  \centering
+  \includegraphics[]{fig/t0.85-n16000-adapt-e0.0045-extend/error.adapt.eps}
+  \caption{The error distribution of the adaptive-cut-off 16000
+    Lennard-Jones particle system at $T^\ast=0.85$.}
+  \label{fig:tmp3}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.90\textwidth]{fig/error-rcut-ball-12.eps} 
+  \includegraphics[width=0.90\textwidth]{fig/error-rcut.eps}
+  \caption{normal words}
+  \label{fig:tmp4}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.49\textwidth]{fig/converge/t0.70.eps} 
+  \includegraphics[width=0.49\textwidth]{fig/converge/t0.85.eps} 
+  \includegraphics[width=0.49\textwidth]{fig/converge/t1.10.eps} 
+  \includegraphics[width=0.49\textwidth]{fig/converge/t1.20.eps} 
+  \caption{normal words}
+  \label{fig:tmp4}
+\end{figure}
 
 
 
 
 \begin{table}
   \centering
-  \begin{tabular*}{0.95\textwidth}{@{\extracolsep{\fill}}c|l|ccccccc}\hline\hline
-    $T^\ast$ & \textrm{method} &$r^\ast_{c}$ & $\mathcal E^\ast_{\textrm{target}}$  & $\rho^\ast_{\textrm{liq}}$ & $\rho^\ast_{\textrm{vap}}$ & $\gamma^\ast_{\textrm{sim}}$ & $\gamma^\ast_{\textrm{tail}}$ & $\gamma^\ast$ \\\hline
-    & \textrm{unifom} & 5.0     & -       & 0.0024 (0) & 0.8364 (1) & 1.001 (7) & 0.120 & 1.121 (7) \\
-    & \textrm{adapt}  & -       & 0.030   & 0.0024 (0) & 0.8358 (1) & 0.999 (9) & 0.138 & 1.137 (9) \\
-0.70& \textrm{unifom} & 7.5     & -       & 0.0022 (0) & 0.8405 (1) & 1.081 (8) & 0.054 & 1.135 (8) \\
-    & \textrm{adapt}  & -       & 0.006   & 0.0021 (0) & 0.8405 (1) & 1.098 (9) & 0.063 & 1.161 (9) \\
-    & \textrm{ref}    & -       & -       & 0.0020 (0) & 0.8414 (1) & 1.081(11) & -     & 1.141(11) \\    \hline
-    & \textrm{unifom} & 5.0     & -       & 0.0112 (1) & 0.7681 (2) & 0.707 (7) & 0.094 & 0.801 (7) \\
-    & \textrm{adapt}  & -       & 0.030   & 0.0115 (1) & 0.7665 (2) & 0.673 (5) & 0.116 & 0.789 (5) \\
-0.85& \textrm{unifom} & 7.5     & -       & 0.0102 (1) & 0.7741 (2) & 0.776 (7) & 0.044 & 0.819 (7) \\
-    & \textrm{adapt}  & -       & 0.006   & 0.0101 (1) & 0.7737 (2) & 0.752(10) & 0.054 & 0.806(10) \\
-    & \textrm{ref}    & -       & -       & 0.0098 (0) & 0.7750 (1) & 0.818(15) & -     & 0.818(15) \\    \hline
-    & \textrm{unifom} & 5.0     & -       & 0.0635 (4) & 0.6258 (6) & 0.234 (8) & 0.044 & 0.279 (8) \\
-    & \textrm{adapt}  & -       & 0.020   & 0.0667 (4) & 0.6219 (5) & 0.207(10) & 0.053 & 0.260(10) \\
-1.10& \textrm{unifom} & 7.5     & -       & 0.0573 (4) & 0.6373 (5) & 0.281 (6) & 0.023 & 0.303 (6) \\
-    & \textrm{adapt}  & -       & 0.004   & 0.0594 (4) & 0.6345 (5) & 0.275 (6) & 0.054 & 0.303 (6) \\
-    & \textrm{ref}    & -       & -       & 0.0553 (0) & 0.6383 (1) & 0.302(11) & -     & 0.302(11) \\    \hline
-    & \textrm{unifom} & 5.0     & -       & 0.1187 (6) & 0.5376(10) & 0.082 (6) & 0.019 & 0.102 (6) \\
-    & \textrm{adapt}  & -       & 0.015   & 0.1391 (8) & 0.5262(16) & 0.054 (8) & 0.021 & 0.075 (8) \\
-1.20& \textrm{unifom} & 7.5     & -       & 0.1057 (7) & 0.5588(10) & 0.120 (8) & 0.012 & 0.132 (8) \\
-    & \textrm{adapt}  & -       & 0.003   & 0.1063 (9) & 0.5550 (8) & 0.113 (5) & 0.015 & 0.129 (5) \\
-    & \textrm{ref}    & -       & -       & 0.0942 (0) & 0.5627 (2) & 0.156(14) & -     & 0.156(14) \\    \hline    \hline    
+  \begin{tabular*}{0.99\textwidth}{c|c|@{\extracolsep{\fill}}clcccccc}\hline\hline
+    $T^\ast$ & \textrm{method} &$r^\ast_{c}$ & $\mathcal E^\ast_{\textrm{target}}$  & $\rho^\ast_{\textrm{liq}}$ & $\rho^\ast_{\textrm{vap}}$ & $\gamma^\ast_{\textrm{sim}}$ & $\gamma^\ast_{\textrm{tail}}$ & $\gamma^\ast$ & cost\\\hline
+    & \textrm{fcorr}  & 3.5     & -       & 0.0020 (0) & 0.8430 (2) & 0.916(12) & 0.238 & 1.154(12) & $3.4\times 10^6$\\\cline{2-10}
+    & \textrm{unifom} & 5.0     & -       & 0.0024 (0) & 0.8364 (1) & 1.001 (7) & 0.120 & 1.121 (7) & $7.9\times 10^6$\\
+    & \textrm{adapt}  & -       & 0.025   & 0.0024 (0) & 0.8364 (1) & 1.015 (6) & 0.122 & 1.137 (6) & $4.6\times 10^6$\\
+    & \textrm{fcorr}  & 5.0     & -       & 0.0019 (0) & 0.8423 (2) & 1.036(11) & 0.121 & 1.157(11) & $8.8\times 10^6$\\\cline{2-10}
+    & \textrm{unifom} & 7.5     & -       & 0.0022 (0) & 0.8405 (1) & 1.081 (8) & 0.054 & 1.135 (8) & $2.7\times 10^7$\\
+0.70& \textrm{adapt}  & -       & 0.0050  & 0.0021 (0) & 0.8408 (2) & 1.091 (8) & 0.056 & 1.147 (8) & $1.3\times 10^7$\\
+    & \textrm{fcorr}  & 7.5     & -       & 0.0019 (0) & 0.8423 (2) & 1.036(11) & 0.121 & 1.157(11) & $2.7\times 10^7$\\\cline{2-10}
+    & \textrm{unifom} & 10.0    & -       & 0.0020 (0) & 0.8418 (1) & 1.125 (6) & 0.029 & 1.154 (6) & $5.9\times 10^7$\\
+    & \textrm{adapt}  & -       & 0.0016  & 0.0021 (0) & 0.8416 (1) & 1.119(10) & 0.031 & 1.150(10) & $2.9\times 10^7$\\
+    & \textrm{fcorr}  & 10.0    & -       & 0.0020 (0) & 0.8425 (2) & 1.127 (7) & 0.029 & 1.156 (7) & $5.9\times 10^7$\\\cline{2-10}
+    & \textrm{ref}    & -       & -       & 0.0020 (0) & 0.8414 (1) & 1.081(11) & -     & 1.141(11) & - \\    \hline\hline
+    & \textrm{fcorr}  & 2.5     & -       & 0.0099 (1) & 0.7788 (2) & 0.468 (8) & 0.249 & 0.717 (8) & $1.3\times 10^6$\\\cline{2-10}
+    & \textrm{unifom} & 5.0     & -       & 0.0112 (1) & 0.7681 (2) & 0.707 (7) & 0.094 & 0.801 (7) & $7.1\times 10^6$\\
+    & \textrm{adapt}  & -       & 0.022   & 0.0110 (1) & 0.7687 (2) & 0.697 (8) & 0.094 & 0.791 (8) & $4.6\times 10^6$\\
+    & \textrm{fcorr}  & 5.0     & -       & 0.0096 (1) & 0.7763 (1) & 0.713 (8) & 0.097 & 0.810 (8) & $7.9\times 10^6$\\\cline{2-10}
+    & \textrm{unifom} & 7.5     & -       & 0.0102 (1) & 0.7741 (2) & 0.776 (7) & 0.044 & 0.819 (7) & $2.4\times 10^7$\\
+0.85& \textrm{adapt}  & -       & 0.0045  & 0.0103 (1) & 0.7738 (2) & 0.768 (8) & 0.045 & 0.813 (8) & $1.2\times 10^7$\\
+    & \textrm{fcorr}  & 7.5     & -       & 0.0097 (1) & 0.7764 (2) & 0.764(10) & 0.044 & 0.808(10) & $2.4\times 10^7$\\\cline{2-10}
+    & \textrm{unifom} & 10.0    & -       & 0.0098 (1) & 0.7752 (2) & 0.775(12) & 0.024 & 0.799(12) & $5.3\times 10^7$\\
+    & \textrm{adapt}  & -       & 0.0015  & 0.0099 (1) & 0.7752 (2) & 0.791 (8) & 0.026 & 0.817 (8) & $2.6\times 10^7$\\
+    & \textrm{fcorr}  & 10.0    & -       & 0.0097 (1) & 0.7760 (2) & 0.798(10) & 0.024 & 0.822(10) & $5.3\times 10^7$\\\cline{2-10}
+    & \textrm{ref}    & -       & -       & 0.0098 (0) & 0.7750 (1) & 0.818(15) & -     & 0.818(15) & - \\    \hline\hline
+  \end{tabular*}
+\end{table}
+
+
+\begin{table}
+  \centering
+  \begin{tabular*}{0.99\textwidth}{c|c|@{\extracolsep{\fill}}clcccccc}\hline\hline
+    $T^\ast$ & \textrm{method} &$r^\ast_{c}$ & $\mathcal E^\ast_{\textrm{target}}$  & $\rho^\ast_{\textrm{liq}}$ & $\rho^\ast_{\textrm{vap}}$ & $\gamma^\ast_{\textrm{sim}}$ & $\gamma^\ast_{\textrm{tail}}$ & $\gamma^\ast$ & cost\\\hline
+    & \textrm{unifom} & 5.0     & -       & 0.0635 (4) & 0.6258 (6) & 0.234 (8) & 0.044 & 0.279 (8) & $5.6\times 10^6$\\
+    & \textrm{adapt}  & -       & 0.016   & 0.0639 (5) & 0.6267 (6) & 0.232 (5) & 0.047 & 0.279 (5) & $3.2\times 10^6$\\
+    & \textrm{fcorr}  & 5.0     & -       & 0.0558 (5) & 0.6403 (6) & 0.268(10) & 0.049 & 0.317(10) & $5.8\times 10^6$\\\cline{2-10}
+    & \textrm{unifom} & 7.5     & -       & 0.0573 (4) & 0.6373 (5) & 0.281 (6) & 0.023 & 0.303 (6) & $1.7\times 10^7$\\
+1.10& \textrm{adapt}  & -       & 0.0033  & 0.0580 (4) & 0.6373 (7) & 0.264 (8) & 0.025 & 0.289 (8) & $8.8\times 10^6$\\
+    & \textrm{fcorr}  & 7.5     & -       & 0.0554 (4) & 0.6403 (4) & 0.294 (8) & 0.022 & 0.317(10) & $1.7\times 10^7$\\\cline{2-10}
+    & \textrm{unifom} & 10.0    & -       & 0.0550 (4) & 0.6391 (6) & 0.300 (8) & 0.013 & 0.313 (8) & $3.9\times 10^7$\\
+    & \textrm{adapt}  & -       & 0.0011  & 0.0558 (2) & 0.6396 (3) & 0.280 (7) & 0.014 & 0.295 (7) & $1.9\times 10^7$\\
+    & \textrm{ref}    & -       & -       & 0.0553 (0) & 0.6383 (1) & 0.302(11) & -     & 0.302(11) & - \\    \hline\hline
+    & \textrm{unifom} & 5.0     & -       & 0.1194 (7) & 0.5381 (8) & 0.083 (4) & 0.019 & 0.102 (4) & $4.2\times 10^6$\\
+    & \textrm{adapt}  & -       & 0.0098  & 0.1214(10) & 0.5419(12) & 0.085 (6) & 0.021 & 0.106 (6) & $2.9\times 10^6$\\
+    & \textrm{unifom} & 7.5     & -       & 0.1053 (5) & 0.5572 (9) & 0.112 (5) & 0.012 & 0.124 (5) & $1.4\times 10^7$\\
+1.20& \textrm{adapt}  & -       & 0.0024  & 0.1043 (7) & 0.5587 (6) & 0.114 (5) & 0.014 & 0.128 (4) & $7.7\times 10^6$\\
+    & \textrm{unifom} &10.0     & -       & 0.1014 (5) & 0.5615 (8) & 0.127 (4) & 0.007 & 0.135 (4) & $3.1\times 10^7$\\
+    & \textrm{adapt}  & -       & 0.00082 & 0.1026 (6) & 0.5616 (7) & 0.125 (5) & 0.008 & 0.134 (4) & $1.7\times 10^7$\\\
+    & \textrm{ref}    & -       & -       & 0.0942 (0) & 0.5627 (2) & 0.156(14) & -     & 0.156(14) & - \\    \hline    \hline    
   \end{tabular*}
 \end{table}
 
