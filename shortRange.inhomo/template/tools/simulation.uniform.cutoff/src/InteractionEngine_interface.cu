@@ -1082,6 +1082,9 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
   ScalorType fsumx = 0.0f;
   ScalorType fsumy = 0.0f;
   ScalorType fsumz = 0.0f;
+  ScalorType fsumx_small = 0.0f;
+  ScalorType fsumy_small = 0.0f;
+  ScalorType fsumz_small = 0.0f;
   IndexType ii = tid + bid * blockDim.x;
 
   if (ii < numAtom) {
@@ -1102,13 +1105,18 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
 	       [nonBondedInteractionParameterPosition[nbForceIndex]],
       	       diffx, diffy, diffz, 
       	       &fx, &fy, &fz);
-      fsumx += fx;
-      fsumy += fy;
-      fsumz += fz;
+      if (fabs(fx) > 1e-3) fsumx += fx;
+      else fsumx_small += fx;
+      if (fabs(fy) > 1e-3) fsumy += fy;
+      else fsumy_small += fy;
+      if (fabs(fz) > 1e-3) fsumz += fz;
+      else fsumz_small += fz;
+      // fsumy += fy;
+      // fsumz += fz;
     }
-    forcx[ii] += fsumx;
-    forcy[ii] += fsumy;
-    forcz[ii] += fsumz;
+    forcx[ii] += fsumx + fsumx_small;
+    forcy[ii] += fsumy + fsumy_small;
+    forcz[ii] += fsumz + fsumz_small;
   }
 }
 
@@ -1214,6 +1222,9 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
   ScalorType fsumx = 0.0f;
   ScalorType fsumy = 0.0f;
   ScalorType fsumz = 0.0f;
+  ScalorType fsumx_small = 0.0f;
+  ScalorType fsumy_small = 0.0f;
+  ScalorType fsumz_small = 0.0f;
   IndexType ii = tid + bid * blockDim.x;
   ScalorType myPoten = 0.0f, myVxx = 0.0f, myVyy = 0.0f, myVzz = 0.0f;
 
@@ -1251,13 +1262,22 @@ calNonBondedInteraction_neighbor (const IndexType		numAtom,
       myVxx += fx * diffx;
       myVyy += fy * diffy;
       myVzz += fz * diffz;
-      fsumx += fx;
-      fsumy += fy;
-      fsumz += fz;
+      if (fabs(fx) > 1e-3) fsumx += fx;
+      else fsumx_small += fx;
+      if (fabs(fy) > 1e-3) fsumy += fy;
+      else fsumy_small += fy;
+      if (fabs(fz) > 1e-3) fsumz += fz;
+      else fsumz_small += fz;
+      // fsumx += fx;
+      // fsumy += fy;
+      // fsumz += fz;
     }
-    forcx[ii] += fsumx;
-    forcy[ii] += fsumy;
-    forcz[ii] += fsumz;
+    forcx[ii] += fsumx + fsumx_small;
+    forcy[ii] += fsumy + fsumy_small;
+    forcz[ii] += fsumz + fsumz_small;
+    // forcx[ii] += fsumx;
+    // forcy[ii] += fsumy;
+    // forcz[ii] += fsumz;
   }
   
   if (ii < numAtom){
