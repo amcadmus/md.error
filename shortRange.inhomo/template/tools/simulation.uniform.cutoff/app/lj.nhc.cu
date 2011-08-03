@@ -34,7 +34,7 @@ int main(int argc, char * argv[])
   ScalorType dt = 0.002;
   ScalorType rcut = 10.0;
   ScalorType nlistExten = 0.49;
-  ScalorType nlistSizeFactor = 4.0;
+  ScalorType nlistSizeFactor = 3.5;
   IndexType  clistDivision = 1;
   ScalorType refT = 0.70;
   ScalorType tauT = 1.0;
