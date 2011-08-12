@@ -22,7 +22,7 @@ tension_error=`echo "$tension_error * 2" | bc -l`
 
 rcut=`grep "rcut=" parameters.sh | cut -d '=' -f 2`
 make -C tools/analyze.simulation.suit -j 4 &> /dev/null
-tension_corr=`tools/analyze.simulation.suit/analyze.uniform -s $st_start -r $rcut | grep tension | awk '{print $3}'`
+tension_corr=`tools/analyze.simulation.suit/analyze.uniform -s $st_start -r $rcut --rcmax $rcut | grep tension | awk '{print $3}'`
 tension_corr_print=`printf $print_format $tension_corr`
 
 tension_total=`echo "$tension_corr + $tension" | octave | grep ans | awk '{print $3}'`
