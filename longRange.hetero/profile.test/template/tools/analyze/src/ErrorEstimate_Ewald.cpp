@@ -73,7 +73,7 @@ freeAll ()
     
 void ErrorEstimate_Ewald::
 reinit (const double & beta_,
-	const int & Kmax_,
+	const IntVectorType & Kmax_,
 	const DensityProfile_PiecewiseConst & dp)
 {
   freeAll ();
@@ -140,9 +140,9 @@ calKernel()
 	if (posiIdx.y < 0) posiIdx.y += K.y;
 	if (posiIdx.z < 0) posiIdx.z += K.z;
 	unsigned index = index3to1 (posiIdx, K);
-	if (idx.x >= -(Kmax >> 1) && idx.x <= (Kmax >> 1) &&
-	    idx.y >= -(Kmax >> 1) && idx.y <= (Kmax >> 1) &&
-	    idx.z >= -(Kmax >> 1) && idx.z <= (Kmax >> 1) ){
+	if (idx.x >= -(Kmax.x >> 1) && idx.x <= (Kmax.x >> 1) &&
+	    idx.y >= -(Kmax.y >> 1) && idx.y <= (Kmax.y >> 1) &&
+	    idx.z >= -(Kmax.z >> 1) && idx.z <= (Kmax.z >> 1) ){
 	  k1mx[index][0] = k1mx[index][1] = 0.;
 	  k1my[index][0] = k1my[index][1] = 0.;
 	  k1mz[index][0] = k1mz[index][1] = 0.;

@@ -9,12 +9,12 @@
 class ErrorEstimate_Ewald
 {
   IntVectorType K;
+  IntVectorType Kmax;
   int nele;
   MatrixType vecA;
   MatrixType vecAStar;
   double volume;
   double beta;
-  int Kmax;
 private:
   void freeAll();
   void calV();
@@ -48,7 +48,7 @@ public:
   ErrorEstimate_Ewald();
   ~ErrorEstimate_Ewald();
   void reinit (const double & beta,
-	       const int & Kmax,
+	       const IntVectorType & Kmax,
 	       const DensityProfile_PiecewiseConst & dp);
   void calError (const DensityProfile_PiecewiseConst & dp);
   void print_error (const std::string & file) const ;

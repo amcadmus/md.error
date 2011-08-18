@@ -24,7 +24,9 @@ int main(int argc, char * argv[])
   dp.print_avg_x ("rho.x.avg.out");
 
   ErrorEstimate_Ewald eee;
-  eee.reinit (1.0, 9, dp);
+  IntVectorType Kmax;
+  Kmax.x = Kmax.y = Kmax.z = 9;
+  eee.reinit (1.0, Kmax, dp);
   eee.calError (dp);
   eee.print_error ("error.out");
 }
