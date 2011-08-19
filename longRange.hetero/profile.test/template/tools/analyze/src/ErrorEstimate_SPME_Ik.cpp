@@ -50,7 +50,8 @@ freeAll ()
     free (k1rx);
     free (k1ry);
     free (k1rz);
-    free (k2m);
+    free (k2ma);
+    free (k2mb);
     free (error1x);
     free (error1y);
     free (error1z);
@@ -61,7 +62,8 @@ freeAll ()
     fftw_destroy_plan (p_backward_k1mx);
     fftw_destroy_plan (p_backward_k1my);
     fftw_destroy_plan (p_backward_k1mz);
-    fftw_destroy_plan (p_forward_k2);
+    fftw_destroy_plan (p_forward_k2a);
+    fftw_destroy_plan (p_forward_k2b);
     fftw_destroy_plan (p_backward_error1x);
     fftw_destroy_plan (p_backward_error1y);
     fftw_destroy_plan (p_backward_error1z);
@@ -99,7 +101,8 @@ reinit (const double & beta_,
   k1rx = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
   k1ry = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
   k1rz = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
-  k2m  = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
+  k2ma = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
+  k2mb = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
   error1x = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
   error1y = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
   error1z = (fftw_complex *) malloc (sizeof(fftw_complex) * nele);
@@ -111,7 +114,8 @@ reinit (const double & beta_,
   p_backward_k1mx = fftw_plan_dft_3d (K.x, K.y, K.z, k1mx, k1rx, FFTW_BACKWARD, FFTW_MEASURE);
   p_backward_k1my = fftw_plan_dft_3d (K.x, K.y, K.z, k1my, k1ry, FFTW_BACKWARD, FFTW_MEASURE);
   p_backward_k1mz = fftw_plan_dft_3d (K.x, K.y, K.z, k1mz, k1rz, FFTW_BACKWARD, FFTW_MEASURE);
-  p_forward_k2 = fftw_plan_dft_3d (K.x, K.y, K.z, k2m, k2m, FFTW_FORWARD, FFTW_MEASURE);
+  p_forward_k2a = fftw_plan_dft_3d (K.x, K.y, K.z, k2ma, k2ma, FFTW_FORWARD, FFTW_MEASURE);
+  p_forward_k2b = fftw_plan_dft_3d (K.x, K.y, K.z, k2mb, k2mb, FFTW_FORWARD, FFTW_MEASURE);
   p_backward_error1x = fftw_plan_dft_3d (K.x, K.y, K.z, error1x, error1x, FFTW_BACKWARD, FFTW_MEASURE);
   p_backward_error1y = fftw_plan_dft_3d (K.x, K.y, K.z, error1y, error1y, FFTW_BACKWARD, FFTW_MEASURE);
   p_backward_error1z = fftw_plan_dft_3d (K.x, K.y, K.z, error1z, error1z, FFTW_BACKWARD, FFTW_MEASURE);
@@ -171,6 +175,181 @@ calKernel()
   Ki.x = 1./double(K.x);
   Ki.y = 1./double(K.y);
   Ki.z = 1./double(K.z);
+
+  for (int i = 0; i < nele; ++i){
+    k2mb[i][0] = k2mb[i][1] = 0.;
+  }
+    
+  for (int myk = -4; myk <= 4; ++myk){
+    if (myk == 0) continue;
+    {
+      for (idx.x = 0; idx.x < K.x; ++idx.x){
+	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+	else posi.x = idx.x;
+	for (idx.y = 0; idx.y < K.y; ++idx.y){
+	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+	  else posi.y = idx.y;
+	  for (idx.z = 0; idx.z < K.z; ++idx.z){
+	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+	    else posi.z = idx.z;
+	    VectorType mm;
+	    mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
+	    mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
+	    mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
+	    double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
+	    unsigned index = index3to1 (idx, K);
+	    k1mx[index][0] = k1mx[index][1] = 0.;
+	    k1my[index][0] = k1my[index][1] = 0.;
+	    k1mz[index][0] = k1mz[index][1] = 0.;
+	    if (m2 == 0) continue;
+	    double fm = kernel_rm1_rec_f (m2, beta) * scalor;
+	    VectorType tmpvalue;
+	    tmpvalue.x = - 4. * M_PI * fm * mm.x;
+	    tmpvalue.y = - 4. * M_PI * fm * mm.y;
+	    tmpvalue.z = - 4. * M_PI * fm * mm.z;
+	    VectorType uu;
+	    uu.x = 2. * M_PI * double(posi.x) * Ki.x;
+	    uu.y = 2. * M_PI * double(posi.y) * Ki.y;
+	    uu.z = 2. * M_PI * double(posi.z) * Ki.z;
+	    VectorType fenmu;
+	    fenmu.x = 1./calsum (uu.x, order);
+	    double sum = 1./gsl_pow_int(uu.x + 2.*M_PI * myk, order) * fenmu.x;
+
+	    k1mx[index][1] = tmpvalue.x * sum;
+	    k1my[index][1] = tmpvalue.y * sum;
+	    k1mz[index][1] = tmpvalue.z * sum;
+	
+	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+	  }
+	}
+      }
+      fftw_execute (p_backward_k1mx);
+      fftw_execute (p_backward_k1my);
+      fftw_execute (p_backward_k1mz);
+  
+      for (int i = 0; i < nele; ++i){
+	k2mb[i][0] += (
+	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+	k2mb[i][1] = 0.;
+      }
+    }
+
+    {
+      for (idx.x = 0; idx.x < K.x; ++idx.x){
+	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+	else posi.x = idx.x;
+	for (idx.y = 0; idx.y < K.y; ++idx.y){
+	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+	  else posi.y = idx.y;
+	  for (idx.z = 0; idx.z < K.z; ++idx.z){
+	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+	    else posi.z = idx.z;
+	    VectorType mm;
+	    mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
+	    mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
+	    mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
+	    double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
+	    unsigned index = index3to1 (idx, K);
+	    k1mx[index][0] = k1mx[index][1] = 0.;
+	    k1my[index][0] = k1my[index][1] = 0.;
+	    k1mz[index][0] = k1mz[index][1] = 0.;
+	    if (m2 == 0) continue;
+	    double fm = kernel_rm1_rec_f (m2, beta) * scalor;
+	    VectorType tmpvalue;
+	    tmpvalue.x = - 4. * M_PI * fm * mm.x;
+	    tmpvalue.y = - 4. * M_PI * fm * mm.y;
+	    tmpvalue.z = - 4. * M_PI * fm * mm.z;
+	    VectorType uu;
+	    uu.x = 2. * M_PI * double(posi.x) * Ki.x;
+	    uu.y = 2. * M_PI * double(posi.y) * Ki.y;
+	    uu.z = 2. * M_PI * double(posi.z) * Ki.z;
+	    VectorType fenmu;
+	    fenmu.y = 1./calsum (uu.y, order);
+	    double sum = 1./gsl_pow_int(uu.y + 2.*M_PI * myk, order) * fenmu.y;
+
+	    k1mx[index][1] = tmpvalue.x * sum;
+	    k1my[index][1] = tmpvalue.y * sum;
+	    k1mz[index][1] = tmpvalue.z * sum;
+	
+	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+	  }
+	}
+      }
+      fftw_execute (p_backward_k1mx);
+      fftw_execute (p_backward_k1my);
+      fftw_execute (p_backward_k1mz);
+  
+      for (int i = 0; i < nele; ++i){
+	k2mb[i][0] += (
+	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+	k2mb[i][1] = 0.;
+      }
+    }
+    
+    {
+      for (idx.x = 0; idx.x < K.x; ++idx.x){
+	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+	else posi.x = idx.x;
+	for (idx.y = 0; idx.y < K.y; ++idx.y){
+	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+	  else posi.y = idx.y;
+	  for (idx.z = 0; idx.z < K.z; ++idx.z){
+	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+	    else posi.z = idx.z;
+	    VectorType mm;
+	    mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
+	    mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
+	    mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
+	    double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
+	    unsigned index = index3to1 (idx, K);
+	    k1mx[index][0] = k1mx[index][1] = 0.;
+	    k1my[index][0] = k1my[index][1] = 0.;
+	    k1mz[index][0] = k1mz[index][1] = 0.;
+	    if (m2 == 0) continue;
+	    double fm = kernel_rm1_rec_f (m2, beta) * scalor;
+	    VectorType tmpvalue;
+	    tmpvalue.x = - 4. * M_PI * fm * mm.x;
+	    tmpvalue.y = - 4. * M_PI * fm * mm.y;
+	    tmpvalue.z = - 4. * M_PI * fm * mm.z;
+	    VectorType uu;
+	    uu.x = 2. * M_PI * double(posi.x) * Ki.x;
+	    uu.y = 2. * M_PI * double(posi.y) * Ki.y;
+	    uu.z = 2. * M_PI * double(posi.z) * Ki.z;
+	    VectorType fenmu;
+	    fenmu.z = 1./calsum (uu.z, order);
+	    double sum = 1./gsl_pow_int(uu.z + 2.*M_PI * myk, order) * fenmu.z;
+
+	    k1mx[index][1] = tmpvalue.x * sum;
+	    k1my[index][1] = tmpvalue.y * sum;
+	    k1mz[index][1] = tmpvalue.z * sum;
+	
+	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+	  }
+	}
+      }
+      fftw_execute (p_backward_k1mx);
+      fftw_execute (p_backward_k1my);
+      fftw_execute (p_backward_k1mz);
+  
+      for (int i = 0; i < nele; ++i){
+	k2mb[i][0] += (
+	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+	k2mb[i][1] = 0.;
+      }
+    }
+  }
   
   for (idx.x = 0; idx.x < K.x; ++idx.x){
     if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
@@ -211,6 +390,8 @@ calKernel()
 	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 2., order) * fenmu.x;
 	sum += 1./gsl_pow_int(uu.x + 2.*M_PI * 3., order) * fenmu.x;
 	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 3., order) * fenmu.x;
+	sum += 1./gsl_pow_int(uu.x + 2.*M_PI * 4., order) * fenmu.x;
+	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 4., order) * fenmu.x;
 	  
 	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 1., order) * fenmu.y;
 	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 1., order) * fenmu.y;
@@ -218,6 +399,8 @@ calKernel()
 	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 2., order) * fenmu.y;
 	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 3., order) * fenmu.y;
 	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 3., order) * fenmu.y;
+	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 4., order) * fenmu.y;
+	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 4., order) * fenmu.y;
 	  
 	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 1., order) * fenmu.z;
 	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 1., order) * fenmu.z;
@@ -225,10 +408,12 @@ calKernel()
 	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 2., order) * fenmu.z;
 	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 3., order) * fenmu.z;
 	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 3., order) * fenmu.z;
+	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 4., order) * fenmu.z;
+	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 4., order) * fenmu.z;
 
-	k1mx[index][1] = tmpvalue.x * sum;
-	k1my[index][1] = tmpvalue.y * sum;
-	k1mz[index][1] = tmpvalue.z * sum;
+	k1mx[index][1] = tmpvalue.x * sum * 2.;
+	k1my[index][1] = tmpvalue.y * sum * 2.;
+	k1mz[index][1] = tmpvalue.z * sum * 2.;
 	
 	if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
 	if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
@@ -237,10 +422,29 @@ calKernel()
     }
   }
 
+  fftw_execute (p_backward_k1mx);
+  fftw_execute (p_backward_k1my);
+  fftw_execute (p_backward_k1mz);
+  
   for (int i = 0; i < nele; ++i){
     k1mx[i][1] *= volume;
     k1my[i][1] *= volume;
     k1mz[i][1] *= volume;
+    k2ma[i][0] = (
+	(k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+	(k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+	(k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+    k2ma[i][1] = 0.;
+  }
+
+  fftw_execute (p_forward_k2a);
+  fftw_execute (p_forward_k2b);
+
+  for (int i = 0; i < nele; ++i){
+    // k2ma[i][0] *= 2.;
+    // k2ma[i][1] *= 2.;
+    k2ma[i][0] += 2. * k2mb[i][0];
+    k2ma[i][1] += 2. * k2mb[i][1];
   }
 }
 
@@ -261,18 +465,18 @@ calError (const DensityProfile_PiecewiseConst & dp)
   array_multiply (error1x, nele, k1mx, rho1);
   array_multiply (error1y, nele, k1my, rho1);
   array_multiply (error1z, nele, k1mz, rho1);
-  // array_multiply (error2, nele, k2m, rho2);
+  array_multiply (error2, nele, k2ma, rho2);
 
   fftw_execute (p_backward_error1x);
   fftw_execute (p_backward_error1y);
   fftw_execute (p_backward_error1z);
-  // fftw_execute (p_backward_error2);
+  fftw_execute (p_backward_error2);
 
   for (int i = 0; i < nele; ++i){
     error1x[i][0] /= volume;
     error1y[i][0] /= volume;
     error1z[i][0] /= volume;
-    // error2[i][0] /= volume;
+    error2[i][0] /= volume;
   }
   for (int i = 0; i < nele; ++i){
     error1[i][0] =
@@ -286,6 +490,33 @@ calError (const DensityProfile_PiecewiseConst & dp)
   }
 }
 
+
+void ErrorEstimate_SPME_Ik::    
+print_error (const std::string & file) const 
+{
+  FILE * fp = fopen (file.c_str(), "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << file << std::endl;
+    exit(1);
+  }
+
+  for (int i = 0; i < K.x; ++i){
+    IntVectorType idx;
+    idx.x = i;
+    idx.y = 0;
+    idx.z = 0;
+    unsigned index = index3to1 (idx, K);
+    fprintf (fp, "%f %e   %e %e %e %e\n",
+	     (i + 0.5) * vecA.xx / K.x,
+	     sqrt(error1[index][0] + error2[index][0]),
+	     error1[index][0],
+	     error1[index][1],
+	     error2[index][0],
+	     error2[index][1]
+	);
+  }
+  fclose (fp);
+}
 
 
 void ErrorEstimate_SPME_Ik::

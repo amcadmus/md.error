@@ -31,7 +31,7 @@ private:
   fftw_complex *rho2;
   fftw_complex *k1mx, *k1my, *k1mz;
   fftw_complex *k1rx, *k1ry, *k1rz;
-  fftw_complex *k2m;
+  fftw_complex *k2ma, *k2mb;
   fftw_complex *error1x, *error1y, *error1z;
   fftw_complex *error1;
   fftw_complex *error2;
@@ -39,7 +39,8 @@ private:
   fftw_plan p_backward_k1mx;
   fftw_plan p_backward_k1my;
   fftw_plan p_backward_k1mz;
-  fftw_plan p_forward_k2;
+  fftw_plan p_forward_k2a;
+  fftw_plan p_forward_k2b;
   fftw_plan p_backward_error1x;
   fftw_plan p_backward_error1y;
   fftw_plan p_backward_error1z;
@@ -53,6 +54,7 @@ public:
 	       // const IntVectorType Kmax,
 	       const DensityProfile_PiecewiseConst & dp);
   void calError (const DensityProfile_PiecewiseConst & dp);
+  void print_error (const std::string & file) const;
   void print_meanf (const std::string & file,
 		    const DensityProfile_PiecewiseConst & dp) const;
 }
