@@ -24,6 +24,7 @@ class DensityProfile_PiecewiseConst
   std::vector<double > boxsize;
   unsigned nx, ny, nz, nele;
   double   hx, hy, hz;
+  std::vector<double > profileP, profileN;
   std::vector<double > profile1, profile2;
   int natoms;
 public:
@@ -59,6 +60,10 @@ public:
       {return profile1[i];}
   const double & getProfile2 (const unsigned & i) const
       {return profile2[i];}
+  const double & getProfileP (const unsigned & i) const
+      {return profileP[i];}
+  const double & getProfileN (const unsigned & i) const
+      {return profileN[i];}
   // inline const double & getValue (const double & xx,
   // 				  const double & yy,
   // 				  const double & zz) const;

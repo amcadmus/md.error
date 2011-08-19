@@ -1,21 +1,20 @@
-#include "ErrorEstimate_Ewald.h"
-
-#include <fstream>
 #include <iostream>
 
-ErrorEstimate_Ewald::
-ErrorEstimate_Ewald ()
+#include "ErrorEstimate_SPME_Ik.h"
+
+ErrorEstimate_SPME_Ik::
+ErrorEstimate_SPME_Ik ()
     : malloced (false)
 {
 }
 
-ErrorEstimate_Ewald::
-~ErrorEstimate_Ewald()
+ErrorEstimate_SPME_Ik::
+~ErrorEstimate_SPME_Ik()
 {
   freeAll();
 }
 
-void ErrorEstimate_Ewald::
+void ErrorEstimate_SPME_Ik::
 calV()
 {
   volume =
@@ -24,7 +23,7 @@ calV()
       vecA.xz * (vecA.yx*vecA.zy - vecA.zx*vecA.yy);
 }
   
-void ErrorEstimate_Ewald::
+void ErrorEstimate_SPME_Ik::
 calAStar ()
 {
   double volumei = double(1.) / volume;
@@ -39,7 +38,7 @@ calAStar ()
   vecAStar.yz = (-vecA.xx*vecA.yz + vecA.yx*vecA.xz) * volumei;
 }
 
-void ErrorEstimate_Ewald::
+void ErrorEstimate_SPME_Ik::
 freeAll ()
 {
   if (malloced){
@@ -70,16 +69,17 @@ freeAll ()
   }
 }
 
-    
-void ErrorEstimate_Ewald::
+
+void ErrorEstimate_SPME_Ik::
 reinit (const double & beta_,
-	const IntVectorType & Kmax_,
+	const int & order_,
+	// const IntVectorType & Kmax_,
 	const DensityProfile_PiecewiseConst & dp)
 {
-  freeAll ();
+  freeAll();
   
   beta = beta_;
-  Kmax = Kmax_;
+  order = order_;
   K.x = dp.getNx();
   K.y = dp.getNy();
   K.z = dp.getNz();
@@ -126,59 +126,20 @@ reinit (const double & beta_,
   fflush (stdout);
 }
 
-void ErrorEstimate_Ewald::
-calKernel()
+inline double
+calsum (const double & u,
+	const int & order)
 {
-  double scalor = 1./(2. * M_PI * volume);
-  int nele = K.x * K.y * K.z;
-  IntVectorType idx;
-  for (idx.x = -(K.x >> 1); idx.x <= (K.x >> 1); ++idx.x){
-    for (idx.y = -(K.y >> 1); idx.y <= (K.y >> 1); ++idx.y){
-      for (idx.z = -(K.z >> 1); idx.z <= (K.z >> 1); ++idx.z){
-	IntVectorType posiIdx (idx);
-	if (posiIdx.x < 0) posiIdx.x += K.x;
-	if (posiIdx.y < 0) posiIdx.y += K.y;
-	if (posiIdx.z < 0) posiIdx.z += K.z;
-	unsigned index = index3to1 (posiIdx, K);
-	if (idx.x >= -(Kmax.x >> 1) && idx.x <= (Kmax.x >> 1) &&
-	    idx.y >= -(Kmax.y >> 1) && idx.y <= (Kmax.y >> 1) &&
-	    idx.z >= -(Kmax.z >> 1) && idx.z <= (Kmax.z >> 1) ){
-	  k1mx[index][0] = k1mx[index][1] = 0.;
-	  k1my[index][0] = k1my[index][1] = 0.;
-	  k1mz[index][0] = k1mz[index][1] = 0.;
-	}
-	else {
-	  VectorType mm;
-	  mm.x = idx.x * vecAStar.xx + idx.y * vecAStar.yx + idx.z * vecAStar.zx;
-	  mm.y = idx.x * vecAStar.xy + idx.y * vecAStar.yy + idx.z * vecAStar.zy;
-	  mm.z = idx.x * vecAStar.xz + idx.y * vecAStar.yz + idx.z * vecAStar.zz;
-	  double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
-	  double fm = kernel_rm1_rec_f (m2, beta) * scalor;
-	  k1mx[index][0] = k1my[index][0] = k1mz[index][0] = 0.;
-	  k1mx[index][1] = - 4. * M_PI * fm * mm.x;
-	  k1my[index][1] = - 4. * M_PI * fm * mm.y;
-	  k1mz[index][1] = - 4. * M_PI * fm * mm.z;
-	}
-      }
-    }
-  }
-
-  fftw_execute (p_backward_k1mx);
-  fftw_execute (p_backward_k1my);
-  fftw_execute (p_backward_k1mz);
-
-  for (int i = 0; i < nele; ++i){
-    k1mx[i][1] *= volume;
-    k1my[i][1] *= volume;
-    k1mz[i][1] *= volume;
-    k2m[i][0] = (
-	(k1rx[i][0] * k1rx[i][0] - k1rx[i][1] * k1rx[i][1]) +
-	(k1ry[i][0] * k1ry[i][0] - k1ry[i][1] * k1ry[i][1]) +
-	(k1rz[i][0] * k1rz[i][0] - k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-    k2m[i][1] = 0.;
-  }
-
-  fftw_execute (p_forward_k2);
+  double sum = 1./gsl_pow_int(u,order);
+  double up(u), un(u);
+  double incr (2. * M_PI);
+  sum += 1./gsl_pow_int((up+=incr),order);
+  sum += 1./gsl_pow_int((un-=incr),order);
+  sum += 1./gsl_pow_int((up+=incr),order);
+  sum += 1./gsl_pow_int((un-=incr),order);
+  sum += 1./gsl_pow_int((up+=incr),order);
+  sum += 1./gsl_pow_int((un-=incr),order);
+  return sum;
 }
 
 static void 
@@ -196,8 +157,95 @@ array_multiply (fftw_complex * a,
   }
 }
 
+void ErrorEstimate_SPME_Ik::
+calKernel()
+{
+  double scalor = 1./(2. * M_PI * volume);
+  int nele = K.x * K.y * K.z;
+  IntVectorType idx;
+  IntVectorType posi;
+  bool cleanX = ( ((K.x >> 1) << 1) == K.x);
+  bool cleanY = ( ((K.y >> 1) << 1) == K.y);
+  bool cleanZ = ( ((K.z >> 1) << 1) == K.z);
+  VectorType Ki;
+  Ki.x = 1./double(K.x);
+  Ki.y = 1./double(K.y);
+  Ki.z = 1./double(K.z);
+  
+  for (idx.x = 0; idx.x < K.x; ++idx.x){
+    if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+    else posi.x = idx.x;
+    for (idx.y = 0; idx.y < K.y; ++idx.y){
+      if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+      else posi.y = idx.y;
+      for (idx.z = 0; idx.z < K.z; ++idx.z){
+	if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+	else posi.z = idx.z;
+	VectorType mm;
+	mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
+	mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
+	mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
+	double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
+	unsigned index = index3to1 (idx, K);
+	k1mx[index][0] = k1mx[index][1] = 0.;
+	k1my[index][0] = k1my[index][1] = 0.;
+	k1mz[index][0] = k1mz[index][1] = 0.;
+	if (m2 == 0) continue;
+	double fm = kernel_rm1_rec_f (m2, beta) * scalor;
+	VectorType tmpvalue;
+	tmpvalue.x = - 4. * M_PI * fm * mm.x;
+	tmpvalue.y = - 4. * M_PI * fm * mm.y;
+	tmpvalue.z = - 4. * M_PI * fm * mm.z;
+	VectorType uu;
+	uu.x = 2. * M_PI * double(posi.x) * Ki.x;
+	uu.y = 2. * M_PI * double(posi.y) * Ki.y;
+	uu.z = 2. * M_PI * double(posi.z) * Ki.z;
+	VectorType fenmu;
+	fenmu.x = 1./calsum (uu.x, order);
+	fenmu.y = 1./calsum (uu.y, order);
+	fenmu.z = 1./calsum (uu.z, order);
+	double sum = 0.;
+	sum += 1./gsl_pow_int(uu.x + 2.*M_PI * 1., order) * fenmu.x;
+	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 1., order) * fenmu.x;
+	sum += 1./gsl_pow_int(uu.x + 2.*M_PI * 2., order) * fenmu.x;
+	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 2., order) * fenmu.x;
+	sum += 1./gsl_pow_int(uu.x + 2.*M_PI * 3., order) * fenmu.x;
+	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 3., order) * fenmu.x;
+	  
+	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 1., order) * fenmu.y;
+	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 1., order) * fenmu.y;
+	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 2., order) * fenmu.y;
+	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 2., order) * fenmu.y;
+	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 3., order) * fenmu.y;
+	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 3., order) * fenmu.y;
+	  
+	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 1., order) * fenmu.z;
+	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 1., order) * fenmu.z;
+	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 2., order) * fenmu.z;
+	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 2., order) * fenmu.z;
+	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 3., order) * fenmu.z;
+	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 3., order) * fenmu.z;
 
-void ErrorEstimate_Ewald::
+	k1mx[index][1] = tmpvalue.x * sum;
+	k1my[index][1] = tmpvalue.y * sum;
+	k1mz[index][1] = tmpvalue.z * sum;
+	
+	if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+	if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+	if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+      }
+    }
+  }
+
+  for (int i = 0; i < nele; ++i){
+    k1mx[i][1] *= volume;
+    k1my[i][1] *= volume;
+    k1mz[i][1] *= volume;
+  }
+}
+
+
+void ErrorEstimate_SPME_Ik::
 calError (const DensityProfile_PiecewiseConst & dp)
 {
   double scalor = volume/double(nele);
@@ -213,18 +261,18 @@ calError (const DensityProfile_PiecewiseConst & dp)
   array_multiply (error1x, nele, k1mx, rho1);
   array_multiply (error1y, nele, k1my, rho1);
   array_multiply (error1z, nele, k1mz, rho1);
-  array_multiply (error2, nele, k2m, rho2);
+  // array_multiply (error2, nele, k2m, rho2);
 
   fftw_execute (p_backward_error1x);
   fftw_execute (p_backward_error1y);
   fftw_execute (p_backward_error1z);
-  fftw_execute (p_backward_error2);
+  // fftw_execute (p_backward_error2);
 
   for (int i = 0; i < nele; ++i){
     error1x[i][0] /= volume;
     error1y[i][0] /= volume;
     error1z[i][0] /= volume;
-    error2[i][0] /= volume;
+    // error2[i][0] /= volume;
   }
   for (int i = 0; i < nele; ++i){
     error1[i][0] =
@@ -239,73 +287,8 @@ calError (const DensityProfile_PiecewiseConst & dp)
 }
 
 
-// void AdaptRCut::    
-// print_error_avg (const DensityProfile_PiecewiseConst & dp,
-// 		 const std::string & file) const 
-// {
-//   FILE * fp = fopen (file.c_str(), "w");
-//   if (fp == NULL){
-//     std::cerr << "cannot open file " << file << std::endl;
-//     exit(1);
-//   }
 
-//   for (int i = 0; i < nx; ++i){
-//     double sum = 0.;
-//     double sumprofile = 0.;
-//     for (int j = 0; j < ny; ++j){
-//       for (int k = 0; k < nz; ++k){
-//     	sum +=
-// 	    result_error[index3to1(i,j,k)] *
-// 	    result_error[index3to1(i,j,k)] *
-// 	    dp.getProfile(i,j,k);
-// 	sumprofile += dp.getProfile (i,j,k);
-//       }
-//     }
-//     sum /= sumprofile;
-//     sum = sqrt(sum);
-//     // fprintf (fp, "%f %e %e\n",
-//     // 	     (i + 0.5) * hx,
-//     // 	     error[4][index3to1(i,0,0)][0],
-//     // 	     error[4][index3to1(i,0,0)][1]
-//     // 	);
-//     // fprintf (fp, "%f", (i + 0.5) * hx);
-//     // fprintf (fp, " %e", sum);
-//     fprintf (fp, "%f %e\n",
-// 	     (i + 0.5) * hx,
-// 	     sum);
-//   }
-//   fclose (fp);
-// }
-
-void ErrorEstimate_Ewald::    
-print_error (const std::string & file) const 
-{
-  FILE * fp = fopen (file.c_str(), "w");
-  if (fp == NULL){
-    std::cerr << "cannot open file " << file << std::endl;
-    exit(1);
-  }
-
-  for (int i = 0; i < K.x; ++i){
-    IntVectorType idx;
-    idx.x = i;
-    idx.y = 0;
-    idx.z = 0;
-    unsigned index = index3to1 (idx, K);
-    fprintf (fp, "%f %e   %e %e %e %e\n",
-	     (i + 0.5) * vecA.xx / K.x,
-	     sqrt(error1[index][0] + error2[index][0]),
-	     error1[index][0],
-	     error1[index][1],
-	     error2[index][0],
-	     error2[index][1]
-	);
-  }
-  fclose (fp);
-}
-
-
-void ErrorEstimate_Ewald::
+void ErrorEstimate_SPME_Ik::
 print_meanf (const std::string & file,
 	     const DensityProfile_PiecewiseConst & dp) const
 {
@@ -335,7 +318,6 @@ print_meanf (const std::string & file,
   }
   fclose (fp);
 }
-  
 
 
-	
+

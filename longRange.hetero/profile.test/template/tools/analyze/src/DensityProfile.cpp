@@ -32,6 +32,10 @@ reinit_conf (const std::string & filename,
   profile1.resize (nx * ny * nz, 0.);
   profile2.clear();
   profile2.resize (nx * ny * nz, 0.);
+  profileP.clear();
+  profileP.resize (nx * ny * nz, 0.);
+  profileN.clear();
+  profileN.resize (nx * ny * nz, 0.);
   
   {
     unsigned i = 0;
@@ -49,6 +53,7 @@ reinit_conf (const std::string & filename,
       if      (posi[i][2] >= boxsize[2]) tmp -= boxsize[2];
       else if (posi[i][2] <  0)          tmp += boxsize[2];
       unsigned iz = unsigned (tmp / hz);
+      profileP[index3to1(ix, iy, iz)] += 1.;
       profile1[index3to1(ix, iy, iz)] += 1.;
       profile2[index3to1(ix, iy, iz)] += 1.;
     }
@@ -66,6 +71,7 @@ reinit_conf (const std::string & filename,
       if      (posi[i][2] >= boxsize[2]) tmp -= boxsize[2];
       else if (posi[i][2] <  0)          tmp += boxsize[2];
       unsigned iz = unsigned (tmp / hz);
+      profileN[index3to1(ix, iy, iz)] -= 1.;
       profile1[index3to1(ix, iy, iz)] -= 1.;
       profile2[index3to1(ix, iy, iz)] += 1.;
     }
@@ -76,6 +82,8 @@ reinit_conf (const std::string & filename,
   for (unsigned i = 0; i < profile1.size(); ++i){
     profile1[i] /= dvolume;
     profile2[i] /= dvolume;
+    profileP[i] /= dvolume;
+    profileN[i] /= dvolume;
   }
 }
 
@@ -290,6 +298,10 @@ reinit_xtc (const char * fname,
   profile1.resize (nx * ny * nz, 0.);
   profile2.clear();
   profile2.resize (nx * ny * nz, 0.);
+  profileP.clear();
+  profileP.resize (nx * ny * nz, 0.);
+  profileN.clear();
+  profileN.resize (nx * ny * nz, 0.);
   
   int nfile = 0;
   while (read_xtc (fp, natoms, &step, &time, gbox, xx, &prec) == 0){
@@ -322,6 +334,7 @@ reinit_xtc (const char * fname,
 	if      (xx[i][2] >= boxsize[2]) tmp -= boxsize[2];
 	else if (xx[i][2] <  0)          tmp += boxsize[2];
 	unsigned iz = unsigned (tmp / hz);
+	profileP[index3to1(ix, iy, iz)] += 1.;
 	profile1[index3to1(ix, iy, iz)] += 1.;
 	profile2[index3to1(ix, iy, iz)] += 1.;
       }
@@ -339,6 +352,7 @@ reinit_xtc (const char * fname,
 	if      (xx[i][2] >= boxsize[2]) tmp -= boxsize[2];
 	else if (xx[i][2] <  0)          tmp += boxsize[2];
 	unsigned iz = unsigned (tmp / hz);
+	profileN[index3to1(ix, iy, iz)] -= 1.;
 	profile1[index3to1(ix, iy, iz)] -= 1.;
 	profile2[index3to1(ix, iy, iz)] += 1.;
       }
@@ -351,6 +365,8 @@ reinit_xtc (const char * fname,
   for (unsigned i = 0; i < profile1.size(); ++i){
     profile1[i] /= dvolume * nfile;
     profile2[i] /= dvolume * nfile;
+    profileP[i] /= dvolume * nfile;
+    profileN[i] /= dvolume * nfile;
   }
   
   free(xx);
@@ -410,14 +426,19 @@ print_avg_x (const std::string & file) const
   }
   for (unsigned i = 0; i < nx; ++i){
     double sum1 = 0., sum2 = 0.;
+    double sumN = 0., sumP = 0.;
     for (unsigned j = 0; j < ny; ++j){
       for (unsigned k = 0; k < nz; ++k){
     	sum1 += profile1[index3to1(i, j, k)];
     	sum2 += profile2[index3to1(i, j, k)];
+    	sumP += profileP[index3to1(i, j, k)];
+    	sumN += profileN[index3to1(i, j, k)];
       }
     }
-    fprintf (fp, "%f %f %f\n",
+    fprintf (fp, "%f %f %f %f %f\n",
 	     (i + 0.5) * hx,
+	     sumP / ny / nz,
+	     sumN / ny / nz,
 	     sum1 / ny / nz,
 	     sum2 / ny / nz
 	);

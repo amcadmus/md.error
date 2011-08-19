@@ -78,6 +78,7 @@ int main(int argc, char * argv[])
   eee.reinit (beta, Kmax, dp);
   eee.calError (dp);
   eee.print_error (efile.c_str());
+  eee.print_meanf ("meanf.out", dp);
 
   return 0;
 }

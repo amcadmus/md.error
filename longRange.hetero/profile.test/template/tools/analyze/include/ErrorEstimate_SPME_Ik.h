@@ -1,20 +1,21 @@
-#ifndef __ErrorEstimate_Ewald_h_wanghan__
-#define __ErrorEstimate_Ewald_h_wanghan__
+#ifndef __ErrorEstimate_SPME_Ik_h_wanghan__
+#define __ErrorEstimate_SPME_Ik_h_wanghan__
 
 #include <fftw3.h>
 #include <gsl/gsl_math.h>
 #include "Defines.h"
 #include "DensityProfile.h"
 
-class ErrorEstimate_Ewald
+class ErrorEstimate_SPME_Ik
 {
   IntVectorType K;
-  IntVectorType Kmax;
+  // IntVectorType Kmax;
+  double beta;
+  int order;
   int nele;
   MatrixType vecA;
   MatrixType vecAStar;
   double volume;
-  double beta;
 private:
   void freeAll();
   void calV();
@@ -45,26 +46,27 @@ private:
   fftw_plan p_backward_error2;
   bool malloced;
 public:
-  ErrorEstimate_Ewald();
-  ~ErrorEstimate_Ewald();
+  ErrorEstimate_SPME_Ik();
+  ~ErrorEstimate_SPME_Ik();
   void reinit (const double & beta,
-	       const IntVectorType & Kmax,
+	       const int & order,
+	       // const IntVectorType Kmax,
 	       const DensityProfile_PiecewiseConst & dp);
   void calError (const DensityProfile_PiecewiseConst & dp);
-  void print_error (const std::string & file) const;
   void print_meanf (const std::string & file,
 		    const DensityProfile_PiecewiseConst & dp) const;
 }
     ;
 
-int ErrorEstimate_Ewald::
+
+int ErrorEstimate_SPME_Ik::
 index3to1 (const IntVectorType i,
 	   const IntVectorType N) const
 {
   return i.z + N.z * (i.y + N.y * i.x);
 }
 
-void ErrorEstimate_Ewald::
+void ErrorEstimate_SPME_Ik::
 index1to3 (const unsigned input,
 	   const IntVectorType N,
 	   IntVectorType * i) const
@@ -75,6 +77,5 @@ index1to3 (const unsigned input,
   i->y = tmp % (N.y);
   i->x =  (tmp - i->y) / N.y;
 }
-
 
 #endif
