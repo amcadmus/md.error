@@ -35,6 +35,10 @@ int main(int argc, char * argv[])
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
   po::notify (vm);
+  if (vm.count("help")){
+    std::cout << desc<< "\n";
+    return 0;
+  }
 
   FILE * fp0, * fp1;
   fp0 = fopen (force0.c_str(), "r");
@@ -60,7 +64,11 @@ int main(int argc, char * argv[])
   int nbin = tmpbox[0] / refh + 0.5;
   double hx = tmpbox[0] / double(nbin);
   std::vector<int > count(nbin, 0);
+  std::vector<int > countp(nbin, 0);
   std::vector<double > value (nbin, 0.);
+  std::vector<double > meanfx (nbin, 0.);
+  std::vector<double > meanfy (nbin, 0.);
+  std::vector<double > meanfz (nbin, 0.);
   for (unsigned i = 0; i < posi.size(); ++i){
     if (posi[i][0] >= tmpbox[0]) posi[i][0] -= tmpbox[0];
     else if (posi[i][0] < 0) posi[i][0] += tmpbox[0];
@@ -72,10 +80,27 @@ int main(int argc, char * argv[])
     f0x -= f1x;
     f0y -= f1y;
     f0z -= f1z;
+    if (i < posi.size() / 2){
+      meanfx[idx] += f0x;
+      meanfy[idx] += f0y;
+      meanfz[idx] += f0z;
+      countp[idx] ++;
+    }
+    // else {
+    //   meanfx[idx] -= f0x;
+    //   meanfy[idx] -= f0y;
+    //   meanfz[idx] -= f0z;
+    //   countp[idx] ++;
+    // }
     value[idx] += f0x*f0x + f0y*f0y + f0z * f0z;
     count[idx] += 1;
   }
   for (int i = 0; i < nbin; ++i){
+    if (countp[i] != 0){
+      meanfx[i] /= countp[i];
+      meanfy[i] /= countp[i];
+      meanfz[i] /= countp[i];
+    }
     if (count[i] != 0){
       value[i] = sqrt (value[i] / count[i]);
     }
@@ -93,6 +118,19 @@ int main(int argc, char * argv[])
     fprintf(fp, "%f %e\n",
 	    (i+0.5) * refh,
 	    value[i]);
+  }
+  fclose (fp);
+  fp = fopen("meanf.out", "w");
+  if (fp == NULL){
+    std::cerr << "cannot open file " << out << std::endl;
+    return 1;
+  }
+  for (int i = 0; i < nbin; ++i){
+    fprintf(fp, "%f %e %e %e\n",
+	    (i+0.5) * refh,
+	    meanfx[i],
+	    meanfy[i],
+	    meanfz[i]);
   }
   fclose (fp);
 }

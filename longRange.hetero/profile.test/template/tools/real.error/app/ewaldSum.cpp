@@ -18,7 +18,7 @@ namespace po = boost::program_options;
 
 int main (int argc, char * argv[])
 {
-  unsigned seed;
+  unsigned seed = 0;
   double refRcut;
   double boxsize = 10.;
   unsigned npart = 1000;
@@ -108,7 +108,7 @@ int main (int argc, char * argv[])
       tmpp.charge() = 1.;
     }
     else {
-      tmpp.charge() = 1.;
+      tmpp.charge() = -1.;
     }
     refParticles.push_back (tmpp);
   }
