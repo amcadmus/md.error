@@ -2,6 +2,8 @@
 
 #include "ErrorEstimate_SPME_Ik.h"
 
+const int global_half_N_k_sum = 4;
+
 ErrorEstimate_SPME_Ik::
 ErrorEstimate_SPME_Ik ()
     : malloced (false)
@@ -179,8 +181,38 @@ calKernel()
   for (int i = 0; i < nele; ++i){
     k2mb[i][0] = k2mb[i][1] = 0.;
   }
-    
-  for (int myk = -4; myk <= 4; ++myk){
+
+  VectorType * gmi = (VectorType *) malloc (sizeof(VectorType) * nele);
+  
+  for (idx.x = 0; idx.x < K.x; ++idx.x){
+    if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+    else posi.x = idx.x;
+    for (idx.y = 0; idx.y < K.y; ++idx.y){
+      if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+      else posi.y = idx.y;
+      for (idx.z = 0; idx.z < K.z; ++idx.z){
+	if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+	else posi.z = idx.z;
+	VectorType mm;
+	mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
+	mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
+	mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
+	double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
+	unsigned index = index3to1 (idx, K);
+	if (m2 == 0) {
+	  gmi[index].x = gmi[index].y = gmi[index].z = 0.;
+	}
+	else {
+	  double fm = kernel_rm1_rec_f (m2, beta) * scalor;
+	  gmi[index].x = - 4. * M_PI * fm * mm.x;
+	  gmi[index].y = - 4. * M_PI * fm * mm.y;
+	  gmi[index].z = - 4. * M_PI * fm * mm.z;
+	}
+      }
+    }
+  }
+      
+  for (int myk = -global_half_N_k_sum; myk <= global_half_N_k_sum; ++myk){
     if (myk == 0) continue;
     {
       for (idx.x = 0; idx.x < K.x; ++idx.x){
@@ -192,32 +224,18 @@ calKernel()
 	  for (idx.z = 0; idx.z < K.z; ++idx.z){
 	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
 	    else posi.z = idx.z;
-	    VectorType mm;
-	    mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
-	    mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
-	    mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
-	    double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
 	    unsigned index = index3to1 (idx, K);
 	    k1mx[index][0] = k1mx[index][1] = 0.;
 	    k1my[index][0] = k1my[index][1] = 0.;
 	    k1mz[index][0] = k1mz[index][1] = 0.;
-	    if (m2 == 0) continue;
-	    double fm = kernel_rm1_rec_f (m2, beta) * scalor;
-	    VectorType tmpvalue;
-	    tmpvalue.x = - 4. * M_PI * fm * mm.x;
-	    tmpvalue.y = - 4. * M_PI * fm * mm.y;
-	    tmpvalue.z = - 4. * M_PI * fm * mm.z;
-	    VectorType uu;
-	    uu.x = 2. * M_PI * double(posi.x) * Ki.x;
-	    uu.y = 2. * M_PI * double(posi.y) * Ki.y;
-	    uu.z = 2. * M_PI * double(posi.z) * Ki.z;
-	    VectorType fenmu;
-	    fenmu.x = 1./calsum (uu.x, order);
-	    double sum = 1./gsl_pow_int(uu.x + 2.*M_PI * myk, order) * fenmu.x;
+	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+	    double uu = 2. * M_PI * double(posi.x) * Ki.x;
+	    double fenmu = 1./calsum (uu, order);
+	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
 
-	    k1mx[index][1] = tmpvalue.x * sum;
-	    k1my[index][1] = tmpvalue.y * sum;
-	    k1mz[index][1] = tmpvalue.z * sum;
+	    k1mx[index][1] = gmi[index].x * sum;
+	    k1my[index][1] = gmi[index].y * sum;
+	    k1mz[index][1] = gmi[index].z * sum;
 	
 	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
 	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
@@ -248,32 +266,18 @@ calKernel()
 	  for (idx.z = 0; idx.z < K.z; ++idx.z){
 	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
 	    else posi.z = idx.z;
-	    VectorType mm;
-	    mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
-	    mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
-	    mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
-	    double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
 	    unsigned index = index3to1 (idx, K);
 	    k1mx[index][0] = k1mx[index][1] = 0.;
 	    k1my[index][0] = k1my[index][1] = 0.;
 	    k1mz[index][0] = k1mz[index][1] = 0.;
-	    if (m2 == 0) continue;
-	    double fm = kernel_rm1_rec_f (m2, beta) * scalor;
-	    VectorType tmpvalue;
-	    tmpvalue.x = - 4. * M_PI * fm * mm.x;
-	    tmpvalue.y = - 4. * M_PI * fm * mm.y;
-	    tmpvalue.z = - 4. * M_PI * fm * mm.z;
-	    VectorType uu;
-	    uu.x = 2. * M_PI * double(posi.x) * Ki.x;
-	    uu.y = 2. * M_PI * double(posi.y) * Ki.y;
-	    uu.z = 2. * M_PI * double(posi.z) * Ki.z;
-	    VectorType fenmu;
-	    fenmu.y = 1./calsum (uu.y, order);
-	    double sum = 1./gsl_pow_int(uu.y + 2.*M_PI * myk, order) * fenmu.y;
+	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+	    double uu = 2. * M_PI * double(posi.y) * Ki.y;
+	    double fenmu = 1./calsum (uu, order);
+	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
 
-	    k1mx[index][1] = tmpvalue.x * sum;
-	    k1my[index][1] = tmpvalue.y * sum;
-	    k1mz[index][1] = tmpvalue.z * sum;
+	    k1mx[index][1] = gmi[index].x * sum;
+	    k1my[index][1] = gmi[index].y * sum;
+	    k1mz[index][1] = gmi[index].z * sum;
 	
 	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
 	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
@@ -304,32 +308,18 @@ calKernel()
 	  for (idx.z = 0; idx.z < K.z; ++idx.z){
 	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
 	    else posi.z = idx.z;
-	    VectorType mm;
-	    mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
-	    mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
-	    mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
-	    double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
 	    unsigned index = index3to1 (idx, K);
 	    k1mx[index][0] = k1mx[index][1] = 0.;
 	    k1my[index][0] = k1my[index][1] = 0.;
 	    k1mz[index][0] = k1mz[index][1] = 0.;
-	    if (m2 == 0) continue;
-	    double fm = kernel_rm1_rec_f (m2, beta) * scalor;
-	    VectorType tmpvalue;
-	    tmpvalue.x = - 4. * M_PI * fm * mm.x;
-	    tmpvalue.y = - 4. * M_PI * fm * mm.y;
-	    tmpvalue.z = - 4. * M_PI * fm * mm.z;
-	    VectorType uu;
-	    uu.x = 2. * M_PI * double(posi.x) * Ki.x;
-	    uu.y = 2. * M_PI * double(posi.y) * Ki.y;
-	    uu.z = 2. * M_PI * double(posi.z) * Ki.z;
-	    VectorType fenmu;
-	    fenmu.z = 1./calsum (uu.z, order);
-	    double sum = 1./gsl_pow_int(uu.z + 2.*M_PI * myk, order) * fenmu.z;
+	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+	    double uu = 2. * M_PI * double(posi.z) * Ki.z;
+	    double fenmu = 1./calsum (uu, order);
+	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
 
-	    k1mx[index][1] = tmpvalue.x * sum;
-	    k1my[index][1] = tmpvalue.y * sum;
-	    k1mz[index][1] = tmpvalue.z * sum;
+	    k1mx[index][1] = gmi[index].x * sum;
+	    k1my[index][1] = gmi[index].y * sum;
+	    k1mz[index][1] = gmi[index].z * sum;
 	
 	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
 	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
@@ -360,21 +350,11 @@ calKernel()
       for (idx.z = 0; idx.z < K.z; ++idx.z){
 	if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
 	else posi.z = idx.z;
-	VectorType mm;
-	mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
-	mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
-	mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
-	double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
 	unsigned index = index3to1 (idx, K);
 	k1mx[index][0] = k1mx[index][1] = 0.;
 	k1my[index][0] = k1my[index][1] = 0.;
 	k1mz[index][0] = k1mz[index][1] = 0.;
-	if (m2 == 0) continue;
-	double fm = kernel_rm1_rec_f (m2, beta) * scalor;
-	VectorType tmpvalue;
-	tmpvalue.x = - 4. * M_PI * fm * mm.x;
-	tmpvalue.y = - 4. * M_PI * fm * mm.y;
-	tmpvalue.z = - 4. * M_PI * fm * mm.z;
+	if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
 	VectorType uu;
 	uu.x = 2. * M_PI * double(posi.x) * Ki.x;
 	uu.y = 2. * M_PI * double(posi.y) * Ki.y;
@@ -384,36 +364,16 @@ calKernel()
 	fenmu.y = 1./calsum (uu.y, order);
 	fenmu.z = 1./calsum (uu.z, order);
 	double sum = 0.;
-	sum += 1./gsl_pow_int(uu.x + 2.*M_PI * 1., order) * fenmu.x;
-	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 1., order) * fenmu.x;
-	sum += 1./gsl_pow_int(uu.x + 2.*M_PI * 2., order) * fenmu.x;
-	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 2., order) * fenmu.x;
-	sum += 1./gsl_pow_int(uu.x + 2.*M_PI * 3., order) * fenmu.x;
-	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 3., order) * fenmu.x;
-	sum += 1./gsl_pow_int(uu.x + 2.*M_PI * 4., order) * fenmu.x;
-	sum += 1./gsl_pow_int(uu.x - 2.*M_PI * 4., order) * fenmu.x;
-	  
-	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 1., order) * fenmu.y;
-	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 1., order) * fenmu.y;
-	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 2., order) * fenmu.y;
-	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 2., order) * fenmu.y;
-	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 3., order) * fenmu.y;
-	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 3., order) * fenmu.y;
-	sum += 1./gsl_pow_int(uu.y + 2.*M_PI * 4., order) * fenmu.y;
-	sum += 1./gsl_pow_int(uu.y - 2.*M_PI * 4., order) * fenmu.y;
-	  
-	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 1., order) * fenmu.z;
-	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 1., order) * fenmu.z;
-	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 2., order) * fenmu.z;
-	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 2., order) * fenmu.z;
-	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 3., order) * fenmu.z;
-	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 3., order) * fenmu.z;
-	sum += 1./gsl_pow_int(uu.z + 2.*M_PI * 4., order) * fenmu.z;
-	sum += 1./gsl_pow_int(uu.z - 2.*M_PI * 4., order) * fenmu.z;
+	for (int myk = -global_half_N_k_sum; myk <= global_half_N_k_sum; ++myk){
+	  if (myk == 0) continue;
+	  sum += 1./gsl_pow_int(uu.x + 2.*M_PI * myk, order) * fenmu.x;
+	  sum += 1./gsl_pow_int(uu.y + 2.*M_PI * myk, order) * fenmu.y;
+	  sum += 1./gsl_pow_int(uu.z + 2.*M_PI * myk, order) * fenmu.z;
+	}
 
-	k1mx[index][1] = tmpvalue.x * sum * 2.;
-	k1my[index][1] = tmpvalue.y * sum * 2.;
-	k1mz[index][1] = tmpvalue.z * sum * 2.;
+	k1mx[index][1] = gmi[index].x * sum * 2.;
+	k1my[index][1] = gmi[index].y * sum * 2.;
+	k1mz[index][1] = gmi[index].z * sum * 2.;
 	
 	if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
 	if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
@@ -441,11 +401,11 @@ calKernel()
   fftw_execute (p_forward_k2b);
 
   for (int i = 0; i < nele; ++i){
-    // k2ma[i][0] *= 2.;
-    // k2ma[i][1] *= 2.;
     k2ma[i][0] += 2. * k2mb[i][0];
     k2ma[i][1] += 2. * k2mb[i][1];
   }
+
+  free (gmi);
 }
 
 

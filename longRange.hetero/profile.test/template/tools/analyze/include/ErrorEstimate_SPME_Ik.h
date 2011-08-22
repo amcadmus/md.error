@@ -8,6 +8,8 @@
 
 class ErrorEstimate_SPME_Ik
 {
+  friend class ErrorEstimate_SPME_Ana;
+  
   IntVectorType K;
   // IntVectorType Kmax;
   double beta;
