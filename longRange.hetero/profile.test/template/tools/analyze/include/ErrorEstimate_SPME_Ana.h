@@ -28,28 +28,30 @@ class ErrorEstimate_SPME_Ana
   fftw_complex *refined_error1;
 
   fftw_complex *rho1;
-  fftw_complex **k1mx, **k1my, **k1mz;
-  fftw_complex **k1rx, **k1ry, **k1rz;
-  fftw_complex **error1x, **error1y, **error1z;
-  VectorType *selfx, *selfy, *selfz;
+  fftw_complex **f1kx;
+  fftw_complex **f1ky;
+  fftw_complex **f1kz;
+  fftw_complex **error1x;
+  fftw_complex **error1y;
+  fftw_complex **error1z;
+  fftw_complex *selfx;
+  fftw_complex *selfy;
+  fftw_complex *selfz;
+  
   fftw_plan p_forward_rho1;
-  fftw_plan * p_backward_k1mx;
-  fftw_plan * p_backward_k1my;
-  fftw_plan * p_backward_k1mz;
-  fftw_plan * p_backward_error1x;
-  fftw_plan * p_backward_error1y;
-  fftw_plan * p_backward_error1z;
-
-  fftw_complex **  myMalloc (int numOfk, int nele);
-  void myFree (int numOfk, fftw_complex ** a);
+  // fftw_plan *p_backward_f1k;
+  fftw_plan *p_backward_error1x;
+  fftw_plan *p_backward_error1y;
+  fftw_plan *p_backward_error1z;
   bool malloced;
   
   ErrorEstimate_SPME_Ik spmeik;
 private:
   void freeAll();
-  void calV();
-  void calAStar();
   void calKernel ();
+  fftw_complex ** myMalloc (int numOfk, int nele);
+  void myFree (int numOfk, fftw_complex ** a);
+
   inline int  index3to1 (const IntVectorType i,
 			 const IntVectorType N) const;
   inline void index1to3 (const unsigned input,
