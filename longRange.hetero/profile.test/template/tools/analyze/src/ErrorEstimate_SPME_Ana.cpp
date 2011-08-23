@@ -600,7 +600,6 @@ calKernel ()
 	  Fmy[myk][index][1] = 0.;
 	  Fmz[myk][index][0] = -2. * fm * fenshu.z;
 	  Fmz[myk][index][1] = 0.;
-	  printf("! %f\n", Fmz[0][0][0]);
 	  
 	  selfx[myk][0] += Fmx[myk][index][0];
 	  selfy[myk][0] += Fmy[myk][index][0];
@@ -666,7 +665,6 @@ calKernel ()
     fftw_execute (p_backward_Gmzz[myk]);
   }
 
-  printf("! %f\n", Fmz[0][0][0]);
   for (int kk = -kcut; kk <= kcut; ++kk){  
     if (kk == 0) continue;
     int myk = kk + kcut;
@@ -676,7 +674,6 @@ calKernel ()
       Fmz[myk][index][0] *= volume;
     }
   }
-  printf("! %f\n", Fmz[0][0][0]);
 
   // assemble cross terms...
   for (int kk = 0; kk < numk; ++kk){
@@ -817,9 +814,6 @@ calError (const DensityProfile_PiecewiseConst & dp)
 {
   spmeik.calError(dp);
 
-  printf ("# here 0\n");
-  fflush (stdout);
-
   double scalor = volume/double(nele);
   for (int i = 0; i < nele; ++i){
     rho1[i][0] = dp.getProfile1(i) * scalor;
@@ -829,21 +823,10 @@ calError (const DensityProfile_PiecewiseConst & dp)
   }
   fftw_execute (p_forward_rho1);
   fftw_execute (p_forward_rho2);
-
-  printf ("# here 1\n");
-  fflush (stdout);
   
   array_multiply (FConvRho1x, kcut, nele, Fmx, rho1);
   array_multiply (FConvRho1y, kcut, nele, Fmy, rho1);
   array_multiply (FConvRho1z, kcut, nele, Fmz, rho1);
-  printf("! %f\n", Fmz[0][0][0]);
-  printf("! %f\n", Fmz[0][0][1]);
-  printf("! %f\n", rho1[0][0]);
-  printf("! %f\n", rho1[0][1]);
-  printf("! %f\n", FConvRho1z[0][0][0]);
-
-  printf ("# here 2\n");
-  fflush (stdout);
 
   array_multiply_kl (FxFxConvRho2, numk, nele, FxFx, rho2);
   array_multiply_kl (FyFyConvRho2, numk, nele, FyFy, rho2);
@@ -858,12 +841,8 @@ calError (const DensityProfile_PiecewiseConst & dp)
   array_multiply_kl (GzyFyConvRho2, numk, nele, GzyFy, rho2);
   array_multiply_kl (GzzFzConvRho2, numk, nele, GzzFz, rho2);
   
-  printf ("# here 3\n");
-  fflush (stdout);
-
   // array_multiply (error2, nele, k2ma, rho2);
   
-  printf("! %f\n", FConvRho1z[0][0][0]);
   for (int kk = -kcut; kk <= kcut; ++kk){
     if (kk == 0) continue;
     int myk = kk + kcut;
@@ -871,7 +850,6 @@ calError (const DensityProfile_PiecewiseConst & dp)
     fftw_execute (p_backward_FConvRho1y[myk]);
     fftw_execute (p_backward_FConvRho1z[myk]);
   }
-  printf("! %f\n", FConvRho1z[0][0][0]);
   for (int kk = -kcut; kk <= kcut; ++kk){
     if (kk == 0) continue;
     int myk = kk + kcut;
@@ -913,7 +891,6 @@ calError (const DensityProfile_PiecewiseConst & dp)
 
   // fftw_execute (p_backward_error2);
 
-  printf("! %f\n", FConvRho1z[0][0][0]);
   for (int kk = -kcut; kk <= kcut; ++kk){
     if (kk == 0) continue;
     int myk = kk + kcut;
@@ -927,7 +904,6 @@ calError (const DensityProfile_PiecewiseConst & dp)
       // error2[i][0] /= volume;
     }
   }
-  printf("! %f\n", FConvRho1z[0][0][0]);
   
   IntVectorType ii;
   for (ii.x = 0; ii.x < refined_K.x; ++ ii.x){
@@ -996,12 +972,6 @@ calError (const DensityProfile_PiecewiseConst & dp)
 	  interpolate (ii, FConvRho1x[myk], resultx);
 	  interpolate (ii, FConvRho1y[myk], resulty);
 	  interpolate (ii, FConvRho1z[myk], resultz);
-	  printf("! %f\n", FConvRho1z[myk][0][0]);
-	  printf("! %f\n", FConvRho1z[myk][0][1]);
-	  printf("! %f\n", FConvRho1z[myk][19682][0]);
-	  printf("! %f\n", FConvRho1z[myk][19682][1]);
-	  printf("! %f\n", resultz[0]);
-	  printf("! %f\n", resultz[1]);
 	  
 	  fftw_complex rx, ry, rz;
 	  multiply (rx, fx, resultx);
@@ -1014,11 +984,6 @@ calError (const DensityProfile_PiecewiseConst & dp)
 	  refined_error1y[indexii][1] -= ry[1];
 	  refined_error1z[indexii][1] -= rz[1];
 	  
-	  printf("! %f\n", resultz[0]);
-	  printf("! %f\n", resultz[1]);
-	  printf("! %f\n", fz[0]);
-	  printf("! %f\n", fz[1]);
-	  printf("! %f\n", refined_error1z[0][0]);
 
 	  refined_termIx[indexii][0] -= rx[0];
 	  refined_termIx[indexii][1] -= rx[1];
@@ -1055,7 +1020,6 @@ calError (const DensityProfile_PiecewiseConst & dp)
 	int indexii;
 	indexii = index3to1 (ii, refined_K);
 	interpolate (ii, spmeik.error2, refined_error2[indexii]);
-	printf("%f\n", refined_error2[0][0]);
 	refined_error2[indexii][0] += 
 	    refined_error1x[indexii][0] * refined_error1x[indexii][0] +
 	    refined_error1x[indexii][1] * refined_error1x[indexii][1] + 
@@ -1063,13 +1027,6 @@ calError (const DensityProfile_PiecewiseConst & dp)
 	    refined_error1y[indexii][1] * refined_error1y[indexii][1] + 
 	    refined_error1z[indexii][0] * refined_error1z[indexii][0] + 
 	    refined_error1z[indexii][1] * refined_error1z[indexii][1] ;
-	printf("%f\n", refined_error1x[0][0]);
-	printf("%f\n", refined_error1y[0][0]);
-	printf("%f\n", refined_error1z[0][0]);
-	printf("%f\n", refined_error1x[0][1]);
-	printf("%f\n", refined_error1y[0][1]);
-	printf("%f\n", refined_error1z[0][1]);
-	printf("%f\n", refined_error2[0][0]);
 	
 	// refined_error2[indexii][0] += 
 	//     refined_termIIx[indexii][0] * refined_termIIx[indexii][0] +
