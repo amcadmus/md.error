@@ -76,6 +76,7 @@ int main(int argc, char * argv[])
   eesi.reinit (beta, order, dp, refine);
   eesi.calError (dp);
   eesi.print_meanf ("meanf.out", dp);
+  eesi.print_error ("error.out");
 
   return 0;
 }
