@@ -536,19 +536,21 @@ calKernel ()
     selfy[kk][0] = selfy[kk][1] = 0.;
     selfz[kk][0] = selfz[kk][1] = 0.;
   }
-  for (int index = 0; index < nele; ++index){
-    Frx[kcut][index][0] = Frx[kcut][index][1] = 0.;
-    Fry[kcut][index][0] = Fry[kcut][index][1] = 0.;
-    Frz[kcut][index][0] = Frz[kcut][index][1] = 0.;
-    Gmxx[kcut][index][0] = Gmxx[kcut][index][1] = 0.;
-    Gmxy[kcut][index][0] = Gmxy[kcut][index][1] = 0.;
-    Gmxz[kcut][index][0] = Gmxz[kcut][index][1] = 0.;
-    Gmyx[kcut][index][0] = Gmyx[kcut][index][1] = 0.;
-    Gmyy[kcut][index][0] = Gmyy[kcut][index][1] = 0.;
-    Gmyz[kcut][index][0] = Gmyz[kcut][index][1] = 0.;
-    Gmzx[kcut][index][0] = Gmzx[kcut][index][1] = 0.;
-    Gmzy[kcut][index][0] = Gmzy[kcut][index][1] = 0.;
-    Gmzz[kcut][index][0] = Gmzz[kcut][index][1] = 0.;
+  for (int kk = 0; kk < numk; ++kk){
+    for (int index = 0; index < nele; ++index){
+      Frx[kk][index][0] = Frx[kk][index][1] = 0.;
+      Fry[kk][index][0] = Fry[kk][index][1] = 0.;
+      Frz[kk][index][0] = Frz[kk][index][1] = 0.;
+      Gmxx[kk][index][0] = Gmxx[kk][index][1] = 0.;
+      Gmxy[kk][index][0] = Gmxy[kk][index][1] = 0.;
+      Gmxz[kk][index][0] = Gmxz[kk][index][1] = 0.;
+      Gmyx[kk][index][0] = Gmyx[kk][index][1] = 0.;
+      Gmyy[kk][index][0] = Gmyy[kk][index][1] = 0.;
+      Gmyz[kk][index][0] = Gmyz[kk][index][1] = 0.;
+      Gmzx[kk][index][0] = Gmzx[kk][index][1] = 0.;
+      Gmzy[kk][index][0] = Gmzy[kk][index][1] = 0.;
+      Gmzz[kk][index][0] = Gmzz[kk][index][1] = 0.;
+    }
   }
   
   for (int kk = -kcut; kk <= kcut; ++kk){
@@ -882,6 +884,18 @@ calError (const DensityProfile_PiecewiseConst & dp)
 	GzxFxConvRho2[klindex][index][0] /= volume;
 	GzyFyConvRho2[klindex][index][0] /= volume;
 	GzzFzConvRho2[klindex][index][0] /= volume;
+	FxFxConvRho2[klindex][index][1] /= volume;
+	FyFyConvRho2[klindex][index][1] /= volume;
+	FzFzConvRho2[klindex][index][1] /= volume;
+	GxxFxConvRho2[klindex][index][1] /= volume;
+	GxyFyConvRho2[klindex][index][1] /= volume;
+	GxzFzConvRho2[klindex][index][1] /= volume;
+	GyxFxConvRho2[klindex][index][1] /= volume;
+	GyyFyConvRho2[klindex][index][1] /= volume;
+	GyzFzConvRho2[klindex][index][1] /= volume;
+	GzxFxConvRho2[klindex][index][1] /= volume;
+	GzyFyConvRho2[klindex][index][1] /= volume;
+	GzzFzConvRho2[klindex][index][1] /= volume;
       }
     }
   }
@@ -1059,6 +1073,168 @@ calError (const DensityProfile_PiecewiseConst & dp)
       }
     }
   }
+
+  for (int kk = -kcut; kk <= kcut; ++kk){
+    if (kk == 0) continue;
+    int myk = kk + kcut;
+    for (int ll = -kcut; ll <= kcut; ++ll){
+      if (ll == 0) continue;
+      int myl = ll + kcut;
+      int klindex = kl2to1 (myk, myl);
+      for (ii.x = 0; ii.x < refined_K.x; ++ ii.x){
+	for (ii.y = 0; ii.y < refined_K.y; ++ ii.y){
+	  for (ii.z = 0; ii.z < refined_K.z; ++ ii.z){
+	    VectorType rr;
+	    rr.x = vecA.xx / double(refined_K.x) * ii.x;
+	    rr.y = vecA.yy / double(refined_K.y) * ii.y;
+	    rr.z = vecA.zz / double(refined_K.z) * ii.z;
+	    int indexii;
+	    indexii = index3to1 (ii, refined_K);
+	    {
+	      
+	      VectorType value ;
+	      value.x = 2 * M_PI * (kk+ll) * K.x * (vecAStar.xx * rr.x);
+	      value.y = 2 * M_PI * (kk+ll) * K.y * (vecAStar.yy * rr.y);
+	      value.z = 2 * M_PI * (kk+ll) * K.z * (vecAStar.zz * rr.z);
+	      fftw_complex fx, fy, fz;
+	      double tmp;
+	      tmp = 2. * M_PI * K.x * vecAStar.xx;
+	      tmp = - tmp * tmp * kk * ll;
+	      fx[0] = tmp * cos(value.x);
+	      fx[1] = tmp * sin(value.x);
+	      tmp = 2. * M_PI * K.y * vecAStar.yy;
+	      tmp = - tmp * tmp * kk * ll;
+	      fy[0] = tmp * cos(value.y);
+	      fy[1] = tmp * sin(value.y);
+	      tmp = 2. * M_PI * K.z * vecAStar.zz;
+	      tmp = - tmp * tmp * kk * ll;
+	      fz[0] = tmp * cos(value.z);
+	      fz[1] = tmp * sin(value.z);
+	      fftw_complex resultx, resulty, resultz;
+	      interpolate (ii, FxFxConvRho2[klindex], resultx);
+	      interpolate (ii, FyFyConvRho2[klindex], resulty);
+	      interpolate (ii, FzFzConvRho2[klindex], resultz);
+	      fftw_complex rx, ry, rz;
+	      multiply (rx, fx, resultx);
+	      multiply (ry, fy, resulty);
+	      multiply (rz, fz, resultz);
+	      refined_error2[indexii][0] += rx[0] + ry[0] + rz[0];
+	      refined_error2[indexii][1] += rx[1] + ry[1] + rz[1];
+	    }
+	    {
+	      fftw_complex conv, term1, term2, result;
+	      double tmp;
+	      {
+		tmp = 2. * M_PI * kk * K.x * vecAStar.xx * rr.x;
+		term1[0] = cos(tmp) - 2.;
+		term1[1] = sin(tmp);
+		term1[0] *= 2.;
+		term1[1] *= 2.;
+
+		interpolate (ii, GxxFxConvRho2[klindex], conv);
+		tmp = 2. * M_PI * ll * K.x * vecAStar.xx * rr.x;
+		term2[0] =-2. * M_PI * ll * K.x * sin(tmp);
+		term2[1] = 2. * M_PI * ll * K.x * cos(tmp);
+		multiply (result, term1, term2);
+		multiply (result, result, conv);
+		refined_error2[indexii][0] += result[0];
+		refined_error2[indexii][1] += result[1];
+
+		interpolate (ii, GxyFyConvRho2[klindex], conv);
+		tmp = 2. * M_PI * ll * K.y * vecAStar.yy * rr.y;
+		term2[0] =-2. * M_PI * ll * K.y * sin(tmp);
+		term2[1] = 2. * M_PI * ll * K.y * cos(tmp);
+		multiply (result, term1, term2);
+		multiply (result, result, conv);
+		refined_error2[indexii][0] += result[0];
+		refined_error2[indexii][1] += result[1];
+
+		interpolate (ii, GxzFzConvRho2[klindex], conv);
+		tmp = 2. * M_PI * ll * K.z * vecAStar.zz * rr.z;
+		term2[0] =-2. * M_PI * ll * K.z * sin(tmp);
+		term2[1] = 2. * M_PI * ll * K.z * cos(tmp);
+		multiply (result, term1, term2);
+		multiply (result, result, conv);
+		refined_error2[indexii][0] += result[0];
+		refined_error2[indexii][1] += result[1];
+	      }
+	      ///
+	      {
+		tmp = 2. * M_PI * kk * K.y * vecAStar.yy * rr.y;
+		term1[0] = cos(tmp) - 2.;
+		term1[1] = sin(tmp);
+		term1[0] *= 2.;
+		term1[1] *= 2.;
+		
+		interpolate (ii, GyxFxConvRho2[klindex], conv);
+		tmp = 2. * M_PI * ll * K.x * vecAStar.xx * rr.x;
+		term2[0] =-2. * M_PI * ll * K.x * sin(tmp);
+		term2[1] = 2. * M_PI * ll * K.x * cos(tmp);
+		multiply (result, term1, term2);
+		multiply (result, result, conv);
+		refined_error2[indexii][0] += result[0];
+		refined_error2[indexii][1] += result[1];
+
+		interpolate (ii, GyyFyConvRho2[klindex], conv);
+		tmp = 2. * M_PI * ll * K.y * vecAStar.yy * rr.y;
+		term2[0] =-2. * M_PI * ll * K.y * sin(tmp);
+		term2[1] = 2. * M_PI * ll * K.y * cos(tmp);
+		multiply (result, term1, term2);
+		multiply (result, result, conv);
+		refined_error2[indexii][0] += result[0];
+		refined_error2[indexii][1] += result[1];
+
+		interpolate (ii, GyzFzConvRho2[klindex], conv);
+		tmp = 2. * M_PI * ll * K.z * vecAStar.zz * rr.z;
+		term2[0] =-2. * M_PI * ll * K.z * sin(tmp);
+		term2[1] = 2. * M_PI * ll * K.z * cos(tmp);
+		multiply (result, term1, term2);
+		multiply (result, result, conv);
+		refined_error2[indexii][0] += result[0];
+		refined_error2[indexii][1] += result[1];
+	      }
+	      
+	      //
+	      {
+		tmp = 2. * M_PI * kk * K.z * vecAStar.zz * rr.z;
+		term1[0] = cos(tmp) - 2.;
+		term1[1] = sin(tmp);
+		term1[0] *= 2.;
+		term1[1] *= 2.;
+		
+		interpolate (ii, GzxFxConvRho2[klindex], conv);
+		tmp = 2. * M_PI * ll * K.x * vecAStar.xx * rr.x;
+		term2[0] =-2. * M_PI * ll * K.x * sin(tmp);
+		term2[1] = 2. * M_PI * ll * K.x * cos(tmp);
+		multiply (result, term1, term2);
+		multiply (result, result, conv);
+		refined_error2[indexii][0] += result[0];
+		refined_error2[indexii][1] += result[1];
+
+		interpolate (ii, GzyFyConvRho2[klindex], conv);
+		tmp = 2. * M_PI * ll * K.y * vecAStar.yy * rr.y;
+		term2[0] =-2. * M_PI * ll * K.y * sin(tmp);
+		term2[1] = 2. * M_PI * ll * K.y * cos(tmp);
+		multiply (result, term1, term2);
+		multiply (result, result, conv);
+		refined_error2[indexii][0] += result[0];
+		refined_error2[indexii][1] += result[1];
+
+		interpolate (ii, GzzFzConvRho2[klindex], conv);
+		tmp = 2. * M_PI * ll * K.z * vecAStar.zz * rr.z;
+		term2[0] =-2. * M_PI * ll * K.z * sin(tmp);
+		term2[1] = 2. * M_PI * ll * K.z * cos(tmp);
+		multiply (result, term1, term2);
+		multiply (result, result, conv);
+		refined_error2[indexii][0] += result[0];
+		refined_error2[indexii][1] += result[1];
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
 }
 
 
@@ -1104,7 +1280,7 @@ print_meanf (const std::string & file,
     // 	     refined_error1x[index1][0] * scalor
     // 	);
     fprintf (fp, "%f %e %e %e\n",
-    	     (idx1.x + 0.5) * vecA.xx / refined_K.x,
+	     (idx1.x + 0.5) * vecA.xx / refined_K.x,
 	     sum0, sum1, sums);
   }
   fclose (fp);
@@ -1127,7 +1303,7 @@ print_error (const std::string & file) const
     unsigned index = index3to1 (idx, refined_K);
     fprintf (fp, "%f %e  \n",
 	     (i + 0.5) * vecA.xx / refined_K.x,
-	     sqrt( refined_error2[index][0])
+	     ( refined_error2[index][0])
 	);
   }
   fclose (fp);
@@ -1135,17 +1311,17 @@ print_error (const std::string & file) const
 
 
 
-  // for (ii.x = 0; ii.x < spmeik.K.x; ++ii.x){
-  // for (ii.y = 0; ii.y < spmeik.K.y; ++ii.y){
-  // for (ii.z = 0; ii.z < spmeik.K.z; ++ii.z){
-  //   IntVectorType jj (ii);
-  //   jj.x *= refine.x;
-  //   jj.y *= refine.y;
-  //   jj.z *= refine.z;
-  //   unsigned indexii, indexjj;
-  //   index3to1 (ii, spmeik.K, indexii);
-  //   index3to1 (jj, refined_K, indexjj);
+// for (ii.x = 0; ii.x < spmeik.K.x; ++ii.x){
+// for (ii.y = 0; ii.y < spmeik.K.y; ++ii.y){
+// for (ii.z = 0; ii.z < spmeik.K.z; ++ii.z){
+//   IntVectorType jj (ii);
+//   jj.x *= refine.x;
+//   jj.y *= refine.y;
+//   jj.z *= refine.z;
+//   unsigned indexii, indexjj;
+//   index3to1 (ii, spmeik.K, indexii);
+//   index3to1 (jj, refined_K, indexjj);
 
-  //   for (int ll = 0; ll < refine.x; 
-  //   refined_error1xx[indexjj+0]
+//   for (int ll = 0; ll < refine.x; 
+//   refined_error1xx[indexjj+0]
       
