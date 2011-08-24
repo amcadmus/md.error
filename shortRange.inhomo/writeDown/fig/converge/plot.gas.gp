@@ -16,10 +16,10 @@ set xrange [2:12]
 pl 0 lc 0 lw 3 lt 2,\
 't0.70.gas.uni.out'   u 1:($2-$4):3 w e ls 11, '' u 1:($2-$4) w l ls 11 not,\
 't0.70.gas.adapt.out' u 1:($2-$4):3 w e ls 11, '' u 1:($2-$4) w l ls 12 not,\
-'t0.70.gas.fcrc.out'  u 1:($2-$4):3 w e ls 11, '' u 1:($2-$4) w l ls 13 not,\
+'t0.70.gas.fcorr.out'  u 1:($2-$4):3 w e ls 11, '' u 1:($2-$4) w l ls 13 not,\
 't0.85.gas.uni.out'   u 1:($2-$4):3 w e ls 21, '' u 1:($2-$4) w l ls 21 not,\
 't0.85.gas.adapt.out' u 1:($2-$4):3 w e ls 21, '' u 1:($2-$4) w l ls 22 not,\
-'t0.85.gas.fcrc.out'  u 1:($2-$4):3 w e ls 21, '' u 1:($2-$4) w l ls 23 not,\
+'t0.85.gas.fcorr.out'  u 1:($2-$4):3 w e ls 21, '' u 1:($2-$4) w l ls 23 not,\
 't1.10.gas.uni.out'   u 1:($2-$4):3 w e ls 31, '' u 1:($2-$4) w l ls 31 not,\
 't1.10.gas.adapt.out' u 1:($2-$4):3 w e ls 31, '' u 1:($2-$4) w l ls 32 not,\
-'t1.10.gas.fcrc.out'  u 1:($2-$4):3 w e ls 31, '' u 1:($2-$4) w l ls 33 not
+'t1.10.gas.fcorr.out'  u 1:($2-$4):3 w e ls 31, '' u 1:($2-$4) w l ls 33 not

@@ -25,7 +25,7 @@ set title 'T*=1.20'
 pl 0 lc 0 lw 3 lt 2 not,\
 't1.20.gas.uni.out'    u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 11 t'gas URC',\
 't1.20.gas.adapt.out'  u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 21 t'gas ARC',\
-'t1.20.gas.fcrc.out'   u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 31 t'gas  FC',\
+'t1.20.gas.fcorr.out'   u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 31 t'gas  FC',\
 't1.20.liquid.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t'liquid URC',\
 't1.20.liquid.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t'liquid ARC',\
-'t1.20.liquid.fcrc.out'  u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t'liquid  FC'
+'t1.20.liquid.fcorr.out'  u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t'liquid  FC'
