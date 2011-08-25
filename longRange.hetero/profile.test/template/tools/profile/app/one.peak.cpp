@@ -64,7 +64,7 @@ int main(int argc, char * argv[])
   x[5] = Lx;
 
   SystemDensityFunction sdf;
-  sdf.reinit (x, y, y, Ly, Lz);
+  sdf.reinit (x, x, y, y, Ly, Lz);
   sdf.genConf_gro (cfile.c_str());
   sdf.genXtc (tfile.c_str(), nframe);
   

@@ -34,9 +34,10 @@ class SystemDensityFunction
   double Lx, Ly, Lz;
   DensityFunction positive;
   DensityFunction negative;
-  DensityFunction total;
+  // DensityFunction total;
 public:
-  void reinit (const std::vector<double > & x,
+  void reinit (const std::vector<double > & xp,
+	       const std::vector<double > & xn,
 	       const std::vector<double > & p,
 	       const std::vector<double > & n,
 	       const double & Ly,

@@ -76,7 +76,8 @@ value (const double & x) const
 }
 
 void SystemDensityFunction::
-reinit (const std::vector<double > & x,
+reinit (const std::vector<double > & xp,
+	const std::vector<double > & xn,
 	const std::vector<double > & p,
 	const std::vector<double > & n,
 	const double & Ly_,
@@ -85,15 +86,15 @@ reinit (const std::vector<double > & x,
   Ly = Ly_;
   Lz = Lz_;
   
-  positive.reinit (x, p);
-  negative.reinit (x, n);
+  positive.reinit (xp, p);
+  negative.reinit (xn, n);
   Lx = positive.Lx();
 
-  std::vector<double > t (p);
-  for (unsigned i = 0; i < p.size(); ++i){
-    t[i] +=  n[i];
-  }
-  total.reinit (x, t);
+  // std::vector<double > t (p);
+  // for (unsigned i = 0; i < p.size(); ++i){
+  //   t[i] +=  n[i];
+  // }
+  // total.reinit (x, t);
 
   np = (positive.integral() * Ly * Lz);
   nn = (negative.integral() * Ly * Lz);

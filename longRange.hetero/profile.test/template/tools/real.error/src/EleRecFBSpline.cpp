@@ -518,7 +518,7 @@ value_type ElectrostaticInteraction_rec_FBSpline::errorEstimate (
 	t31 += Epp2s[1] * KK[1] * KK[1] * VectorOperation::dot(vecAStar[1], vecAStar[1]);
 	t31 += Epp2s[2] * KK[2] * KK[2] * VectorOperation::dot(vecAStar[2], vecAStar[2]);
 	double t3 = t30 + t31;
-	
+
 
 // 	std::vector<double > tmpm(3), tmpr(3);
 // 	tmpm[0] = m0;

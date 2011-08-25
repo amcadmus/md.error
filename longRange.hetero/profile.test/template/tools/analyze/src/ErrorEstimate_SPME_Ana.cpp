@@ -525,9 +525,9 @@ calKernel ()
   //
   // clean X
   //
-  // bool cleanX = ( ((K.x >> 1) << 1) == K.x);
-  // bool cleanY = ( ((K.y >> 1) << 1) == K.y);
-  // bool cleanZ = ( ((K.z >> 1) << 1) == K.z);
+  bool cleanX = ( ((K.x >> 1) << 1) == K.x);
+  bool cleanY = ( ((K.y >> 1) << 1) == K.y);
+  bool cleanZ = ( ((K.z >> 1) << 1) == K.z);
   VectorType Ki;
   Ki.x = 1./double(K.x);
   Ki.y = 1./double(K.y);
@@ -601,6 +601,9 @@ calKernel ()
 	  Fmy[myk][index][1] = 0.;
 	  Fmz[myk][index][0] = -2. * fm * fenshu.z;
 	  Fmz[myk][index][1] = 0.;
+	  if (idx.x == (K.x >> 1) && cleanX) Fmx[myk][index][0] = 0.;
+	  if (idx.y == (K.y >> 1) && cleanY) Fmy[myk][index][0] = 0.;
+	  if (idx.z == (K.z >> 1) && cleanZ) Fmz[myk][index][0] = 0.;
 	  
 	  selfx[myk][0] += Fmx[myk][index][0];
 	  selfy[myk][0] += Fmy[myk][index][0];
@@ -618,6 +621,9 @@ calKernel ()
 	  Gmxz[myk][index][1] =
 	      -4. * M_PI * posi.z * vecAStar.zz * vecAStar.zz *
 	      fm * fenshu.x;
+	  if (idx.x == (K.x >> 1) && cleanX) {
+	    Gmxx[myk][index][1] = Gmxy[myk][index][1] = Gmxz[myk][index][1] = 0.;
+	  }
 
 	  Gmyx[myk][index][0] = 0.;
 	  Gmyx[myk][index][1] =
@@ -631,6 +637,9 @@ calKernel ()
 	  Gmyz[myk][index][1] =
 	      -4. * M_PI * posi.z * vecAStar.zz * vecAStar.zz *
 	      fm * fenshu.y;
+	  if (idx.y == (K.y >> 1) && cleanY) {
+	    Gmyx[myk][index][1] = Gmyy[myk][index][1] = Gmyz[myk][index][1] = 0.;
+	  }
 	  
 	  Gmzx[myk][index][0] = 0.;
 	  Gmzx[myk][index][1] =
@@ -644,6 +653,9 @@ calKernel ()
 	  Gmzz[myk][index][1] =
 	      -4. * M_PI * posi.z * vecAStar.zz * vecAStar.zz *
 	      fm * fenshu.z;
+	  if (idx.z == (K.z >> 1) && cleanZ) {
+	    Gmzx[myk][index][1] = Gmzy[myk][index][1] = Gmzz[myk][index][1] = 0.;
+	  }
 	}
       }
     }

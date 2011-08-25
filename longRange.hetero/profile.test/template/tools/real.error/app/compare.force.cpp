@@ -20,7 +20,7 @@ namespace po = boost::program_options;
 int main(int argc, char * argv[])
 {
   po::options_description desc ("Allow options");
-  std::string config, force0, force1, out;
+  std::string config, force0, force1, out, meanf;
   double refh;
   
   desc.add_options()
@@ -30,6 +30,7 @@ int main(int argc, char * argv[])
       ("force-0", po::value<std::string > (&force0)->default_value("force0.out"), "force file 0")
       ("force-1", po::value<std::string > (&force1)->default_value("force1.out"), "force file 1")
       ("error-file,o", po::value<std::string > (&out)->default_value("error.out"), "error file")
+      ("mean-force-file,m", po::value<std::string > (&meanf)->default_value("meanf.out"), "error file")
       ;
   
   po::variables_map vm;
@@ -120,7 +121,7 @@ int main(int argc, char * argv[])
 	    value[i]);
   }
   fclose (fp);
-  fp = fopen("meanf.out", "w");
+  fp = fopen(meanf.c_str(), "w");
   if (fp == NULL){
     std::cerr << "cannot open file " << out << std::endl;
     return 1;

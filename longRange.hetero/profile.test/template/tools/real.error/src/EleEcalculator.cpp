@@ -129,6 +129,8 @@ inline void produce4Item (const double & x, const int & n,
   double de = denominator (x, n);
   e1 = - tmp6 / de;
   e2 = (tmp6 * tmp6 + sixTerms (x, n*2)) / (de * de);
+  // e1 = 0.;
+  // e2 = (tmp6 * tmp6) / (de * de);
   e2p = 2 * M_PI / (de*de) *  sixTermsp (x, 2*n);
   e2pp = 4 * M_PI * M_PI / (de*de) * sixTermspp (x, n*2);
 }

@@ -32,7 +32,7 @@ int main(int argc, char * argv[])
   x[5] = 30.;
 
   SystemDensityFunction sdf;
-  sdf.reinit (x, y, y, 30., 30.);
+  sdf.reinit (x, x, y, y, 30., 30.);
   sdf.genConf_gro ("conf.gro");
   sdf.genXtc ("traj.xtc", 100);
 
