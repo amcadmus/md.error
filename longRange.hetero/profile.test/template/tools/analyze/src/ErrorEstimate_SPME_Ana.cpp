@@ -268,6 +268,10 @@ calsum (const double & u,
   sum += 1./gsl_pow_int((un-=incr),order);
   sum += 1./gsl_pow_int((up+=incr),order);
   sum += 1./gsl_pow_int((un-=incr),order);
+  sum += 1./gsl_pow_int((up+=incr),order);
+  sum += 1./gsl_pow_int((un-=incr),order);
+  sum += 1./gsl_pow_int((up+=incr),order);
+  sum += 1./gsl_pow_int((un-=incr),order);
   return sum;
 }
 
@@ -570,29 +574,24 @@ calKernel ()
 	  mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
 	  mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
 	  double m2 = (mm.x*mm.x + mm.y*mm.y + mm.z*mm.z);
-	  VectorType uu;
-	  uu.x = 2. * M_PI * double(posi.x) * Ki.x;
-	  uu.y = 2. * M_PI * double(posi.y) * Ki.y;
-	  uu.z = 2. * M_PI * double(posi.z) * Ki.z;
 	  double fm;
-	  VectorType fenshu;
 	  if (m2 == 0){
 	    fm = 0.;
 	  }
 	  else {
 	    fm = kernel_rm1_rec_f (m2, beta) * scalor;
 	  }
-	  fenshu.x = 1./(gsl_pow_int(uu.x + 2.*M_PI*kk, order) * calsum (uu.x, order));
-	  fenshu.y = 1./(gsl_pow_int(uu.y + 2.*M_PI*kk, order) * calsum (uu.y, order));
-	  fenshu.z = 1./(gsl_pow_int(uu.z + 2.*M_PI*kk, order) * calsum (uu.z, order));
-
-	  // fenshu.x = fenshu.y = fenshu.z = 0;
-	  // fenshu.x = 1./calsum (uu.x, order);
-	  // fenshu.y = 1./calsum (uu.y, order);
-	  // fenshu.z = 1./calsum (uu.z, order);
-	  // fenshu.x *= 1./gsl_pow_int(uu.x + 2.*M_PI*kk, order);
-	  // fenshu.y *= 1./gsl_pow_int(uu.y + 2.*M_PI*kk, order);
-	  // fenshu.z *= 1./gsl_pow_int(uu.z + 2.*M_PI*kk, order);
+	  VectorType uu;
+	  uu.x = 2. * M_PI * double(posi.x) * Ki.x;
+	  uu.y = 2. * M_PI * double(posi.y) * Ki.y;
+	  uu.z = 2. * M_PI * double(posi.z) * Ki.z;
+	  VectorType fenshu;
+	  fenshu.x = 1./(gsl_pow_int(uu.x + 2.*M_PI*kk, order));
+	  fenshu.x /= calsum (uu.x, order);
+	  fenshu.y = 1./(gsl_pow_int(uu.y + 2.*M_PI*kk, order));
+	  fenshu.y /= calsum (uu.y, order);
+	  fenshu.z = 1./(gsl_pow_int(uu.z + 2.*M_PI*kk, order));
+	  fenshu.z /= calsum (uu.z, order);
 	  
 	  unsigned index = index3to1 (idx, K);
 	  
@@ -899,7 +898,7 @@ calError (const DensityProfile_PiecewiseConst & dp)
       }
     }
   }
-    
+
   printf ("# here 4\n");
   fflush (stdout);
 
@@ -1079,7 +1078,7 @@ calError (const DensityProfile_PiecewiseConst & dp)
     int myk = kk + kcut;
     for (int ll = -kcut; ll <= kcut; ++ll){
       if (ll == 0) continue;
-      int myl = ll + kcut;
+      int myl = ll + kcut;      
       int klindex = kl2to1 (myk, myl);
       for (ii.x = 0; ii.x < refined_K.x; ++ ii.x){
 	for (ii.y = 0; ii.y < refined_K.y; ++ ii.y){
@@ -1113,123 +1112,125 @@ calError (const DensityProfile_PiecewiseConst & dp)
 	      fftw_complex resultx, resulty, resultz;
 	      interpolate (ii, FxFxConvRho2[klindex], resultx);
 	      interpolate (ii, FyFyConvRho2[klindex], resulty);
-	      interpolate (ii, FzFzConvRho2[klindex], resultz);
+	      interpolate (ii, FzFzConvRho2[klindex], resultz);  
 	      fftw_complex rx, ry, rz;
 	      multiply (rx, fx, resultx);
 	      multiply (ry, fy, resulty);
 	      multiply (rz, fz, resultz);
-	      refined_error2[indexii][0] += rx[0] + ry[0] + rz[0];
-	      refined_error2[indexii][1] += rx[1] + ry[1] + rz[1];
-	    }
+	      refined_error2[indexii][0] += (rx[0] + ry[0] + rz[0]);
+	      refined_error2[indexii][1] += (rx[1] + ry[1] + rz[1]);
+ 	    }
+
 	    {
 	      fftw_complex conv, term1, term2, result;
 	      double tmp;
 	      {
-		tmp = 2. * M_PI * kk * K.x * vecAStar.xx * rr.x;
-		term1[0] = cos(tmp) - 2.;
-		term1[1] = sin(tmp);
-		term1[0] *= 2.;
-		term1[1] *= 2.;
+	    	tmp = 2. * M_PI * kk * K.x * vecAStar.xx * rr.x;
+	    	term1[0] = cos(tmp) - 2.0;
+	    	term1[1] = sin(tmp);
+	    	term1[0] *= 2.;
+	    	term1[1] *= 2.;
 
-		interpolate (ii, GxxFxConvRho2[klindex], conv);
-		tmp = 2. * M_PI * ll * K.x * vecAStar.xx * rr.x;
-		term2[0] =-2. * M_PI * ll * K.x * sin(tmp);
-		term2[1] = 2. * M_PI * ll * K.x * cos(tmp);
-		multiply (result, term1, term2);
-		multiply (result, result, conv);
-		refined_error2[indexii][0] += result[0];
-		refined_error2[indexii][1] += result[1];
+	    	interpolate (ii, GxxFxConvRho2[klindex], conv);
+	    	tmp = 2. * M_PI * ll * K.x * vecAStar.xx * rr.x;
+	    	term2[0] =-2. * M_PI * ll * K.x * sin(tmp);
+	    	term2[1] = 2. * M_PI * ll * K.x * cos(tmp);
+	    	multiply (result, term1, term2);
+	    	multiply (result, result, conv);
+	    	refined_error2[indexii][0] += result[0];
+	    	refined_error2[indexii][1] += result[1];
 
-		interpolate (ii, GxyFyConvRho2[klindex], conv);
-		tmp = 2. * M_PI * ll * K.y * vecAStar.yy * rr.y;
-		term2[0] =-2. * M_PI * ll * K.y * sin(tmp);
-		term2[1] = 2. * M_PI * ll * K.y * cos(tmp);
-		multiply (result, term1, term2);
-		multiply (result, result, conv);
-		refined_error2[indexii][0] += result[0];
-		refined_error2[indexii][1] += result[1];
+	    	interpolate (ii, GxyFyConvRho2[klindex], conv);
+	    	tmp = 2. * M_PI * ll * K.y * vecAStar.yy * rr.y;
+	    	term2[0] =-2. * M_PI * ll * K.y * sin(tmp);
+	    	term2[1] = 2. * M_PI * ll * K.y * cos(tmp);
+	    	multiply (result, term1, term2);
+	    	multiply (result, result, conv);
+	    	refined_error2[indexii][0] += result[0];
+	    	refined_error2[indexii][1] += result[1];
 
-		interpolate (ii, GxzFzConvRho2[klindex], conv);
-		tmp = 2. * M_PI * ll * K.z * vecAStar.zz * rr.z;
-		term2[0] =-2. * M_PI * ll * K.z * sin(tmp);
-		term2[1] = 2. * M_PI * ll * K.z * cos(tmp);
-		multiply (result, term1, term2);
-		multiply (result, result, conv);
-		refined_error2[indexii][0] += result[0];
-		refined_error2[indexii][1] += result[1];
+	    	interpolate (ii, GxzFzConvRho2[klindex], conv);
+	    	tmp = 2. * M_PI * ll * K.z * vecAStar.zz * rr.z;
+	    	term2[0] =-2. * M_PI * ll * K.z * sin(tmp);
+	    	term2[1] = 2. * M_PI * ll * K.z * cos(tmp);
+	    	multiply (result, term1, term2);
+	    	multiply (result, result, conv);
+	    	refined_error2[indexii][0] += result[0];
+	    	refined_error2[indexii][1] += result[1];
 	      }
 	      ///
 	      {
-		tmp = 2. * M_PI * kk * K.y * vecAStar.yy * rr.y;
-		term1[0] = cos(tmp) - 2.;
-		term1[1] = sin(tmp);
-		term1[0] *= 2.;
-		term1[1] *= 2.;
+	      	tmp = 2. * M_PI * kk * K.y * vecAStar.yy * rr.y;
+	      	term1[0] = cos(tmp) - 2.;
+	      	term1[1] = sin(tmp);
+	      	term1[0] *= 2.;
+	      	term1[1] *= 2.;
 		
-		interpolate (ii, GyxFxConvRho2[klindex], conv);
-		tmp = 2. * M_PI * ll * K.x * vecAStar.xx * rr.x;
-		term2[0] =-2. * M_PI * ll * K.x * sin(tmp);
-		term2[1] = 2. * M_PI * ll * K.x * cos(tmp);
-		multiply (result, term1, term2);
-		multiply (result, result, conv);
-		refined_error2[indexii][0] += result[0];
-		refined_error2[indexii][1] += result[1];
+	      	interpolate (ii, GyxFxConvRho2[klindex], conv);
+	      	tmp = 2. * M_PI * ll * K.x * vecAStar.xx * rr.x;
+	      	term2[0] =-2. * M_PI * ll * K.x * sin(tmp);
+	      	term2[1] = 2. * M_PI * ll * K.x * cos(tmp);
+	      	multiply (result, term1, term2);
+	      	multiply (result, result, conv);
+	      	refined_error2[indexii][0] += result[0];
+	      	refined_error2[indexii][1] += result[1];
 
-		interpolate (ii, GyyFyConvRho2[klindex], conv);
-		tmp = 2. * M_PI * ll * K.y * vecAStar.yy * rr.y;
-		term2[0] =-2. * M_PI * ll * K.y * sin(tmp);
-		term2[1] = 2. * M_PI * ll * K.y * cos(tmp);
-		multiply (result, term1, term2);
-		multiply (result, result, conv);
-		refined_error2[indexii][0] += result[0];
-		refined_error2[indexii][1] += result[1];
+	      	interpolate (ii, GyyFyConvRho2[klindex], conv);
+	      	tmp = 2. * M_PI * ll * K.y * vecAStar.yy * rr.y;
+	      	term2[0] =-2. * M_PI * ll * K.y * sin(tmp);
+	      	term2[1] = 2. * M_PI * ll * K.y * cos(tmp);
+	      	multiply (result, term1, term2);
+	      	multiply (result, result, conv);
+	      	refined_error2[indexii][0] += result[0];
+	      	refined_error2[indexii][1] += result[1];
 
-		interpolate (ii, GyzFzConvRho2[klindex], conv);
-		tmp = 2. * M_PI * ll * K.z * vecAStar.zz * rr.z;
-		term2[0] =-2. * M_PI * ll * K.z * sin(tmp);
-		term2[1] = 2. * M_PI * ll * K.z * cos(tmp);
-		multiply (result, term1, term2);
-		multiply (result, result, conv);
-		refined_error2[indexii][0] += result[0];
-		refined_error2[indexii][1] += result[1];
+	      	interpolate (ii, GyzFzConvRho2[klindex], conv);
+	      	tmp = 2. * M_PI * ll * K.z * vecAStar.zz * rr.z;
+	      	term2[0] =-2. * M_PI * ll * K.z * sin(tmp);
+	      	term2[1] = 2. * M_PI * ll * K.z * cos(tmp);
+	      	multiply (result, term1, term2);
+	      	multiply (result, result, conv);
+	      	refined_error2[indexii][0] += result[0];
+	      	refined_error2[indexii][1] += result[1];
 	      }
 	      
 	      //
 	      {
-		tmp = 2. * M_PI * kk * K.z * vecAStar.zz * rr.z;
-		term1[0] = cos(tmp) - 2.;
-		term1[1] = sin(tmp);
-		term1[0] *= 2.;
-		term1[1] *= 2.;
+	    	tmp = 2. * M_PI * kk * K.z * vecAStar.zz * rr.z;
+	    	term1[0] = cos(tmp) - 2.;
+	    	term1[1] = sin(tmp);
+	    	term1[0] *= 2.;
+	    	term1[1] *= 2.;
 		
-		interpolate (ii, GzxFxConvRho2[klindex], conv);
-		tmp = 2. * M_PI * ll * K.x * vecAStar.xx * rr.x;
-		term2[0] =-2. * M_PI * ll * K.x * sin(tmp);
-		term2[1] = 2. * M_PI * ll * K.x * cos(tmp);
-		multiply (result, term1, term2);
-		multiply (result, result, conv);
-		refined_error2[indexii][0] += result[0];
-		refined_error2[indexii][1] += result[1];
+	    	interpolate (ii, GzxFxConvRho2[klindex], conv);
+	    	tmp = 2. * M_PI * ll * K.x * vecAStar.xx * rr.x;
+	    	term2[0] =-2. * M_PI * ll * K.x * sin(tmp);
+	    	term2[1] = 2. * M_PI * ll * K.x * cos(tmp);
+	    	multiply (result, term1, term2);
+	    	multiply (result, result, conv);
+	    	refined_error2[indexii][0] += result[0];
+	    	refined_error2[indexii][1] += result[1];
 
-		interpolate (ii, GzyFyConvRho2[klindex], conv);
-		tmp = 2. * M_PI * ll * K.y * vecAStar.yy * rr.y;
-		term2[0] =-2. * M_PI * ll * K.y * sin(tmp);
-		term2[1] = 2. * M_PI * ll * K.y * cos(tmp);
-		multiply (result, term1, term2);
-		multiply (result, result, conv);
-		refined_error2[indexii][0] += result[0];
-		refined_error2[indexii][1] += result[1];
+	    	interpolate (ii, GzyFyConvRho2[klindex], conv);
+	    	tmp = 2. * M_PI * ll * K.y * vecAStar.yy * rr.y;
+	    	term2[0] =-2. * M_PI * ll * K.y * sin(tmp);
+	    	term2[1] = 2. * M_PI * ll * K.y * cos(tmp);
+	    	multiply (result, term1, term2);
+	    	multiply (result, result, conv);
+	    	refined_error2[indexii][0] += result[0];
+	    	refined_error2[indexii][1] += result[1];
 
-		interpolate (ii, GzzFzConvRho2[klindex], conv);
-		tmp = 2. * M_PI * ll * K.z * vecAStar.zz * rr.z;
-		term2[0] =-2. * M_PI * ll * K.z * sin(tmp);
-		term2[1] = 2. * M_PI * ll * K.z * cos(tmp);
-		multiply (result, term1, term2);
-		multiply (result, result, conv);
-		refined_error2[indexii][0] += result[0];
-		refined_error2[indexii][1] += result[1];
+	    	interpolate (ii, GzzFzConvRho2[klindex], conv);
+	    	tmp = 2. * M_PI * ll * K.z * vecAStar.zz * rr.z;
+	    	term2[0] =-2. * M_PI * ll * K.z * sin(tmp);
+	    	term2[1] = 2. * M_PI * ll * K.z * cos(tmp);
+	    	multiply (result, term1, term2);
+	    	multiply (result, result, conv);
+	    	refined_error2[indexii][0] += result[0];
+	    	refined_error2[indexii][1] += result[1];
 	      }
 	    }
+
 	  }
 	}
       }
@@ -1295,18 +1296,42 @@ print_error (const std::string & file) const
     exit(1);
   }
 
-  for (int i = 0; i < refined_K.x; ++i){
-    IntVectorType idx;
-    idx.x = i;
-    idx.y = 0;
-    idx.z = 0;
-    unsigned index = index3to1 (idx, refined_K);
-    fprintf (fp, "%f %e  \n",
-	     (i + 0.5) * vecA.xx / refined_K.x,
-	     ( refined_error2[index][0])
-	);
+  IntVectorType idx1;
+  for (idx1.x = 0; idx1.x < refined_K.x; ++idx1.x){
+    double sum0 = 0.;
+    double sum1 = 0.;
+    for (idx1.y = 0; idx1.y < refined_K.y; ++idx1.y){
+      for (idx1.z = 0; idx1.z < refined_K.z; ++idx1.z){
+	unsigned index1 = index3to1 (idx1, refined_K);
+	sum0 += refined_error2[index1][0];
+	sum1 += refined_error2[index1][1];
+      }
+    }
+    sum0 /= (refined_K.y * refined_K.z);
+    sum1 /= (refined_K.y * refined_K.z);
+    // fprintf (fp, "%f %e %e %e\n",
+    // 	     (i + 0.5) * vecA.xx / refined_K.x,
+    // 	     refined_error1x[index1][0],
+    // 	     refined_error1x[index1][1],
+    // 	     refined_error1x[index1][0] * scalor
+    // 	);
+    fprintf (fp, "%f %e %e\n",
+	     (idx1.x + 0.5) * vecA.xx / refined_K.x,
+	     sum0, sum1);
   }
   fclose (fp);
+  // for (int i = 0; i < refined_K.x; ++i){
+  //   IntVectorType idx;
+  //   idx.x = i;
+  //   idx.y = 0;
+  //   idx.z = 0;
+  //   unsigned index = index3to1 (idx, refined_K);
+  //   fprintf (fp, "%f %e  \n",
+  // 	     (i + 0.5) * vecA.xx / refined_K.x,
+  // 	     ( refined_error2[index][0])
+  // 	);
+  // }
+  // fclose (fp);
 }
 
 

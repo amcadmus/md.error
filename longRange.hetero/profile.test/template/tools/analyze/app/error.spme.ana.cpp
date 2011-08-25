@@ -71,8 +71,10 @@ int main(int argc, char * argv[])
 
   ErrorEstimate_SPME_Ana eesi;
   IntVectorType refine;
-  refine.y = refine.z= 1;
-  refine.x = 12;
+  refine.x = refine.y = refine.z= 1;
+  refine.x = 4;
+  refine.y = 4;
+  refine.z = 4;
   eesi.reinit (beta, order, dp, refine);
   eesi.calError (dp);
   eesi.print_meanf ("meanf.out", dp);
