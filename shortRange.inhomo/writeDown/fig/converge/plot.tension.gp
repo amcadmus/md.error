@@ -11,7 +11,7 @@ set style line 31 lt 1 lc 3 lw 3 pt 7
 set style line 32 lt 2 lc 3 lw 3 pt 7
 set style line 33 lt 4 lc 3 lw 3 pt 7
 
-set xrange [2:15]
+set xrange [2:12]
 set xtics 1
 set mxtics 2
 set format y "%.3f"
