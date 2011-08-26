@@ -16,19 +16,13 @@
 
 \begin{document}
 
-\title{The Error Estimate of Force Calculation in Heterogeneous and Correlated Molecular Systems}
+\title{The Error Estimate of SPME in Heterogeneous Molecular Systems}
 \author{Han Wang}
-\affiliation{LMAM and School of Mathematical
-  Sciences, Peking University}
-\author{Pingwen Zhang}
-% \email{pzhang@pku.edu.cn}
-\affiliation{LMAM and School of Mathematical
-  Sciences, Peking University}
 
 \begin{abstract}
 \end{abstract}
 
-\maketitle
+% \maketitle
 
 
 \section{Ewald sumation}
@@ -464,10 +458,10 @@ of $\v g(\v m)$ and $A(\v m, \v r)$. The ensemble average of the error force is
   \big)
   \,\d d\v r' 
 \end{align}
-The Fourier modes of term $\rho_q(\v r')
+The Fourier modes of term $\rho_q(\v r')\,
 e^{-2\pi i l K_1\v a^\ast_1\cdot \v r'}$ is
 \begin{align}
-  [\,\rho_q(\v r') e^{-2\pi i l K_1\v a^\ast_1\cdot \v r'}\,] ^\wedge
+  [\,\rho_q(\v r')\,e^{-2\pi i l K_1\v a^\ast_1\cdot \v r'}\,] ^\wedge
   (m_1, m_2, m_3)
   = \hat\rho(m_1+lK_1, m_2, m_3).
 \end{align}
@@ -507,6 +501,20 @@ we have
   e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r_i} - 2
   \big)
   [\v G_{\alpha,l}\ast\rho_q\,] (\v r_i)
+\end{align}
+If the high wave number terms are neglected,
+\begin{align}
+  \big\langle
+  \Delta\v F(\v r_i)
+  \big\rangle
+  & =
+  - 2 q_i
+  \bigg[
+  \big(
+  \sum_{\alpha}\sum_{l\neq 0}\v G_{\alpha,l}
+  \big)
+  \ast\rho_q\,
+  \bigg] (\v r_i)
 \end{align}
 
 
@@ -657,11 +665,13 @@ We can savely neglect the high wave number terms, so
   T_1
   = &\,
   q_i^2
+  \bigg[\,
+  \big(
   \sum_{\alpha} \sum_{l\neq 0}
-  \big[\,
   \vert \v G_{\alpha,l}\vert^2
+  \big)
   \ast \rho_{q^2}
-  \,\big] (\v r_i)
+  \,\bigg] (\v r_i)
   +
   q_i^2\,
   \bigg[
@@ -670,12 +680,37 @@ We can savely neglect the high wave number terms, so
   \v G_{\alpha,l}
   \big)^2
   \ast \rho_{q^2}\,
-  \bigg] (\v r_i) \\
+  \bigg] (\v r_i) \\\nonumber
   &+ \,
+  \bigg\{\,
+  q_i
+  \bigg[
+  \big(\sum_{\alpha}\sum_{l\neq 0}
+  \v G_{\alpha,l}
+  \big)
+  \ast\rho_q\,
+  \bigg] (\v r_i)
+  \,\bigg\}^2  \\ \nonumber
+  = &\,
+  q_i^2
   \bigg[\,
-  q_i \sum_{\alpha}\sum_{l\neq 0}
-  [\v G_{\alpha,l}\ast\rho_q\,] (\v r_i)
-  \,\bigg]^2 
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}
+  \vert \v G_{\alpha,l}\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \,\bigg] (\v r_i)
+  +
+  q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i)
+  + 
+  \frac14\big\langle\Delta\v F(\v r_i)\big\rangle^2
 \end{align}
 
 And 
@@ -753,7 +788,7 @@ Therefore,
   \,\bigg]  
 \end{align}
 We can savely neglect the high wave number terms, so
-\begin{align}
+\begin{align}\nonumber
   T_2
   = &\,
   q_i^2\,
@@ -763,12 +798,45 @@ We can savely neglect the high wave number terms, so
   \v G_{\alpha,l}
   \big)^2
   \ast \rho_{q^2}\,
-  \bigg] (\v r_i) + \,
-  \bigg[\,
-  q_i \sum_{\alpha}\sum_{k\neq 0}
-  \,[\v G_{\alpha,k}\ast\rho_q\,] (\v r_i)
-  \,\bigg]^2 
+  \bigg] (\v r_i) 
+  + \,
+  \bigg\{\,
+  q_i
+  \bigg[
+  \big(\sum_{\alpha}\sum_{l\neq 0}
+  \v G_{\alpha,l}
+  \big)
+  \ast\rho_q\,
+  \bigg] (\v r_i)
+  \,\bigg\}^2  \\ \nonumber
+  = &\,
+  q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i)
+  + 
+  \frac14\big\langle\Delta\v F(\v r_i)\big\rangle^2
 \end{align}
+% \begin{align}
+%   T_2
+%   = &\,
+%   q_i^2\,
+%   \bigg[
+%   \big(
+%   \sum_{\alpha} \sum_{l\neq 0}  
+%   \v G_{\alpha,l}
+%   \big)^2
+%   \ast \rho_{q^2}\,
+%   \bigg] (\v r_i) + \,
+%   \bigg[\,
+%   q_i \sum_{\alpha}\sum_{k\neq 0}
+%   \,[\v G_{\alpha,k}\ast\rho_q\,] (\v r_i)
+%   \,\bigg]^2 
+% \end{align}
 
 And 
 \begin{align} \nonumber
@@ -798,6 +866,7 @@ And
   \int
   e^{-2\pi i (\v m_1 + \v m_2)\cdot\v r'}\rho_{q^2}(\v r') \\\nonumber
   &\,
+  \times
   \sum_{\alpha, \beta}\sum_{l_1\neq 0}\sum_{l_2\neq 0}
   \frac
   {\big(\dfrac{2\pi m_{1,\alpha}}{K_\alpha} + 2\pi l_1\big)^{-n}}
@@ -806,7 +875,9 @@ And
   \frac
   {\big(\dfrac{2\pi m_{2,\beta}}{K_\beta} + 2\pi l_2\big)^{-n}}
   {\sum\limits_{l_2=-\infty}^{+\infty}
-    \big(\dfrac{2\pi m_{2,\beta}}{K_\beta} + 2\pi l_2\big)^{-n}}
+    \big(\dfrac{2\pi m_{2,\beta}}{K_\beta} + 2\pi l_2\big)^{-n}} \\\nonumber
+  &\,
+  \times
   \big(
   e^{-2\pi i l_1 K_\alpha\v a^\ast_\alpha\cdot \v r'} - 1
   \big)
@@ -847,12 +918,14 @@ And
   \,\d d\v r' \\\nonumber
   &+ \,
   \int
-  e^{-2\pi i\v m_1\cdot\v r'}\rho_q(\v r')\,\d d\v r'
+  e^{-2\pi i\v m_1\cdot\v r'}\rho_q(\v r')
   \sum_{\alpha=1}^3\sum_{l\neq 0}
   \frac
   {\big(\dfrac{2\pi m_{1,\alpha}}{K_\alpha} + 2\pi l\big)^{-n}}
   {\sum\limits_{l=-\infty}^{+\infty}
     \big(\dfrac{2\pi m_{1,\alpha}}{K_\alpha} + 2\pi l\big)^{-n}}
+  \,\d d\v r' \\\nonumber
+  &\,\times
   \int
   e^{-2\pi i\v m_2\cdot\v r'}\rho_q(\v r')
   \sum_{\alpha=1}^3\sum_{l\neq 0}
@@ -940,13 +1013,15 @@ Therefore,
   q_i \sum_{\alpha}\sum_{k\neq 0}
   [\v G_{\alpha,k}\ast\rho_q\,] (\v r_i)
   \bigg]^2  \\\nonumber
-    = &\,
+  = &\,
   q_i^2
+  \bigg[\,
+  \big(
   \sum_{\alpha} \sum_{l\neq 0}
-  \big[\,
   \vert \v G_{\alpha,l}\vert^2
+  \big)
   \ast \rho_{q^2}
-  \,\big] (\v r_i)
+  \,\bigg] (\v r_i)
   +
   q_i^2\,
   \bigg[
@@ -955,12 +1030,37 @@ Therefore,
   \v G_{\alpha,l}
   \big)^2
   \ast \rho_{q^2}\,
-  \bigg] (\v r_i) \\
+  \bigg] (\v r_i) \\\nonumber
   &+ \,
+  \bigg\{\,
+  q_i
+  \bigg[
+  \big(\sum_{\alpha}\sum_{l\neq 0}
+  \v G_{\alpha,l}
+  \big)
+  \ast\rho_q\,
+  \bigg] (\v r_i)
+  \,\bigg\}^2  \\ 
+  = &\,
+  q_i^2
   \bigg[\,
-  q_i \sum_{\alpha}\sum_{k\neq 0}
-  [\v G_{\alpha,k}\ast\rho_q\,] (\v r_i)
-  \,\bigg]^2 
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}
+  \vert \v G_{\alpha,l}\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \,\bigg] (\v r_i)
+  +
+  q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i)
+  + 
+  \frac14\big\langle\Delta\v F(\v r_i)\big\rangle^2  
 \end{align}
 
 In summary,
@@ -972,11 +1072,13 @@ In summary,
   T_1 + 2T_2 + T_3\\\nonumber
   =&\, 
   2q_i^2
+  \bigg[\,
+  \big(
   \sum_{\alpha} \sum_{l\neq 0}
-  \big[\,
   \vert \v G_{\alpha,l}\vert^2
+  \big)
   \ast \rho_{q^2}
-  \,\big] (\v r_i)
+  \,\bigg] (\v r_i)
   +
   4q_i^2\,
   \bigg[
@@ -1264,7 +1366,7 @@ ik-differentiation, we have
   2\pi i l_2K_\beta \v a_\beta ^\ast\,e^{2\pi i l_2 K_\beta \v a_\beta^\ast\cdot r}
   \big[
   (F_{\alpha,l_1} F_{\beta,l_2})
-  \ast \rho_q
+  \ast \rho_{q^2}
   \big]
   (\v r_i) + \\
   &\,
@@ -1277,12 +1379,14 @@ Ignoring the high wave number term: (with $\alpha = \beta$ and $l_1 = -l_2$)
   \big\rangle
   = &\, 
   q_i^2
+  \bigg[
+  \big(
   \sum_{\alpha}\sum_{l\neq 0}
-   (2\pi l K_\alpha\v a_\alpha^\ast)^2
-  \big[
-  \vert F_{\alpha,l} \vert^2
-  \ast \rho_q
-  \big]
+  \vert\,
+  2\pi l K_\alpha F_{\alpha,l} \v a_\alpha^\ast\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \bigg]
   (\v r_i) + 
   \langle I\rangle^2
 \end{align}
@@ -1344,7 +1448,8 @@ The other term:
   &\,
   \int
   \sum_{\v m_1\neq 0}\sum_{\v m_2\neq 0}
-  \v g(\v m_1) (-2) f(\v m_2)
+  \v g(\v m_1) (-2) f(\v m_2) \\\nonumber
+  &\,\times
   \frac
   {\big(\dfrac{2\pi m_{1,\alpha}}{K_\alpha} + 2\pi l_1\big)^{-n}}
   {\sum\limits_{l_1=-\infty}^{+\infty}
@@ -1361,7 +1466,8 @@ The other term:
   &\,
   \int
   \sum_{\v m_1\neq 0}\sum_{\v m_2\neq 0}
-  \v g(\v m_1) (-2) f(\v m_2)
+  \v g(\v m_1) (-2) f(\v m_2) \\\nonumber
+  &\,\times
   \frac
   {\big(\dfrac{2\pi m_{1,\alpha}}{K_\alpha} + 2\pi l_1\big)^{-n}}
   {\sum\limits_{l_1=-\infty}^{+\infty}
@@ -1404,13 +1510,14 @@ Ignoring the high wave number term: (with $\alpha = \beta$ and $l_1 = -l_2$)
   \big\langle
   \Delta\v F^{\textrm{ik}}(\v r_i)\cdot I
   \big\rangle
-    =&\;
+  =&\;
   q^2_i
+  \bigg[
+  \big(
   \sum_{\alpha}\sum_{l\neq 0}
-  -2\pi i\,l K_\beta \v a_\beta ^\ast
-  \big[
-  (\v G_{\alpha,l_1} \bar F_{\beta,l_2}) \ast \rho_{q^2}
-  \big] (\v r_i) +
+  -2\pi i\,l K_\alpha \bar F_{\alpha,l}\v a_\alpha ^\ast\cdot\v G_{\alpha,l} 
+  \big)\ast \rho_{q^2}
+  \bigg] (\v r_i) +
   \big\langle
   \Delta\v F^{\textrm{ik}}(\v r_i)
   \big\rangle
@@ -1420,17 +1527,20 @@ Ignoring the high wave number term: (with $\alpha = \beta$ and $l_1 = -l_2$)
   \big\rangle   
 \end{align}
 
+In summary,
 \begin{align}\nonumber
   \big\langle
   \vert \Delta\v F(\v r_i)\vert^2
   \big\rangle
   =&\, 
   2q_i^2
+  \bigg[\,
+  \big(
   \sum_{\alpha} \sum_{l\neq 0}
-  \big[\,
   \vert \v G_{\alpha,l}\vert^2
+  \big)
   \ast \rho_{q^2}
-  \,\big] (\v r_i) 
+  \,\bigg] (\v r_i)
   +\,
   4q_i^2\,
   \bigg[
@@ -1442,20 +1552,23 @@ Ignoring the high wave number term: (with $\alpha = \beta$ and $l_1 = -l_2$)
   \bigg] (\v r_i) \\\nonumber
   & +\,
   q_i^2
+  \bigg[
+  \big(
   \sum_{\alpha}\sum_{l\neq 0}
-   (2\pi l K_\alpha\v a_\alpha^\ast)^2
-  \big[
-  \vert F_{\alpha,l} \vert^2
-  \ast \rho_q
-  \big]
-  (\v r_i)  \\\nonumber
+  \vert\,
+  2\pi l K_\alpha F_{\alpha,l} \v a_\alpha^\ast\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \bigg]
+  (\v r_i) \\\nonumber
   & +\,
   q^2_i
+  \bigg[
+  \big(
   \sum_{\alpha}\sum_{l\neq 0}
-  -2\pi i\,l K_\beta \v a_\beta ^\ast
-  \big[
-  (\v G_{\alpha,l_1} \bar F_{\beta,l_2}) \ast \rho_{q^2}
-  \big] (\v r_i)  \\\nonumber
+  -4\pi i\,l K_\alpha \bar F_{\alpha,l}\v a_\alpha ^\ast\cdot\v G_{\alpha,l} 
+  \big)\ast \rho_{q^2}
+  \bigg] (\v r_i) \\\nonumber
   &+\,
   \big\langle
   \Delta\v F^{\textrm{ik}}(\v r_i)
@@ -1465,12 +1578,14 @@ Ignoring the high wave number term: (with $\alpha = \beta$ and $l_1 = -l_2$)
   + 2\langle\Delta\v F^{\textrm{ik}}(\v r_i)\rangle\cdot I\negthickspace I
   + 2\langle I\rangle\cdot I\negthickspace I \\\nonumber
   =&\,
-  2q_i^2
+  q_i^2
+  \bigg[\,
+  \big(
   \sum_{\alpha} \sum_{l\neq 0}
-  \big[\,
   \vert \v G_{\alpha,l}\vert^2
+  \big)
   \ast \rho_{q^2}
-  \,\big] (\v r_i) 
+  \,\bigg] (\v r_i)
   +\,
   4q_i^2\,
   \bigg[
@@ -1482,20 +1597,15 @@ Ignoring the high wave number term: (with $\alpha = \beta$ and $l_1 = -l_2$)
   \bigg] (\v r_i) \\\nonumber
   & +\,
   q_i^2
+  \bigg[
+  \big(
   \sum_{\alpha}\sum_{l\neq 0}
-   (2\pi l K_\alpha\v a_\alpha^\ast)^2
-  \big[
-  \vert F_{\alpha,l} \vert^2
-  \ast \rho_q
-  \big]
-  (\v r_i)  \\\nonumber
-  & +\,
-  q^2_i
-  \sum_{\alpha}\sum_{l\neq 0}
-  -2\pi i\,l K_\beta \v a_\beta ^\ast
-  \big[
-  (\v G_{\alpha,l_1} \bar F_{\beta,l_2}) \ast \rho_{q^2}
-  \big] (\v r_i)  \\
+  \vert
+  \v G_{\alpha,l} + 2\pi i\,l K_\alpha F_{\alpha,l} \v a_\alpha^\ast\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \bigg]
+  (\v r_i) \\
   & +\,
   \big\langle \Delta\v F(\v r_i)\big\rangle ^2
 \end{align}
