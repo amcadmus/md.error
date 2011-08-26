@@ -620,10 +620,10 @@ For $T_1$,
   T_1
   =  &\,
   q_i^2
-  \int
   \sum_{\alpha,\beta} \sum_{l_1\neq 0}\sum_{l_2\neq 0}
   (e^{2\pi i l_1K_\alpha\v a^\ast_\alpha\cdot\v r_i} - 1)
   (e^{2\pi i l_2K_\beta\v a^\ast_\beta\cdot\v r_i} - 1)
+  \int
   \v G_{\alpha,l_1}(\v r_i - \v r')\cdot\v G_{\beta,l_2}(\v r_i - \v r')
   \rho_{q^2}(\v r')
   \,\d d\v r' \\ \nonumber
@@ -807,12 +807,12 @@ And
   {\big(\dfrac{2\pi m_{2,\beta}}{K_\beta} + 2\pi l_2\big)^{-n}}
   {\sum\limits_{l_2=-\infty}^{+\infty}
     \big(\dfrac{2\pi m_{2,\beta}}{K_\beta} + 2\pi l_2\big)^{-n}}
-  \bigg(
+  \big(
   e^{-2\pi i l_1 K_\alpha\v a^\ast_\alpha\cdot \v r'} - 1
-  \bigg)
-  \bigg(
+  \big)
+  \big(
   e^{-2\pi i l_2 K_\beta\v a^\ast_\beta\cdot \v r'} - 1
-  \bigg)
+  \big)
   \,\d d\v r' \\\nonumber
   &+ \,
   \int
@@ -995,19 +995,510 @@ In summary,
 
 \subsection{Analytical differetiation}
 
+The error force is 
+\begin{align}\nonumber
+  \Delta\v F(\v r_i)
+  =\;&
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  \nabla_{\v r_i}
+  e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,
+  A(\v m, -\v r_j)
+  e^{-2\pi i\v m\cdot\v r_j} \\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  \nabla_{\v r_i}
+  [A(\v m, \v r_i)\,
+  e^{2\pi i\v m\cdot \v r_i} ]
+  \sum_{j\neq i}q_j\,
+  e^{-2\pi i\v m\cdot\v r_j} \\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  A(-\v m, \v r_i)\,e^{2\pi i\v m\cdot \v r_i} \nabla_{\v r_i}e^{2\pi i\v m\cdot\v r_i} \\
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  e^{-2\pi i\v m\cdot \v r_i}
+  \nabla_{\v r_i} [\,A(\v m, \v r_i) \,e^{2\pi i\v m\cdot\v r_i}\,] 
+\end{align}
+We denote
+\begin{align}
+  \v B(\v m, \v r) = \nabla_{\v r_i}A(\v m, \v r)
+  =
+  \sum_{\alpha=1}^3\sum_{l\neq 0}
+  \frac
+  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  {\sum\limits_{l=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  2\pi i l K_\alpha\v a_\alpha^\ast\,e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r} 
+\end{align}
+Therefore,
+\begin{align}\nonumber
+  \Delta\v F(\v r_i)
+  =\;&
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \v g(\v m)\,
+  e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,
+  A(\v m, -\v r_j)\,
+  e^{-2\pi i\v m\cdot\v r_j} \\\nonumber
+  & + \,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \v g(\v m)\,
+  A(\v m, \v r_i)\,e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,
+  e^{-2\pi i\v m\cdot\v r_j} \\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  \v B(\v m, \v r_i)\,e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,
+  e^{-2\pi i\v m\cdot\v r_j} \\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,\v B(\v m, \v r_i) \\\nonumber
+  =&\,
+  \Delta\v F^{\textrm{ik}}(\v r_i)\\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  \v B(\v m, \v r_i)\,e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,
+  e^{-2\pi i\v m\cdot\v r_j} \\
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,\v B(\v m, \v r_i) \\
+  =&\,
+   \Delta\v F^{\textrm{ik}}(\v r_i) + I + I\negthickspace I
+\end{align}
+Notice that ``self-interacting'' term $I\negthickspace I$ is
+independent with the coordinates of any other particle.
+\begin{align}\nonumber
+  \langle I\rangle
+  =&\,
+  q_i\sum_{\alpha}\sum_{l\neq 0}
+  2\pi i l K_\alpha\v a_\alpha^\ast\,e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r} \times\\\nonumber
+  &\,
+  \int
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  (-2)f(\v m)\,
+  \frac
+  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  {\sum\limits_{l=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}\,
+  e^{2\pi i\v m\cdot (\v r_i - \v r')}\rho_q(\v r')
+  \,\d d\v r'
+\end{align}
+For convenience, we denote
+\begin{align}
+  F_{\alpha,l} (\v r)=
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  (-2)f(\v m)\,
+  \frac
+  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  {\sum\limits_{l=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}\,
+  e^{2\pi i\v m\cdot \v r}
+\end{align}
+So
+\begin{align}
+  \langle I\rangle &=
+  q_i\sum_{\alpha}\sum_{l\neq 0}
+  2\pi i l K_\alpha\v a_\alpha^\ast\,e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r_i} \times
+  \int
+  F_{\alpha,l}(\v r - \v r')\,\rho_q(\v r')
+  \,\d d\v r' \\
+  &=
+  q_i\sum_{\alpha}\sum_{l\neq 0}
+  2\pi i l K_\alpha\v a_\alpha^\ast\,e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r_i}
+  [F_{\alpha,l}\ast\rho_q\,]\,(\v r_i)
+\end{align}
+By denoting
+\begin{align}
+  C_{\alpha,l}^{\textrm{self}}
+  = 
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  (-2)f(\v m)\,
+  \frac
+  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  {\sum\limits_{l=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}\,
+\end{align}
+We have
+\begin{align}
+  I\negthickspace I =
+  q_i\sum_{\alpha}\sum_{l\neq 0}
+  2\pi i l K_\alpha\v a_\alpha^\ast\,e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r_i}
+  C_{\alpha,l}^{\textrm{self}}
+\end{align}
+In sum
+\begin{align} \nonumber
+  \langle \Delta\v F(\v r_i)\rangle
+  =\;&
+  \langle \Delta\v F^{\textrm{ik}}(\v r_i)\rangle\\\nonumber
+  &+\,
+  q_i\sum_{\alpha}\sum_{l\neq 0}
+  2\pi i\,l K_\alpha\v a_\alpha^\ast\,e^{2\pi i\,l K_\alpha\v a^\ast_\alpha\cdot \v r_i}
+  [F_{\alpha,l}\ast\rho_q](\v r_i) \\
+  &+\,
+  q_i\sum_{\alpha}\sum_{l\neq 0}
+  2\pi i\,l K_\alpha\v a_\alpha^\ast\,e^{2\pi i\,l K_\alpha\v a^\ast_\alpha\cdot \v r_i}
+  C_{\alpha,l}^{\textrm{self}}
+\end{align}
+
+The ensemble average of the squared force error is
+\begin{align}\nonumber
+  \langle\vert \Delta\v F(\v r_i) \vert^2\rangle
+  = &\,
+  \langle\vert \Delta\v F^{\textrm{ik}}(\v r_i) \vert^2\rangle
+  + \langle I\cdot I\rangle
+  + I\negthickspace I\cdot I\negthickspace I\\
+  &\,
+  + 2\langle\Delta\v F^{\textrm{ik}}(\v r_i)\cdot I\rangle
+  + 2\langle\Delta\v F^{\textrm{ik}}(\v r_i)\rangle\cdot I\negthickspace I
+  + 2\langle I\rangle\cdot I\negthickspace I
+\end{align}
+What we should calculate are $\langle I\cdot I\rangle$ and
+$\langle\Delta\v F^{\textrm{ik}}(\v r_i)\cdot I\rangle$.
+\begin{align}\nonumber
+  \big\langle
+  I\cdot I
+  \big\rangle
+  = \,&
+  q^2_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
+      \v m_1\neq 0
+    \end{subarray}}
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
+      \v m_2\neq 0
+    \end{subarray}}
+  4 f(\v m_1)f(\v m_2) \,
+  \v B(\v m_1, \v r_i)\cdot\v B(\v m_2, \v r_i)
+  \,e^{2\pi i(\v m_1 + \v m_2)\cdot\v r_i} \\ 
+  &
+  \bigg\langle
+  \sum_{j\neq i}q_j\,e^{-2\pi i\v m_1\cdot\v r_j}  
+  \sum_{k\neq i}q_k\,e^{-2\pi i\v m_2\cdot\v r_k}
+  \bigg\rangle
+\end{align}
+With exactly the same procedure as term $T_1$ in the
+ik-differentiation, we have
+\begin{align}\nonumber
+  \big\langle
+  I\cdot I
+  \big\rangle
+  = &\, 
+  q_i^2
+  \sum_{\alpha, \beta}\sum_{l_1\neq 0}\sum_{l_2\neq 0}
+  2\pi i l_1K_\alpha\v a_\alpha^\ast\,e^{2\pi i l_1 K_\alpha\v a_\alpha^\ast\cdot r}
+  \cdot
+  2\pi i l_2K_\beta \v a_\beta ^\ast\,e^{2\pi i l_2 K_\beta \v a_\beta^\ast\cdot r}
+  \big[
+  (F_{\alpha,l_1} F_{\beta,l_2})
+  \ast \rho_q
+  \big]
+  (\v r_i) + \\
+  &\,
+  \langle I\rangle^2
+\end{align}
+Ignoring the high wave number term: (with $\alpha = \beta$ and $l_1 = -l_2$)
+\begin{align}\nonumber
+  \big\langle
+  I\cdot I
+  \big\rangle
+  = &\, 
+  q_i^2
+  \sum_{\alpha}\sum_{l\neq 0}
+   (2\pi l K_\alpha\v a_\alpha^\ast)^2
+  \big[
+  \vert F_{\alpha,l} \vert^2
+  \ast \rho_q
+  \big]
+  (\v r_i) + 
+  \langle I\rangle^2
+\end{align}
 
 
+The other term:
+\begin{align}\nonumber
+  \big\langle
+  \Delta\v F^{\textrm{ik}}(\v r_i)\cdot I
+  \big\rangle
+  = &\,
+  q^2_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
+      \v m_1\neq 0
+    \end{subarray}}
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
+      \v m_2\neq 0
+    \end{subarray}}
+  \v g(\v m_1) (-2)f(\v m_2) \,
+  A(\v m_1, \v r_i)\cdot\v B(\v m_2, \v r_i)
+  \,e^{2\pi i(\v m_1 + \v m_2)\cdot\v r_i} \\  \nonumber
+  &
+  \bigg\langle
+  \sum_{j\neq i}q_j\,e^{-2\pi i\v m_1\cdot\v r_j}  
+  \sum_{k\neq i}q_k\,e^{-2\pi i\v m_2\cdot\v r_k}
+  \bigg\rangle \\\nonumber
+  + &\,
+  q^2_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
+      \v m_1\neq 0
+    \end{subarray}}
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
+      \v m_2\neq 0
+    \end{subarray}}
+  \v g(\v m_1) (-2)f(\v m_2) \,
+  \v B(\v m_2, \v r_i)
+  \,e^{2\pi i(\v m_1 + \v m_2)\cdot\v r_i} \\  \nonumber
+  &
+  \bigg\langle
+  \sum_{j\neq i}q_j\,e^{-2\pi i\v m_1\cdot\v r_j}A(\v m_1, \v r_j)
+  \sum_{k\neq i}q_k\,e^{-2\pi i\v m_2\cdot\v r_k}
+  \bigg\rangle \\\nonumber
+  =&\,
+  q^2_i
+  \sum_{\alpha, \beta}\sum_{l_1\neq 0}\sum_{l_2\neq 0}
+  \big(
+  e^{2\pi i l_1 K_\alpha\v a_\alpha^\ast\cdot r} - 1
+  \big)
+  \cdot
+  2\pi i l_2K_\beta \v a_\beta ^\ast\,e^{2\pi i l_2 K_\beta \v a_\beta^\ast\cdot r} \times \\\nonumber
+  &\,
+  \int
+  \sum_{\v m_1\neq 0}\sum_{\v m_2\neq 0}
+  \v g(\v m_1) (-2) f(\v m_2)
+  \frac
+  {\big(\dfrac{2\pi m_{1,\alpha}}{K_\alpha} + 2\pi l_1\big)^{-n}}
+  {\sum\limits_{l_1=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_{1,\alpha}}{K_\alpha} + 2\pi l_1\big)^{-n}}
+  \frac
+  {\big(\dfrac{2\pi m_{2,\beta}}{K_\beta} + 2\pi l_2\big)^{-n}}
+  {\sum\limits_{l_2=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_{2,\beta}}{K_\beta} + 2\pi l_2\big)^{-n}}
+  e^{2\pi i(\v m_1+\v m_2)\cdot(\v r - \v r')} \rho_{q^2}(\v r') \,\d d\v r' \\\nonumber
+  +&\,
+  q^2_i
+  \sum_{\alpha, \beta}\sum_{l_1\neq 0}\sum_{l_2\neq 0}
+  2\pi i l_2K_\beta \v a_\beta ^\ast\,e^{2\pi i l_2 K_\beta \v a_\beta^\ast\cdot r} \times \\\nonumber
+  &\,
+  \int
+  \sum_{\v m_1\neq 0}\sum_{\v m_2\neq 0}
+  \v g(\v m_1) (-2) f(\v m_2)
+  \frac
+  {\big(\dfrac{2\pi m_{1,\alpha}}{K_\alpha} + 2\pi l_1\big)^{-n}}
+  {\sum\limits_{l_1=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_{1,\alpha}}{K_\alpha} + 2\pi l_1\big)^{-n}}
+  \frac
+  {\big(\dfrac{2\pi m_{2,\beta}}{K_\beta} + 2\pi l_2\big)^{-n}}
+  {\sum\limits_{l_2=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_{2,\beta}}{K_\beta} + 2\pi l_2\big)^{-n}}
+  e^{2\pi i(\v m_1+\v m_2)\cdot(\v r - \v r')} \rho_{q^2}(\v r') \,\d d\v r' \\ \nonumber
+  + &\,
+  \big\langle
+  \Delta\v F^{\textrm{ik}}(\v r_i)
+  \big\rangle
+  \cdot 
+  \big\langle
+  I
+  \big\rangle   \\\nonumber
+  =&\;
+  q^2_i
+  \sum_{\alpha, \beta}\sum_{l_1\neq 0}\sum_{l_2\neq 0}
+  \big(
+  e^{2\pi i l_1 K_\alpha\v a_\alpha^\ast\cdot r} - 2
+  \big)\,
+  2\pi i l_2K_\beta \v a_\beta ^\ast
+  \,e^{2\pi i l_2 K_\beta \v a_\beta^\ast\cdot r}
+  \big[
+  (\v G_{\alpha,l_1} F_{\beta,l_2}) \ast \rho_{q^2}
+  \big] (\v r_i) \\
+  + &\,
+  \big\langle
+  \Delta\v F^{\textrm{ik}}(\v r_i)
+  \big\rangle
+  \cdot 
+  \big\langle
+  I
+  \big\rangle   
+\end{align}
+Ignoring the high wave number term: (with $\alpha = \beta$ and $l_1 = -l_2$)
+\begin{align}
+  \big\langle
+  \Delta\v F^{\textrm{ik}}(\v r_i)\cdot I
+  \big\rangle
+    =&\;
+  q^2_i
+  \sum_{\alpha}\sum_{l\neq 0}
+  -2\pi i\,l K_\beta \v a_\beta ^\ast
+  \big[
+  (\v G_{\alpha,l_1} \bar F_{\beta,l_2}) \ast \rho_{q^2}
+  \big] (\v r_i) +
+  \big\langle
+  \Delta\v F^{\textrm{ik}}(\v r_i)
+  \big\rangle
+  \cdot 
+  \big\langle
+  I
+  \big\rangle   
+\end{align}
 
-
-
-
-
-
-
-
-
-
-
+\begin{align}\nonumber
+  \big\langle
+  \vert \Delta\v F(\v r_i)\vert^2
+  \big\rangle
+  =&\, 
+  2q_i^2
+  \sum_{\alpha} \sum_{l\neq 0}
+  \big[\,
+  \vert \v G_{\alpha,l}\vert^2
+  \ast \rho_{q^2}
+  \,\big] (\v r_i) 
+  +\,
+  4q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i) \\\nonumber
+  & +\,
+  q_i^2
+  \sum_{\alpha}\sum_{l\neq 0}
+   (2\pi l K_\alpha\v a_\alpha^\ast)^2
+  \big[
+  \vert F_{\alpha,l} \vert^2
+  \ast \rho_q
+  \big]
+  (\v r_i)  \\\nonumber
+  & +\,
+  q^2_i
+  \sum_{\alpha}\sum_{l\neq 0}
+  -2\pi i\,l K_\beta \v a_\beta ^\ast
+  \big[
+  (\v G_{\alpha,l_1} \bar F_{\beta,l_2}) \ast \rho_{q^2}
+  \big] (\v r_i)  \\\nonumber
+  &+\,
+  \big\langle
+  \Delta\v F^{\textrm{ik}}(\v r_i)
+  \big\rangle  ^2 +
+  \langle I\rangle^2  + I\negthickspace I\cdot I\negthickspace I
+  + 2\langle\Delta\v F^{\textrm{ik}}(\v r_i)\rangle \cdot\langle I\rangle
+  + 2\langle\Delta\v F^{\textrm{ik}}(\v r_i)\rangle\cdot I\negthickspace I
+  + 2\langle I\rangle\cdot I\negthickspace I \\\nonumber
+  =&\,
+  2q_i^2
+  \sum_{\alpha} \sum_{l\neq 0}
+  \big[\,
+  \vert \v G_{\alpha,l}\vert^2
+  \ast \rho_{q^2}
+  \,\big] (\v r_i) 
+  +\,
+  4q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i) \\\nonumber
+  & +\,
+  q_i^2
+  \sum_{\alpha}\sum_{l\neq 0}
+   (2\pi l K_\alpha\v a_\alpha^\ast)^2
+  \big[
+  \vert F_{\alpha,l} \vert^2
+  \ast \rho_q
+  \big]
+  (\v r_i)  \\\nonumber
+  & +\,
+  q^2_i
+  \sum_{\alpha}\sum_{l\neq 0}
+  -2\pi i\,l K_\beta \v a_\beta ^\ast
+  \big[
+  (\v G_{\alpha,l_1} \bar F_{\beta,l_2}) \ast \rho_{q^2}
+  \big] (\v r_i)  \\
+  & +\,
+  \big\langle \Delta\v F(\v r_i)\big\rangle ^2
+\end{align}
 
 
 
