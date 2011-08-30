@@ -5,7 +5,7 @@ set style line 1  lt 1 lc 1 lw 3 pt 7
 set style line 2  lt 1 lc 3 lw 3 pt 7
 set style line 21 lt 2 lc 3 lw 3 pt 7
 set style line 22 lt 4 lc 3 lw 3 pt 7
-set style line 3  lt 1 lc 2 lw 3 pt 7
+set style line 3  lt 1 lc 2 lw 3 pt 5
 
 set rmargin 8.5
 
@@ -27,7 +27,7 @@ set y2label 'Density'
 
 pl\
 'a.density.x.out' axes x2y2 w l ls 1 not,\
-'a.real.x.out'  every 1 axes x1y1 w l ls 3 t '{/Symbol e}_{real}',\
+'a.real.x.out'  every 1 axes x1y1 w p ls 3 t '{/Symbol e}_{real}',\
 'a.error.x.out' every 1 axes x1y1 w l ls 2 t '{/Symbol e}_{esti}',\
 '' u 1:3 axes x1y1 w l ls 21 t '{/Symbol e}_{homo}',\
 '' u 1:4 axes x1y1 w l ls 22 t '{/Symbol e}_{hetero}'
