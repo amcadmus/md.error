@@ -35,7 +35,7 @@
 
 int main(int argc, char * argv[])
 {
-  IndexType nstep = 10000;
+  IndexType nstep = 100000;
   IndexType confFeq = 2000;
   IndexType thermoFeq = 100;
   ScalorType dt = 0.002;
@@ -45,9 +45,9 @@ int main(int argc, char * argv[])
   char * filename;
 
   double refh = 1.0;
-  IndexType densityProfileSamplingFeq = 5;
-  IndexType assignForceCorrFeq = 5;
-  IndexType updateForceCorrFeq = 50;
+  IndexType densityProfileSamplingFeq = 10;
+  IndexType assignForceCorrFeq = 10;
+  IndexType updateForceCorrFeq = 10;
   char afcname[] = "fc.ctj";
 
   if (argc != 4){
