@@ -32,7 +32,7 @@ int main (int argc, char * argv[])
       ("help,h", "print this message")
       ("start,s", po::value<float > (&start_t)->default_value (0.f),  "start time")
       ("end,e",   po::value<float > (&end_t)  ->default_value (0.f),  "end time, 0 is infinity")
-      ("file-name,f", po::value<std::string > (&filename)->default_value (std::string("rcut.rtj"), "rcut file name"));
+      ("file-name,f", po::value<std::string > (&filename)->default_value (std::string("fc.ctj"), "rcut file name"));
 
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -65,7 +65,7 @@ int main (int argc, char * argv[])
     char timefile[1024];
     int zhengshu = int(time);
     int xiaoshu  = int((time - zhengshu) * 100.);
-    sprintf (timefile, "rcut.t%04d.%02d.out", zhengshu, xiaoshu);
+    sprintf (timefile, "fcorr.t%04d.%02d.out", zhengshu, xiaoshu);
     assign.print_xy (timefile);
   }
   

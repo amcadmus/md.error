@@ -23,9 +23,9 @@ public:
   ~AssignFcorr ();
   void uniform (const double & rc);
 public:
-  void init_write	 (const char * file) const;
-  void write		 (const float & time) const;
-  void end_write	 () const;
+  void init_read	 (const char * file);
+  bool read		 (float & time);
+  void end_read		 () const;
 public:
   void print_xy		 (const char * file) const;
 }

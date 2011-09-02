@@ -1,6 +1,6 @@
 #include "AssignFcorr.h"
 #include <fstream>
-
+#include <cmath>
 
 AssignFcorr::
 AssignFcorr ()
