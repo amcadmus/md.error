@@ -12,8 +12,12 @@ set style line 32 lt 2 lc 3 lw 3 pt 7
 set style line 33 lt 4 lc 3 lw 3 pt 7
 
 set xrange [2:12]
+set yrange [-0.007:0.002]
 set xtics 1
+set ytics 0.001
 set mxtics 2
+set mytics 1
+set format y "%.3f"
 
 set key right bottom
 set title 'T*=0.70'

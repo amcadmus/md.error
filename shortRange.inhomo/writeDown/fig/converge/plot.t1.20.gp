@@ -14,9 +14,9 @@ set style line 33 lt 4 lc 3 lw 3 pt 7
 set xrange [2:12]
 set xtics 1
 set mxtics 2
-set yrange [-0.025:0.025]
-set ytics 0.005
-set mytics 5
+set yrange [-0.030:0.030]
+set ytics 0.010
+set mytics 10
 set format y "%.3f"
 
 set key right bottom
