@@ -110,20 +110,21 @@ interaction.
 
 In this work, we develop the error estimate of the short-range force
 in inhomogeneous systems. The force error can be split into the
-homogeneous and inhomogeneous part regardless the correlation in the
-system. The inhomogeneous error that can be more than one order of
-maganitude larger than the homogeneous error plays a dominant role in
-the interfacial region. An adaptive cut-off method is hereby proposed
-to equally distribte the error according to the error estimate, so
-that a substantial computational effort can be saved while the
-precision of simulation is preserved. We also proposed a long-range
-force correction method based on the error estimate to screen out the
-contribution of the inhomogeneous error, which can tremendously
-improve the precision of simulation. To show the effectiveness of the
-error estimate and the proposed methods, two systems are tested: the
-liquid-vapor equilibrium for equilibrium properties, and the colliding
-nanoscale clusters for dynamical properties. Finally, a conclusion is
-given in section \ref{sec:conclusion}.
+homogeneous and inhomogeneous part regardless the particle-particle
+correlation outside the cut-off radius. The inhomogeneous error that
+can be more than one order of maganitude larger than the homogeneous
+error plays a dominant role in the interfacial region. An adaptive
+cut-off method is hereby proposed to equally distribte the error
+according to the error estimate, so that a substantial computational
+effort can be saved while the precision of simulation is preserved. We
+also proposed a long-range force correction method based on the error
+estimate to screen out the contribution of the inhomogeneous error,
+which can tremendously improve the precision of simulation. To show
+the effectiveness of the error estimate and the proposed methods, two
+systems are tested: the liquid-vapor equilibrium for equilibrium
+properties, and the colliding nanoscale clusters for dynamical
+properties. Finally, conclusions are given in section
+\ref{sec:conclusion}.
 
 % The error estimate of long-range algorithms, for example the Ewald
 % family method~\cite{ewald1921die, hockney1988computer,
@@ -993,7 +994,7 @@ convergence is achieved at small cut-off radius.
     &     &\textrm{FC } & $4.2\times 10^{-5}$ & 39 \\ \hline\hline
     & 3.5 &\textrm{FC } & $1.2\times 10^{-2}$ & 1.8 \\\cline{2-5}
     &     &\textrm{URC} & $1.1\times 10^{-2}$ & 4.2 \\
-    & 5.0 &\textrm{ARC} & $9.2\times 10^{-3}$ & 2.9 \\
+    & 5.0 &\textrm{ARC} & $1.0\times 10^{-2}$ & 2.8 \\
     &     &\textrm{FC } & $1.5\times 10^{-3}$ & 4.6 \\\cline{2-5}
     &     &\textrm{URC} & $2.5\times 10^{-3}$ & 14 \\
 1.20& 7.5 &\textrm{ARC} & $2.4\times 10^{-3}$ & 7.7 \\
@@ -1192,7 +1193,7 @@ the correct value by 1 \% at $t^\ast = 130$.
 
 
 
-\section{Conclusion}\label{sec:conclusion}
+\section{Conclusions}\label{sec:conclusion}
 
 
 % \newpage
