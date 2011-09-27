@@ -23,10 +23,10 @@ set format y '10^{%L}'
 set format y2 '%.f'
 set xlabel 'x'
 set ylabel 'RMS error of the force'
-set y2label 'Correction Force ( x 10^3)'
+set y2label 'Mean error force ( x 10^3)'
 
 
 pl\
-'afc.x.out' u 1:($2*1e3) every 1 axes x1y2 w l ls 1 t 'F_{corr,x}',\
+'afc.x.out' u 1:($2*1e3) every 1 axes x1y2 w l ls 1 t '<{/Symbol D}F_{x}>',\
 'a.real.x.out'  every 1 axes x1y1 w p ls 3 t '{/Symbol e}_{real}',\
 'a.error.xtc.x.part1.out' axes x1y1 w l ls 2 t '{/Symbol e}_{homo}'

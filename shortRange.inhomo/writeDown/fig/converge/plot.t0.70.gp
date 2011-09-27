@@ -21,6 +21,9 @@ set format y "%.3f"
 
 set key right bottom
 set title 'T*=0.70'
+unset title
+unset label
+set label 'T*=0.70' at 9, 0.001
 
 pl 0 lc 0 lw 3 lt 2 not,\
 't0.70.gas.uni.out'    u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 11 t'gas URC',\

@@ -18,9 +18,14 @@ set yrange [-0.030:0.030]
 set ytics 0.010
 set mytics 10
 set format y "%.3f"
+set xlabel "r_c*"
+set ylabel "{/Symbol r}* - {/Symbol r}*_{ref}"
 
 set key right bottom
 set title 'T*=1.20'
+unset title
+unset label
+set label 'T*=1.20' at 9, 0.022
 
 pl 0 lc 0 lw 3 lt 2 not,\
 't1.20.gas.uni.out'    u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 11 t'gas URC',\
