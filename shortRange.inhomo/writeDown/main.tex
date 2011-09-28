@@ -43,39 +43,43 @@ radius, outside of which all pairwise interactions are simply
 neglected. In combination with the cell list and the neighbor list
 algorithms \cite{frenkel02b}, the total computational cost of the
 short-range interactions can be reduced to an acceptable level of
-$\mathcal O(N)$. The cut-off radius is only a user provided
-algorithmetic parameter, so it should have no effect on the
-physical/chemical properties of the system.  Therefore, it is very
-important to test the convergence of the simulation results with
-respect to the used cut-off radius before collecting data and deriving
-conclusions. Fortunately, in most homogeneous systems, a satisfactory
-convergence can be achieved even with a very small cut-off value, for
-example, $2.5$ -- $4.0\sigma$.  Moreover, it is possible to correct
-the systematic error of the potential energy, the pressure and the
-free energy by applying the standard long range correction
-(LRC)~\cite{allen87a}, which assumes the uniformity outside the
-cut-off and integrates the contribution of the mentioned properties to
-infinity.  However,
-% The spacial inhomogenety of the system in terms of particle density,
+$\mathcal O(N)$. The cut-off radius is a user provided algorithmetic
+parameter, so it should have NO effect on the simulation result of
+physical/chemical properties.  Therefore, it is very important to test
+the convergence of the simulation results with respect to the cut-off
+radius before collecting data and deriving conclusions. Fortunately,
+in most homogeneous systems, a satisfactory convergence can be
+achieved even with a very small cut-off value, for example,
+$2.5\sigma$.  Moreover, it is possible to correct the systematic error
+of the potential energy, the pressure and the free energy by applying
+the standard long range correction (LRC)~\cite{allen87a}, which
+assumes the uniformity outside the cut-off radius and integrates the
+contribution of the mentioned properties to infinity. 
+% The spacial heterogenety of the system in terms of particle density,
 % particle type and change distribution is very common in natrual
 % system.
-the direct molecular simulation of a inhomogeneous system will
-encounter non-trival difficulty that does not exist in the homogeneous
-bulk simulations.  The measured properties are found to depend on the
-cut-off radius even at a very large value~\cite{duque2004some}. Also
-the contiuity at the cut-off and the long-range correction involved
-may have foundamental effect on the simulation
-results~\cite{trokhymchuk1999computer, shen2007comparative,
+
+Heterogeneous systems, in which density (or atom type) changes within
+the length scale of several molecules, are more universal than
+homogeneous systems in nature. However, the direct molecular
+simulation of heterogeneous systems by the cut-off method will
+encounter non-trival difficulties that do not exist in the homogeneous
+system simulations.  The simulation results are found to converge only
+at a very large cut-off radius value~\cite{duque2004some,
+  ismail2007application}, also denpend on the energy/force continuity
+at the cut-off and the way of applying the long-range
+correction~\cite{trokhymchuk1999computer, shen2007comparative,
   guo1997long, mecke1997molecular, janecek2006long, goujon2004monte}.
 Therefore, it is necessary to systemetically study the precision of
-short-range interaction calculation, and to develop methods screening
-out the aforementioned cut-off artifect in the inhomogeneous systems.
+the short-range interaction calculation, and to develop methods
+screening out the aforementioned cut-off artifect in the heterogeneous
+systems.
 
 % In this paper, we focus on the systems in which
 % atoms/particles are interacting via short-range interactions, because
 % it is a good starting point of the study of more complex systems, for
 % example, the systems with long-range electrostatic interactions.  The
-% simulation results in the inhomogeneous systems are found to depend on
+% simulation results in the heterogeneous systems are found to depend on
 % a number of factors of treating the short-range interaction in the
 % simulation. For example, the way of calculating the short-range
 % interaction (simple cut-off method or Ewald
@@ -94,33 +98,35 @@ out the aforementioned cut-off artifect in the inhomogeneous systems.
 A promising way to quantitatively analyze the undesirable cut-off
 effects is to express these artifacts in terms of the difference
 between the cut-offed interaction and the exact interaction, namely
-the error. In homogeneous systems, the error analysis of the
-short-range interaction has been well established,
-see~\cite{kolafa1992cutoff} for example. Also the error
-estimates~\cite{hummer1995numerical, kolafa1992cutoff,
-  petersen1995accuracy, deserno1998mue2, wang2010optimizing} for
-long-range Ewald family methods~\cite{ewald1921die,
-  hockney1988computer, deserno1998mue1, darden1993pme, essmann1995spm}
-have provided a profound view of the precision of force calculation,
-and introduced parameter tuning algorithms~\cite{limbach06a,
-  wang2010optimizing} that boost the efficiency of the computation
-with a good control of the error. However, in inhomogeneous systems
-the error study is still scarce, even for the simplest short-range
-interaction.
+the error. In homogeneous systems, the error analysis of the cut-off
+method has been well established, see~\cite{kolafa1992cutoff} for
+example. Also the error estimates~\cite{hummer1995numerical,
+  kolafa1992cutoff, petersen1995accuracy, deserno1998mue2,
+  wang2010optimizing} for long-range Ewald family
+methods~\cite{ewald1921die, hockney1988computer, deserno1998mue1,
+  darden1993pme, essmann1995spm} have provided a profound
+understanding of the accuracy of force calculation, and introduced
+parameter tuning algorithms~\cite{limbach06a, wang2010optimizing} that
+boost the efficiency of the computation with a good control of the
+error. However, in heterogeneous systems the error study is still
+scarce, even for the simplest cut-off method.
 
 In this work, we develop the error estimate of the short-range force
-in inhomogeneous systems. The force error can be split into the
-homogeneous and inhomogeneous part regardless the particle-particle
-correlation outside the cut-off radius. The inhomogeneous error that
-can be more than one order of maganitude larger than the homogeneous
-error plays a dominant role in the interfacial region. An adaptive
-cut-off method is hereby proposed to equally distribte the error
-according to the error estimate, so that a substantial computational
-effort can be saved while the precision of simulation is preserved. We
-also proposed a long-range force correction method based on the error
-estimate to screen out the contribution of the inhomogeneous error,
-which can tremendously improve the precision of simulation. To show
-the effectiveness of the error estimate and the proposed methods, two
+in heterogeneous systems. We prove that the 
+force error is comprised of a homogeneity error and a heterogeneity
+error, regardless the particle-particle correlation outside the
+cut-off radius.  In a heterogeneous system composed by several bulk
+regions, an important observation is that the heterogeneity error can
+be more than one order of maganitude larger than the homogeneity
+error, and plays a dominant role in the interfacial region. An
+adaptive cut-off method is hereby proposed to equally distribute the
+error across the simulation region, so that a substantial
+computational effort can be saved while the precision of simulation is
+preserved. We also proposed a long-range force correction (LFC) method
+based on the error estimate to screen out the contribution of the
+heterogeneity error, which can tremendously improve the precision of
+simulation without much extra computational load. To show the
+effectiveness of the error estimate and the proposed methods, two
 systems are tested: the liquid-vapor equilibrium for equilibrium
 properties, and the colliding nanoscale clusters for dynamical
 properties. Finally, conclusions are given in section
@@ -139,20 +145,30 @@ properties. Finally, conclusions are given in section
 \section{Theoretical background}
 \subsection{Error estimate in a heterogeneous system}
 
+In this paper, we only consider the single-component system. Because
+this assumption simplifies the discussion, and the error estimates for
+the single-component system can be straightforwardly extended to the
+multi-component system without substantial difficulty.  The only the
+force error is estimated in the present paper, because the
+applications are based on molecular dynamics simulation.
+% Since the error estimate developed for the one-component system can be
+% directly extended to multi-component system without substantial
+% difficulty, the discussion in this paper will focus on one-component
+% system for symplicity. 
 Suppose the system is composed by $N$ identical particles located at
 $\v r_1, \v r_2, \cdots, \v r_N$ with periodic boundary condition.
-Since the error estimate developed for the one-component system can be
-directly extended to multi-component system without substantial
-difficulty, the discussion in this paper will focus on one-component
-system for symplicity.  These particles are interacting via a
+ These particles are interacting via a
 short-range pairwise interaction denoted by $u(\v r)$ and correspond
 force denoted by $\v f(\v r)$, with a cut-off radius $r_c > 0$.  This
 means the interaction between any pair of particles falling out of the
-cut-off radius is neglected.  An infinite cut-off radius will lead to
-a precise calculation of interaction, but it is impractical.  The
-error of computing interaction is mainly introduced by a finit value
-of the cut-off radius. For convenience, the complementary of the
-cut-offed short-range force is defined by
+cut-off radius is neglected.
+% An infinite cut-off radius will lead to
+% a precise calculation of interaction, but it is impractical.
+% The error of computing interaction is mainly introduced by a finit
+% value of the cut-off radius.
+The force error mainly stems from the neglected interaction outside
+the cut-off radius, so it is convenient to consider the complementary
+of the cut-offed force that is defined by
 \begin{align}
   \v f^c(\v r) =
   \left\{
@@ -162,22 +178,24 @@ cut-offed short-range force is defined by
   \end{array}
   \right.
 \end{align}
-To measure the error of force computing, we add a testing particle at
-position $\v r$. The exact force and the computed force (or cut-offed
-force) exerted by the system on the testing particle are denoted by
-${\v F}(\v r)$ and $\tilde{\v F}(\v r)$, respectively.  The difference
+We measure the force error at an arbitary position in the system,
+saying $\v r$, by adding a testing particle to that position.  We
+assume all particles in the system exert forces on the testng
+particle, whereas the testing particle do NOT exert any force on the
+system.  The exact force and the computed force (or cut-offed force)
+exerted by the system on the testing particle are denoted by ${\v
+  F}(\v r)$ and $\tilde{\v F}(\v r)$, respectively.  The difference
 between them, namely the \emph{error force}, is denoted by $\Delta\v
 F(\v r) = \v F(\v r) - \tilde{\v F}(\v r)$, which can be expressed by
 \begin{align}
   \Delta\v F(\v r) = \sum_{\v n}\sum_{j}\, \v f^c(\v r - \v r_j + \v n).
 \end{align}
-Where $\v n$ is simulation box vector, so the summation over $\v n$
-indicates that all periodic images are consider in the force
-calculation. In a homogeneous system with periodic boundary condition
-applied, the surounding of any particle is isotropic, so the
-\emph{mean error force} vanishes, namely $\langle\Delta\v F(\v
-r)\rangle = 0$. However, in a heterogenous system, the mean error
-force is not necessarily zero but
+Where $\v n$ is the box vector, so the summation over $\v n$ indicates
+that all periodic images of the system are considered. In a
+homogeneous system, the surounding of any particle is isotropic, so
+the \emph{mean error force} vanishes: $\langle\Delta\v F(\v r)\rangle
+= 0$. In contrast, the mean error force is not necessarily zero in a
+heterogeneous system:
 \begin{align} \label{eqn:tmp3} %\nonumber
   \langle\Delta\v F(\v r)\rangle
   &=
@@ -185,17 +203,18 @@ force is not necessarily zero but
   \sum_{\v n}\sum_{j}\, \v f^c(\v r - \v r_j + \v n)
   \big\rangle 
   =
-  \int_{\mathbb R^3}\v f^c(\v r - \v r')\rho(\v r')\,\d d\v r'
+  \int_{\mathbb R^3}\v f^c(\v r - \v r')\rho(\v r')\,\d d\v r',
 \end{align}
-Where $\rho(\v r)$ denotes the particle number density at the position
+where $\rho(\v r)$ denotes the particle number density at the position
 $\v r$, and is periodically extended to $\mathbb R^3$. And notice the
 error force implicitly depends on the cut-off radius used for the
-interaction.
+interaction calculation.
 
-The widely accepted definition of the force error is the \emph{root mean
-square} (RMS) \emph{error}, namely the square root of the second moment of the
-error force is $\mathcal E(\v r) = \sqrt{\langle\vert\Delta\v F(\v
-  r)\vert^2\rangle}$, which can be calculate by
+The widely accepted definition of the force error is the \emph{root
+  mean square} (RMS) \emph{error}, which the square root of the second
+moment of the error force $\mathcal E(\v r) =
+\sqrt{\langle\vert\Delta\v F(\v r)\vert^2\rangle}$. It can be
+calculate by
 \begin{align} \nonumber
   \langle\vert\Delta\v F(\v r)\vert^2\rangle
   =\,&
@@ -207,34 +226,32 @@ error force is $\mathcal E(\v r) = \sqrt{\langle\vert\Delta\v F(\v
   \int_{\mathbb R^3}\vert\v F^c(\v r - \v r')\vert^2\rho(\v r')\,\d d\v r'
   + \\\label{eqn:tmp4}
   \,&
-  \int_{\mathbb R^3\times\mathbb R^3}\v F^c(\v r - \v r')\cdot\v F^c(\v r - \v r'')\rho(\v r', \v r'')\,\d d\v r'\d d\v r'',
+  \int_{\mathbb R^3\times\mathbb R^3}\v F^c(\v r - \v r')\cdot\v F^c(\v r - \v r'')\rho(\v r', \v r'')\,\d d\v r'\d d\v r''.
 \end{align}
 The density $\rho(\v r')$ and the pair density $\rho(\v r', \v r'')$
-are related to the probability density $p(\v r')$ and pair probability
-density $p(\v r', \v r'')$ by
+(also extended to $\mathbb R^3$) are related to the probability
+density $p(\v r')$ and pair probability density $p(\v r', \v r'')$ by
 \begin{align}
   \rho(\v r') &= N\,p(\v r') \\
   \rho(\v r', \v r'') &= N(N-1)\,p(\v r', \v r'')
 \end{align}
-The pair density is also periodically extented to the whole space $\mathbb
-R^3$.
 % The problem now this how to discretize the integrals in
 % \eqref{eqn:tmp4}. With the piecewise constant numerical integration
 % formulus, we have:
-Now, let
+Notice
 \begin{align} \nonumber
   \rho(\v r', \v r'')
   & = N (N-1) \,p(\v r', \v r'') \\\nonumber
   & = N (N-1) \big\{ p(\v r')p(\v r'') + [\,p(\v r', \v r'') -  p(\v r')p(\v r'')\,]\big\} \\\nonumber
   &= \frac{N-1}N \rho(\v r')\rho(\v r'') + C (\v r', \v r'')\\ \label{eqn:tmp7}
-  &\approx \rho(\v r')\rho(\v r'') + C (\v r', \v r'')
+  &\approx \rho(\v r')\rho(\v r'') + C (\v r', \v r''),
 \end{align}
-the function
+where 
 \begin{align}
 C (\v r', \v r'') = N (N-1) [\,p(\v r', \v r'') -  p(\v r')p(\v r'')\,]
 \end{align}
-denotes the correlation between
-position $\v r'$ and $\v r''$. Therefore, \eqref{eqn:tmp4} becomes
+denotes the density correlation between position $\v r'$ and $\v
+r''$. Eqn. \eqref{eqn:tmp4} becomes
 \begin{align} \nonumber
   \langle\vert\Delta\v F(\v r)\vert^2\rangle
   = &\,
@@ -244,39 +261,41 @@ position $\v r'$ and $\v r''$. Therefore, \eqref{eqn:tmp4} becomes
   &\,
   \int_{\mathbb R^3\times\mathbb R^3}\v f^c(\v r - \v r')\cdot\v f^c(\v r - \v r'')\,C(\v r', \v r'')\,\d d\v r'\d d\v r'' \\\label{eqn:tmp5}
   = &\,
-  \mathcal E_{\textrm{homo}}(\v r) +
+  \mathcal E^2_{\textrm{homo}}(\v r) +
 %  \langle\Delta\v F(\v r)\,\rangle^2 +
-  \mathcal E_{\textrm{hetero}}(\v r) +
-  \mathcal E_{\textrm{correlation}}(\v r)
+  \mathcal E^2_{\textrm{hetero}}(\v r) +
+  \mathcal E^2_{\textrm{correlation}}(\v r).
 \end{align}
-If the system is homogeneous and the correlation between particles is
-neglected, then only the first term, which is called the homogeneity
-error, is left in \eqref{eqn:tmp5}. This term is originated from the
-flucuation of the error force $\Delta\v F(\v r)$. The second term is
-called the heterogeneity error, because it generates due to the
-density heterogeneity of the system. It is worth poining out that the
-heterogeneity error is the nothing but the squared mean error force,
-namely $\mathcal E_{\textrm{hetero}}(\v r) = \langle\Delta\v F(\v
-r)\,\rangle^2$.  The last term in \eqref{eqn:tmp5} originates from the
+If the system is homogeneous and the particle-particle correlation is
+neglected, then only the first term is left in \eqref{eqn:tmp5}, so it
+is called the homogeneity error.  This term originates from the
+flucuation of the error force $\Delta\v F(\v r)$.  The second term is
+called the heterogeneity error, because it stems from the density
+heterogeneity of the system. It is worth poining out that the
+heterogeneity error is the nothing but the maganitude of the mean error force,
+namely $\mathcal E_{\textrm{hetero}}(\v r) = \vert\langle\Delta\v F(\v
+r)\,\rangle\vert$.  The last term in \eqref{eqn:tmp5} originates from the
 correlation between the particles, so it is called the correlation
-error.  The correlation error involves a double integral, which
-implies that calculating this term requires more compuational cost
-than the homogeneity and heterogeneity errors. The rest of this paper
+error.
+% The correlation error involves a double integral, which
+% implies that calculating this term requires more compuational cost
+% than the homogeneity and heterogeneity errors.
+The rest of this paper
 assumes the system is far from the critical point, therefore the
 correlation error does not dominate in the system, and can be savely
 neglected.
 
 
 
-\subsection{The fast calculation of the error estimate}\label{sec:tmp1.3}
+\subsection{Fast calculation of the error estimate}\label{sec:tmp1.3}
 
 The naive calculation of the error estimate \eqref{eqn:tmp5} requires
-the compuational cost of $\mathcal O(N^2)$. To apply the error
-estimate on-the-fly with simulation, the compuational cost should be
-reduced to at least $\mathcal O(N\log N)$.  This is achieved by
-calculating the convolutions in \eqref{eqn:tmp5} with the fast Fourier
-transform. We assume the simulation box is uniformly divided in to
-small bins.  The positions of these bins are
+a compuational cost of $\mathcal O(N^2)$. To estimate the force error
+on the fly, the compuational cost of the estimate should be reduced to
+at least $\mathcal O(N\log N)$.  This is achieved by calculating the
+convolutions in \eqref{eqn:tmp5} by the fast Fourier transform. We
+assume the simulation box is uniformly divided in to small bins.  The
+positions of these bins are
 \begin{align}
   \v r_{i_1, i_2, i_3} & =
   \frac{i_1}{K_1}\v a_1 + 
@@ -285,7 +304,7 @@ small bins.  The positions of these bins are
 \end{align}
 where $\v a_\alpha$ are box vectors, and $K_\alpha$ is the number of
 division on each direction. In the reciprocal space, a corresponding
-lettice is set up:
+lattice is set up:
 \begin{align}
   \v k_{k_1, k_2, k_3} & =
   k_1\v a_1^\ast +
@@ -295,19 +314,19 @@ lettice is set up:
 where $\v a_\alpha^\ast$ are reciprocal box vectors defined by $\v
 a_\alpha\cdot\v a_\beta^\ast = \delta_{\alpha\beta}$.  In each bin the
 error and the particles number density are assumed to be constant,
-therefore,
+then, a Fourier expansion can be obtained:
 \begin{align}\nonumber
-  \mathcal E_{\textrm{homo}}(\v r_{i_1,i_2,i_3})
-  & \approx
+  \mathcal E^2_{\textrm{homo}}(\v r_{i_1,i_2,i_3})
+  & =
   \frac1V\sum_{k_1=-\infty}^\infty\sum_{k_2=-\infty}^\infty\sum_{k_3=-\infty}^\infty
-  \hat{\mathcal E}_{\textrm{homo}}(\v k_{k_1,k_2,k_3})
+  [{\mathcal E}^2_{\textrm{homo}}]^{\wedge}(\v k_{k_1,k_2,k_3})
   % e^{2\pi i\v k_{k_1,k_2,k_3}\cdot\v r_{i_1,i_2,i_3}}
   \exp\bigg[
   2\pi i\bigg(
   \frac{k_1i_1}{K_1} + \frac{k_2i_2}{K_2} + \frac{k_3i_3}{K_3}
   \bigg)
   \bigg] \\\label{eqn:tmp13}
-  & \approx
+  & =
   \frac1V\sum_{k_1=0}^{K_1}\sum_{k_2=0}^{K_2}\sum_{k_3=0}^{K_3}
   \hat{K}_{\textrm{homo}}(\v k'_{k_1,k_2,k_3})\:
   \hat{\rho}(\v k_{k_1,k_2,k_3})
@@ -316,19 +335,19 @@ therefore,
   2\pi i\bigg(
   \frac{k_1i_1}{K_1} + \frac{k_2i_2}{K_2} + \frac{k_3i_3}{K_3}
   \bigg)
-  \bigg]   
+  \bigg].
 \end{align}
-here we denote the convolution kernel $\vert\v f^c(\v r)\vert^2$ by
-$K_{\textrm{homo}}(\v r)$.  Equation \eqref{eqn:tmp13} simply utilizes
-the identity: the Fourier transform of the convolution
-$K_{\textrm{homo}}\ast\rho$ is equal to the multiply of
+Here we denote the convolution kernel $\vert\v f^c(\v r)\vert^2$ by
+$K_{\textrm{homo}}(\v r)$.  The second equation in \eqref{eqn:tmp13}
+holds due to the fact: the Fourier transform of the convolution
+$K_{\textrm{homo}}\ast\rho$ is equal to the multiplication of
 $\hat{K}_{\textrm{homo}}$ and $\hat\rho$.  The prime on $\v
 k_{k_1,k_2,k_3}$ means that we should use the periodic image $k_\alpha
 - K_\alpha$ instead of $k_\alpha$ when $k_\alpha \geq K_\alpha/2$. By
 definition, the Fourier transform of the density is
 \begin{align}
   \hat\rho(\v k_{k_1,k_2,k_3})
-  & \approx
+  & =
   \frac{V}{K_1K_2K_3}
   \sum_{i_1=0}^{K_1}\sum_{i_2=0}^{K_2}\sum_{i_2=0}^{K_2}
   \rho(\v r_{i_1,i_2,i_3})
@@ -336,33 +355,38 @@ definition, the Fourier transform of the density is
   -2\pi i\bigg(
   \frac{k_1i_1}{K_1} + \frac{k_2i_2}{K_2} + \frac{k_3i_3}{K_3}
   \bigg)
-  \bigg]
+  \bigg].
 \end{align}
 The Fourier transform of the homogeneity kernel is 
 \begin{align}
   \hat K_{\textrm{homo}}(\v k)
   &=
-  \int_{\mathbb R^3}K_{\textrm{homo}}(\v r)e^{-2\pi i\v k\cdot\v r}\,\d d\v r
+  \int_{\mathbb R^3}K_{\textrm{homo}}(\v r)e^{-2\pi i\v k\cdot\v r}\,\d d\v r.
 \end{align}
-Most of the short-range interactions are isotropic, therefore,
+Most of the short-range interactions are isotropic, therefore
 $K_{\textrm{homo}}(\v r) = K_{\textrm{homo}}(r)$, and
-\begin{align}
+\begin{align}\label{eqn:kernel-inte}
   \hat{K}_{\textrm{homo}}(\v k)
   =
   \int_{\mathbb R^3}K_{\textrm{homo}}(r)e^{-2\pi i\v k\cdot\v r}\d d\v r
   =
-  \int_{r_c}^\infty \frac{2 r}k\, K_{\textrm{homo}}(r) \sin(2\pi kr)\,\d dr
+  \int_{r_c}^\infty \frac{2 r}k\, K_{\textrm{homo}}(r) \sin(2\pi kr)\,\d dr.
 \end{align}
-
+The last one-dimentional integral can be calculated by numerical
+integration from $r_c$ to a large upper bound, saying $R_c$. Perfact
+convergence can be achieve by using $R_c = 30\sigma$ throughout the
+paper. Since integral \eqref{eqn:kernel-inte} is independent with the
+density of the system, it can be calculated for only once and stored
+for reference.
 
 Similarly, by \eqref{eqn:tmp3}, the Fourier mode of the the mean error
 force is
 \begin{align}\label{eqn:tmp17}
   \langle\Delta\v F\rangle^\wedge(\v k) =
   \hat{\v f}^c(\v k)\,
-  \hat\rho(\v k)
+  \hat\rho(\v k),
 \end{align}
-where 
+where the Fourier transform of the complementary force is given by
 \begin{align}\label{eqn:tmp18}
   \hat{\v f}^c(\v k) 
   & = 
@@ -375,11 +399,11 @@ where
   \,\bigg] 
   -
   \int_{r_c}^\infty 2r\,u(r)\sin(2\pi kr)\,\d d\v r
-  \bigg\}
+  \bigg\}.
 \end{align}
 
 
-\subsection{The adaptive cut-off radius method}
+\subsection{Adaptive cut-off radius method}
 
 % In Fig. \ref{fig:tmp1}, the testing system containing $N=16000$
 % standard Lennard-Jone particles is set up in a tube with periodic
@@ -400,15 +424,16 @@ where
 
 A basic observation in a heterogeneous system is that the RMS force
 error is not uniformly distributed. The difference between the maximum
-and minimum error can be as large as two orders of maganitude, see
+and minimum error can be as large as more than one order of
+maganitude, in one of the cases we studied, see
 Fig. \ref{fig:tmp2}. Traditionally, a very large cut-off radius is
-used to reduce the maximum error to an acceptable level and to reach
-convergent simulation results. However, a huge amount of compuational
-effort is wasted in the low-error region. The idea of the adaptive
-cut-off radius simulation is to use larger cut-off radius for
-particles in the high-error region to control the force error, while
-to use smaller cut-off radius for particles in the low-error region to
-save compuational cost.  The vaidity of this method relies on a
+used to reduce the maximum error in the system to reach convergent
+simulation results. Therefore, a huge amount of compuational effort is
+wasted in the low-error region. The idea of the adaptive cut-off
+radius simulation is to use larger cut-off radius for particles in the
+high-error region to control the force error, while to use smaller
+cut-off radius for particles in the low-error region to save
+compuational cost.  The effectiveness of this method relies on a
 diliberated cut-off choice for each particle so that the force error
 is uniformly distributed across the simulation region.  Unfortunately,
 the compuational expense of a naive implementation of this method is
@@ -427,25 +452,25 @@ $\mathcal O(N \log N)$.
 % adaptive cut-off method is to equivalently distributed the force error
 % over the simulation region.
 
-To make the adaptive cut-off method feasible,
+To make the adaptive cut-off method feasible, we assume
 \begin{enumerate}
 \item The space is divided in to small bins, the size of which is the
   same as those mentioned in the section \ref{sec:tmp1.3}.  The
   particles falling in the same bin are assigned by the same cut-off
-  radius.
+  radius. In other words, the cut-off radius is chosen for each bin
+  rather than each particles.
   % The cut-off
   % radius is assumed to be constant within a bin, no matter the
   % position of the partile.
 \item The cut-off radius can only be chosen from a discrete series of
-  increasing values between a maximum cut-off radius
-  $r_c^{\textrm{max}}$ and a minimum cut-off radius
+  monotonically increasing values between a maximum 
+  $r_c^{\textrm{max}}$ and a minimum 
   $r_c^{\textrm{min}}$: $\{\,r_c^{\textrm{min}} = r_c^0 < r_c^1 <
   \cdots < r_c^{M-1} <r_c^M = r_c^{\textrm{max}}\}$.  We call it the
-  \emph{candidate set} of cut-off radii.  For convenience but not
-  necessarily, the interval between two neighboring cut-off radius in
-  uniform, which means
+  \emph{candidate set} of the cut-off radius.  For convenience but not
+  necessarily, the cut-off radii in the candidate set is uniformly increasing, i.e.
   \begin{align}
-    r_c^m = r_c^0 + r_c^{\textrm{step}} m, \quad 0 \leq m \leq M
+    r_c^m = r_c^0 + r_c^{\textrm{step}} m, \quad 0 \leq m \leq M.
   \end{align}
   For example, a possible candidate set is $\{2.5\,\sigma,\
   3.0\,\sigma,\ 3.5\,\sigma,\ 4.0\,\sigma,\ \cdots,\ 10.0\,\sigma\}$,
@@ -453,26 +478,27 @@ To make the adaptive cut-off method feasible,
   2.5\sigma$ and $r_c^{\textrm{step}} = 0.5 \sigma$.
 \end{enumerate}
 For each cut-off radius in the candidate set, the force error
-distribution $\mathcal E(\v r)$ is calculated by estimate
-\eqref{eqn:tmp5}. Notice the error is calculated on-the-fly by the
-fast algorithm described in section \ref{sec:tmp1.3}, therefore it is
+$\mathcal E(\v r)$ is calculated by estimate
+\eqref{eqn:tmp5}. Notice the error is calculated by the
+fast algorithm described in section \ref{sec:tmp1.3}, so it is
 defined on the bins.  For a predetermined error control level
 $\mathcal E_{\textrm{C}}$, a satisfactory cut-off radius of a bin is
-choosen such that it is the smallest one that satisfying the precision
+choosen such that it is the smallest one satisfying the precision
 constrain $\mathcal E(\v r_{i_1,i_2,i_3}) \leq \mathcal
 E_{\textrm{C}}$. The computational cost of this algorithm is $\mathcal
 O(MN\log N)$.  The idea of this algorithm is based on the observation
 that the cut-off radius may not be calculated at a very high
-precision, a slightly (and at most $r_c^{\textrm{step}}$) larger
+precision, a slightly (at most $r_c^{\textrm{step}}$) larger
 cut-off radius will not waste too much computational cost.  Due to the
 thermodynamic flucuation of the system density, the resulting cut-off
-distribution $r_c(\v r_{i_1,i_2,i_3})$ (as a function of lattice
-position) needs to be refined by the following scheme:
+distribution $r_c(\v r_{i_1,i_2,i_3})$ (as a function of bin
+position) needs to be refined for several times by the following scheme:
 \begin{align}\label{eqn:rc-refine}
   r^{(1)}_c(\v r_{i_1,i_2,i_3}) = \max_{j_\alpha\in I}\,r_c(\v r_{i_1+j_1,i_2+j_2,i_3+j_3}),
   \quad I = \{-1, 0, 1\},
 \end{align}
-to catch the fluctuating interfacial region.
+so that the fluctuating large-error regions are savely covered by bins
+with large cut-off radius.
 
 % This
 % means the force error is a combination of a homogeneous contribution,
@@ -482,7 +508,7 @@ to catch the fluctuating interfacial region.
 %   \v F_{\textrm{hetero}} = \int_{\mathbb R^3}\v F^c(\v r - \v r')\rho(\v r')\,\d d\v r'
 % \end{align}
 
-\subsection{Force correction by the mean error force}
+\subsection{Long-range Force correction}
 
 In a spacial heterogeneous system, the heterogeneity error may play a
 dominate role in the simulation, (see examples in section
@@ -493,7 +519,9 @@ force, namely
 \begin{align}\label{eqn:define-fcorr}
   \v F_{\textrm{corr}}(\v r) = \tilde{\v F}(\v r) + \langle\Delta\v F(\v r)\rangle.
 \end{align}
-The mean of the corrected error force vanishes:
+This long-range correction works because it takes into the force
+contribution outside the cut-off radius. The mean of the corrected
+error force vanishes:
 \begin{align}\label{eqn:mean-fcorr}
   \langle\Delta\v F_{\textrm{corr}}(\v r)\rangle
    =
@@ -516,14 +544,23 @@ The mean square error is therefore given by
   \langle\vert\Delta\v F(\v r)\vert^2\rangle -
   \langle\Delta\v F(\v r)\,\rangle^2 \\
   & =
-  \mathcal E_{\textrm{homo}}(\v r) +
-  \mathcal E_{\textrm{correlation}}(\v r).
+  \mathcal E^2_{\textrm{homo}}(\v r) +
+  \mathcal E^2_{\textrm{correlation}}(\v r),
 \end{align}
-It worth noticing that the mean square error of the corrected force is
-nothing but the variance of the uncorrected  error force:
-$\langle\vert\Delta\v F_{\textrm{corr}}(\v r)\vert^2\rangle =
-\textrm{Var}[\Delta\v F(\v r)]$, which contains no heterogeneous
-contribution.
+containing no heterogeneity error.  It worth noticing that the mean
+square error of the corrected force is nothing but the variance of the
+uncorrected error force: $\langle\vert\Delta\v F_{\textrm{corr}}(\v
+r)\vert^2\rangle = \textrm{Var}[\Delta\v F(\v r)]$, which contains no
+heterogeneous contribution.
+
+The idea of the long-range force correction is very similar to those
+proposed in earlier works~\cite{guo1997long, mecke1997molecular,
+  janecek2006long, shen2007comparative}. In these works, the density
+profile is assume to varying on only one direction, and the system is
+subdivided into slabs perpendicular to that direction to calculate the
+energy/force correction. The advantange of the our force correction is
+that it has no geometric restriction on the density profile of the
+system, so can be used in a wider range of heterogeneous simulations.
 
 % \textrm{Var}[\Delta\v F_{\textrm{corr}}(\v r)] = 
 
@@ -534,59 +571,65 @@ contribution.
 
 
 
-\subsection{Heterogeneous pressure corrections}
-By the cut-off method, the system lost the pressure contribution from
-the particles outside the cut-off radius.  In the homogeneous systems,
-the distribution of particles is assumed to be uniform outside the
-cut-off radius, and the pressure correction is calculated by
-integrating the virial from the cut-off to infinity.
+\subsection{Long-range pressure corrections}
+% By the cut-off method, the system lost the pressure contribution from
+% the particles outside the cut-off radius.  In the homogeneous systems,
+% the distribution of particles is assumed to be uniform outside the
+% cut-off radius, and the pressure correction is calculated by
+% integrating the virial from the cut-off to infinity.
 
-In the heterogeneous systems, the previous idea does not
-work. Instead, the pressure correction of the system are:
+% In the heterogeneous systems, the previous idea does not
+% work. Instead, the pressure correction of the system are:
+
+The pressure contribution outside the cut-off radius can be expressed
+by:
 \begin{align}
   \v P^c &= \frac1{V} \bigg\langle \sum_{i\neq j}\,\frac12\, (\v r_i - \v r_j) \otimes \v f^c(\v r_i - \v r_j) \bigg\rangle
 \end{align}
-For simplicity, let us consider the general form the the corrections:
-\begin{align}
-  Q = \bigg\langle \sum_{i\neq j} K(\v r_i - \v r_j) \bigg\rangle
-\end{align}
-For the pressure correction, $K$ is replaced by $\frac{1}{2V}\v
-r\otimes\v f^c$.  By using \eqref{eqn:tmp7}, we have
+For simplicity, we denote $\frac{1}{2V}\v r\otimes\v f^c$ by $\v
+K_{\textrm{P}}$, therefore,
+% For simplicity, let us consider the general form the the corrections:
+% \begin{align}
+%   Q = \bigg\langle \sum_{i\neq j} K(\v r_i - \v r_j) \bigg\rangle
+% \end{align}
+% For the pressure correction, $K$ is replaced by $\frac{1}{2V}\v
+% r\otimes\v f^c$.  By using \eqref{eqn:tmp7}, we have
 \begin{align}\nonumber
-  Q
-  &= \bigg\langle \sum_{i\neq j} K(\v r_i - \v r_j) \bigg\rangle\\\nonumber
-  & = \int K(\v r' - \v r'') \rho(\v r', \v r'') \d d\v r'\d d\v r'' \\\nonumber
-  & = \int K(\v r' - \v r'')
+  \v P^c
+  &= \bigg\langle \sum_{i\neq j} \v K_{\textrm{P}}(\v r_i - \v r_j) \bigg\rangle\\\nonumber
+  & = \int \v K_{\textrm{P}}(\v r' - \v r'') \rho(\v r', \v r'') \d d\v r'\d d\v r'' \\\nonumber
+  & = \int \v K_{\textrm{P}}(\v r' - \v r'')
   \big[
   \rho(\v r') \rho(\v r'') + C(\v r', \v r'')
   \big]
   \d d\v r'\d d\v r''
 \end{align}
-Assuming the correlation $C(\v r', \v r'')$ vanishes, then
+Assuming the correlation term $C(\v r', \v r'')$ vanishes, then
 \begin{align} \nonumber
-  Q 
-  & = \int K(\v r' - \v r'')
+  \v P^c
+  & = \int \v K_{\textrm{P}}(\v r' - \v r'')
   \rho(\v r') \rho(\v r'') 
   \d d\v r'\d d\v r'' \\
   & = \int
   \Big[
-  \int K(\v r' - \v r'') \rho(\v r'')\,\d d\v r''
+  \int \v K_{\textrm{P}}(\v r' - \v r'') \rho(\v r'')\,\d d\v r''
   \Big]
   \rho(\v r')\,\d d\v r'
 \end{align}
-
-The Fourier transform of the convolution $\int K(\v r' - \v r'')
-\rho(\v r'')\,\d d\v r''$ is identical to the product $\hat K(\v
-k)\,\hat \rho(\v k)$. In the case of pressure correction, the Fourier
-transform of $\frac{1}{2V}\v r\otimes\v f^c$ requires more efforts.
-For the isotropic short-range interactions, the $\alpha\beta$
-component of the kernel $\frac{1}{2V}\v r\otimes\v f^c$ can be written
-as
+The Fourier transform of the convolution $\int \v K_{\textrm{P}}(\v r'
+- \v r'') \rho(\v r'')\,\d d\v r''$ is identical to the product $\hat
+{\v K}_{\textrm{P}}(\v k)\,\hat \rho(\v k)$. The Fourier transform of
+${\v K}_{\textrm{P}}$ requires more efforts, because unlike
+the convolution kernel of the homogeneity error, this kernel is 
+anisotropic.  Assuming the isotropicity of the short-range interaction,
+the $\alpha\beta$ component of this kernel can be written as
 \begin{align}
-  \frac1{2V}\{\v r\otimes\v f^c\}_{\alpha\beta} =
-  r_\alpha r_\beta \,G^c(r) \qquad \alpha, \beta = 1, 2, 3
+  \{\v K_{\textrm{P}}\}_{\alpha\beta}
+  = \frac1{2V}\{\v r\otimes\v f^c\}_{\alpha\beta}
+  = \frac1{2V} r_\alpha r_\beta \,G^c(r)
+  \qquad \alpha, \beta = 1, 2, 3,
 \end{align}
-where $G^c(r)$ is independent with the direction of $\v r$.  We list
+where $G^c(r) = [u^c(r)]'/r$ is isotropic.  We list
 here without proving the Fourier transform of these terms:
 \begin{align}
   [\,r_1r_1\,G^c(r)\,]^{\wedge} 
@@ -652,36 +695,38 @@ kind.
 
 
 
-\section{Results and discussions}\label{sec:tmp2}
+\section{Simulation results and discussions}\label{sec:tmp2}
 
-\subsection{Liquid-vapor coexistence simulation of the Lennard-Jones fluid}\label{sec:tmp2.1}
+\subsection{Liquid-vapor equilibrium}\label{sec:tmp2.1}
 
-The liquid-vapor coexistence simulation is a very typical
-heterogeneous molecular system, which is widely used to study the
-phase coexistence properties, for example, the equilibrium liquid and
-vapor density, and the surface tension. The system contains 16,000
-standard Lennard-Jones particles that saperated into liquid phase in
-the center of the box and vapor phase surrounded.  The conventional
-dimensionless unit system is employed: the unit of length, energy,
-mass and time are denoted by $\epsilon$, $\sigma$, $m$ and $\tau$
-($\tau = \sigma\sqrt{m/\varepsilon}$), respectively.  All quantities
-are written in the unitless form by adding the superscript ``$\ast$''.
-For example, $r^\ast = r / \sigma$, $T^\ast = k_BT / \epsilon$ and
-$P^\ast = P \sigma^3 / \epsilon$.  The MD time step {is} $\Delta
-t^\ast = 0.005$. The simulations last for $3\times 10^6$ time
-steps. The first $1\times 10^6$ steps are discarded. The quantities of
-interest are sampled every 100 time steps. The commonly used blocking
-average method~\cite{flyvbjerg1989error} is applied to estimate the
+The direct simulation of the liquid-vapor equilibrium is a very
+typical heterogeneous system, which is widely used to study the phase
+coexistence properties, for example, the equilibrium liquid and vapor
+density, and the surface tension. The system studied in the present
+paper contains 16,000 standard Lennard-Jones particles that are
+saperated into liquid phase in the center of the box and vapor phase
+surrounded, see Fig.~\ref{fig:tmp1}.  The conventional dimensionless
+unit system is employed: the unit of length, energy, mass and time are
+denoted by $\epsilon$, $\sigma$, $m$ and $\tau$ ($\tau =
+\sigma\sqrt{m/\varepsilon}$), respectively.  All quantities are
+written in the unitless form by adding the superscript ``$\ast$''.
+For example, $r^\ast = r / \sigma$, $T^\ast = k_BT / \epsilon$,
+$P^\ast = P\cdot \sigma^3 / \epsilon$ and $\mathcal E^\ast = \mathcal
+E\cdot\sigma/\varepsilon$.  The MD time step {is} $\Delta t^\ast =
+0.005$. The simulations last for $3\times 10^6$ time steps. The first
+$1\times 10^6$ steps are discarded. The quantities of interest are
+sampled every 100 time steps. The blocking average
+method~\cite{flyvbjerg1989error} is applied to estimate the
 statistical uncertainty of the autocorrelated data. The NVT ensemble
 is generated by the Nos\`e-Hoover thermostat~\cite{nose1984molecular,
   hoover1985canonical}.  The size of the simulation box is $L_x^\ast
 \times L_y^\ast \times L_z^\ast = 150\times 21\times 21$, as shown in
-Fig. \ref{fig:tmp1}. This simulation box permit a maximum cut-off
-radius of $r_c^\ast = 10$, and eliminate the finite scale effect
-discussed in literatures \cite{orea2005oscillatory,
+Fig. \ref{fig:tmp1}. This simulation box permits a maximum cut-off
+radius of $r_c^\ast = 10$, and eliminates the finite size effect
+reported in literatures \cite{chen1995area, orea2005oscillatory,
   biscay2009calculation}. In all simulations, the maximum cut-off
-radius considered is $10$, but the reference (precise value) results
-are given by a simulation carried out in a 24,000 particles system
+radius considered is $10$, but the reference results for comparison
+are obtained by simulations carried out in a 24,000 particles system
 with simulation box $L_x^\ast \times L_y^\ast \times L_z^\ast =
 150\times 27\times 27$, and a uniform cut-off radius of $r_c^\ast =
 13$.
@@ -689,19 +734,20 @@ with simulation box $L_x^\ast \times L_y^\ast \times L_z^\ast =
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{fig/t0.85-n16000-rc07.5uni/confout.eps}
-  \caption{The snapshot of the 16000 Lennard-Jones particle system at
-    $T^\ast=0.85$ with a uniform cut-off radius of $r_c^\ast = 7.5$.}
+  \caption{The snapshot of the 16000 Lennard-Jones particle system in
+    liquid-vapor equilibrium at $T^\ast=0.85$ with a uniform cut-off
+    radius of $r_c^\ast = 7.5$.}
   \label{fig:tmp1}
 \end{figure}
 
 Figure \ref{fig:tmp2} presents the real RMS force error (in green
-square) in a system using a uniform cut-off raidus of $r_c^\ast =
+square and log-scaled) in a system using a uniform cut-off raidus of $r_c^\ast =
 7.5$. The number density distribution along $x$ direction is shown by
 the solid red line for reference.  The error is comparatively constant
 at the bulk liquid and gas region. In contrast, two paaks, which are
 more than one order of maganitude larger than the force errors in bulk
 regions, form at the interfacial region.  The estimated RMS force
-error is presented in solid blue line.  The estimate follows the real
+error is presented by solid blue line.  The estimate follows the real
 error very well at the interfacial region, but slightly over estimate
 the error in the bulk regions.  Two components of the force error,
 namely the homogeneity error and heterogeneity error are presented in
@@ -732,27 +778,29 @@ dotted blue line overlaps with the solid one.
 The Fig. \ref{fig:tmp2} inspires us to develop the adaptive cut-off
 method: in the bulk regions, the error is much smaller, therefore, it
 is a waste to use the same cut-off radius as the interfacial
-regions. As mentioned before, the key idea is to use small cut-off
+regions. As mentioned before, the key idea is to use smaller cut-off
 radius in the bulk regions, so that the RMS force error is uniformly
 distributed over the simulation region. In Fig. \ref{fig:tmp3}, we
-present the adapted cut-off radius in a solid red line and all errors
-in the same notation as the Fig. \ref{fig:tmp2}. The control error
+present the adapted cut-off radius by a solid red line and all errors
+by the same notations as in the Fig. \ref{fig:tmp2}. The control error
 $\mathcal E^\ast_{\textrm{C}} = 0.0045$ is the same as the maximum
 error in the uniform cut-off simulation with $r_c^\ast=7.5$. The
-cut-off distribution is refined for twice by \eqref{eqn:rc-refine}. In
-the interfacial region, the same cut-off radius as the uniform cut-off
-simulation, namely $7.5$, is reproduced.  Whereas, in the liquid and
-vapor regions, the cut-off radii are $4.75$ and $3.5$, respective,
-which is notably reduced. Considering the computational cost grows
-with $\mathcal O(r_c^3)$, the adaptive cut-off saves 75 \% and 90 \%
-computational cost in the liquid and vapor bulk regions, respectively.
-The error is uniformly distributed, except that in the liquid region,
-the real error is somewhat lower because the error estimate is not
-sharp here. In constrast with the uniform cut-off case,
-i.e. Fig. \ref{fig:tmp2}, the error estimate for the vapor region is
-very sharp. The same phenominon is observed: the homogeneity error
-dominates in the bulk regions, while the heterogeneity error dominates
-in the interfacial region.
+cut-off distribution is calculated every 20,000 time steps, and is
+refined for twice by \eqref{eqn:rc-refine}. In the interfacial
+regions, the same cut-off radius as the uniform cut-off simulation,
+namely $7.5$, is chosen from the candidate set as expected.  In the
+liquid and vapor regions, the cut-off radii are $4.75$ and $3.5$,
+respective, which is notably reduced. Since the computational cost
+grows with $\mathcal O(r_c^3)$, the adaptive cut-off saves 75 \% and
+90 \% computational cost in the liquid and vapor bulk regions,
+respectively.  The error is uniformly distributed, except that in the
+liquid region, the real error is somewhat lower because the error
+estimate overestimate the real error. In constrast with the uniform
+cut-off case, i.e. Fig. \ref{fig:tmp2}, the error estimate for the
+vapor region is very sharp. The similar phenominon is observed by
+Ref.~\cite{wang2011}. The same as the uniform cut-off simuation, the
+homogeneity error dominates in the bulk regions, while the
+heterogeneity error dominates in the interfacial region.
 
 \begin{figure}
   \centering
@@ -770,21 +818,26 @@ in the interfacial region.
 
 
 In Fig. \ref{fig:tmp4}, we present the mean error force (only $x$
-component) by the red solid line. The $y$ and $z$ components of the
-mean error force is not shown because their magnitudes are negligible.
-On the left interface, the mean error force is along the positive
-direction of $x$ axis, namely poiting right.  On the right interface,
-the mean error force is of the same maganitude but poiting
-left. Therefore, the liquid density should be higher and the vapor
-density should be lower than the uniform and adaptive cut-off
-simulations.  The real error (in green square) and the homogeneity
-error (in blue solid line) are all presented in
-Fig. \ref{fig:tmp4}. Clearly the contribution of the heterogeneity
-error is successfully removed, because the estimate of homogeneity
-error follows the real error perfectly in the interfacial regions.  In
-the bulk liquid region, the homogeneity error is slightly
-overestimated, which is the same as the uniform and adaptive cut-off
-simulations.
+component) by the red solid line. The $y$ and $z$ components are not
+shown because their magnitudes are negligible.  On the left interface,
+the mean error force is along the positive direction of $x$ axis,
+namely poiting right.  On the right interface, the mean error force is
+of the same maganitude but poiting left. Therefore, the liquid density
+should be higher and the vapor density should be lower than the
+corresponding uniform cut-off simulation.  The real error (in green
+square) and the homogeneity error (in blue solid line) are all
+presented in Fig. \ref{fig:tmp4}.  Cleary, the real error follows the
+homogeneity error estimate, which implies the contribution of the
+heterogeneity error is successfully removed. In the bulk liquid
+region, the homogeneity error is slightly overestimated, which is the
+same as the uniform and adaptive cut-off simulations.
+
+% Clearly the contribution of the heterogeneity
+% error is successfully removed, because the estimate of homogeneity
+% error follows the real error perfectly in the interfacial regions.  In
+% the bulk liquid region, the homogeneity error is slightly
+% overestimated, which is the same as the uniform and adaptive cut-off
+% simulations.
 
 \begin{figure}
   \centering
@@ -819,20 +872,22 @@ simulations.
 % computational cost, respectively. In total, the adaptive cut-off
 % radius method save 50\% of the computational cost.
 
-We test the uniform and adaptive cut-off methods as well as the
-correction force method in the mentioned liquid vapor equilibrium
-system. The temperatures are controlled to $T^\ast = 0.70,\ 0.85,\
-1.10,\ 1.20$ by a Nos\`e-Hoover thermostat. The interested properties are
-the liquid-vapor equilibrium density and the surface tension defined
-by
+% We test the uniform and adaptive cut-off methods as well as the
+% correction force method in the mentioned liquid vapor equilibrium
+% system.
+
+To extensively test the effectiveness of the proposed adaptive cut-off
+and long-range force correction methods, we perform simulations at
+$T^\ast = 0.70,\ 0.85,\ 1.10,\ 1.20$.  We test the liquid-vapor
+equilibrium density and the surface tension defined by
 \begin{align}
   \gamma = \frac12 \int_{L_x}
   \bigg[\,
   p_x(x) - \frac{p_y(x) + p_z(x)}{2}
   \,\bigg]
-  \,\d dx
+  \,\d dx.
 \end{align}
-where $p_x$, $p_y$ and $p_z$ are $x$, $y$ and $z$ component of the
+Where $p_x$, $p_y$ and $p_z$ are $x$, $y$ and $z$ component of the
 pressure. The convergence of the properties of interest with respect
 to the cut-off radius is considered.  For the adaptive cut-off
 simulation, the ``cut-off radius'' means the largest cut-off radius
@@ -854,63 +909,6 @@ used in the simulation region.
   \label{fig:tmp5}
 \end{figure}
 
-In the Fig. \ref{fig:tmp5}, the convergence of the equilibrium density
-is investigated. The red, green and blue points presents the results
-of uniform, adaptive and force correction simulations, respectively.
-The gas densities are connected by the solid lines, and the liquid
-densities are connected by the dashed lines for clarity. All data are
-substracted by the reference results, which are calculated by uniform
-cut-off simulations with a cut-off radius $r_c^\ast=13$.  In the
-higher temperature cases, the thermodynamic flucuation of the system
-is stronger. Therefore, the meansurement of densities are less
-accurate in higher temperature cases than in lower temperature cases.
-At $T^\ast = 0.70$, the gas density is more accurate than the liquid
-density, while at $T^\ast = 1.20$, the gas and liquid densities are of
-the same accuracy.
-
-The liquid and gas densities of the uniform and the adaptive cut-off
-methods are almost identical using the same cut-off radius. This
-observation is also true for the surface tension, see
-Fig. \ref{fig:tmp6}. This indicates that controlling the maximum of
-force error (see Tab. \ref{tab:tmp1}) and introducing larger
-homogeneous force error in the bulk liquid/gas regions will not
-disturb the accuracy of equilibrium densities and surface tension.
-The adaptive cut-off method roughly saves one half of the
-computational cost (see Tab. \ref{tab:tmp1}). The benefit of the
-adaptive cut-off depends on the system geometry: if the work load
-mainly concentrates on the bulk phase region, the adaptive cut-off
-will save a lot computational expense. On the other hand, if the
-interfacial region is computationally intensive, the adaptive will not
-improve the efficency greatly.
-
-The force correction method presents a perfect convergence when the
-cut-off radius is equal to or larger than 5, and the result at a
-cut-off as small as 3.5 is acceptable. Comparing the results of force
-correction method at $r_c^\ast = 3.5$ and uniform cut-off radius
-method at $r_c = 7.5$, the maximum force error of the former method is
-3--5 times larger than the later (see Tab. \ref{tab:tmp1}), however,
-the measure of equilibrium densities and surface tension are
-comparable to and sometimes even better than the later (see
-Fig. \ref{fig:tmp5} and \ref{fig:tmp6}). In the force correction
-simulation, the heterogeneity error is screened out and the force
-error term is dominated by the homogeneity error. And in the uniform
-cut-off simulation the force error is dominated by the heterogeneity
-error in the interfacial regions. Therefore, the homogeneity error and
-heterogeneity error play different roles in the simulations.  The
-heterogeneity error stems from the non-vanishing value of the mean
-error force, which is alway pointing at one certain direction (the
-same direction as the low-to-high density jump), see
-Fig. \ref{fig:tmp4} for example. The homogeneity error is actually the
-variation of the corrected error force that may be cancelled by itself
-in a long time. The reason is the corrected error force has a
-varnished mean value (see eqn. \eqref{eqn:mean-fcorr}), so it may
-point to any direction with the same possibility.  With the same
-cut-off radius, the computational cost of the force correction and
-uniform cut-off methods are nearly the same, see
-Tab. \ref{tab:tmp1}. However, the maximum force error of the force
-correction method is about one order of maganitude more precise,
-comparing with the uniform cut-off simulations.
-
 \begin{figure}
   \centering
   \includegraphics[width=0.49\textwidth]{fig/converge/tension.t0.70.eps} 
@@ -928,19 +926,114 @@ comparing with the uniform cut-off simulations.
   \label{fig:tmp6}
 \end{figure}
 
-The convergence of the surface tension with respect to the cut-off
-radius is shown in the Fig. \ref{fig:tmp6}. The color notation is the
-same as Fig. \ref{fig:tmp5}.  Surface tensions measured with and
-without heterogeneous pressure correction are connected by solid and
-dashed lines, respectively.  The reference surface tension is
-presented by the black solid lines. The heterogeneous pressure
-correction improve the surface tention measurement greatly. The
-discrepancy between the corrected and uncorrected pressure is the
-value of the correction, which decreases with increasing cut-off
-radius. However, even at $r_c^\ast=10$, the correction is not
-negligible for $T^\ast = 0.70$ and $T^\ast = 0.85$. At higher
-temperature, the statistical uncertainty gets larger, and better
-convergence is achieved at small cut-off radius.
+In the Fig. \ref{fig:tmp5} and Fig. \ref{fig:tmp6}, the convergence of
+the equilibrium liquid/vapor densities and surface tension are
+investigated with respect to increasing cut-off radius. The red, green
+and blue points with error bars denote the results of uniform,
+adaptive and long-range force correction simulations, respectively.
+In Fig. \ref{fig:tmp5}, all densities are substracted by the reference
+value measured by uniform cut-off simulation of $r_c^\ast = 13$.  The
+gas densities are connected by the dashed lines, and the liquid
+densities are connected by the solid lines to guide the eyes.  In
+Fig. \ref{fig:tmp6}, the direct measures of surface tension (data
+points connected by the dashed lines) are presented with pressure
+corrected surface tension (data points connected by solid lines) and
+the reference surface tension measured by uniform cut-off simulations
+at $r_c^\ast = 13$ with pressure correction.
+
+% In the higher
+% temperature cases, the thermodynamic flucuation of the system is
+% stronger. Therefore, the meansurement of densities and surface tension
+% are less accurate.
+% At $T^\ast = 0.70$, the gas
+% density converges much faster than the liquid density, while at
+% $T^\ast = 1.20$, the gas and liquid densities almost converges at the
+% same speed, see Fig. \ref{fig:tmp5}.
+
+For all temperatures studied, the liquid and gas densities of the
+uniform and the adaptive cut-off methods are almost identical at the
+same cut-off radius. This observation is also true for the surface
+tension, see Fig. \ref{fig:tmp6}. This indicates that controlling the
+maximum of force error (see Tab. \ref{tab:tmp1}) and introducing
+larger homogeneous force error in the bulk liquid/gas regions will not
+disturb the accuracy of the equilibrium densities and surface tension.
+The adaptive cut-off method roughly saves one half of the
+computational cost (see Tab. \ref{tab:tmp1}). The benefit of the
+adaptive cut-off depends on the property of the system: if the bulk
+regions dominate the system, and the density difference between the
+bulk regions is big enough to produce large error in the interfacial regions,
+then the adaptive cut-off will save a lot of
+computational expense. On the other hand, if the interfacial region is
+computationally intensive, the adaptive cut-off will not improve the efficency
+greatly.
+
+For the liquid/vapor densities, the long-range force correction method
+presents a much better convergence than the uniform and adaptive
+cut-off simulations. The densities perfectly converge when the cut-off
+radius is equal to or larger than 5, and the convergence at a cut-off
+as small as 3.5 is acceptable.  With the same cut-off radius, the
+computational cost of the force correction is nearly the same as the
+uniform cut-off methods, see Tab. \ref{tab:tmp1}, and at the same
+time, the force accuracy is more than one order of maganitude better.
+% However, the maximum
+% force error of the force correction method is reduced by about one
+% order of maganitude.
+
+With long-range pressure correction, the convergence of the surface
+tension of all methods are greatly improved. The discrepancy between
+the corrected and uncorrected pressure is the value of the correction,
+which decreases with increasing cut-off radius. However, even at
+$r_c^\ast=10$, the correction is not negligible for $T^\ast = 0.70$
+and $T^\ast = 0.85$. At higher temperature, the statistical
+uncertainty gets larger, and better convergence is achieved at smaller
+cut-off radius.
+
+Comparing the results of the force correction method at
+$r_c^\ast = 3.5$ and uniform cut-off radius method at $r_c = 7.5$, the
+force accuracy of the former method is 3--5 times less than the later
+(see Tab. \ref{tab:tmp1}), however, the former accuracy of the
+equilibrium densities and surface tension are comparable to and
+sometimes even better than the later (see Fig. \ref{fig:tmp5} and
+\ref{fig:tmp6}).
+% In the force correction simulation, the
+% heterogeneity error is screened out and the force error term is
+% dominated by the homogeneity error. And in the uniform cut-off
+% simulation the force error is dominated by the heterogeneity error.
+Since the homogeneity error dominates in the former simulation and the
+heterogeneity error dominates in the later, the homogeneity error and
+heterogeneity error play different roles in the simulations.  The
+homogeneity error is actually the variation of the corrected error
+force that has a vanished mean, see Eqn. \eqref{eqn:mean-fcorr}. This
+implies that the corrected error force may point to any direction with
+the same probability, and may be cancelled by itself in a long time
+average.  The heterogeneity error, in contrast, stems from the
+non-vanishing value of the mean error force, which is alway pointing
+at one certain direction (the same direction as the low-to-high
+density jump), and has no oppotunity to be self-cancelled.
+
+% The reason is the corrected error force has a varnished mean
+% value (, so it may point to any
+% direction with the same possibility.  With the same cut-off radius,
+% the computational cost of the force correction and uniform cut-off
+% methods are nearly the same, see Tab. \ref{tab:tmp1}. However, the
+% maximum force error of the force correction method is about one order
+% of maganitude more precise, comparing with the uniform cut-off
+% simulations.
+
+
+% The convergence of the surface tension with respect to the cut-off
+% radius is shown in the Fig. \ref{fig:tmp6}. The color notation is the
+% same as Fig. \ref{fig:tmp5}.  Surface tensions measured with and
+% without heterogeneous pressure correction are connected by solid and
+% dashed lines, respectively.  The reference surface tension is
+% presented by the black solid lines. The heterogeneous pressure
+% correction improve the surface tention measurement greatly. The
+% discrepancy between the corrected and uncorrected pressure is the
+% value of the correction, which decreases with increasing cut-off
+% radius. However, even at $r_c^\ast=10$, the correction is not
+% negligible for $T^\ast = 0.70$ and $T^\ast = 0.85$. At higher
+% temperature, the statistical uncertainty gets larger, and better
+% convergence is achieved at small cut-off radius.
 
 % Although the force correction is a
 % little better, no substential difference between the different
@@ -1068,7 +1161,7 @@ convergence is achieved at small cut-off radius.
 \subsection{Collision of nanoscale Lennard-Jones clusters}
 \label{sec:tmp2.2}
 
-In this section, we test the adaptive cut-off method and the force
+In this section, we test the adaptive cut-off method and the long-range force
 correction method in a dynamical problem: collision of nanoscale
 Lennard-Jones clusters. Two initial Lennard-Jones clusters, denoted by
 $A$ and $B$, are setup in the simulation box, each of which contains
@@ -1089,10 +1182,10 @@ three major collision modes: the coalescence, the streching seperation
 and the shattering. The major modes were further classified into a
 series submodes. In this paper, we want to study the how the collision
 properties of interests are affected by the force calculation
-precision, therefore, we will NOT investigate a broad range of
-parameters, but focus on one special case: $u^\ast = 2.2$ and $x =
-0.6$, where poor precision of force calculation will lead to wrong
-major collision modes.
+precision. Therefore, we focus on one special case: $u^\ast = 2.2$ and
+$x = 0.6$, where the major collision mode is the coalescence, and a
+poor precision of force calculation may lead to a wrong major
+collision mode.
 
 \begin{figure}
   \centering
@@ -1103,20 +1196,20 @@ major collision modes.
 \end{figure}
 
 In Fig. \ref{fig:tmp8} and \ref{fig:tmp9}, we present the trajectory
-of cluster $A$ and COM distance between the two clusters,
+of COM of cluster $A$ and the COM distance between the two clusters,
 respectively. Three different cut-off radii of uniform cut-off
-simulation are considered. In this case the two clusters collide and
-form one rotating cluster. It is obvious that the trajectory of
+simulation are considered. It is obvious that the trajectory of
 $r_c^\ast = 2.5$ is completely wrong: two clusters seperate after
 collision. The $r_c^\ast = 5.0$ trajectory is reasonably good, but the
 COM distance converges only when $r_c^\ast = 7.5$. This means the
 precision of force calculation is crucial in the study of collision
 dynamics. Althougth the precision of the adaptive cut-off method of
 $r_c^\ast = 5$ is the as uniform cut-off $r_c^\ast = 5$, the former
-produce better trajectory than the later. The force correction method
-that get rid of the heterogeneity error produces correct trajectory,
-but the motion along the trajectory is somewhat faster than other
-methods (see also the angular velocity in Fig. \ref{fig:tmp11}).
+produce better trajectory than the later. The long-range force
+correction method that gets rid of the heterogeneity error produces
+correct trajectory, but the motion along the trajectory is somewhat
+faster than other methods (see also the angular velocity in
+Fig. \ref{fig:tmp11}).
 
 \begin{figure}
   \centering
