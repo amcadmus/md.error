@@ -28,10 +28,10 @@ set yrange [0.00:0.20]
 pl 0.128 w l lc 0 lw 3,\
    't1.20.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't1.20.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
-   't1.20.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'FC',\
-   't1.20.tension.uni.out'   u 1:2:3 w e ls 11 not, '' u 1:2 w l ls 11 t 'URC HPC',\
-   't1.20.tension.adapt.out' u 1:2:3 w e ls 21 not, '' u 1:2 w l ls 21 t 'ARC HPC',\
-   't1.20.tension.fcorr.out' u 1:2:3 w e ls 31 not, '' u 1:2 w l ls 31 t 'FC HPC'
+   't1.20.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'LFC',\
+   't1.20.tension.uni.out'   u 1:2:3 w e ls 11 not, '' u 1:2 w l ls 11 t 'URC LPC',\
+   't1.20.tension.adapt.out' u 1:2:3 w e ls 21 not, '' u 1:2 w l ls 21 t 'ARC LPC',\
+   't1.20.tension.fcorr.out' u 1:2:3 w e ls 31 not, '' u 1:2 w l ls 31 t 'LFC LPC'
 
 set out 'tension.t1.10.eps'
 # set title 'T*=1.10'
@@ -41,10 +41,10 @@ set yrange [0.10:0.40]
 pl 0.307 w l lc 0 lw 3,\
    't1.10.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't1.10.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
-   't1.10.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'FC',\
-   't1.10.tension.uni.out'   u 1:2:3 w e ls 11 not, '' u 1:2 w l ls 11 t 'URC HPC',\
-   't1.10.tension.adapt.out' u 1:2:3 w e ls 21 not, '' u 1:2 w l ls 21 t 'ARC HPC',\
-   't1.10.tension.fcorr.out' u 1:2:3 w e ls 31 not, '' u 1:2 w l ls 31 t 'FC HPC'
+   't1.10.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'LFC',\
+   't1.10.tension.uni.out'   u 1:2:3 w e ls 11 not, '' u 1:2 w l ls 11 t 'URC LPC',\
+   't1.10.tension.adapt.out' u 1:2:3 w e ls 21 not, '' u 1:2 w l ls 21 t 'ARC LPC',\
+   't1.10.tension.fcorr.out' u 1:2:3 w e ls 31 not, '' u 1:2 w l ls 31 t 'LFC LPC'
 
 set out 'tension.t0.85.eps'
 # set title 'T*=0.85'
@@ -54,10 +54,10 @@ set yrange [0.50:1.00]
 pl 0.828 w l lc 0 lw 3,\
    't0.85.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't0.85.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
-   't0.85.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'FC',\
-   't0.85.tension.uni.out'   u 1:2:3 w e ls 11 not, '' u 1:2 w l ls 11 t 'URC HPC',\
-   't0.85.tension.adapt.out' u 1:2:3 w e ls 21 not, '' u 1:2 w l ls 21 t 'ARC HPC',\
-   't0.85.tension.fcorr.out' u 1:2:3 w e ls 31 not, '' u 1:2 w l ls 31 t 'FC HPC'
+   't0.85.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'LFC',\
+   't0.85.tension.uni.out'   u 1:2:3 w e ls 11 not, '' u 1:2 w l ls 11 t 'URC LPC',\
+   't0.85.tension.adapt.out' u 1:2:3 w e ls 21 not, '' u 1:2 w l ls 21 t 'ARC LPC',\
+   't0.85.tension.fcorr.out' u 1:2:3 w e ls 31 not, '' u 1:2 w l ls 31 t 'LFC LPC'
 
 set out 'tension.t0.70.eps'
 # set title 'T*=0.70'
@@ -67,8 +67,8 @@ set yrange [0.80:1.30]
 pl 1.150 w l lc 0 lw 3,\
    't0.70.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't0.70.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
-   't0.70.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'FC',\
-   't0.70.tension.uni.out'   u 1:2:3 w e ls 11 not, '' u 1:2 w l ls 11 t 'URC HPC',\
-   't0.70.tension.adapt.out' u 1:2:3 w e ls 21 not, '' u 1:2 w l ls 21 t 'ARC HPC',\
-   't0.70.tension.fcorr.out' u 1:2:3 w e ls 31 not, '' u 1:2 w l ls 31 t 'FC HPC'
+   't0.70.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'LFC',\
+   't0.70.tension.uni.out'   u 1:2:3 w e ls 11 not, '' u 1:2 w l ls 11 t 'URC LPC',\
+   't0.70.tension.adapt.out' u 1:2:3 w e ls 21 not, '' u 1:2 w l ls 21 t 'ARC LPC',\
+   't0.70.tension.fcorr.out' u 1:2:3 w e ls 31 not, '' u 1:2 w l ls 31 t 'LFC LPC'
    

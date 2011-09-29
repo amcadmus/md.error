@@ -23,4 +23,4 @@ pl\
 'collision-x0.60-u2.20-rc5.0/dist.cm.out' u 1:2 w l ls 2 t 'URC 5.0',\
 'collision-x0.60-u2.20-rc7.5/dist.cm.out' u 1:2 w l ls 3 t 'URC 7.5',\
 'adaptColl-x0.60-u2.20-rc5.0-61/dist.cm.out' u 1:2 w l ls 4 t 'ARC 5.0',\
-'fcorrColl-x0.60-u2.20-rc2.5-14/dist.cm.out' u 1:2 w l ls 5 t 'FR 2.5'
+'fcorrColl-x0.60-u2.20-rc2.5-14/dist.cm.out' u 1:2 w l ls 5 t 'LFC 2.5'
