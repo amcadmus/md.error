@@ -1,5 +1,5 @@
-\documentclass[aps,pre,preprint]{revtex4}
-% \documentclass[aps,pre,twocolumn]{revtex4}
+\documentclass[aps,pre,preprint]{revtex4-1}
+% \documentclass[aps,pre,twocolumn]{revtex4-1}
 % \documentclass[aps,jcp,groupedaddress,twocolumn,unsortedaddress]{revtex4}
 
 \usepackage{amsmath}
@@ -68,12 +68,12 @@ system simulations.  The simulation results are found to converge only
 at a very large cut-off radius value~\cite{duque2004some,
   ismail2007application}, also denpend on the energy/force continuity
 at the cut-off and the way of applying the long-range
-correction~\cite{trokhymchuk1999computer, shen2007comparative,
-  guo1997long, mecke1997molecular, janecek2006long, goujon2004monte}.
-Therefore, it is necessary to systemetically study the precision of
-the short-range interaction calculation, and to develop methods
-screening out the aforementioned cut-off artifect in the heterogeneous
-systems.
+correction~\cite{trokhymchuk1999computer, guo1997long,
+  mecke1997molecular, janecek2006long, goujon2004monte,
+  shen2007comparative}.  Therefore, it is necessary to systemetically
+study the precision of the short-range interaction calculation, and to
+develop methods screening out the aforementioned cut-off artifect in
+the heterogeneous systems.
 
 % In this paper, we focus on the systems in which
 % atoms/particles are interacting via short-range interactions, because
@@ -819,21 +819,22 @@ heterogeneity error dominates in the interfacial region.
 \end{figure}
 
 
-In Fig. \ref{fig:tmp4}, we present the correction force (only $x$
-component) by the red solid line. The $y$ and $z$ components are not
-shown because their magnitudes are negligible.  On the left interface,
-the correction force is along the positive direction of $x$ axis,
-namely poiting right.  On the right interface, the correction force is
-of the same maganitude but poiting left. Therefore, the liquid density
-should be higher and the vapor density should be lower than the
-corresponding uniform cut-off simulation.  The real error (in green
-square) and the estimated homogeneity error (in blue solid line) are
-all presented in Fig. \ref{fig:tmp4}.  Cleary, the real error follows
-the homogeneity error across the simulation region, which implies the
-contribution of the heterogeneity error is successfully removed, or is
-at least negligible. In the bulk liquid region, the homogeneity error
-is slightly overestimated, which is the same as the uniform and
-adaptive cut-off simulations.
+In Fig. \ref{fig:tmp4}, the red solid line presents the $x$ component
+correction force that is calculated every 40 time steps. The $y$ and
+$z$ components are not shown because their magnitudes are negligible.
+On the left interface, the correction force is along the positive
+direction of $x$ axis, namely poiting right.  On the right interface,
+the correction force is of the same maganitude but poiting
+left. Therefore, the liquid density should be higher and the vapor
+density should be lower than the corresponding uniform cut-off
+simulation.  The real error (in green square) and the estimated
+homogeneity error (in blue solid line) are all presented in
+Fig. \ref{fig:tmp4}.  Cleary, the real error follows the homogeneity
+error across the simulation region, which implies the contribution of
+the heterogeneity error is successfully removed, or is at least
+negligible. In the bulk liquid region, the homogeneity error is
+slightly overestimated, which is the same as the uniform and adaptive
+cut-off simulations.
 
 % Clearly the contribution of the heterogeneity
 % error is successfully removed, because the estimate of homogeneity
@@ -898,51 +899,120 @@ used in the simulation region.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.49\textwidth]{fig/converge/t0.70.eps} 
-  \includegraphics[width=0.49\textwidth]{fig/converge/t0.85.eps} 
-  \includegraphics[width=0.49\textwidth]{fig/converge/t1.10.eps} 
-  \includegraphics[width=0.49\textwidth]{fig/converge/t1.20.eps} 
-  \caption{The convergence of the equilibrium gas and liquid density
-    with respect to the cut-off radius. All densities are substracted
-    by the reference value, namely, the liquid and vapor density
-    meansured with a uniform cut-off radius $r_c^\ast=13$. This figure
-    presents the results of three methods, namely the uniform cut-off
-    (URC), the adaptive cut-off (ARC) and the force correction (LFC)
-    method. }
+  \includegraphics[width=0.42\textwidth]{fig/converge.new/t0.70.gas.eps} 
+  \includegraphics[width=0.42\textwidth]{fig/converge.new/t0.70.liquid.eps} 
+  \includegraphics[width=0.42\textwidth]{fig/converge.new/t0.85.gas.eps} 
+  \includegraphics[width=0.42\textwidth]{fig/converge.new/t0.85.liquid.eps} 
+  \includegraphics[width=0.42\textwidth]{fig/converge.new/t1.10.gas.eps} 
+  \includegraphics[width=0.42\textwidth]{fig/converge.new/t1.10.liquid.eps} 
+  \includegraphics[width=0.42\textwidth]{fig/converge.new/t1.20.gas.eps} 
+  \includegraphics[width=0.42\textwidth]{fig/converge.new/t1.20.liquid.eps} 
+  % \includegraphics[width=0.49\textwidth]{fig/converge.new/t0.70.eps} 
+  % \includegraphics[width=0.49\textwidth]{fig/converge.new/t0.85.eps} 
+  % \includegraphics[width=0.49\textwidth]{fig/converge.new/t1.10.eps} 
+  % \includegraphics[width=0.49\textwidth]{fig/converge.new/t1.20.eps} 
+  \caption{The convergence of the equilibrium gas and liquid densities
+    with respect to the cut-off radius. All densities are compared
+    with the refence value (black solid line), namely, the liquid and
+    vapor densities meansured with a uniform cut-off radius
+    $r_c^\ast=13$. The gray region denotes the statistcal uncertainty
+    of the reference value.  This figure presents the results of three
+    methods, namely the uniform cut-off (URC), the adaptive cut-off
+    (ARC) and the force correction (LFC) method. }
   \label{fig:tmp5}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.49\textwidth]{fig/converge/tension.t0.70.eps} 
-  \includegraphics[width=0.49\textwidth]{fig/converge/tension.t0.85.eps} 
-  \includegraphics[width=0.49\textwidth]{fig/converge/tension.t1.10.eps} 
-  \includegraphics[width=0.49\textwidth]{fig/converge/tension.t1.20.eps} 
+  \includegraphics[width=0.49\textwidth]{fig/converge.new/tension.t0.70.eps} 
+  \includegraphics[width=0.49\textwidth]{fig/converge.new/tension.t0.85.eps} 
+  \includegraphics[width=0.49\textwidth]{fig/converge.new/tension.t1.10.eps} 
+  \includegraphics[width=0.49\textwidth]{fig/converge.new/tension.t1.20.eps} 
   \caption{The convergence of the surface tension with respect to the
     cut-off radius.  This figure presents the results of three
     methods, namely the uniform cut-off (URC), the adaptive cut-off
-    (ARC) and the force correction (FC) method.  The results with and
-    without heterogeneous pressure correction (HPC) are shown together
-    for comparison. The reference surface tensions, shown by solid
-    black lines, are measured by the uniform cut-off method with
-    $r_c^\ast=13$ using HPC.}
+    (ARC) and the long-range force correction (LFC) method.  The
+    results with and without long-range pressure correction (LPC) are
+    shown together for comparison. The reference surface tensions,
+    shown by solid black lines, are measured by the uniform cut-off
+    method with $r_c^\ast=13$ using LPC.}
   \label{fig:tmp6}
 \end{figure}
+
+\begin{table}
+  \centering
+  \caption{
+    The maximum RMS force error and computational cost of 
+    three methods, namely the uniform cut-off
+    (URC), the adaptive cut-off (ARC) and the long-range
+    force correction (LFC) method.
+    The computational cost is the number of pairwise interaction 
+    measurements, which should be mashine-independent.
+  }\label{tab:tmp1}
+  \begin{tabular*}{0.50\textwidth}{c|c|@{\extracolsep{\fill}}ccc}\hline\hline
+    $T^\ast$ &$r^\ast_{c}$ & \textrm{method} & $\max\mathcal E^\ast$ & Cost($\times 10^{-6}$) \\ \hline
+    & 3.5 &\textrm{LFC} & $1.4\times 10^{-2}$ & 3.4 \\\cline{2-5}
+    &     &\textrm{URC} & $2.5\times 10^{-2}$ & 7.9 \\
+    & 5.0 &\textrm{ARC} & $2.4\times 10^{-2}$ & 4.6 \\
+    &     &\textrm{LFC} & $2.0\times 10^{-3}$ & 8.8 \\\cline{2-5}
+    &     &\textrm{URC} & $4.9\times 10^{-3}$ & 27 \\
+0.70& 7.5 &\textrm{ARC} & $4.9\times 10^{-3}$ & 13 \\
+    &     &\textrm{LFC} & $2.5\times 10^{-4}$ & 27 \\\cline{2-5}
+    &     &\textrm{URC} & $1.6\times 10^{-3}$ & 59 \\
+    &10.0 &\textrm{ARC} & $1.6\times 10^{-3}$ & 29 \\
+    &     &\textrm{LFC} & $5.8\times 10^{-5}$ & 59 \\ \hline\hline
+    & 3.5 &\textrm{LFC} & $1.4\times 10^{-2}$ & 3.1 \\\cline{2-5}
+    &     &\textrm{URC} & $2.1\times 10^{-2}$ & 7.1 \\
+    & 5.0 &\textrm{ARC} & $1.8\times 10^{-2}$ & 4.6 \\
+    &     &\textrm{LFC} & $1.9\times 10^{-3}$ & 7.9 \\\cline{2-5}
+    &     &\textrm{URC} & $4.4\times 10^{-3}$ & 24 \\
+0.85& 7.5 &\textrm{ARC} & $4.3\times 10^{-3}$ & 12 \\
+    &     &\textrm{LFC} & $3.0\times 10^{-4}$ & 24 \\\cline{2-5}
+    &     &\textrm{URC} & $1.4\times 10^{-3}$ & 53 \\
+    &10.0 &\textrm{ARC} & $1.4\times 10^{-3}$ & 26 \\
+    &     &\textrm{LFC} & $5.3\times 10^{-5}$ & 53 \\ \hline\hline
+  \end{tabular*}
+  \begin{tabular*}{0.49\textwidth}{c|c|@{\extracolsep{\fill}}ccc}\hline\hline
+    $T^\ast$ &$r^\ast_{c}$ & \textrm{method} & $\max\mathcal E^\ast$ & Cost($\times 10^{-6}$) \\ \hline
+    & 3.5 &\textrm{LFC} & $1.3\times 10^{-2}$ & 3.8 \\\cline{2-5}
+    &     &\textrm{URC} & $1.5\times 10^{-2}$ & 5.6 \\
+    & 5.0 &\textrm{ARC} & $1.5\times 10^{-2}$ & 3.2 \\
+    &     &\textrm{LFC} & $1.7\times 10^{-3}$ & 9.9 \\\cline{2-5}
+    &     &\textrm{URC} & $3.3\times 10^{-3}$ & 17 \\
+1.10& 7.5 &\textrm{ARC} & $3.5\times 10^{-3}$ & 8.8 \\
+    &     &\textrm{LFC} & $1.8\times 10^{-4}$ & 18 \\\cline{2-5}
+    &     &\textrm{URC} & $1.1\times 10^{-3}$ & 39 \\
+    &10.0 &\textrm{ARC} & $1.0\times 10^{-3}$ & 19 \\
+    &     &\textrm{LFC} & $4.2\times 10^{-5}$ & 39 \\ \hline\hline
+    & 3.5 &\textrm{LFC} & $1.2\times 10^{-2}$ & 1.8 \\\cline{2-5}
+    &     &\textrm{URC} & $1.1\times 10^{-2}$ & 4.2 \\
+    & 5.0 &\textrm{ARC} & $1.0\times 10^{-2}$ & 2.8 \\
+    &     &\textrm{LFC} & $1.5\times 10^{-3}$ & 4.6 \\\cline{2-5}
+    &     &\textrm{URC} & $2.5\times 10^{-3}$ & 14 \\
+1.20& 7.5 &\textrm{ARC} & $2.4\times 10^{-3}$ & 7.7 \\
+    &     &\textrm{LFC} & $1.5\times 10^{-4}$ & 14 \\\cline{2-5}
+    &     &\textrm{URC} & $8.2\times 10^{-4}$ & 30 \\
+    &10.0 &\textrm{ARC} & $8.3\times 10^{-4}$ & 17 \\
+    &     &\textrm{LFC} & $3.3\times 10^{-5}$ & 31 \\\hline\hline
+  \end{tabular*}
+\end{table}
+
+
 
 In the Fig. \ref{fig:tmp5} and Fig. \ref{fig:tmp6}, the convergence of
 the equilibrium liquid/vapor densities and surface tension are
 investigated with respect to increasing cut-off radius. The red, green
 and blue points with error bars denote the results of uniform,
-adaptive and long-range force correction, respectively.
-In Fig. \ref{fig:tmp5}, all densities are substracted by the reference
-value measured by uniform cut-off simulations of $r_c^\ast = 13$.  The
-gas densities are connected by the dashed lines, and the liquid
-densities are connected by the solid lines to guide the eyes.  In
+adaptive and long-range force correction, respectively.  In
+Fig. \ref{fig:tmp5}, all densities are compared with the reference
+value measured by uniform cut-off simulations of $r_c^\ast = 13$, with
+the statistcal uncertainty denoted by the gray region. The densities
+are connected by the the solid lines to guide the eyes.  In
 Fig. \ref{fig:tmp6}, the direct measures of surface tension (data
 points connected by the dashed lines) are presented with pressure
-corrected surface tension (data points connected by solid lines) and
-the reference surface tension measured by uniform cut-off simulations
-at $r_c^\ast = 13$ with pressure correction.
+corrected surface tension (data points connected by solid lines).  The
+reference surface tension is measured by uniform cut-off simulations
+at $r_c^\ast = 13$ with long-range pressure correction.
 
 % In the higher
 % temperature cases, the thermodynamic flucuation of the system is
@@ -955,41 +1025,106 @@ at $r_c^\ast = 13$ with pressure correction.
 
 For all temperatures studied, the liquid and gas densities of the
 uniform and the adaptive cut-off methods are almost identical at the
-same cut-off radius. This observation is also true for the surface
-tension, see Fig. \ref{fig:tmp6}. This indicates that controlling the
-maximum of force error (see Tab. \ref{tab:tmp1}) and introducing
-larger homogeneous force error in the bulk liquid/gas regions will not
-disturb the accuracy of the equilibrium densities and surface tension.
-The adaptive cut-off method roughly saves one half of the
-computational cost (see Tab. \ref{tab:tmp1}). The benefit of the
-adaptive cut-off depends on the property of the system: if the bulk
-regions dominate the system, and the density difference between the
-bulk regions is big enough to produce large error in the interfacial regions,
-then the adaptive cut-off will save a lot of
+same cut-off radius, see Fig. \ref{fig:tmp5}. This observation is also
+true for the surface tension, see Fig. \ref{fig:tmp6}. This indicates
+that controlling the maximum of force error (see Tab. \ref{tab:tmp1})
+and introducing larger homogeneous force error in the bulk liquid/gas
+regions will not disturb the accuracy of the equilibrium densities and
+surface tension.  The adaptive cut-off method roughly saves one half
+of the computational cost (see Tab. \ref{tab:tmp1}). The benefit of
+the adaptive cut-off depends on the property of the system: if the
+bulk regions dominate the system, and the density difference between
+the bulk regions is big enough to produce large error in the
+interfacial regions, then the adaptive cut-off will save a lot of
 computational expense. On the other hand, if the interfacial region is
-computationally intensive, the adaptive cut-off will not improve the efficency
-greatly.
+computationally intensive, the adaptive cut-off will not improve the
+efficency greatly.
 
 For the liquid/vapor densities, the long-range force correction method
 presents a much better convergence than the uniform and adaptive
-cut-off simulations. The properties perfectly converge when the cut-off
-radius is equal to or larger than 5, and the convergence at a cut-off
-as small as 3.5 is acceptable.  With the same cut-off radius, the
-computational cost of the force correction is nearly the same as the
-uniform cut-off methods, see Tab. \ref{tab:tmp1}, and at the same
-time, the force accuracy is more than one order of maganitude better.
+cut-off simulations. The properties converge when the cut-off radius is
+only 3.5.  With the same cut-off radius, the computational cost of the
+force correction is nearly the same as the uniform cut-off methods,
+see Tab. \ref{tab:tmp1}, and at the same time, the force accuracy is
+more than one order of maganitude better.
 % However, the maximum
 % force error of the force correction method is reduced by about one
 % order of maganitude.
+We also observe that the liquid densities are systemetically higher
+than the reference results. This fact will be discussed later by
+comparing with literature results.
 
-With the long-range pressure correction, the convergence of the
-surface tension of all methods are greatly improved. The discrepancy
-between the corrected and uncorrected pressure is the value of the
-correction, which decreases with increasing cut-off radius. However,
-even at $r_c^\ast=10$, the correction is not negligible for $T^\ast =
-0.70$ and $T^\ast = 0.85$. At higher temperature, the statistical
-uncertainty gets larger, and better convergence is achieved at smaller
-cut-off radius.
+
+The surface tension result of the force correction without pressure
+correction is slightly better than the uniform and adaptive cut-off
+methods with out pressure correction, see Fig. \ref{fig:tmp6}.  With
+the help of the long-range pressure correction, the convergence of the
+surface tension of all methods are greatly improved.  The force
+correction method converges at $r_c^\ast = 3.5$, and the
+uniform/adaptive cut-off methods converge at $r_c^\ast = 5.0$ ($T^\ast
+= 0.70$) and at $r_c^\ast = 7.5$ ($T^\ast = 0.85,\ 1.10,\ 1.20$).  The
+discrepancy between the corrected and uncorrected tension is the
+amount of the correction, which decreases with increasing cut-off
+radius. However, even at $r_c^\ast=10$, the correction is not
+negligible for $T^\ast = 0.70$ and $T^\ast = 0.85$. At higher
+temperature, amount of correction is sometimes smaller than the
+statistcal uncertainty.
+
+We list in Tab. \ref{tab:comparison} a wide range of results reported
+by literature~\cite{janecek2006long, lotfi1992vapour,
+  errington2003evaluating, ismail2007application}, as well as our
+uniform ($r_c^\ast = 13$) and force correction ($r_c^\ast = 5.0$)
+results for comparison. The abbreviations in the table are explained
+in the caption. The MC/LEC, MD/Ewald and our methods are direct
+simulation of the heterogeneous system. The MD/Npt+test particle and
+MC/GC-TMMC methods are simulation of homogeneous systems that do not
+have the difficulties of heterogeneity, and are believed to be more
+precise than direct simulations~\cite{shen2007comparative}.
+\begin{table}
+  \centering
+  \caption{Equilibrium densities and surface tension comparision 
+    with various literature results: Monte Carlo with long-range
+    energy correction (MC/LEC)~\cite{janecek2006long}, Npt+test
+    particle molecular dynamics (MD/Npt+test particle)~\cite{lotfi1992vapour},
+    grand-canonical transition-matrix Monte Carlo (MC/GC-TMMC)~\cite{errington2003evaluating},
+    molecular dynamics with dispersion term calculated by the Ewald
+    summation (MD/Ewald)~\cite{ismail2007application}
+    and uniform cut-off (URC) and long-range force correction (LFC) molecular dynamics
+    proposed by this work. The surface tensions of this work are
+    corrected by the long-range pressure correction.
+    The cut-off radius of the Ewald summation is for the real space.
+  }
+  \label{tab:comparison}
+  \begin{tabular*}{0.99\textwidth}{@{\extracolsep{\fill}}clllllc}\hline\hline
+  % \begin{tabular}{cccc|cccc}\hline\hline
+    $T^\ast$ & Method & $r_c^\ast$ & $\rho^\ast_{\textrm{liq}}$ & $\rho^\ast_{\textrm{vap}}$ & $\gamma^\ast$ & Source \\\hline
+    0.70 & MC/LEC               & 2.5      & 0.842(1)    & 0.0021(2)   & 1.21(2)   & \cite{janecek2006long}\\
+    0.70 & MD/Npt+test particle & 5.0      & 0.84266(18) & 0.00193(10) & -         & \cite{lotfi1992vapour}\\
+    0.70 & MC/GC-TMMC           & 1/2 box  & 0.8424(13)  & 0.001992(2) & 1.182(10) & \cite{errington2003evaluating}\\
+    0.70 & MD/Ewald             & 5.0(real)& 0.8414(1)   & 0.0020(0)   & 1.141(11) & \cite{ismail2007application}\\
+    0.70 & MD/URC               & 13.0     & 0.8423(2)   & 0.0020(0)   & 1.128(10) & this work \\
+    0.70 & MD/LFC               & 5.0      & 0.8424(2)   & 0.0021(1)   & 1.145(11) & this work \\\hline
+    0.85 & MD/Npt+test particle & 5.0      & 0.77623(25) & 0.00970(22) & -         & \cite{lotfi1992vapour}\\
+    0.85 & MC/GC-TMMC           & 1/2 box  & 0.7760(10)  & 0.009611(9) & 0.837(2)  & \cite{errington2003evaluating}\\
+    0.85 & MD/Ewald             & 5.0(real)& 0.7750(1)   & 0.0098(0)   & 0.818(15) & \cite{ismail2007application}\\
+    0.85 & MD/URC               & 13.0     & 0.7758(3)   & 0.0098(1)   & 0.794(09) & this work \\
+    0.85 & MD/LFC               & 5.0      & 0.7760(4)   & 0.0098(1)   & 0.823(21) & this work\\\hline
+    1.10 & MC/LEC               & 2.5      & 0.642(1)    & 0.054(1)    & 0.33(2)   & \cite{janecek2006long}\\
+    1.10 & MD/Npt+test particle & 5.0      & 0.6401(12)  & 0.0533(14)  & -         & \cite{lotfi1992vapour}\\
+    1.10 & MC/GC-TMMC           & 1/2 box  & 0.6410(7)   & 0.05485(5)  & 0.343(2)  & \cite{errington2003evaluating}\\
+    1.10 & MD/Ewald             & 5.0(real)& 0.6383(1)   & 0.0553(0)   & 0.302(11) & \cite{ismail2007application}\\
+    1.10 & MD/URC               & 13.0     & 0.6399(9)   & 0.0560(8)   & 0.300(07) & this work\\
+    1.10 & MD/LFC               & 5.0      & 0.6405(9)   & 0.0553(6)   & 0.293(9)  & this work\\ \hline
+    1.20 & MC/LEC               & 2.5      & 0.566(1)    & 0.109(2)    & 0.16(2)   & \cite{janecek2006long}\\
+    1.20 & MD/Npt+test particle & 5.0      & 0.5661(22)  & 0.0987(16)  & -         & \cite{lotfi1992vapour}\\
+    1.20 & MD/Ewald             & 5.0(real)& 0.5627(2)   & 0.0942(0)   & 0.156(14) & \cite{ismail2007application}\\
+    1.20 & MD/URC               & 13.0     & 0.5624(11)  & 0.1002(5)   & 0.131(06) & this work\\
+    1.20 & MD/LFC               & 5.0      & 0.5651(22)  & 0.0987(11)  & 0.136(17) & this work\\
+    \hline\hline
+  % \end{tabular}
+  \end{tabular*}
+\end{table}
+
 
 Comparing the results of the force correction method at
 $r_c^\ast = 3.5$ and uniform cut-off radius method at $r_c^\ast = 7.5$, the
@@ -1011,8 +1146,8 @@ implies that the corrected error force may point to any direction with
 the same probability, and may be cancelled by itself in a long time
 average.  The heterogeneity error, in contrast, stems from the
 non-vanishing value of the mean error force, which is alway pointing
-at one certain direction (the same direction as the low-to-high
-density jump), and has no oppotunity to be self-cancelled.
+at one certain direction (the opposite direction of the density
+gradient), and has no oppotunity to be self-cancelled.
 
 % The reason is the corrected error force has a varnished mean
 % value (, so it may point to any
@@ -1044,63 +1179,9 @@ density jump), and has no oppotunity to be self-cancelled.
 % pressure correction, the result is acceptable at cut-off 5.0 and
 % satisfactorily converged at cut-off 7.5.
 
-\begin{table}
-  \centering
-  \caption{
-    The maximum RMS force error and computational cost of 
-    three methods, namely the uniform cut-off
-    (URC), the adaptive cut-off (ARC) and the long-range
-    force correction (LFC) method.
-    The computational cost is the number of pairwise interaction 
-    measurements, which should be mashine-independent.
-  }\label{tab:tmp1}
-  \begin{tabular*}{0.50\textwidth}{c|c|@{\extracolsep{\fill}}ccc}\hline\hline
-    $T^\ast$ &$r^\ast_{c}$ & \textrm{method} & $\max\mathcal E^\ast$ & Cost($\times 10^{-6}$) \\ \hline
-    & 3.5 &\textrm{FC } & $1.4\times 10^{-2}$ & 3.4 \\\cline{2-5}
-    &     &\textrm{URC} & $2.5\times 10^{-2}$ & 7.9 \\
-    & 5.0 &\textrm{ARC} & $2.4\times 10^{-2}$ & 4.6 \\
-    &     &\textrm{FC } & $2.0\times 10^{-3}$ & 8.8 \\\cline{2-5}
-    &     &\textrm{URC} & $4.9\times 10^{-3}$ & 27 \\
-0.70& 7.5 &\textrm{ARC} & $4.9\times 10^{-3}$ & 13 \\
-    &     &\textrm{FC } & $2.5\times 10^{-4}$ & 27 \\\cline{2-5}
-    &     &\textrm{URC} & $1.6\times 10^{-3}$ & 59 \\
-    &10.0 &\textrm{ARC} & $1.6\times 10^{-3}$ & 29 \\
-    &     &\textrm{FC } & $5.8\times 10^{-5}$ & 59 \\ \hline\hline
-    & 3.5 &\textrm{FC } & $1.4\times 10^{-2}$ & 3.1 \\\cline{2-5}
-    &     &\textrm{URC} & $2.1\times 10^{-2}$ & 7.1 \\
-    & 5.0 &\textrm{ARC} & $1.8\times 10^{-2}$ & 4.6 \\
-    &     &\textrm{FC } & $1.9\times 10^{-3}$ & 7.9 \\\cline{2-5}
-    &     &\textrm{URC} & $4.4\times 10^{-3}$ & 24 \\
-0.85& 7.5 &\textrm{ARC} & $4.3\times 10^{-3}$ & 12 \\
-    &     &\textrm{FC } & $3.0\times 10^{-4}$ & 24 \\\cline{2-5}
-    &     &\textrm{URC} & $1.4\times 10^{-3}$ & 53 \\
-    &10.0 &\textrm{ARC} & $1.4\times 10^{-3}$ & 26 \\
-    &     &\textrm{FC } & $5.3\times 10^{-5}$ & 53 \\ \hline\hline
-  \end{tabular*}
-  \begin{tabular*}{0.49\textwidth}{c|c|@{\extracolsep{\fill}}ccc}\hline\hline
-    $T^\ast$ &$r^\ast_{c}$ & \textrm{method} & $\max\mathcal E^\ast$ & Cost($\times 10^{-6}$) \\ \hline
-    & 3.5 &\textrm{FC } & $1.3\times 10^{-2}$ & 3.8 \\\cline{2-5}
-    &     &\textrm{URC} & $1.5\times 10^{-2}$ & 5.6 \\
-    & 5.0 &\textrm{ARC} & $1.5\times 10^{-2}$ & 3.2 \\
-    &     &\textrm{FC } & $1.7\times 10^{-3}$ & 9.9 \\\cline{2-5}
-    &     &\textrm{URC} & $3.3\times 10^{-3}$ & 17 \\
-1.10& 7.5 &\textrm{ARC} & $3.5\times 10^{-3}$ & 8.8 \\
-    &     &\textrm{FC } & $1.8\times 10^{-4}$ & 18 \\\cline{2-5}
-    &     &\textrm{URC} & $1.1\times 10^{-3}$ & 39 \\
-    &10.0 &\textrm{ARC} & $1.0\times 10^{-3}$ & 19 \\
-    &     &\textrm{FC } & $4.2\times 10^{-5}$ & 39 \\ \hline\hline
-    & 3.5 &\textrm{FC } & $1.2\times 10^{-2}$ & 1.8 \\\cline{2-5}
-    &     &\textrm{URC} & $1.1\times 10^{-2}$ & 4.2 \\
-    & 5.0 &\textrm{ARC} & $1.0\times 10^{-2}$ & 2.8 \\
-    &     &\textrm{FC } & $1.5\times 10^{-3}$ & 4.6 \\\cline{2-5}
-    &     &\textrm{URC} & $2.5\times 10^{-3}$ & 14 \\
-1.20& 7.5 &\textrm{ARC} & $2.4\times 10^{-3}$ & 7.7 \\
-    &     &\textrm{FC } & $1.5\times 10^{-4}$ & 14 \\\cline{2-5}
-    &     &\textrm{URC} & $8.2\times 10^{-4}$ & 30 \\
-    &10.0 &\textrm{ARC} & $8.3\times 10^{-4}$ & 17 \\
-    &     &\textrm{FC } & $3.3\times 10^{-5}$ & 31 \\\hline\hline
-  \end{tabular*}
-\end{table}
+
+
+
 
 
 
@@ -1338,6 +1419,9 @@ is worthwhile because it improves the simulation results tramendously.
 
 
 \section{Conclusions}\label{sec:conclusion}
+
+In this paper, we developed the force error estimate for non-bonded
+short-range interaction in the heterogeneous system. 
 
 
 % \newpage

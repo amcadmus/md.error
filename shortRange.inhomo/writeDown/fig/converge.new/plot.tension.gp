@@ -18,14 +18,18 @@ set mxtics 2
 set mytics 5
 set format y "%.2f"
 set key bottom right
+set clip two
+set style fill pattern 8
 
 set out 'tension.t1.20.eps'
 unset title
 # set title 'T*=1.20'
 unset label
-set label 'T*=1.20' at 6.5, 0.18
+set label 'T*=1.20' at 6.0, 0.18
 set yrange [0.00:0.20]
-pl 0.128 w l lc 0 lw 3,\
+pl \
+   't1.20.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+   't1.20.tension.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
    't1.20.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't1.20.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
    't1.20.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'LFC',\
@@ -36,9 +40,11 @@ pl 0.128 w l lc 0 lw 3,\
 set out 'tension.t1.10.eps'
 # set title 'T*=1.10'
 unset label
-set label 'T*=1.10' at 6.5, 0.37
+set label 'T*=1.10' at 6.0, 0.37
 set yrange [0.10:0.40]
-pl 0.307 w l lc 0 lw 3,\
+pl \
+   't1.10.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+   't1.10.tension.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
    't1.10.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't1.10.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
    't1.10.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'LFC',\
@@ -49,9 +55,11 @@ pl 0.307 w l lc 0 lw 3,\
 set out 'tension.t0.85.eps'
 # set title 'T*=0.85'
 unset label
-set label 'T*=0.85' at 6.5, 0.95
+set label 'T*=0.85' at 6.0, 0.95
 set yrange [0.50:1.00]
-pl 0.828 w l lc 0 lw 3,\
+pl \
+   't0.85.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+   't0.85.tension.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
    't0.85.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't0.85.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
    't0.85.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'LFC',\
@@ -62,9 +70,11 @@ pl 0.828 w l lc 0 lw 3,\
 set out 'tension.t0.70.eps'
 # set title 'T*=0.70'
 unset label
-set label 'T*=0.70' at 6.5, 1.255
+set label 'T*=0.70' at 6.0, 1.255
 set yrange [0.80:1.30]
-pl 1.150 w l lc 0 lw 3,\
+pl \
+   't0.70.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+   't0.70.tension.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
    't0.70.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't0.70.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
    't0.70.tension.fcorr.out' u 1:($2-$4):3 w e ls 31 not, '' u 1:($2-$4) w l ls 32 t 'LFC',\

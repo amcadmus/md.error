@@ -1,0 +1,96 @@
+#processing t0.70-n16000-uni-rc05.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-uni-rc05.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+./run.uniform.sh: line 28: 16626 Aborted                 $command > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-uni-rc07.5
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-uni-rc07.5/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+./run.uniform.sh: line 28: 19052 Aborted                 $command > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-uni-rc10.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-uni-rc10.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+./run.uniform.sh: line 28: 21474 Aborted                 $command > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-uni-rc05.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-uni-rc05.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-uni-rc05.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-uni-rc05.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-uni-rc07.5
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-uni-rc07.5/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-uni-rc07.5
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-uni-rc07.5/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-uni-rc10.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-uni-rc10.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-uni-rc10.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-uni-rc10.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-fcorr-rc03.5-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-fcorr-rc03.5-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-fcorr-rc05.0-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-fcorr-rc05.0-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-fcorr-rc03.5-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-fcorr-rc03.5-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-fcorr-rc05.0-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-fcorr-rc05.0-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-fcorr-rc07.5-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-fcorr-rc07.5-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-fcorr-rc07.5-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-fcorr-rc07.5-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-fcorr-rc10.0-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-fcorr-rc10.0-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-fcorr-rc10.0-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-fcorr-rc10.0-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t1.10-n16000-fcorr-rc03.5-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-fcorr-rc03.5-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.10-n16000-fcorr-rc05.0-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-fcorr-rc05.0-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-fcorr-rc07.5-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-fcorr-rc07.5-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t1.10-n16000-fcorr-rc07.5-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-fcorr-rc07.5-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-fcorr-rc10.0-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-fcorr-rc10.0-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t1.10-n16000-fcorr-rc10.0-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-fcorr-rc10.0-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-fcorr-rc05.0-feq0040-1
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-fcorr-rc05.0-feq0040-1/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-fcorr-rc03.5-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-fcorr-rc03.5-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-fcorr-rc05.0-feq0040
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-fcorr-rc05.0-feq0040/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-uni-rc05.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-uni-rc05.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+./run.fcorr.sh: line 32:  5613 Killed                  $command > gpu-md.out 2> gpu-md.perf
+#processing t1.10-n16000-uni-rc05.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-uni-rc05.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.10-n16000-uni-rc07.5
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-uni-rc07.5/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-uni-rc07.5
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-uni-rc07.5/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t1.10-n16000-uni-rc10.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-uni-rc10.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-uni-rc10.0
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-uni-rc10.0/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+./run.uniform.sh: line 28: 14148 Terminated              $command > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-fcorr-rc03.5-feq0040-long
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-fcorr-rc03.5-feq0040-long/tools/simulation.fcorr/lj.nhc-xtc conf.gro 6000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-fcorr-rc05.0-feq0040-long
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-fcorr-rc05.0-feq0040-long/tools/simulation.fcorr/lj.nhc-xtc conf.gro 6000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-uni-rc03.5
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-uni-rc03.5/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-uni-rc03.5
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-uni-rc03.5/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.10-n16000-uni-rc03.5
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-uni-rc03.5/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-uni-rc03.5
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-uni-rc03.5/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-fcorr-rc05.0-feq0040-1
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-fcorr-rc05.0-feq0040-1/tools/simulation.fcorr/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-fcorr-rc07.5-feq0040-long
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-fcorr-rc07.5-feq0040-long/tools/simulation.fcorr/lj.nhc-xtc conf.gro 6000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-fcorr-rc10.0-feq0040-long
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-fcorr-rc10.0-feq0040-long/tools/simulation.fcorr/lj.nhc-xtc conf.gro 6000000 1 > gpu-md.out 2> gpu-md.perf
+./run.fcorr.sh: line 32: 30016 Killed                  $command > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-adapt-e0.098
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-adapt-e0.098/tools/simulation.hetero.cutoff/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+#processing t0.70-n16000-adapt-e0.098
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-adapt-e0.098/tools/simulation.hetero.cutoff/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-adapt-e0.086
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-adapt-e0.086/tools/simulation.hetero.cutoff/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t1.10-n16000-adapt-e0.051
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-adapt-e0.051/tools/simulation.hetero.cutoff/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
