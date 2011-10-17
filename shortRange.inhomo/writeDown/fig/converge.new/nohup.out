@@ -94,3 +94,7 @@ command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.70-n16000-adapt-e0.
 command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-adapt-e0.086/tools/simulation.hetero.cutoff/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
 #processing t1.10-n16000-adapt-e0.051
 command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.10-n16000-adapt-e0.051/tools/simulation.hetero.cutoff/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t1.20-n16000-adapt-0.027
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t1.20-n16000-adapt-0.027/tools/simulation.hetero.cutoff/lj.nhc-xtc conf.gro 6000000 1 > gpu-md.out 2> gpu-md.perf
+#processing t0.85-n16000-adapt-e0.086-1
+command is: /home/wanghan/study/shortRange.inhomo/final.1/t0.85-n16000-adapt-e0.086-1/tools/simulation.hetero.cutoff/lj.nhc-xtc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
