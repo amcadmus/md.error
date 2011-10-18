@@ -16,9 +16,9 @@ set logscale y
 set y2range [2:9]
 set mxtics 2
 set ytics nomirror
-set y2tics .5
+set y2tics 1.0
 set mytics 10
-set my2tics 1
+set my2tics 2
 set format y '10^{%L}'
 set format y2 '%.1f'
 set xlabel 'x'
