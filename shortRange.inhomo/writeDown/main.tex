@@ -1502,10 +1502,15 @@ cut-off simulations, in which very large cut-off radii were used to
 achieve real convergence.  With the same maximum RMS force error,
 the precision of physical properties of the adaptive cut-off method
 were the same as the uniform cut-off method. From the efficiency
-point of view, the advantage of the adaptive cut-off method depends on the
+point of view,
+the adaptive cut-off simulation saved 34\% -- 50\% computational cost
+in liquid-vapor simulation and 18\% in the cluster collision simulation.
+The advantage of the adaptive cut-off method depends on the
 system: if the large bulk regions are connected by high density
 gradient interfaces, the adaptive cut-off method will save a large amount of
-computational cost.  In the liquid-vapor equilibrium simulation, the
+computational cost.
+
+In the liquid-vapor equilibrium simulation, the
 force correction method improved the force accuracy by one order of
 magnitude without large extra computational expense. The physical
 properties converged at cut-off $r_c^\ast = 3.5$, whereas the uniform
@@ -1526,6 +1531,11 @@ computation, small deviations of angular velocity and momentum were
 observed.
 
 
+
+\section*{Acknowledgements}
+The authors gratefully thank Luigi Delle Site for for useful comments
+on the manuscript. The work of P.Z. is supported by grants from
+National Natural Science Foundation of China (20490222).
 
 
 % \newpage
