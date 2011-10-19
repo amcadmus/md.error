@@ -329,17 +329,14 @@ then, a Fourier expansion can be obtained:
   \bigg)
   \bigg].
 \end{align}
-Here we denote the convolution kernel $\vert\v f^c(\v r)\vert^2$ by
-$K_{\textrm{homo}}(\v r)$.  The second equation in \eqref{eqn:tmp13}
-holds due to the fact: the Fourier transform of the convolution
-$K_{\textrm{homo}}\ast\rho$ is equal to the multiplication of Fourier transforms
-$\hat{K}_{\textrm{homo}}$ and $\hat\rho$, which are given by
-\begin{align}\label{eqn:f-kernel-homo}
-  \hat K_{\textrm{homo}}(\v k)
-  &=
-  \int_{\mathbb R^3}K_{\textrm{homo}}(\v r)e^{-2\pi i\v k\cdot\v r}\,\d d\v r,
-\end{align}
-and
+Here $\vert\v f^c(\v r)\vert^2$ is denoted by
+$K_{\textrm{homo}}(\v r)$.
+The wedge notation $\wedge$ means Fourier transform. The prime on $\v k_{k_1,k_2,k_3}$ means
+that the periodic image $k_\alpha - K_\alpha$ should use instead of
+$k_\alpha$ when $k_\alpha \geq K_\alpha/2$.
+The second equation in \eqref{eqn:tmp13}
+holds due to the fact:
+$[\mathcal E^2]^\wedge = [K_{\textrm{homo}}\ast\rho]^\wedge = \hat{K}_{\textrm{homo}} \times \hat\rho$. The Fourier transform of $\rho$ and $K_{\textrm{homo}}$  are
 \begin{align}
   \hat\rho(\v k_{k_1,k_2,k_3})
   & =
@@ -350,14 +347,14 @@ and
   -2\pi i\bigg(
   \frac{k_1i_1}{K_1} + \frac{k_2i_2}{K_2} + \frac{k_3i_3}{K_3}
   \bigg)
-  \bigg].
+  \bigg],
 \end{align}
-Note that in Eqn. \eqref{eqn:tmp13}, the prime on $\v k_{k_1,k_2,k_3}$ means
-that the periodic image $k_\alpha - K_\alpha$ should use instead of
-$k_\alpha$ when $k_\alpha \geq K_\alpha/2$.
-In Eqn. \eqref{eqn:f-kernel-homo}
-the Fourier transform is performed on $K_{\textrm{homo}}(\v r)$ rather than
-$K_{\textrm{homo}}(\v r - \v r')$.
+and
+\begin{align}\label{eqn:f-kernel-homo}
+  \hat K_{\textrm{homo}}(\v k)
+  &=
+  \int_{\mathbb R^3}K_{\textrm{homo}}(\v s)e^{-2\pi i\v k\cdot\v s}\,\d d\v s.
+\end{align}
 Most of the short-range
 interactions are isotropic, so  $K_{\textrm{homo}}(\v r) =
 K_{\textrm{homo}}(r)$, then the three-dimensional integral in
@@ -368,7 +365,7 @@ integral:
   =
   % \int_{\mathbb R^3}K_{\textrm{homo}}(r)e^{-2\pi i\v k\cdot\v r}\d d\v r
   % =
-  \int_{r_c}^\infty \frac{2 r}k\, K_{\textrm{homo}}(r) \sin(2\pi kr)\,\d dr,
+  \int_{r_c}^\infty \frac{2 s}k\, K_{\textrm{homo}}(s) \sin(2\pi ks)\,\d ds,
 \end{align}
 which can be calculated by numerical
 integration from $r_c$ to a large upper bound, saying $R_c$. Perfect
@@ -380,25 +377,25 @@ Similarly, for Eqn. \eqref{eqn:tmp3}, the Fourier mode of the the mean error
 force is (in terms of Fourier transform):
 \begin{align}\label{eqn:tmp17}
   \langle\Delta\v F\rangle^\wedge(\v k) =
-  \hat{\v f}^c(\v k)\,
+  \hat{\v f^c}(\v k)\,
   \hat\rho(\v k),
 \end{align}
 where the Fourier transform of the complementary force is given by
 \begin{align}\label{eqn:tmp18}
-  \hat{\v f}^c(\v k) 
+  \hat{\v f^c}(\v k) 
   & = 
   2\pi\frac{\v k}k\, i\,
   \bigg\{
   r_c^2\,u(r_c)
   \bigg[\,
-  \frac{2\cos(2\pi kr)}{2\pi kr}
-  -\frac{2\sin(2\pi kr)}{(2\pi kr)^2}
+  \frac{2\cos(2\pi kr_c)}{2\pi kr_c}
+  -\frac{2\sin(2\pi kr_c)}{(2\pi kr_c)^2}
   \,\bigg] 
   -
-  \int_{r_c}^\infty 2r\,u(r)\sin(2\pi kr)\,\d d\v r
-  \bigg\}.
+  \int_{r_c}^\infty 2s\,u(s)\sin(2\pi ks)\,\d ds
+  \bigg\},
 \end{align}
-
+where $u(r)$ is the isotropic pairwise potential.
 
 \subsection{Adaptive cut-off radius method}
 
