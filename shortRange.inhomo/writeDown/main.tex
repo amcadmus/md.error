@@ -62,7 +62,7 @@ contribution of the mentioned properties to infinity.
 % The spacial inhomogenety of the system in terms of particle density,
 % particle type and change distribution is very common in natrual
 % system.
-The inhomogeneous systems, in which the density of certain type of
+Instead for inhomogeneous systems, in which the density of certain type of
 atom changes within the length scale of several molecules, 
 and thus lack of uniformity, 
 the direct molecular simulation 
@@ -268,14 +268,16 @@ namely $\mathcal E_{\textrm{inhomo}}(\v r) = \vert\langle\Delta\v F(\v
 r)\,\rangle\vert$.  The last term on right hand side of \eqref{eqn:tmp5} originates from the
 correlation between the particles, so it is called the correlation
 error.
-% The correlation error involves a double integral, which
-% implies that calculating this term requires more compuational cost
-% than the homogeneity and inhomogeneity errors.
+The correlation error involves a double integral, which
+implies that the calculation  requires more compuational resources
+than the homogeneity and inhomogeneity errors.
 The rest of this paper
 assumes the 
 correlation error does not dominate in the system, and can be safely
 neglected.
-
+It is worth pointing out that this is not always true, for example, in
+critical region where the corrlation plays an important role in the system,
+the corrlation error should be taken into account.
 
 
 \subsection{Fast calculation of the error estimate}\label{sec:tmp1.3}
@@ -375,7 +377,7 @@ paper. Since integral \eqref{eqn:kernel-inte} is independent of the
 density of the system, it is calculated only once and stored.
 
 Similarly, for Eqn. \eqref{eqn:tmp3}, the Fourier mode of the the mean error
-force is
+force is (in terms of Fourier transform):
 \begin{align}\label{eqn:tmp17}
   \langle\Delta\v F\rangle^\wedge(\v k) =
   \hat{\v f}^c(\v k)\,
@@ -547,7 +549,7 @@ The mean square error is given by
 \end{align}
 containing no inhomogeneity contribution.  It is worth noticing that the mean
 square error of the corrected force is nothing but the variance of the
-corrected/uncorrected error force: $\langle\vert\Delta\v
+error force: $\langle\vert\Delta\v
 F_{\textrm{corr}}(\v r)\vert^2\rangle = \textrm{Var}[\Delta\v
 F_{\textrm{corr}}(\v r)] = \textrm{Var}[\Delta\v F(\v r)]$.
 
@@ -704,11 +706,11 @@ coexistence properties, for example, the equilibrium liquid/vapor
 density, and the surface tension. The system studied in the present
 paper contains 16,000 identical standard Lennard-Jones particles that are
 separated into liquid phase in the center of the box and vapor phase
-surrounded (see Fig.~\ref{fig:tmp1}).  The conventional dimensionless
+surrounded (see Fig.~\ref{fig:tmp1}).  The conventional Lennard-Jones
 unit system is employed: the unit of length, energy, mass and time are
 denoted by $\epsilon$, $\sigma$, $m$ and $\tau$ ($\tau =
 \sigma\sqrt{m/\varepsilon}$), respectively.  All quantities are
-written in the unitless form by adding the superscript ``$\ast$''.
+rescaled by the Lennard-Jones units and added the superscript ``$\ast$''.
 For example, $r^\ast = r / \sigma$, $T^\ast = k_BT / \epsilon$,
 $P^\ast = P\cdot \sigma^3 / \epsilon$ and $\mathcal E^\ast = \mathcal
 E\cdot\sigma/\varepsilon$.  The MD time step {is} $\Delta t^\ast =
@@ -1071,7 +1073,7 @@ computational cost (see Tab. \ref{tab:tmp1}). The efficiency benefit
 of the adaptive cut-off depends on the property of the system: if the
 bulk regions dominate the system, and the inhomogeneity produces large
 interfacial force error, then the adaptive cut-off will save non-negligible
-computational expense. On the other hand, if the interfacial region is
+computational resources. On the other hand, if the interfacial region is
 computationally intensive, the adaptive cut-off will not improve the
 efficiency greatly.
 
@@ -1124,8 +1126,8 @@ Since the homogeneity error dominates in the former simulation and the
 inhomogeneity error dominates in the latter, the above observation
 indicates different natures of error play different roles in the
 equilibrium densities.  The homogeneity error is actually the variation of the
-corrected error force that has a vanished mean, see
-Eqn. \eqref{eqn:mean-fcorr}. This implies that the corrected error
+corrected error force with its mean equal to zero (see
+Eqn.~\eqref{eqn:mean-fcorr}). This implies that the corrected error
 force may point to any direction with the same probability, and may cancel
 in a long time average.  The inhomogeneity error,
 in contrast, stems from the non-vanishing mean value of the error
@@ -1315,7 +1317,7 @@ $d^\ast\approx 27$. The initial velocity of the clusters are $\v u_A =
 \frac12(u, 0, 0)$ and $\v u_B = -\frac12(u, 0, 0)$, see
 Fig. \ref{fig:tmp7}. The impact parameter $D$ is defined by the $z$
 coordinate difference between the center of mass (COM) of the
-clusters. The unitless impact factor defined by
+clusters. The dimensionless impact factor defined by
 \begin{align}
   x = \frac D d
 \end{align}
@@ -1508,7 +1510,7 @@ in liquid-vapor simulation and 18\% in the cluster collision simulation.
 The advantage of the adaptive cut-off method depends on the
 system: if the large bulk regions are connected by high density
 gradient interfaces, the adaptive cut-off method will save a large amount of
-computational cost.
+computational resources.
 
 In the liquid-vapor equilibrium simulation, the
 force correction method improved the force accuracy by one order of
@@ -1520,7 +1522,7 @@ densities). With nearly the same RMS force error, precision of
 equilibrium densities of the force correction simulation were much
 better than the uniform cut-off simulation.  Since the homogeneity
 error dominated the force correction and the inhomogeneity error
-dominated the uniform cut-off simulation, we conclude the homogeneity
+dominated the simulation with uniform cut-off, we conclude the homogeneity
 error and the inhomogeneity error play different roles on the precision
 of equilibrium liquid-vapor densities.  In the collision cluster case,
 the force correction methods produced high-precision trajectory at a
