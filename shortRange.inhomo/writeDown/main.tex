@@ -255,7 +255,7 @@ r''$. Eqn. \eqref{eqn:tmp4} becomes
   \mathcal E^2_{\textrm{homo}}(\v r) +
 %  \langle\Delta\v F(\v r)\,\rangle^2 +
   \mathcal E^2_{\textrm{inhomo}}(\v r) +
-  \mathcal E^2_{\textrm{correlation}}(\v r).
+  \mathcal E_{\textrm{correlation}}(\v r).
 \end{align}
 If the system is homogeneous and the particle-particle correlation is
 neglected, then only the first term is left on the right hand side of \eqref{eqn:tmp5}, so it
@@ -329,8 +329,7 @@ then, a Fourier expansion can be obtained:
   \bigg)
   \bigg].
 \end{align}
-Here $\vert\v f^c(\v r)\vert^2$ is denoted by
-$K_{\textrm{homo}}(\v r)$.
+Here $K_{\textrm{homo}}(\v r)$ denotes $\vert\v f^c(\v r)\vert^2$.
 The wedge notation $\wedge$ means Fourier transform. The prime on $\v k_{k_1,k_2,k_3}$ means
 that the periodic image $k_\alpha - K_\alpha$ should use instead of
 $k_\alpha$ when $k_\alpha \geq K_\alpha/2$.
@@ -356,7 +355,7 @@ and
   \int_{\mathbb R^3}K_{\textrm{homo}}(\v s)e^{-2\pi i\v k\cdot\v s}\,\d d\v s.
 \end{align}
 Most of the short-range
-interactions are isotropic, so  $K_{\textrm{homo}}(\v r) =
+interactions are isotropic, i.e. $K_{\textrm{homo}}(\v r) =
 K_{\textrm{homo}}(r)$, then the three-dimensional integral in
 Eqn. \eqref{eqn:f-kernel-homo} can be simplified to a one-dimensional
 integral:
@@ -479,7 +478,7 @@ fast algorithm described in section~\ref{sec:tmp1.3}, so it is
 defined on the bins.  For a predetermined error control level
 $\mathcal E_{\textrm{C}}$, a satisfactory cut-off radius for a bin is
 chosen such that it is the smallest one satisfying the precision
-constrain $\mathcal E(\v r_{i_1,i_2,i_3}) \leq \mathcal
+constraint $\mathcal E(\v r_{i_1,i_2,i_3}) \leq \mathcal
 E_{\textrm{C}}$. The computational cost of this algorithm is $\mathcal
 O(MN\log N)$.  The idea of this algorithm is based on the observation
 that the cut-off radius may not be calculated at a very high
@@ -542,7 +541,7 @@ The mean square error is given by
   \langle\Delta\v F(\v r)\,\rangle^2 \\
   & =
   \mathcal E^2_{\textrm{homo}}(\v r) +
-  \mathcal E^2_{\textrm{correlation}}(\v r),
+  \mathcal E_{\textrm{correlation}}(\v r),
 \end{align}
 containing no inhomogeneity contribution.  It is worth noticing that the mean
 square error of the corrected force is nothing but the variance of the

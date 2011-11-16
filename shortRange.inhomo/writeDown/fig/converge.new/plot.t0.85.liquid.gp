@@ -25,7 +25,7 @@ set key right bottom
 set title 'T*=0.85'
 unset title
 unset label
-set label 'T*=0.85, liquid' at 5.5, 0.782
+set label 'T*=0.85, liquid' at 5.5, 0.781
 set clip two
 set style fill pattern 8
 

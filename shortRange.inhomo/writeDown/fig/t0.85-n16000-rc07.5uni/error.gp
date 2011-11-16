@@ -26,9 +26,9 @@ set ylabel 'RMS error of the force'
 set y2label 'Density'
 
 pl\
-'a.density.x.out' axes x2y2 w l ls 1 not,\
+'a.density.x.out' axes x2y2 w l ls 1 t '{/Symbol r}',\
 'a.real.x.out'  every 1 axes x1y1 w p ls 3 t '{/Symbol e}_{real}',\
 'a.error.xtc.x.out' every 1 axes x1y1 w l ls 2 t '{/Symbol e}_{esti}',\
 'a.error.xtc.x.part1.out' every 1 axes x1y1 w l ls 21 t '{/Symbol e}_{homo}',\
-'a.error.xtc.x.part2.out' every 1 axes x1y1 w l ls 22 t '{/Symbol e}_{hetero}'
+'a.error.xtc.x.part2.out' every 1 axes x1y1 w l ls 22 t '{/Symbol e}_{inhomo}'
 
