@@ -1,0 +1,349 @@
+\documentclass[aps,pre,preprint]{revtex4-1}
+% \documentclass[aps,pre,twocolumn]{revtex4-1}
+% \documentclass[aps,jcp,groupedaddress,twocolumn,unsortedaddress]{revtex4}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[dvips]{graphicx}
+\usepackage{color}
+\usepackage{tabularx}
+
+\makeatletter
+\makeatother
+
+\newcommand{\recheck}[1]{{\color{red} #1}}
+\renewcommand{\v}[1]{\textbf{\textit{#1}}}
+\renewcommand{\d}[1]{\textsf{#1}}
+
+
+\begin{document}
+
+\title{The Error Estimate of Force Calculation in the Inhomogeneous Molecular Systems}
+\author{Han Wang}
+\affiliation{LMAM and School of Mathematical
+  Sciences, Peking University}
+\author{Pingwen Zhang}
+% \email{pzhang@pku.edu.cn}
+\affiliation{LMAM and School of Mathematical
+  Sciences, Peking University}
+
+\begin{abstract}
+\end{abstract}
+
+\maketitle
+
+\section{Theory}
+\subsection{Ewald summation}
+The Ewald method divides the electrostatic interaction in to three
+parts: the direct part, the reciprocal part and the correction
+part. that is
+\begin{equation}
+E = E_{\textrm{dir}} + E_{\textrm{rec}} + E_{\textrm{corr}},
+\end{equation}
+where 
+\begin {align}
+E_{\textrm{dir}} & = \frac12 \sum^{\ast}_{\v n}
+\sum_{i,j = 1}^{N} \frac{q_iq_j \textrm{erfc}(\beta \vert\v{r}_{ij} + \v{n}\vert)}
+{\vert\v{r}_{ij} + \v{n}\vert} \\
+E_{\textrm{rec}} & = \frac1{2\pi V} \sum_{\v m \neq 0}
+\frac{\exp(-\pi^2\v m^2 / \beta^2)}{\v m^2} S(\v m) S(-\v m) \\
+ E_{\textrm{corr}}& = -\frac\beta{\sqrt \pi} \sum_{i=1}^N q_i^2
+\end {align}
+The distance between the two particles is denoted by $\v r_{ij} = \v
+r_i - \v r_j$, where $\v r_i$ and $\v r_j$ are positions of particle
+$i$ and $j$, respectively.  The lattice in the real space is denoted
+by $\v n = n_1 \v a_1 + n_2 \v a_2 + n_3 \v a_3$, where $\v a_\alpha,
+\ \alpha=1,2,3$ are box vectors. the structure factor $S(\v m)$ is
+defined by
+\begin{equation}\label{sm1}
+S(\v m) = \sum_{j=1}^N q_j \exp (2 \pi i \v m \cdot \v r_j),
+\end{equation}
+where $\v m = m_1 \v a_1^\ast + m_2 \v a_2^\ast + m_3 \v a_3^\ast$ is
+the reciprocal space lattice vectors. $\v a_\alpha^\ast,\ \alpha = 1,
+2, 3$ are conjugate reciprocal vectors of $\v a_\alpha$, defined by
+$\v a_\alpha \cdot \v a_\beta^\ast = \delta_{\alpha\beta}$. and $V =
+\v a_1 \cdot \v a_2 \times \v a_3$ is the volume of the box.
+
+Both the direct and the reciprocal parts are calculated by cut-off in
+real and reciprocal space, respectively. For the reciprocal part the
+cut-offed energy reads
+\begin{align}
+  E_{\textrm{rec}} & =
+  \frac1{2\pi V}
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_\alpha\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \frac{\exp(-\pi^2\v m^2 / \beta^2)}{\v m^2} S(\v m) S(-\v m)   
+\end{align}
+where $K_\alpha$ is the number of Fourier modes used on direction
+$\alpha$. For convenience, we denote
+\begin{align}
+  f(\v m) = \frac{\exp(-\pi^2 \v m^2 / \beta^2)}{2\pi V \v m^2}
+\end{align}
+The truncated reciprocal force acting on particle $i$ is
+\begin{align}
+  \v F(\v r_i) = - 
+  q_i 
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_\alpha\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \v g(\v m) \,
+  S(-\v m)\,
+  e^{2\pi i\v m\cdot\v r_i}
+\end{align}
+where
+\begin{align}
+  \v g(\v m) = -4 \pi \v m i f(\v m)
+\end{align}
+
+
+
+\subsection{Error estimate for the reciprocal Ewald force}
+
+In this paper, we consider the force error, bacause the applicaions
+are based on the molecular dynamics simulation. We study the force
+error at arbitrary position $\v r$ by adding a testing particle with
+charge $q$ to $\v r$. The difference between the exact force and
+calculated force (with error introduced by cut-offs) exerting on the
+testing particle are denoted by $\v F(\v r)$ and $\tilde{\v F}(\v r)$,
+respectively. Note that the testing particle does NOT exert any force
+on the system. The difference between the exact and calculated is
+called the \emph{error force} \cite{short}, and is denoted by $\Delta
+\v F(\v r) = \v F(\v r) - \tilde{\v F}(\v r)$.  The error of the force
+computation is defined by the \emph{root mean square (RMS)}
+\emph{error}, which is the square root of the second moment of the
+error force: $\mathcal E(\v r) = \sqrt{\langle\vert\Delta\v F(\v
+  r)\vert^2\rangle}$.  The notation $\langle\cdot\rangle$ means
+ensemble average.
+
+Ref.~\cite{wang2010optimizing} pointed out that it
+is reasonable and convenient to estimate the error for the direct and
+reciprocal force part seperately. 
+The direct part is a short-range
+interaction in real space, the error estimate of which
+is well established in \cite{short}.
+The mean of the error force is
+\begin{align}\label{eqn:tmp10}
+  \langle\Delta\v F_{\textrm{dir}}(\v r)\rangle
+  =q\, [\v K^c_{\textrm{dir}}\ast\rho_q](\v r).
+\end{align}
+Herein, the ``$\ast$'' notation means convolution.  The direct
+convolutional kernel of the error force $\v K^c_{\textrm{dir}}(\v r)$
+is defined by
+\begin{align}
+  \v K^c_{\textrm{dir}}(\v r) =
+  \left\{
+    \begin{aligned}
+      &\,0, &\quad & \vert\v r\vert \leq r_c;\\
+      &\frac{\textrm{erfc}(\beta\vert\v r\vert)}{\vert\v r\vert},& & \vert\v r\vert > r_c,
+    \end{aligned}
+  \right.
+\end{align}
+where $r_c$ is the cut-off radius in the real space.  The first order
+charge distribution function $\rho_q$ is defined by:
+\begin{align}
+  \rho_q(\v r) = 
+  \bigg\langle
+  \sum_{j = 1}^N
+  \,q_j\,\delta(\v r - \v r_j)
+  \bigg\rangle.
+\end{align}
+With the help of fast Fourier transform (FFT), the convolution in
+\eqref{eqn:tmp10} can be calculated with the computational cost of
+$\mathcal O(N\log N)$.
+
+And the RMS error is estimated by
+\begin{align}\nonumber
+  \langle\vert\Delta\v F_{\textrm{dir}}(\v r)\vert^2\rangle
+  = &\,
+  q^2\,[(\v K^c_{\textrm{dir}})^2\ast\rho_{q^2}] (\v r) + 
+  q^2\,[\v K^c_{\textrm{dir}}\ast\rho_{q}]^2 (\v r) + \\
+  &
+  q^2\,\int_{\mathbb R^3\times\mathbb R^3}
+  \v K^c_{\textrm{dir}}(\v r-\v r')\cdot
+  \v K^c_{\textrm{dir}}(\v r-\v r'')\,
+  C_{q^2}(\v r', \v r'')\,
+  \d d\v r'\d d\v r''.
+\end{align}
+The three terms on the right hand side are homogeneity error,
+inhomogeneity error and correlation error. The second order charge
+distribution $\rho_{q^2}$ is
+\begin{align}
+  \rho_{q^2}(\v r) = 
+  \bigg\langle
+  \sum_{j = 1}^N
+  \,q^2_j\,\delta(\v r - \v r_j)
+  \bigg\rangle.
+\end{align}
+The charge density correlation function is defined by
+\begin{align}
+  C_{q^2}(\v r', \v r'')
+  =
+  \bigg\langle
+  \sum_{i\neq j}q_iq_j\delta(\v r'-\v r_i)\delta(\v r''-\v r_j)
+  \bigg\rangle
+  - \rho_q(\v r')\rho_q(\v r'').
+\end{align}
+In most situations, neglecting the correlation error will give
+satisfactory estimate of the error~\cite{short}. Therefore, 
+\begin{align}
+  \langle\vert\Delta\v F_{\textrm{dir}}(\v r)\vert^2\rangle
+  = &\,
+  q^2\,[(\v K^c_{\textrm{dir}})^2\ast\rho_{q^2}] (\v r) + 
+  q^2\,[\v K^c_{\textrm{dir}}\ast\rho_{q}]^2 (\v r).
+\end{align}
+
+
+The reciprocal error force, namely the difference between the
+the exact and truncated reciprocal force, is
+\begin{align}
+  \Delta \v F_{\textrm{rec}}(\v r)
+  = & - 
+  q
+  \sum_{\vert m_\alpha\vert \geq K_\alpha/2}
+  \v g(\v m) \,
+  S(-\v m)\,
+  e^{2\pi i\v m\cdot\v r} 
+\end{align}
+It is proved that the mean reciprocal error force is
+\begin{align}
+  \big\langle
+  \Delta \v F_{\textrm{rec}}(\v r)
+  \big\rangle
+  &= 
+  -q\,[\v K_c\ast\rho_q\,] (\v r_i),
+\end{align}
+where the reciprocal convolutional kernel of the error force $\v
+K^c_{\textrm{rec}}$ is defined by:
+\begin{align}
+  \v K^c_{\textrm{rec}}(\v r) =
+  \sum_{
+      \vert m_\alpha\vert \geq K_\alpha/2}
+  \v g(\v m) \,
+  e^{2\pi i\v m\cdot\v r}.
+\end{align}
+Similarly, with the assumption of uncorrelation, it is shown that
+\begin{align}
+  \langle\vert\Delta\v F_{\textrm{rec}}(\v r)\vert^2\rangle
+  = &\,
+  q^2\,[(\v K^c_{\textrm{rec}})^2\ast\rho_{q^2}] (\v r) + 
+  q^2\,[\v K^c_{\textrm{rec}}\ast\rho_{q}]^2 (\v r).
+\end{align}
+
+
+
+From \eqref{eqn:tmp13}, the ensemble average of the squared force error is
+\begin{align}\nonumber
+  \big\langle
+  \vert\Delta\v F(\v r_i)\vert^2
+  \big\rangle
+  = \,&
+  q^2_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
+      \v m_1\neq 0
+    \end{subarray}}
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
+      \v m_2\neq 0
+    \end{subarray}}
+  \v g(\v m_1)\cdot\v g(\v m_2) \,
+  e^{2\pi i(\v m_1 + \v m_2)\cdot\v r_i} \\ \nonumber
+  &
+  \bigg\langle
+  \sum_{j\neq i}q_j\,e^{-2\pi i\v m_1\cdot\v r_j}  
+  \sum_{k\neq i}q_k\,e^{-2\pi i\v m_2\cdot\v r_k}
+  \bigg\rangle\\ \nonumber
+  = \,&
+  q^2_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
+      \v m_1\neq 0
+    \end{subarray}}
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
+      \v m_2\neq 0
+    \end{subarray}}
+  \v g(\v m_1)\cdot\v g(\v m_2) \,
+  e^{2\pi i(\v m_1 + \v m_2)\cdot\v r_i}\\\nonumber
+  &
+  \bigg\langle
+  \sum_{j\neq i}\,q_j^2\,e^{-2\pi i(\v m_1 + \v m_2)\cdot\v r_j} +
+  \sum_{j\neq k}\,q_jq_k\, e^{-2\pi i\v m_1\cdot\v r_j} e^{-2\pi i\v m_2\cdot\v r_k}
+  \bigg\rangle
+\end{align}
+Assuming particle $i$ is independent with $j$ when $i\neq j$, the second term is
+approximately $\langle\Delta\v F(\v r_i)\rangle^2$, therefore,
+\begin{align}\nonumber
+  \big\langle
+  \vert\Delta\v F(\v r_i)\vert^2
+  \big\rangle
+  = \,&
+  q^2_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
+      \v m_1\neq 0
+    \end{subarray}}
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
+      \v m_2\neq 0
+    \end{subarray}}
+  \v g(\v m_1)\cdot\v g(\v m_2) \\\nonumber
+  \,&
+  \int
+  \bigg\langle
+  \sum_{j\neq i}\,q_j^2
+  \delta (\v r' - \v r_j)
+  \bigg\rangle
+  \,e^{2\pi i(\v m_1 + \v m_2)\cdot(\v r_i - \v r')}
+  \,\d d\v r' \\ \nonumber
+  &+\,
+  \langle\Delta\v F(\v r_i)\rangle^2 \\ \nonumber
+  =\,&
+  q^2_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
+      \v m_1\neq 0
+    \end{subarray}}
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
+      \v m_2\neq 0
+    \end{subarray}}
+  \v g(\v m_1)\cdot\v g(\v m_2) 
+  \int
+  \,e^{2\pi i(\v m_1 + \v m_2)\cdot(\v r_i - \v r')}
+  \,\rho_{q^2}(\v r')
+  \,\d d\v r' \\  \nonumber
+  &+\,
+  \langle\Delta\v F(\v r_i)\rangle^2 \\ 
+  =\;&
+  q^2_i
+  \int \v G^2_c(\v r - \v r')\,\rho_{q^2}(\v r')\,\d d\v r'  
+  + 
+  \langle\Delta\v F(\v r_i)\,\rangle^2 \\
+  =\;&
+  q_i^2\,[\v G_c^2\ast\rho_{q^2}] (\v r_i) + \langle\Delta\v F(\v r_i)\,\rangle^2 
+\end{align}
+
+
+
+
+% \newpage
+
+\bibliography{ref}{}
+\bibliographystyle{unsrt}
+
+
+\end{document}
