@@ -12,6 +12,7 @@
 \makeatother
 
 \newcommand{\recheck}[1]{{\color{red} #1}}
+\newcommand{\redc}[1]{{\color{red} #1}}
 \renewcommand{\v}[1]{\textbf{\textit{#1}}}
 \renewcommand{\d}[1]{\textsf{#1}}
 
@@ -22,6 +23,9 @@
 \author{Han Wang}
 \affiliation{LMAM and School of Mathematical
   Sciences, Peking University}
+\affiliation{Institute for Mathematics, Freie Universit\"at Berlin, Germany}
+\author{Christof Sch\"utte}
+\affiliation{Institute for Mathematics, Freie Universit\"at Berlin, Germany}
 \author{Pingwen Zhang}
 % \email{pzhang@pku.edu.cn}
 \affiliation{LMAM and School of Mathematical
@@ -269,15 +273,15 @@ r)\,\rangle\vert$.  The last term on right hand side of \eqref{eqn:tmp5} origina
 correlation between the particles, so it is called the correlation
 error.
 The correlation error involves a double integral, which
-implies that the calculation  requires more compuational resources
+implies that the calculation  requires more computational resources
 than the homogeneity and inhomogeneity errors.
 The rest of this paper
 assumes the 
 correlation error does not dominate in the system, and can be safely
 neglected.
 It is worth pointing out that this is not always true, for example, in
-critical region where the corrlation plays an important role in the system,
-the corrlation error should be taken into account.
+critical region where the correlation plays an important role in the system,
+the correlation error should be taken into account.
 
 
 \subsection{Fast calculation of the error estimate}\label{sec:tmp1.3}
@@ -514,7 +518,7 @@ force, namely
   \v F_{\textrm{corr}}(\v r) = \tilde{\v F}(\v r) + \langle\Delta\v F(\v r)\rangle.
 \end{align}
 In this paper, the mean error force $\langle\Delta\v F(\v r)\rangle$
-is also refered as \emph{correction force} in the context of
+is also referred as \emph{correction force} in the context of
 long-range force correction. This correction works because it takes
 into account the force contribution outside the cut-off radius. The mean of
 the corrected error force vanishes:
@@ -1132,6 +1136,36 @@ direction of the density gradient), and has low  opportunity to be
 self-canceled.
 
 
+\redc{ The precise calculation of the correction force needs the
+  precise knowledge of the density profile of the system (see
+  Eqn. \eqref{eqn:tmp3}). Then the corrected force, in turn, improves
+  the accuracy of the density profile. It is possible that this
+  feedback loop does not converge, namely the system is driven to a
+  totally wrong state by the corresponding incorrect correction
+  force. It may happen when the simulation starts very far from the
+  equilibrium, or when the fluctuation in the system is so large that
+  an accurate calculation of the density profile is impossible.
+  % In
+  % the latter case, the MD simulation are not trivial anyway, for
+  % example, the simulation of critical point.
+  % For these two cases, the traditional MD simulation is also not easy
+  % to handel.
+  In our
+  simulations, we do not observe any failure of convergence. Firstly,
+  the system is far from the critical point, and we always let the
+  simulation starts form a good enough configuration, for example, a
+  snapshot of a simulation with the uniform small cut-off and lower
+  temperature, or a snapshot from another force correction simulation.
+  % or the state of the system changes too fast
+  % comparing with the correction force updating fequency
+  We also observe that the equilibration of the force-corrected
+  system is always as fast as the system simulated by uniform and
+  adaptive cut-off methods. That means, at least in our simulation
+  cases, the force correction does not lead to more effort of 
+  equilibrating the system.
+}
+  
+
 % To verify our simulations, we compare our results in
 % Tab. \ref{tab:comparison} with a wide range of results reported by
 % literature~\cite{janecek2006long, lotfi1992vapour,
@@ -1530,10 +1564,10 @@ observed.
 
 
 
-\section*{Acknowledgements}
+\section*{Acknowledgments}
 The authors gratefully thank Luigi Delle Site for for useful comments
 on the manuscript. The work of P.Z. is supported by grants from
-National Natural Science Foundation of China (20490222).
+National Natural Science Foundation of China (50930003).
 
 
 % \newpage
