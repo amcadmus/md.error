@@ -14,6 +14,7 @@
 \newcommand{\recheck}[1]{{\color{red} #1}}
 \renewcommand{\v}[1]{\textbf{\textit{#1}}}
 \renewcommand{\d}[1]{\textsf{#1}}
+% \allowdisplaybreaks
 
 
 \begin{document}
@@ -105,19 +106,19 @@ where
 \subsection{Error estimate for the reciprocal Ewald force}
 
 In this paper, we consider the force error, bacause the applicaions
-are based on the molecular dynamics simulation. We study the force
-error at arbitrary position $\v r$ by adding a testing particle with
-charge $q$ to $\v r$. The difference between the exact force and
-calculated force (with error introduced by cut-offs) exerting on the
-testing particle are denoted by $\v F(\v r)$ and $\tilde{\v F}(\v r)$,
-respectively. Note that the testing particle does NOT exert any force
-on the system. The difference between the exact and calculated is
-called the \emph{error force} \cite{short}, and is denoted by $\Delta
-\v F(\v r) = \v F(\v r) - \tilde{\v F}(\v r)$.  The error of the force
+are based on the molecular dynamics simulation.  Suppose the system is
+composed by $N$ charged particles located at $\v r_1, \v r_2, \cdots,
+\v r_N$ with charges $q_1, q_2, \cdots, q_N$, respectively.  We study
+the force error of an arbitrary charge $i$ by the difference between
+the exact force $\v F(\v r_i)$ and calculated force $\tilde{\v F}(\v
+r_i)$ (with error introduced by cut-offs) exerting on the charge $i$.
+The difference between the exact and calculated is called the
+\emph{error force} \cite{short}, and is denoted by $\Delta \v F(\v r_i)
+= \v F(\v r_i) - \tilde{\v F}(\v r_i)$.  The error of the force
 computation is defined by the \emph{root mean square (RMS)}
 \emph{error}, which is the square root of the second moment of the
-error force: $\mathcal E(\v r) = \sqrt{\langle\vert\Delta\v F(\v
-  r)\vert^2\rangle}$.  The notation $\langle\cdot\rangle$ means
+error force: $\mathcal E(\v r_i) = \sqrt{\langle\vert\Delta\v F(\v
+  r_i)\vert^2\rangle}$.  The notation $\langle\cdot\rangle$ means
 ensemble average.
 
 Ref.~\cite{wang2010optimizing} pointed out that it
@@ -128,8 +129,8 @@ interaction in real space, the error estimate of which
 is well established in \cite{short}.
 The mean of the error force is
 \begin{align}\label{eqn:tmp10}
-  \langle\Delta\v F_{\textrm{dir}}(\v r)\rangle
-  =q\, [\v K^c_{\textrm{dir}}\ast\rho_q](\v r).
+  \langle\Delta\v F_{\textrm{dir}}(\v r_i)\rangle
+  =q_i\, [\v K^c_{\textrm{dir}}\ast\rho_q](\v r_i).
 \end{align}
 Herein, the ``$\ast$'' notation means convolution.  The direct
 convolutional kernel of the error force $\v K^c_{\textrm{dir}}(\v r)$
@@ -158,20 +159,21 @@ $\mathcal O(N\log N)$.
 
 And the RMS error is estimated by
 \begin{align}\nonumber
-  \langle\vert\Delta\v F_{\textrm{dir}}(\v r)\vert^2\rangle
+  \langle\vert\Delta\v F_{\textrm{dir}}(\v r_i)\vert^2\rangle
   = &\,
-  q^2\,[(\v K^c_{\textrm{dir}})^2\ast\rho_{q^2}] (\v r) + 
-  q^2\,[\v K^c_{\textrm{dir}}\ast\rho_{q}]^2 (\v r) + \\
+  q_i^2\,[(\v K^c_{\textrm{dir}})^2\ast\rho_{q^2}] (\v r_i) + 
+  q_i^2\,[\v K^c_{\textrm{dir}}\ast\rho_{q}]^2 (\v r_i) + \\
   &
-  q^2\,\int_{\mathbb R^3\times\mathbb R^3}
-  \v K^c_{\textrm{dir}}(\v r-\v r')\cdot
-  \v K^c_{\textrm{dir}}(\v r-\v r'')\,
+  q_i^2\,\int_{\mathbb R^3\times\mathbb R^3}
+  \v K^c_{\textrm{dir}}(\v r_i-\v r')\cdot
+  \v K^c_{\textrm{dir}}(\v r_i-\v r'')\,
   C_{q^2}(\v r', \v r'')\,
   \d d\v r'\d d\v r''.
 \end{align}
 The three terms on the right hand side are homogeneity error,
-inhomogeneity error and correlation error. The second order charge
-distribution $\rho_{q^2}$ is
+inhomogeneity error and correlation error. The inhomogeneity error is
+nothing but the square of the mean error force \eqref{eqn:tmp10}. The
+second order charge distribution $\rho_{q^2}$ is
 \begin{align}
   \rho_{q^2}(\v r) = 
   \bigg\langle
@@ -191,31 +193,31 @@ The charge density correlation function is defined by
 In most situations, neglecting the correlation error will give
 satisfactory estimate of the error~\cite{short}. Therefore, 
 \begin{align}
-  \langle\vert\Delta\v F_{\textrm{dir}}(\v r)\vert^2\rangle
+  \langle\vert\Delta\v F_{\textrm{dir}}(\v r_i)\vert^2\rangle
   = &\,
-  q^2\,[(\v K^c_{\textrm{dir}})^2\ast\rho_{q^2}] (\v r) + 
-  q^2\,[\v K^c_{\textrm{dir}}\ast\rho_{q}]^2 (\v r).
+  q_i^2\,[(\v K^c_{\textrm{dir}})^2\ast\rho_{q^2}] (\v r_i) + 
+  q_i^2\,[\v K^c_{\textrm{dir}}\ast\rho_{q}]^2 (\v r_i).
 \end{align}
 
 
 The reciprocal error force, namely the difference between the
 the exact and truncated reciprocal force, is
 \begin{align}
-  \Delta \v F_{\textrm{rec}}(\v r)
+  \Delta \v F_{\textrm{rec}}(\v r_i)
   = & - 
-  q
+  q_i
   \sum_{\vert m_\alpha\vert \geq K_\alpha/2}
   \v g(\v m) \,
   S(-\v m)\,
-  e^{2\pi i\v m\cdot\v r} 
+  e^{2\pi i\v m\cdot\v r_i} 
 \end{align}
 It is proved that the mean reciprocal error force is
-\begin{align}
+\begin{align}\label{eqn:tmp18}
   \big\langle
-  \Delta \v F_{\textrm{rec}}(\v r)
+  \Delta \v F_{\textrm{rec}}(\v r_i)
   \big\rangle
   &= 
-  -q\,[\v K_c\ast\rho_q\,] (\v r_i),
+  -q_i\,[\v K^c_{\textrm{rec}}\ast\rho_q\,] (\v r_i),
 \end{align}
 where the reciprocal convolutional kernel of the error force $\v
 K^c_{\textrm{rec}}$ is defined by:
@@ -228,119 +230,344 @@ K^c_{\textrm{rec}}$ is defined by:
 \end{align}
 Similarly, with the assumption of uncorrelation, it is shown that
 \begin{align}
-  \langle\vert\Delta\v F_{\textrm{rec}}(\v r)\vert^2\rangle
+  \langle\vert\Delta\v F_{\textrm{rec}}(\v r_i)\vert^2\rangle
   = &\,
-  q^2\,[(\v K^c_{\textrm{rec}})^2\ast\rho_{q^2}] (\v r) + 
-  q^2\,[\v K^c_{\textrm{rec}}\ast\rho_{q}]^2 (\v r).
+  q_i^2\,[(\v K^c_{\textrm{rec}})^2\ast\rho_{q^2}] (\v r_i) + 
+  q_i^2\,[\v K^c_{\textrm{rec}}\ast\rho_{q}]^2 (\v r_i).
 \end{align}
 
 
+% Ref. \cite{short} pointed out that the inhomogeneity error is more
+% harmful than the homogeneity error, so it is interesting to analyze
+% the inhomogeneity error. Apply the Fourier transform on both sides of
+% Eqn. \eqref{eqn:tmp10} and \eqref{eqn:tmp18}:
+% \begin{align}  
+%   \langle\Delta\v F_{\textrm{dir}}\rangle^\wedge(\v m)
+%   &= q_i\,\hat{\v K}^c_{\textrm{dir}}(\v m)\cdot\hat\rho_q(\v m)\\
+%   \langle\Delta\v F_{\textrm{rec}}\rangle^\wedge(\v m)
+%   &= -q_i\,\hat{\v K}^c_{\textrm{rec}}(\v m)\cdot\hat\rho_q(\v m)
+% \end{align}
+% If the charge distribution is \emph{locally} neutral, then all modes
+% of the first order density distribution vanishes, and $\langle\Delta\v
+% F_{\textrm{dir}}\rangle = \langle\Delta\v F_{\textrm{rec}}\rangle = 0$.
 
-From \eqref{eqn:tmp13}, the ensemble average of the squared force error is
+
+
+
+\section{SPME}
+
+The principle idea of the SPME method is to approximate the term
+$e^{2\pi i\v m\cdot\v r}$ in the structure factor by the B-spline
+interpolation. Denote the error introduced by this approximation by
+$A(\v m, \v r)\,e^{2\pi i\v m\cdot \v r}$, we are fortunate to have
+the analytical expression of $A(\v m, \v r)$:
+\begin{align}
+  A(\v m, \v r)
+  =
+  \sum_{\alpha=1}^3\sum_{l\neq 0}
+  \frac
+  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  {\sum\limits_{l=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  \bigg(
+  e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r} - 1
+  \bigg)
+\end{align}
+
+There are two possibility of calculating the reciprocal force from the
+SPME energy. The first one is to differentiate the reciprocal term of
+the original Ewald summation and then approximated the analytical
+force by the B-spline interplation. This way is called
+\emph{ik--differentiation}. The other way is to negative gradient on
+the SPME approximated energy, as proposed in the original SPME paper
+\cite{essmann1995spm}. The later is called \emph{analytical
+differentiation}.
+
+
+\subsection{Error estimate of the ik-differentiation}
+The error force is 
+\begin{align}\nonumber
+  \Delta\v F(\v r_i)
+  =\;&
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \v g(\v m)\,
+  A(\v m, \v r_i)\,
+  e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,e^{-2\pi i\v m\cdot\v r_j} \\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \v g(\v m)\,
+  e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,A(\v m, -\v r_j)\,e^{-2\pi i\v m\cdot\v r_j}\\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \v g(\v m)\,
+  \big[
+  A(\v m, \v r_i) +
+  A(\v m, -\v r_i)
+  \big]
+\end{align}
+The last ``self-interacting term'' is zero because of the symmetricity
+of $\v g(\v m)$ and $A(\v m, \v r)$. 
+By denoting
+\begin{align}
+  \v G_{\alpha,l}(\v r) =
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \v g(\v m)\,
+  \frac
+  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  {\sum\limits_{l=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  e^{2\pi i\v m\cdot\v r}
+\end{align}
+And if the high wave number terms are neglected, it is proved that the
+mean error force is
+\begin{align}
+  \big\langle
+  \Delta\v F(\v r_i)
+  \big\rangle
+  & \approx
+  - 2 q_i
+  \bigg[
+  \big(
+  \sum_{\alpha}\sum_{l\neq 0}\v G_{\alpha,l}
+  \big)
+  \ast\rho_q\,
+  \bigg] (\v r_i)
+\end{align}
+Also neglect the high wave number terms, the mean squared error force is 
 \begin{align}\nonumber
   \big\langle
   \vert\Delta\v F(\v r_i)\vert^2
   \big\rangle
-  = \,&
-  q^2_i
-  \sum_{
-    \begin{subarray}{c}
-      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
-      \v m_1\neq 0
-    \end{subarray}}
-  \sum_{
-    \begin{subarray}{c}
-      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
-      \v m_2\neq 0
-    \end{subarray}}
-  \v g(\v m_1)\cdot\v g(\v m_2) \,
-  e^{2\pi i(\v m_1 + \v m_2)\cdot\v r_i} \\ \nonumber
-  &
-  \bigg\langle
-  \sum_{j\neq i}q_j\,e^{-2\pi i\v m_1\cdot\v r_j}  
-  \sum_{k\neq i}q_k\,e^{-2\pi i\v m_2\cdot\v r_k}
-  \bigg\rangle\\ \nonumber
-  = \,&
-  q^2_i
-  \sum_{
-    \begin{subarray}{c}
-      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
-      \v m_1\neq 0
-    \end{subarray}}
-  \sum_{
-    \begin{subarray}{c}
-      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
-      \v m_2\neq 0
-    \end{subarray}}
-  \v g(\v m_1)\cdot\v g(\v m_2) \,
-  e^{2\pi i(\v m_1 + \v m_2)\cdot\v r_i}\\\nonumber
-  &
-  \bigg\langle
-  \sum_{j\neq i}\,q_j^2\,e^{-2\pi i(\v m_1 + \v m_2)\cdot\v r_j} +
-  \sum_{j\neq k}\,q_jq_k\, e^{-2\pi i\v m_1\cdot\v r_j} e^{-2\pi i\v m_2\cdot\v r_k}
-  \bigg\rangle
+  \approx&\, 
+  2q_i^2
+  \bigg[\,
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}
+  \vert \v G_{\alpha,l}\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \,\bigg] (\v r_i)
+  +
+  4q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i) \\
+  &\,+
+  \big\langle
+  \Delta\v F(\v r_i)
+  \big\rangle  ^2
 \end{align}
-Assuming particle $i$ is independent with $j$ when $i\neq j$, the second term is
-approximately $\langle\Delta\v F(\v r_i)\rangle^2$, therefore,
+
+
+
+
+
+
+\subsection{Analytical differetiation}
+
+The error force is 
+\begin{align}\nonumber
+  \Delta\v F(\v r_i)
+  =\;&
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  \nabla_{\v r_i}
+  e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,
+  A(\v m, -\v r_j)
+  e^{-2\pi i\v m\cdot\v r_j} \\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  \nabla_{\v r_i}
+  [A(\v m, \v r_i)\,
+  e^{2\pi i\v m\cdot \v r_i} ]
+  \sum_{j\neq i}q_j\,
+  e^{-2\pi i\v m\cdot\v r_j} \\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  A(-\v m, \v r_i)\,e^{2\pi i\v m\cdot \v r_i} \nabla_{\v r_i}e^{2\pi i\v m\cdot\v r_i} \\
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  e^{-2\pi i\v m\cdot \v r_i}
+  \nabla_{\v r_i} [\,A(\v m, \v r_i) \,e^{2\pi i\v m\cdot\v r_i}\,]  \\\nonumber
+  =&\,
+  \Delta\v F^{\textrm{ik}}(\v r_i)\\\nonumber
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,
+  \v B(\v m, \v r_i)\,e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,
+  e^{-2\pi i\v m\cdot\v r_j} \\
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  -2f(\v m)\,\v B(\v m, \v r_i) 
+\end{align}
+With $\v B(\v m, \v r)$ defined by
+\begin{align}\nonumber
+  \v B(\v m, \v r)
+  &=
+  \nabla_{\v r_i}A(\v m, \v r)\\
+  &=
+  \sum_{\alpha=1}^3\sum_{l\neq 0}
+  \frac
+  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  {\sum\limits_{l=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  2\pi i l K_\alpha\v a_\alpha^\ast\,e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r} 
+\end{align}
+For convenience, we denote
+\begin{align}
+  F_{\alpha,l} (\v r)
+  &=
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  (-2)f(\v m)\,
+  \frac
+  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  {\sum\limits_{l=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}\,
+  e^{2\pi i\v m\cdot \v r}\\
+  C_{\alpha,l}^{\textrm{self}}
+  &= 
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  (-2)f(\v m)\,
+  \frac
+  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  {\sum\limits_{l=-\infty}^{+\infty}
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}\,
+\end{align}
+We prove:
+\begin{align} \nonumber
+  \langle \Delta\v F(\v r_i)\rangle
+  =\;&
+  \langle \Delta\v F^{\textrm{ik}}(\v r_i)\rangle\\\nonumber
+  &+\,
+  q_i\sum_{\alpha}\sum_{l\neq 0}
+  2\pi i\,l K_\alpha\v a_\alpha^\ast\,e^{2\pi i\,l K_\alpha\v a^\ast_\alpha\cdot \v r_i}
+  [F_{\alpha,l}\ast\rho_q](\v r_i) \\
+  &+\,
+  q_i\sum_{\alpha}\sum_{l\neq 0}
+  2\pi i\,l K_\alpha\v a_\alpha^\ast\,e^{2\pi i\,l K_\alpha\v a^\ast_\alpha\cdot \v r_i}
+  C_{\alpha,l}^{\textrm{self}}
+\end{align}
+The ensemble average of the squared force error is
 \begin{align}\nonumber
   \big\langle
-  \vert\Delta\v F(\v r_i)\vert^2
+  \vert \Delta\v F(\v r_i)\vert^2
   \big\rangle
-  = \,&
-  q^2_i
-  \sum_{
-    \begin{subarray}{c}
-      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
-      \v m_1\neq 0
-    \end{subarray}}
-  \sum_{
-    \begin{subarray}{c}
-      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
-      \v m_2\neq 0
-    \end{subarray}}
-  \v g(\v m_1)\cdot\v g(\v m_2) \\\nonumber
-  \,&
-  \int
-  \bigg\langle
-  \sum_{j\neq i}\,q_j^2
-  \delta (\v r' - \v r_j)
-  \bigg\rangle
-  \,e^{2\pi i(\v m_1 + \v m_2)\cdot(\v r_i - \v r')}
-  \,\d d\v r' \\ \nonumber
-  &+\,
-  \langle\Delta\v F(\v r_i)\rangle^2 \\ \nonumber
-  =\,&
-  q^2_i
-  \sum_{
-    \begin{subarray}{c}
-      \vert m_{1,\alpha}\vert \geq K_\alpha/2\\
-      \v m_1\neq 0
-    \end{subarray}}
-  \sum_{
-    \begin{subarray}{c}
-      \vert m_{2,\alpha}\vert \geq K_\alpha/2\\
-      \v m_2\neq 0
-    \end{subarray}}
-  \v g(\v m_1)\cdot\v g(\v m_2) 
-  \int
-  \,e^{2\pi i(\v m_1 + \v m_2)\cdot(\v r_i - \v r')}
-  \,\rho_{q^2}(\v r')
-  \,\d d\v r' \\  \nonumber
-  &+\,
-  \langle\Delta\v F(\v r_i)\rangle^2 \\ 
-  =\;&
-  q^2_i
-  \int \v G^2_c(\v r - \v r')\,\rho_{q^2}(\v r')\,\d d\v r'  
-  + 
-  \langle\Delta\v F(\v r_i)\,\rangle^2 \\
-  =\;&
-  q_i^2\,[\v G_c^2\ast\rho_{q^2}] (\v r_i) + \langle\Delta\v F(\v r_i)\,\rangle^2 
+  =&\,
+  q_i^2
+  \bigg[\,
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}
+  \vert \v G_{\alpha,l}\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \,\bigg] (\v r_i)
+  +\,
+  4q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i) \\\nonumber
+  & +\,
+  q_i^2
+  \bigg[
+  \big(
+  \sum_{\alpha}\sum_{l\neq 0}
+  \vert
+  \v G_{\alpha,l} + 2\pi i\,l K_\alpha F_{\alpha,l} \v a_\alpha^\ast\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \bigg]
+  (\v r_i) \\
+  & +\,
+  \big\langle \Delta\v F(\v r_i)\big\rangle ^2
 \end{align}
 
 
 
+\section{Numerical tests}
 
-% \newpage
+
+
+
+\newpage
+\appendix
+\section{Error estimate of the Ewald summation}
+
+
+
+
+\newpage
 
 \bibliography{ref}{}
 \bibliographystyle{unsrt}
