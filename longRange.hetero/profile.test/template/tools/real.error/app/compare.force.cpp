@@ -66,25 +66,62 @@ int main(int argc, char * argv[])
   double hx = tmpbox[0] / double(nbin);
   std::vector<int > count(nbin, 0);
   std::vector<int > countp(nbin, 0);
-  std::vector<double > value (nbin, 0.);
-  std::vector<double > meanfx (nbin, 0.);
-  std::vector<double > meanfy (nbin, 0.);
-  std::vector<double > meanfz (nbin, 0.);
+
+  std::vector<double > dir_value  (nbin, 0.);
+  std::vector<double > dir_meanfx (nbin, 0.);
+  std::vector<double > dir_meanfy (nbin, 0.);
+  std::vector<double > dir_meanfz (nbin, 0.);
+
+  std::vector<double > rec_value  (nbin, 0.);
+  std::vector<double > rec_meanfx (nbin, 0.);
+  std::vector<double > rec_meanfy (nbin, 0.);
+  std::vector<double > rec_meanfz (nbin, 0.);
+
+  std::vector<double > t_value  (nbin, 0.);
+  std::vector<double > t_meanfx (nbin, 0.);
+  std::vector<double > t_meanfy (nbin, 0.);
+  std::vector<double > t_meanfz (nbin, 0.);
+
+  
   for (unsigned i = 0; i < posi.size(); ++i){
     if (posi[i][0] >= tmpbox[0]) posi[i][0] -= tmpbox[0];
     else if (posi[i][0] < 0) posi[i][0] += tmpbox[0];
     int idx = posi[i][0] / hx;
-    double f0x, f0y, f0z;
-    double f1x, f1y, f1z;
-    fscanf (fp0, "%lf%lf%lf", &f0x, &f0y, &f0z);
-    fscanf (fp1, "%lf%lf%lf", &f1x, &f1y, &f1z);
-    f0x -= f1x;
-    f0y -= f1y;
-    f0z -= f1z;
+    double dir_f0x, dir_f0y, dir_f0z;
+    double dir_f1x, dir_f1y, dir_f1z;
+    double rec_f0x, rec_f0y, rec_f0z;
+    double rec_f1x, rec_f1y, rec_f1z;
+    double t_f0x, t_f0y, t_f0z;
+    double t_f1x, t_f1y, t_f1z;
+    fscanf (fp0, "%lf%lf%lf%lf%lf%lf%lf%lf%lf",
+	    &dir_f0x, &dir_f0y, &dir_f0z,
+	    &rec_f0x, &rec_f0y, &rec_f0z,
+	    &t_f0x, &t_f0y, &t_f0z
+	);
+    fscanf (fp1, "%lf%lf%lf%lf%lf%lf%lf%lf%lf",
+	    &dir_f1x, &dir_f1y, &dir_f1z,
+	    &rec_f1x, &rec_f1y, &rec_f1z,
+	    &t_f1x, &t_f1y, &t_f1z
+	);
+    dir_f0x -= dir_f1x;
+    dir_f0y -= dir_f1y;
+    dir_f0z -= dir_f1z;
+    rec_f0x -= rec_f1x;
+    rec_f0y -= rec_f1y;
+    rec_f0z -= rec_f1z;
+    t_f0x -= t_f1x;
+    t_f0y -= t_f1y;
+    t_f0z -= t_f1z;
     if (i < posi.size() / 2){
-      meanfx[idx] += f0x;
-      meanfy[idx] += f0y;
-      meanfz[idx] += f0z;
+      dir_meanfx[idx] += dir_f0x;
+      dir_meanfy[idx] += dir_f0y;
+      dir_meanfz[idx] += dir_f0z;
+      rec_meanfx[idx] += rec_f0x;
+      rec_meanfy[idx] += rec_f0y;
+      rec_meanfz[idx] += rec_f0z;
+      t_meanfx[idx] += t_f0x;
+      t_meanfy[idx] += t_f0y;
+      t_meanfz[idx] += t_f0z;
       countp[idx] ++;
     }
     // else {
@@ -93,17 +130,27 @@ int main(int argc, char * argv[])
     //   meanfz[idx] -= f0z;
     //   countp[idx] ++;
     // }
-    value[idx] += f0x*f0x + f0y*f0y + f0z * f0z;
+    dir_value[idx] += dir_f0x*dir_f0x + dir_f0y*dir_f0y + dir_f0z*dir_f0z;
+    rec_value[idx] += rec_f0x*rec_f0x + rec_f0y*rec_f0y + rec_f0z*rec_f0z;
+    t_value[idx] += t_f0x*t_f0x + t_f0y*t_f0y + t_f0z*t_f0z;
     count[idx] += 1;
   }
   for (int i = 0; i < nbin; ++i){
     if (countp[i] != 0){
-      meanfx[i] /= countp[i];
-      meanfy[i] /= countp[i];
-      meanfz[i] /= countp[i];
+      dir_meanfx[i] /= countp[i];
+      dir_meanfy[i] /= countp[i];
+      dir_meanfz[i] /= countp[i];
+      rec_meanfx[i] /= countp[i];
+      rec_meanfy[i] /= countp[i];
+      rec_meanfz[i] /= countp[i];
+      t_meanfx[i] /= countp[i];
+      t_meanfy[i] /= countp[i];
+      t_meanfz[i] /= countp[i];
     }
     if (count[i] != 0){
-      value[i] = sqrt (value[i] / count[i]);
+      dir_value[i] = sqrt (dir_value[i] / count[i]);
+      rec_value[i] = sqrt (rec_value[i] / count[i]);
+      t_value[i] = sqrt (t_value[i] / count[i]);
     }
   }
   
@@ -115,10 +162,16 @@ int main(int argc, char * argv[])
     std::cerr << "cannot open file " << out << std::endl;
     return 1;
   }
+  fprintf(fp, "# 1  2      3      4      5      \n");
+  fprintf(fp, "# x  dirEF  recEF  sumEF  #Sample\n");	  
   for (int i = 0; i < nbin; ++i){
-    fprintf(fp, "%f %e\n",
+    fprintf(fp, "%f %e %e %e %d\n",
 	    (i+0.5) * refh,
-	    value[i]);
+	    dir_value[i],
+	    rec_value[i],
+	    t_value[i],
+	    count[i]
+	);
   }
   fclose (fp);
   fp = fopen(meanf.c_str(), "w");
@@ -126,13 +179,24 @@ int main(int argc, char * argv[])
     std::cerr << "cannot open file " << out << std::endl;
     return 1;
   }
+  fprintf(fp, "# 1  2-4    5-7    8-10   11     \n");
+  fprintf(fp, "# x  dirEF  recEF  sumEF  #Sample\n");	  
   for (int i = 0; i < nbin; ++i){
-    fprintf(fp, "%f %e %e %e\n",
+    fprintf(fp, "%f \t %e %e %e \t %e %e %e \t %e %e %e \t %d\n",
 	    (i+0.5) * refh,
-	    meanfx[i],
-	    meanfy[i],
-	    meanfz[i]);
+	    dir_meanfx[i],
+	    dir_meanfy[i],
+	    dir_meanfz[i],
+	    rec_meanfx[i],
+	    rec_meanfy[i],
+	    rec_meanfz[i],
+	    t_meanfx[i],
+	    t_meanfy[i],
+	    t_meanfz[i],
+	    countp[i]
+	);
   }
   fclose (fp);
 }
+
 

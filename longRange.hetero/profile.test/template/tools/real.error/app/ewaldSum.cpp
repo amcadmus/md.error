@@ -32,7 +32,8 @@ int main (int argc, char * argv[])
   desc.add_options()
       ("help,h", "print this message")
       ("config,c", po::value<std::string > (&config)->default_value("conf.gro"), "config file")
-      ("beta,b", po::value<double > (&definedbeta)->default_value(2), "value of beta")
+      ("beta,b", po::value<double > (&definedbeta)->default_value(2.), "value of beta")
+      ("rcut,r", po::value<double > (&refRcut)->default_value(2.), "value of rcut")
       ("grid-number,k", po::value<unsigned > (&definedk)->default_value(32), "number of grid on three dimesions")
       ("precision,p", po::value<double > (&precision), "required precision of the reference force. if this option is used, then beta and grid-number are ignored")
       ("output-force,o", po::value<std::string > (&forceFile)->default_value ("force.out"), "the output exact force for the system");
@@ -65,6 +66,7 @@ int main (int argc, char * argv[])
 	      << "# npart is " << npart << "\n"
 	      << "# random seed is " << seed << "\n"
 	      << "# configuration file is " << config << "\n"
+	      << "# rcut is " << refRcut << "\n"
 	      << "# beta is " << definedbeta << "\n"
 	      << "# K is " << definedk << "\n"
 	      << "# output reference force file is " << forceFile << "\n"
@@ -93,6 +95,10 @@ int main (int argc, char * argv[])
 			tmpbox);
   npart = posi.size();
 
+  std::vector<double > zero3 (3, 0.);
+  std::vector<std::vector<double > > dir_force (npart, zero3);
+  std::vector<std::vector<double > > rec_force (npart, zero3);
+  
   ToolBox::init_genrand (seed);
   for (unsigned i = 0; i < npart; ++i){
     tmpp.r()[0] = posi[i][0];
@@ -116,10 +122,10 @@ int main (int argc, char * argv[])
   boxly = tmpbox[1];
   boxlz = tmpbox[2];
 
-  refRcut = 0.9 * (boxsize / 2.);
-  if (refRcut > 5){
-    refRcut = 5;
-  }
+  // refRcut = 0.9 * (boxsize / 2.);
+  // if (refRcut > 5){
+  //   refRcut = 5;
+  // }
 
   TimeConstRectangularBoxGeometry box(boxlx, boxly, boxlz);
   for (std::vector<StandardParticle >::iterator ppart = refParticles.begin(); 
@@ -216,7 +222,7 @@ int main (int argc, char * argv[])
   // calculate interaction
   double refPotenEnergy = 0;
   std::cout << "### list checked" << std::endl;
-  refPotenEnergy += refEle.applyInteractionCalPotential ();
+  refPotenEnergy += refEle.applyInteractionCalPotential (dir_force, rec_force);
   std::cout << "### interaction is applied" << std::endl;
   
   std::cout << "reference energy is " << refPotenEnergy << std::endl;
@@ -228,10 +234,17 @@ int main (int argc, char * argv[])
     return 1;
   }
   for (unsigned i = 0; i < refParticles.size(); ++ i){
-    fprintf (fp, "%.16e\t%.16e\t%.16e\n", 
+    fprintf (fp, "%.16e %.16e %.16e \t  %.16e %.16e %.16e \t  %.16e %.16e %.16e\n", 
+	     dir_force[i][0],
+	     dir_force[i][1],
+	     dir_force[i][2],
 	     unitScale * refParticles[i].f()[0],
 	     unitScale * refParticles[i].f()[1],
-	     unitScale * refParticles[i].f()[2]);
+	     unitScale * refParticles[i].f()[2],
+	     dir_force[i][0] + rec_force[i][0],
+	     dir_force[i][1] + rec_force[i][1],
+	     dir_force[i][2] + rec_force[i][2]
+	);
   }
   fclose (fp);
 

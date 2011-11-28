@@ -12,7 +12,7 @@
 #include <queue>
 #include <vector>
 #include <cmath>
-
+#include "RandomGenerator.h"
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
@@ -25,10 +25,12 @@ int main(int argc, char * argv[])
   double layer;
   std::string cfile, tfile;
   int nframe;
+  unsigned long seed;
   
   po::options_description desc ("Allow options");
   desc.add_options()
       ("help,h", "print this message")
+      ("seed,s", po::value<unsigned long > (&seed)->default_value(1), "random seed")
       ("Lx,x", po::value<double > (&Lx)->default_value(30.), "box dim of x")
       ("Ly,y", po::value<double > (&Ly)->default_value(30.), "box dim of y")
       ("Lz,z", po::value<double > (&Lz)->default_value(30.), "box dim of z")
@@ -42,6 +44,12 @@ int main(int argc, char * argv[])
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
   po::notify (vm);
+  if (vm.count("help")){
+    std::cout << desc<< "\n";
+    return 0;
+  }
+
+  RandomGenerator_MT19937::init_genrand (seed);
 
   printf ("#######################################################\n");
   printf ("## Lx Ly Lz: %f %f %f\n", Lx, Ly, Lz);

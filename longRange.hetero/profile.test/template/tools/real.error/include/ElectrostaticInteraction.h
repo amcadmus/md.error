@@ -405,6 +405,8 @@ public:
   value_type calPotential ();
   void applyInteraction ();
   value_type applyInteractionCalPotential ();
+  value_type applyInteractionCalPotential (std::vector<std::vector<double > > & dir_force,
+					   std::vector<std::vector<double > > & rec_force);
 public:
   void errorEstimatePME (const value_type & c2, const value_type & N, 
 			 value_type & errorDir, value_type & errorRec);

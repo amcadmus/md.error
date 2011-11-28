@@ -1329,7 +1329,7 @@ print_error (const std::string & file) const
     // 	);
     fprintf (fp, "%f %e %e\n",
 	     (idx1.x + 0.5) * vecA.xx / refined_K.x,
-	     sum0, sum1);
+	     sqrt(sum0), sqrt(sum1));
   }
   fclose (fp);
   // for (int i = 0; i < refined_K.x; ++i){

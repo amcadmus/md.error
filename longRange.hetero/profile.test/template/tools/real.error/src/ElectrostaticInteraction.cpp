@@ -168,7 +168,7 @@ value_type ElectrostaticInteraction::applyInteractionCalPotential ()
   // 	* box);
   // }
   watch.stop();
-  dir_time += watch.user();
+  dir_time += watch.user();  
   
   watch.start();
   // for (std::vector<StandardParticle * >::const_iterator ppart = partPool.begin();
@@ -185,6 +185,58 @@ value_type ElectrostaticInteraction::applyInteractionCalPotential ()
 
   return valueCor + valueDir + valueRec;
 }
+
+value_type ElectrostaticInteraction::
+applyInteractionCalPotential (std::vector<std::vector<double > > & dir_force,
+			      std::vector<std::vector<double > > & rec_force)
+{
+  double valueRec = 0;
+  double valueDir = 0;
+  double valueCor = 0;
+
+  watch.start();
+  pairFinder->checkList();
+  for (std::vector<PositionParticle * >::const_iterator ppart = pairFinder->begin();
+       ppart != pairFinder->end(); ){
+    valueDir += dir->applyInteractionCalPotential (
+  	* static_cast<StandardParticle * >(*(ppart++)), 
+  	* static_cast<StandardParticle * >(*(ppart++)),
+  	* box);
+  }
+  watch.stop();
+  dir_time += watch.user();
+
+  unsigned count = 0;
+  for (std::vector<StandardParticle * >::const_iterator ppart = partPool.begin();
+       ppart != partPool.end(); ppart ++){
+    dir_force[count ++] = (*ppart)->f();
+    (*ppart)->f()[0] = 0.;
+    (*ppart)->f()[1] = 0.;
+    (*ppart)->f()[2] = 0.;
+  }
+  
+  watch.start();
+  for (std::vector<StandardParticle * >::const_iterator ppart = partPool.begin();
+       ppart != partPool.end(); ppart ++){
+    valueCor -= beta / sqrt(M_PI) * (*ppart)->charge() * (*ppart)->charge();
+  }
+  watch.stop();
+  corr_time += watch.user();
+  
+  watch.start();
+  valueRec = rec->applyInteractionCalPotential (partPool.begin(), partPool.end());
+  watch.stop();
+  rec_time += watch.user();
+
+  count = 0;
+  for (std::vector<StandardParticle * >::const_iterator ppart = partPool.begin();
+       ppart != partPool.end(); ppart ++){
+    rec_force[count ++] = (*ppart)->f();
+  }
+  
+  return valueCor + valueDir + valueRec;
+}
+
 
 value_type ElectrostaticInteraction::calPotential ()
 {
