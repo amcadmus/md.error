@@ -22,8 +22,10 @@ do
     ./tools/profile/$profile_command -s $seed &>> $mylog
     seed=$(($seed+1))
     mv -f conf.gro $record_dir/conf.$iname.gro
-    echo "conf.$iname.gro" >> confFilenames.record
+    echo "$record_dir/conf.$iname.gro" >> confFilenames.record
 done
 
 mv -f $mylog confFilenames.record $record_dir
+
+./tools/profile/conf2traj -r $record_dir/confFilenames.record -o $record_dir/traj.xtc
 
