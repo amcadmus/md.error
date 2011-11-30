@@ -286,6 +286,8 @@ print_error (const std::string & file) const
     exit(1);
   }
 
+  fprintf (fp, "# 1      2         3-4       5-6\n");
+  fprintf (fp, "# x  RMS-E  E_inhomo^2  E_homo^2\n");
   for (int i = 0; i < K.x; ++i){
     IntVectorType idx;
     idx.x = i;
@@ -315,6 +317,8 @@ print_meanf (const std::string & file,
     exit(1);
   }
 
+  fprintf (fp, "# 1       2    3-5\n");
+  fprintf (fp, "# x  meanFx  meanF\n");
   for (int i = 0; i < K.x; ++i){
     IntVectorType idx;
     idx.x = i;
@@ -325,7 +329,9 @@ print_meanf (const std::string & file,
     scalor = 
     	(dp.getProfileP(index) + dp.getProfileN(index)) /
     	(dp.getProfileP(index) - dp.getProfileN(index)) ;
-    fprintf (fp, "%f %e %e %e %e\n",
+    scalor = 1.;
+    
+    fprintf (fp, "%f     %e %e %e %e\n",
 	     (i + 0.5) * vecA.xx / K.x,
 	     error1x[index][0],
 	     error1x[index][0] * scalor,
