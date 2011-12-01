@@ -14,7 +14,7 @@
 
 #include "DensityProfile.h"
 #include "ErrorEstimate_SPME_Ik.h"
-#include "ErrorEstimate_SPME_Ana_old.h"
+#include "ErrorEstimate_SPME_Ana.h"
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
@@ -69,13 +69,13 @@ int main(int argc, char * argv[])
   dp.reinit_xtc (tfile.c_str(), K.x, K.y, K.z, start, end);
   dp.print_avg_x (rfile.c_str());
 
-  ErrorEstimate_SPME_Ana_old eesi;
-  IntVectorType refine;
-  refine.x = refine.y = refine.z= 1;
-  refine.x = 8;
-  refine.y = 4;
-  refine.z = 4;
-  eesi.reinit (beta, order, dp, refine);
+  ErrorEstimate_SPME_Ana eesi;
+  // IntVectorType refine;
+  // refine.x = refine.y = refine.z= 1;
+  // refine.x = 8;
+  // refine.y = 4;
+  // refine.z = 4;
+  eesi.reinit (beta, order, dp);
   eesi.calError (dp);
   eesi.print_meanf ("meanf.out", dp);
   eesi.print_error ("error.out");
