@@ -6,8 +6,8 @@ mylog=make.ref.log
 
 rm -f $mylog
 
-make -C ./tools/profile/ &> make.log
-make -C ./tools/real.error/ &>> make.log
+make -j8 -C ./tools/profile/ &> make.log
+make -j8 -C ./tools/real.error/ &>> make.log
 
 for i in `ls $record_dir | grep conf | grep gro`;
 do

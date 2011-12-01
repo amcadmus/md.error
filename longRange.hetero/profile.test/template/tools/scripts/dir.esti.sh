@@ -6,7 +6,7 @@ mylog=dir.esti.log
 rm -f $mylog
 touch $mylog
 
-make -C ./tools/analyze/ &>> make.log
+make -j8 -C ./tools/analyze/ &>> make.log
 
 # esti the dir error
 ./tools/analyze/error.dir -t $record_dir/traj.xtc --refh $real_h --beta $beta --rcut $cal_rcut &>> $mylog

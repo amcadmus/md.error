@@ -20,4 +20,8 @@ mv -f rho.x.avg.out $record_dir/
 mv -f error.out $record_dir/esti.rec.ewald.error.out
 mv -f meanf.out $record_dir/esti.rec.ewald.meanf.out
 
+# combine rec with dir
+./tools/analyze/combine.error --dir-meanf $record_dir/esti.dir.meanf.out --rec-meanf $record_dir/esti.rec.ewald.meanf.out  --dir-error $record_dir/esti.dir.error.out --rec-error $record_dir/esti.rec.ewald.error.out --output-error $record_dir/esti.ewald.error.out --output-meanf $record_dir/esti.ewald.meanf.out &>> $mylog
+
+
 mv -f $mylog $record_dir

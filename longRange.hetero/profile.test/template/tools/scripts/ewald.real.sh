@@ -27,7 +27,7 @@ mv -f $ewald_record $record_dir
 echo "# #############################################################################" &>> $mylog
 echo "# combine results" &>> $mylog
 echo "# #############################################################################" &>> $mylog
-./tools/real.error/combine.results --record-file $record_dir/$ewald_record -o $record_dir/real.error.out -m $record_dir/real.meanf.out &>> $mylog
+./tools/real.error/combine.results --record-file $record_dir/$ewald_record -o $record_dir/real.ewald.error.out -m $record_dir/real.ewald.meanf.out &>> $mylog
 
 # # esti the dir error
 # ./tools/analyze/error.dir -t $record_dir/traj.xtc --refh $real_h --beta $beta --rcut $cal_rcut

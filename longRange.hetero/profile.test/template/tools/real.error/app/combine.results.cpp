@@ -186,13 +186,13 @@ int main(int argc, char * argv[])
     return 1;
   }
   fprintf(fp, "# 1  2      3      4      5      \n");
-  fprintf(fp, "# x  dirEF  recEF  sumEF  #Sample\n");	  
+  fprintf(fp, "# x  sumEF  dirEF  recEF  #Sample\n");	  
   for (int i = 0; i < nbin; ++i){
     fprintf(fp, "%f %e %e %e %d\n",
 	    (i+0.5) * refh,
+	    t_value[i],
 	    dir_value[i],
 	    rec_value[i],
-	    t_value[i],
 	    count[i]
 	);
   }
@@ -203,19 +203,19 @@ int main(int argc, char * argv[])
     return 1;
   }
   fprintf(fp, "# 1  2-4    5-7    8-10   11     \n");
-  fprintf(fp, "# x  dirEF  recEF  sumEF  #Sample\n");	  
+  fprintf(fp, "# x  sumEF  dirEF  recEF  #Sample\n");	  
   for (int i = 0; i < nbin; ++i){
     fprintf(fp, "%f \t %e %e %e \t %e %e %e \t %e %e %e \t %d\n",
 	    (i+0.5) * refh,
+	    t_meanfx[i],
+	    t_meanfy[i],
+	    t_meanfz[i],
 	    dir_meanfx[i],
 	    dir_meanfy[i],
 	    dir_meanfz[i],
 	    rec_meanfx[i],
 	    rec_meanfy[i],
 	    rec_meanfz[i],
-	    t_meanfx[i],
-	    t_meanfy[i],
-	    t_meanfz[i],
 	    countp[i]
 	);
   }

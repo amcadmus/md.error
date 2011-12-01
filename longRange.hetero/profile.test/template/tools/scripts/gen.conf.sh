@@ -8,8 +8,8 @@ rm -f $mylog
 rm -fr $record_dir
 mkdir -p $record_dir
 
-make -C ./tools/profile/ &> make.log
-make -C ./tools/real.error/ &>> make.log
+make -j8 -C ./tools/profile/ &> make.log
+make -j8 -C ./tools/real.error/ &>> make.log
 
 seed=`date +%s`
 

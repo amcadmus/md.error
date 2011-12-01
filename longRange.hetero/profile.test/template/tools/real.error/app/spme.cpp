@@ -39,7 +39,7 @@ int main (int argc, char * argv[])
       ("grid-number,k", po::value<unsigned > (&ksize)->default_value(32), "number of grid on three dimesions")
       ("rcut,r", po::value<double > (&rcut)->default_value(2.5), "cut of radius")
       ("config,c",    po::value<std::string > (&config)->default_value ("conf.gro"), "config file")
-      ("out-force,o", po::value<std::string > (&forceFile)->default_value ("force.ref"), "the exact force for the system");
+      ("output-force,o", po::value<std::string > (&forceFile)->default_value ("force.ref"), "the exact force for the system");
   
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -75,6 +75,10 @@ int main (int argc, char * argv[])
 			tmpbox);
   npart = posi.size();
 
+  std::vector<double > zero3 (3, 0.);
+  std::vector<std::vector<double > > dir_force (npart, zero3);
+  std::vector<std::vector<double > > rec_force (npart, zero3);
+  
   ToolBox::init_genrand (seed);
   for (unsigned i = 0; i < npart; ++i){
     tmpp.r()[0] = posi[i][0];
@@ -165,7 +169,7 @@ int main (int argc, char * argv[])
   }
   std::cout << "### force is cleared" << std::endl;
   // calculate interaction
-  double potenEnergy = ele.applyInteractionCalPotential ();
+  double potenEnergy = ele.applyInteractionCalPotential (dir_force, rec_force);
   ele.reset_watch();
   Stopwatch st;
   st.start();
@@ -205,11 +209,26 @@ int main (int argc, char * argv[])
   std::cout << "the estimated error of rec part SPME " << errorRec << std::endl;
 
   FILE * fpmy = fopen (forceFile.c_str(), "w");
+  if (fpmy == NULL){
+    std::cerr << "cannot open file " << forceFile << std::endl;
+    return 1;
+  }
   for (unsigned i = 0; i < particles.size(); ++ i){
-    fprintf (fpmy, "%.16e\t%.16e\t%.16e\n", 
+    fprintf (fpmy, "%.16e %.16e %.16e \t  %.16e %.16e %.16e \t  %.16e %.16e %.16e\n", 
+	     dir_force[i][0],
+	     dir_force[i][1],
+	     dir_force[i][2],
 	     unitScale * particles[i].f()[0],
 	     unitScale * particles[i].f()[1],
-	     unitScale * particles[i].f()[2]);
+	     unitScale * particles[i].f()[2],
+	     dir_force[i][0] + rec_force[i][0],
+	     dir_force[i][1] + rec_force[i][1],
+	     dir_force[i][2] + rec_force[i][2]
+	);
+    // fprintf (fpmy, "%.16e\t%.16e\t%.16e\n", 
+    // 	     unitScale * particles[i].f()[0],
+    // 	     unitScale * particles[i].f()[1],
+    // 	     unitScale * particles[i].f()[2]);
   }
   fclose (fpmy);
 

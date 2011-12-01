@@ -32,5 +32,7 @@ record_dir=$project_name.b$beta.r$ref_rcut.K$ref_K
 # naive summation
 cal_rcut=3.0
 cal_K=21
-real_h=2.0
+cal_order=6
+
+real_h=1.0
 
