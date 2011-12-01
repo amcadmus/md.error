@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ErrorEstimate_SPME_Ana.h"
+#include "ErrorEstimate_SPME_Ana_old.h"
 
 static void 
 array_multiply (fftw_complex ** a,
@@ -56,19 +56,19 @@ multiply (fftw_complex & c,
 }
 
 
-ErrorEstimate_SPME_Ana::
-ErrorEstimate_SPME_Ana ()
+ErrorEstimate_SPME_Ana_old::
+ErrorEstimate_SPME_Ana_old ()
     : malloced (false)
 {
 }
 
-ErrorEstimate_SPME_Ana::
-~ErrorEstimate_SPME_Ana()
+ErrorEstimate_SPME_Ana_old::
+~ErrorEstimate_SPME_Ana_old()
 {
   freeAll();
 }
 
-fftw_complex ** ErrorEstimate_SPME_Ana::
+fftw_complex ** ErrorEstimate_SPME_Ana_old::
 myMalloc (int numOfk,
 	  int nele)
 {
@@ -80,7 +80,7 @@ myMalloc (int numOfk,
   return result;
 }
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 myFree (int numOfk,
 	fftw_complex ** a)
 {
@@ -90,7 +90,7 @@ myFree (int numOfk,
   free (a);
 }
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 freeAll ()
 {
   if (malloced){
@@ -276,7 +276,7 @@ calsum (const double & u,
 }
 
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 reinit (const double & beta_,
 	const int & order_,
 	const DensityProfile_PiecewiseConst & dp,
@@ -518,7 +518,7 @@ reinit (const double & beta_,
   calKernel();
 }
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 calKernel ()
 {
   double scalor = 1./(2. * M_PI * volume);
@@ -762,7 +762,7 @@ calKernel ()
 // }
 
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 interpolate (const IntVectorType ii,		// on the refined grid
 	     const fftw_complex * value,	// on the coarse grid
 	     fftw_complex & result)
@@ -822,7 +822,7 @@ interpolate (const IntVectorType ii,		// on the refined grid
 
 
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 calError (const DensityProfile_PiecewiseConst & dp)
 {
   spmeik.calError(dp);
@@ -1251,7 +1251,7 @@ calError (const DensityProfile_PiecewiseConst & dp)
 }
 
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 print_meanf (const std::string & file,
 	     const DensityProfile_PiecewiseConst & dp) const
 {
@@ -1299,7 +1299,7 @@ print_meanf (const std::string & file,
   fclose (fp);
 }
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 print_error (const std::string & file) const
 {
   FILE * fp = fopen (file.c_str(), "w");

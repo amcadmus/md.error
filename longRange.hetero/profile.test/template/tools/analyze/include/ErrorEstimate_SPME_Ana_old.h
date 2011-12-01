@@ -1,5 +1,5 @@
-#ifndef __ErrorEstimate_SPME_Ana_h_wanghan__
-#define __ErrorEstimate_SPME_Ana_h_wanghan__
+#ifndef __ErrorEstimate_SPME_Ana_old_h_wanghan__
+#define __ErrorEstimate_SPME_Ana_old_h_wanghan__
 
 #include <fftw3.h>
 #include <gsl/gsl_math.h>
@@ -7,7 +7,7 @@
 #include "DensityProfile.h"
 #include "ErrorEstimate_SPME_Ik.h"
 
-class ErrorEstimate_SPME_Ana
+class ErrorEstimate_SPME_Ana_old
 {
   IntVectorType refined_K;
   IntVectorType refine;
@@ -153,8 +153,8 @@ private:
 		    const fftw_complex * value,		// on the coarse grid
 		    fftw_complex & result);
 public:
-  ErrorEstimate_SPME_Ana();
-  ~ErrorEstimate_SPME_Ana();
+  ErrorEstimate_SPME_Ana_old();
+  ~ErrorEstimate_SPME_Ana_old();
   void reinit (const double & beta,
 	       const int & order,
 	       const DensityProfile_PiecewiseConst & dp,
@@ -165,14 +165,14 @@ public:
   void print_error (const std::string & file) const;
 };
 
-unsigned ErrorEstimate_SPME_Ana::
+unsigned ErrorEstimate_SPME_Ana_old::
 kl2to1 (const int & k,
 	const int & l) const
 {
   return l + numk * k;
 }
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 kl1to2 (const unsigned & index,
 	int & k,
 	int & l)
@@ -182,14 +182,14 @@ kl1to2 (const unsigned & index,
   k = (tmp - l) / numk;
 }
 
-int ErrorEstimate_SPME_Ana::
+int ErrorEstimate_SPME_Ana_old::
 index3to1 (const IntVectorType i,
 	   const IntVectorType N) const
 {
   return i.z + N.z * (i.y + N.y * i.x);
 }
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_old::
 index1to3 (const unsigned input,
 	   const IntVectorType N,
 	   IntVectorType * i) const
