@@ -363,11 +363,11 @@ calKernel()
     if (kk == 0) continue;
     int myk = kk + kcut;
     self_error += 4. * M_PI * M_PI * kk * kk *
-	K.x * K.x * vecAStar.xx * vecAStar.xx * selfx[myk][0];
+	K.x * K.x * vecAStar.xx * vecAStar.xx * selfx[myk][0] * selfx[myk][0];
     self_error += 4. * M_PI * M_PI * kk * kk *
-	K.y * K.y * vecAStar.yy * vecAStar.yy * selfy[myk][0];
+	K.y * K.y * vecAStar.yy * vecAStar.yy * selfy[myk][0] * selfy[myk][0];
     self_error += 4. * M_PI * M_PI * kk * kk *
-	K.z * K.z * vecAStar.zz * vecAStar.zz * selfz[myk][0];
+	K.z * K.z * vecAStar.zz * vecAStar.zz * selfz[myk][0] * selfz[myk][0];
   }
   
   for (int kk = -kcut; kk <= kcut; ++kk){  
