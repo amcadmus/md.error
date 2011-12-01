@@ -456,9 +456,14 @@ calKernel()
       }
 
       for (int index = 0; index < nele; ++index){
-	k1mx[index][1] += 2. * M_PI * double(myk) * Fmx[kk][index][0] * vecAStar.xx;
+      	k1mx[index][1] += 2. * M_PI * double(myk) * K.x * vecAStar.xx * Fmx[kk][index][0];
       }
       fftw_execute (p_backward_k1mx);
+      // for (int index = 0; index < nele; ++index){
+      // 	double scalor = 2. * M_PI * myk * K.x * vecAStar.xx;
+      // 	k1rx[index][1] += scalor * Frx[kk][index][0];
+      // 	k1rx[index][0] +=-scalor * Frx[kk][index][1];	
+      // }
       for (int i = 0; i < nele; ++i){
 	k2mb[i][0] += (
 	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
@@ -510,9 +515,14 @@ calKernel()
       }
 
       for (int index = 0; index < nele; ++index){
-	k1my[index][1] += 2. * M_PI * double(myk) * Fmy[kk][index][0] * vecAStar.yy;
+      	k1my[index][1] += 2. * M_PI * double(myk) * K.y * vecAStar.yy * Fmy[kk][index][0];
       }
       fftw_execute (p_backward_k1my);
+      // for (int index = 0; index < nele; ++index){
+      // 	double scalor = 2. * M_PI * myk * K.y * vecAStar.yy;
+      // 	k1ry[index][1] += scalor * Fry[kk][index][0];
+      // 	k1ry[index][0] +=-scalor * Fry[kk][index][1];	
+      // }
       for (int i = 0; i < nele; ++i){
 	k2mb[i][0] += (
 	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
@@ -564,9 +574,14 @@ calKernel()
       }
 
       for (int index = 0; index < nele; ++index){
-	k1mz[index][1] += 2. * M_PI * double(myk) * Fmz[kk][index][0] * vecAStar.zz;
+      	k1mz[index][1] += 2. * M_PI * double(myk) * K.z * vecAStar.zz * Fmz[kk][index][0];
       }
       fftw_execute (p_backward_k1mz);
+      // for (int index = 0; index < nele; ++index){
+      // 	double scalor = 2. * M_PI * myk * K.z * vecAStar.zz;
+      // 	k1rz[index][1] += scalor * Frz[kk][index][0];
+      // 	k1rz[index][0] +=-scalor * Frz[kk][index][1];	
+      // }
       for (int i = 0; i < nele; ++i){
 	k2mb[i][0] += (
 	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
@@ -726,13 +741,16 @@ calError (const DensityProfile_PiecewiseConst & dp)
     for (int i = 0; i < nele; ++i){
       error2[i][0] += 4. * M_PI * M_PI * kk * kk *
 	  K.x * K.x * vecAStar.xx * vecAStar.xx *
-	  FConvRho1x[myk][i][0] * FConvRho1x[myk][i][0];
+	  (FConvRho1x[myk][i][0] * FConvRho1x[myk][i][0] +
+	   FConvRho1x[myk][i][1] * FConvRho1x[myk][i][1]);
       error2[i][0] += 4. * M_PI * M_PI * kk * kk *
 	  K.y * K.y * vecAStar.yy * vecAStar.yy *
-	  FConvRho1y[myk][i][0] * FConvRho1y[myk][i][0];
+	  (FConvRho1y[myk][i][0] * FConvRho1y[myk][i][0] +
+	   FConvRho1y[myk][i][1] * FConvRho1y[myk][i][1]);
       error2[i][0] += 4. * M_PI * M_PI * kk * kk *
 	  K.z * K.z * vecAStar.zz * vecAStar.zz *
-	  FConvRho1z[myk][i][0] * FConvRho1z[myk][i][0];
+	  (FConvRho1z[myk][i][0] * FConvRho1z[myk][i][0] +
+	   FConvRho1z[myk][i][1] * FConvRho1z[myk][i][1]);
     }
   }
 }
@@ -748,21 +766,30 @@ print_error (const std::string & file) const
   }
 
   fprintf (fp, "# 1      2         3-4       5-6      7\n");
-  fprintf (fp, "# x  RMS-E  E_inhomo^2  E_homo^2  selfE\n");
+  fprintf (fp, "# x  RMS-E  E_inhomo^2  E_homo^2  selfE^2\n");
   for (int i = 0; i < K.x; ++i){
     IntVectorType idx;
     idx.x = i;
     idx.y = 0;
     idx.z = 0;
     unsigned index = index3to1 (idx, K);
-    fprintf (fp, "%f %e   %e %e %e %e   %e\n",
+    int kk = 1;
+    int myk = kk + kcut;
+
+    fprintf (fp, "%f %e   %e %e %e %e   %e %e %e\n",
 	     (i + 0.5) * vecA.xx / K.x,
 	     sqrt(error1[index][0] + error2[index][0] + self_error),
 	     error1[index][0],
 	     error1[index][1],
 	     error2[index][0],
 	     error2[index][1],
-	     self_error
+	     self_error,
+	     sqrt(4. * M_PI * M_PI * kk * kk *
+	     K.x * K.x * vecAStar.xx * vecAStar.xx *
+		  FConvRho1x[myk][i][0] * FConvRho1x[myk][i][0]),
+	     sqrt(4. * M_PI * M_PI * kk * kk *
+	     K.x * K.x * vecAStar.xx * vecAStar.xx *
+		  FConvRho1x[myk][i][1] * FConvRho1x[myk][i][1])
 	);
   }
   fclose (fp);
