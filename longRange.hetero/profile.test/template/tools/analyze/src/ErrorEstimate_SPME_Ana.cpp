@@ -357,6 +357,19 @@ calKernel()
       }
     }
   }
+
+  self_error = 0.;
+  for (int kk = -kcut; kk <= kcut; ++kk){
+    if (kk == 0) continue;
+    int myk = kk + kcut;
+    self_error += 4. * M_PI * M_PI * kk * kk *
+	K.x * K.x * vecAStar.xx * vecAStar.xx * selfx[myk][0];
+    self_error += 4. * M_PI * M_PI * kk * kk *
+	K.y * K.y * vecAStar.yy * vecAStar.yy * selfy[myk][0];
+    self_error += 4. * M_PI * M_PI * kk * kk *
+	K.z * K.z * vecAStar.zz * vecAStar.zz * selfz[myk][0];
+  }
+  
   for (int kk = -kcut; kk <= kcut; ++kk){  
     if (kk == 0) continue;
     int myk = kk + kcut;
@@ -698,21 +711,22 @@ print_error (const std::string & file) const
     exit(1);
   }
 
-  fprintf (fp, "# 1      2         3-4       5-6\n");
-  fprintf (fp, "# x  RMS-E  E_inhomo^2  E_homo^2\n");
+  fprintf (fp, "# 1      2         3-4       5-6      7\n");
+  fprintf (fp, "# x  RMS-E  E_inhomo^2  E_homo^2  selfE\n");
   for (int i = 0; i < K.x; ++i){
     IntVectorType idx;
     idx.x = i;
     idx.y = 0;
     idx.z = 0;
     unsigned index = index3to1 (idx, K);
-    fprintf (fp, "%f %e   %e %e %e %e\n",
+    fprintf (fp, "%f %e   %e %e %e %e   %e\n",
 	     (i + 0.5) * vecA.xx / K.x,
-	     sqrt(error1[index][0] + error2[index][0]),
+	     sqrt(error1[index][0] + error2[index][0] + self_error),
 	     error1[index][0],
 	     error1[index][1],
 	     error2[index][0],
-	     error2[index][1]
+	     error2[index][1],
+	     self_error
 	);
   }
   fclose (fp);
