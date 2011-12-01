@@ -377,16 +377,6 @@ calKernel()
     fftw_execute (p_backward_Fmy[myk]);   // 
     fftw_execute (p_backward_Fmz[myk]);   //
   }
-  // for (int kk = -kcut; kk <= kcut; ++kk){  
-  //   if (kk == 0) continue;
-  //   int myk = kk + kcut;
-  //   for (int index = 0; index < nele; ++index){
-  //     Fmx[myk][index][0] *= volume;
-  //     Fmy[myk][index][0] *= volume;
-  //     Fmz[myk][index][0] *= volume;
-  //   }
-  // }
-
 
   
   VectorType * gmi = (VectorType *) malloc (sizeof(VectorType) * nele);
@@ -642,6 +632,16 @@ calKernel()
 	(k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
     k2ma[i][1] = 0.;
   }
+  
+  for (int kk = -kcut; kk <= kcut; ++kk){  
+    if (kk == 0) continue;
+    int myk = kk + kcut;
+    for (int index = 0; index < nele; ++index){
+      Fmx[myk][index][0] *= volume;
+      Fmy[myk][index][0] *= volume;
+      Fmz[myk][index][0] *= volume;
+    }
+  }
 
   fftw_execute (p_forward_k2a);
   fftw_execute (p_forward_k2b);
@@ -682,12 +682,32 @@ calError (const DensityProfile_PiecewiseConst & dp)
   fftw_execute (p_backward_error1y);
   fftw_execute (p_backward_error1z);
   fftw_execute (p_backward_error2);
+  for (int kk = -kcut; kk <= kcut; ++kk){
+    if (kk == 0) continue;
+    int myk = kk + kcut;
+    fftw_execute (p_backward_FConvRho1x[myk]);
+    fftw_execute (p_backward_FConvRho1y[myk]);
+    fftw_execute (p_backward_FConvRho1z[myk]);
+  }
 
   for (int i = 0; i < nele; ++i){
     error1x[i][0] /= volume;
     error1y[i][0] /= volume;
     error1z[i][0] /= volume;
     error2[i][0] /= volume;
+  }
+  for (int kk = -kcut; kk <= kcut; ++kk){
+    if (kk == 0) continue;
+    int myk = kk + kcut;
+    for (int i = 0; i < nele; ++i){
+      FConvRho1x[myk][i][0] /= volume;
+      FConvRho1y[myk][i][0] /= volume;
+      FConvRho1z[myk][i][0] /= volume;
+      FConvRho1x[myk][i][1] /= volume;
+      FConvRho1y[myk][i][1] /= volume;
+      FConvRho1z[myk][i][1] /= volume;
+      // error2[i][0] /= volume;
+    }
   }
   for (int i = 0; i < nele; ++i){
     error1[i][0] =
@@ -698,6 +718,22 @@ calError (const DensityProfile_PiecewiseConst & dp)
 	error1x[i][1] * error1x[i][1] + 
 	error1y[i][1] * error1y[i][1] + 
 	error1z[i][1] * error1z[i][1] ;
+  }
+
+  for (int kk = -kcut; kk <= kcut; ++kk){
+    if (kk == 0) continue;
+    int myk = kk + kcut;
+    for (int i = 0; i < nele; ++i){
+      error2[i][0] += 4. * M_PI * M_PI * kk * kk *
+	  K.x * K.x * vecAStar.xx * vecAStar.xx *
+	  FConvRho1x[myk][i][0] * FConvRho1x[myk][i][0];
+      error2[i][0] += 4. * M_PI * M_PI * kk * kk *
+	  K.y * K.y * vecAStar.yy * vecAStar.yy *
+	  FConvRho1y[myk][i][0] * FConvRho1y[myk][i][0];
+      error2[i][0] += 4. * M_PI * M_PI * kk * kk *
+	  K.z * K.z * vecAStar.zz * vecAStar.zz *
+	  FConvRho1z[myk][i][0] * FConvRho1z[myk][i][0];
+    }
   }
 }
 
