@@ -15,12 +15,12 @@ rhol=0.05
 project_name=one.peak
 profile_command="$project_name -x $Lx -y $Ly -z $Lz -p $peak_size -t $layerWith -u $rhoh -l $rhol -n 0"
 
+project_name=uniform
+profile_command="$project_name -x $Lx -y $Ly -z $Lz --rho $rhoh -n 0"
+
 peak_dist=5.0
 project_name=two.peaks
 profile_command="$project_name -d $peak_dist -x $Lx -y $Ly -z $Lz -p $peak_size -t $layerWith -u $rhoh -l $rhol -n 0"
-
-project_name=uniform
-profile_command="$project_name -x $Lx -y $Ly -z $Lz --rho $rhoh -n 0"
 
 # Ewald parameters
 beta=1.0
@@ -30,12 +30,16 @@ ref_K=65
 beta=`printf "%.3f" $beta`
 ref_rcut=`printf "%.2f" $ref_rcut`
 ref_K=`printf "%03d" $ref_K`
-record_dir=$project_name.b$beta.r$ref_rcut.K$ref_K
+record_dir=$project_name.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K$ref_K
 
 # naive summation
 cal_rcut=3.0
 cal_K=59
 cal_order=6
-
 real_h=1.0
 
+# regulate parameters. DO NOT MOVE
+cal_rcut=`printf "%.2f" $cal_rcut`
+cal_K=`printf "%03d" $cal_K`
+cal_order=`printf "%01d" $cal_order`
+errors_dir=error.$project_name.box${Lx}x${Ly}x${Lz}.b$beta.r$cal_rcut.n$cal_order.K$cal_K

@@ -6,6 +6,10 @@ if test ! -d $record_dir; then
     echo "no record dir $record_dir"
     exit
 fi
+if test ! -d $errors_dir; then
+    echo "# no errors dir $errors_dir, make it"
+    mkdir -p $errors_dir
+fi
 
 mylog=spme.ana.real.log
 rm -f $mylog
@@ -24,21 +28,15 @@ do
     
     tools/real.error/compare.force --config $record_dir/$i --refh $real_h --force-0 $record_dir/force.ref.$iname.out --force-1 force.spme.ana.out -o error.spme.ana.$iname.out -m meanf.spme.ana.$iname.out &>> $mylog
 
-    mv error.spme.ana.$iname.out meanf.spme.ana.$iname.out $record_dir
-    echo "$record_dir/error.spme.ana.$iname.out $record_dir/meanf.spme.ana.$iname.out" >> $spme_ana_record
+    mv error.spme.ana.$iname.out meanf.spme.ana.$iname.out $errors_dir
+    echo "$errors_dir/error.spme.ana.$iname.out $errors_dir/meanf.spme.ana.$iname.out" >> $spme_ana_record
 done
-mv -f $spme_ana_record $record_dir
+mv -f $spme_ana_record $errors_dir
 
 echo "# #############################################################################" &>> $mylog
 echo "# combine results" &>> $mylog
 echo "# #############################################################################" &>> $mylog
-./tools/real.error/combine.results --record-file $record_dir/$spme_ana_record -o $record_dir/real.spme.ana.error.out -m $record_dir/real.spme.ana.meanf.out &>> $mylog
-
-# # esti the dir error
-# ./tools/analyze/error.dir -t $record_dir/traj.xtc --refh $real_h --beta $beta --rcut $cal_rcut
-# mv -f rho.x.avg.out $record_dir/
-# mv -f error.out $record_dir/esti.dir.error.out
-# mv -f meanf.out $record_dir/esti.dir.meanf.out
+./tools/real.error/combine.results --record-file $errors_dir/$spme_ana_record -o $errors_dir/real.spme.ana.error.out -m $errors_dir/real.spme.ana.meanf.out &>> $mylog
 
 rm -f force.spme.ana.out
-mv -f make.log $mylog $record_dir
+mv -f make.log $mylog $errors_dir

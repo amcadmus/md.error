@@ -6,8 +6,12 @@ if test ! -d $record_dir; then
     echo "no record dir $record_dir"
     exit
 fi
+if test ! -d $errors_dir; then
+    echo "# no errors dir $errors_dir, make it"
+    mkdir -p $errors_dir
+fi
 
-mylog=ewald.log
+mylog=ewald.real.log
 rm -f $mylog
 ewald_record=ewald.record
 rm -f $ewald_record
@@ -24,15 +28,15 @@ do
     
     tools/real.error/compare.force --config $record_dir/$i --refh $real_h --force-0 $record_dir/force.ref.$iname.out --force-1 force.ewald.out -o error.ewald.$iname.out -m meanf.ewald.$iname.out &>> $mylog
 
-    mv error.ewald.$iname.out meanf.ewald.$iname.out $record_dir
-    echo "$record_dir/error.ewald.$iname.out $record_dir/meanf.ewald.$iname.out" >> $ewald_record
+    mv error.ewald.$iname.out meanf.ewald.$iname.out $errors_dir
+    echo "$errors_dir/error.ewald.$iname.out $errors_dir/meanf.ewald.$iname.out" >> $ewald_record
 done
-mv -f $ewald_record $record_dir
+mv -f $ewald_record $errors_dir
 
 echo "# #############################################################################" &>> $mylog
 echo "# combine results" &>> $mylog
 echo "# #############################################################################" &>> $mylog
-./tools/real.error/combine.results --record-file $record_dir/$ewald_record -o $record_dir/real.ewald.error.out -m $record_dir/real.ewald.meanf.out &>> $mylog
+./tools/real.error/combine.results --record-file $errors_dir/$ewald_record -o $errors_dir/real.ewald.error.out -m $errors_dir/real.ewald.meanf.out &>> $mylog
 
 # # esti the dir error
 # ./tools/analyze/error.dir -t $record_dir/traj.xtc --refh $real_h --beta $beta --rcut $cal_rcut
@@ -41,4 +45,4 @@ echo "# ########################################################################
 # mv -f meanf.out $record_dir/esti.dir.meanf.out
 
 rm -f force.ewald.out
-mv -f make.log $mylog $record_dir
+mv -f make.log $mylog $errors_dir
