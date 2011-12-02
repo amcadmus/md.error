@@ -2,6 +2,11 @@
 
 source parameters.sh
 
+if test ! -d $record_dir; then
+    echo "no record dir $record_dir"
+    exit
+fi
+
 mylog=dir.esti.log
 rm -f $mylog
 touch $mylog
@@ -14,4 +19,4 @@ mv -f rho.x.avg.out $record_dir/
 mv -f error.out $record_dir/esti.dir.error.out
 mv -f meanf.out $record_dir/esti.dir.meanf.out
 
-mv -f $mylog $record_dir
+mv -f make.log $mylog $record_dir

@@ -13,7 +13,7 @@ make -j8 -C ./tools/real.error/ &>> make.log
 
 seed=`date +%s`
 
-for i in `seq 1 $nframe_real_error`;
+for i in `seq 1 $nframe_traj`;
 do
     iname=`printf "%04d" $i`
     echo "# #############################################################################" &>> $mylog
@@ -25,7 +25,16 @@ do
     echo "$record_dir/conf.$iname.gro" >> confFilenames.record
 done
 
-mv -f $mylog confFilenames.record $record_dir
-
+mv -f confFilenames.record $record_dir
 ./tools/profile/conf2traj -r $record_dir/confFilenames.record -o $record_dir/traj.xtc
+
+for i in `seq $(($nframe_real_error+1)) $nframe_traj`;
+do
+    iname=`printf "%04d" $i`
+    rm -f $record_dir/conf.$iname.gro
+done
+
+mv -f make.log $mylog $record_dir
+rm -f traj.xtc
+
 

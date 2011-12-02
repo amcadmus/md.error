@@ -2,6 +2,11 @@
 
 source parameters.sh
 
+if test ! -d $record_dir; then
+    echo "no record dir $record_dir"
+    exit
+fi
+
 mylog=ewald.log
 rm -f $mylog
 ewald_record=ewald.record
@@ -36,4 +41,4 @@ echo "# ########################################################################
 # mv -f meanf.out $record_dir/esti.dir.meanf.out
 
 rm -f force.ewald.out
-mv -f $mylog $record_dir
+mv -f make.log $mylog $record_dir

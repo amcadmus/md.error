@@ -2,6 +2,11 @@
 
 source parameters.sh
 
+if test ! -d $record_dir; then
+    echo "no record dir $record_dir"
+    exit
+fi
+
 mylog=make.ref.log
 
 rm -f $mylog
@@ -19,4 +24,4 @@ do
     mv force.ref.$iname.out $record_dir
 done
 
-mv -f $mylog $record_dir
+mv -f make.log $mylog $record_dir
