@@ -1,7 +1,7 @@
 #!/bin/bash
 
 nframe_real_error=5
-nframe_error_esti=100
+nframe_traj=100
 
 # gen conf parameters
 Lx=30
