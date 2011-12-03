@@ -38,7 +38,7 @@ int main(int argc, char * argv[])
       ("kx", po::value<int > (&K.x)->default_value (27), "Number of grid points, should be odd")
       ("ky", po::value<int > (&K.y)->default_value (27), "Number of grid points, should be odd")
       ("kz", po::value<int > (&K.z)->default_value (27), "Number of grid points, should be odd")
-      ("grid,k",po::value<int > (&kValue)->default_value (27), "Number of grid points, should be odd, this will overwrite kx, ky and kz")
+      ("grid,k",po::value<int > (&kValue), "Number of grid points, should be odd, this will overwrite kx, ky and kz")
       ("output-density",  po::value<std::string > (&rfile)->default_value ("rho.x.avg.out"), "the output density (averaged on yz) of the system")
       ("output-error,o",  po::value<std::string > (&efile)->default_value ("error.out"), "the output error of the system");
   po::variables_map vm;
