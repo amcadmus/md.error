@@ -21,6 +21,7 @@ int main (int argc, char * argv[])
   unsigned seed = 0;
   double beta;
   unsigned ksize;
+  unsigned ksizex, ksizey, ksizez;
   double rcut;
   double boxsize = 1;
   unsigned npart;
@@ -36,7 +37,10 @@ int main (int argc, char * argv[])
       ("method,m", po::value<std::string > (&method)->default_value("bspline"), "set method, can be bspline or fbspline")
       ("order,n", po::value<unsigned > (&order)->default_value (4), "set order of interpolation")
       ("beta,b", po::value<double > (&beta)->default_value(1.), "value of beta")
-      ("grid-number,k", po::value<unsigned > (&ksize)->default_value(32), "number of grid on three dimesions")
+      ("kx", po::value<unsigned > (&ksizex)->default_value(32), "value of Kx")
+      ("ky", po::value<unsigned > (&ksizey)->default_value(32), "value of Ky")
+      ("kz", po::value<unsigned > (&ksizez)->default_value(32), "value of Kz")
+      ("grid-number,k", po::value<unsigned > (&ksize), "number of grid on three dimesions")
       ("rcut,r", po::value<double > (&rcut)->default_value(2.5), "cut of radius")
       ("config,c",    po::value<std::string > (&config)->default_value ("conf.gro"), "config file")
       ("output-force,o", po::value<std::string > (&forceFile)->default_value ("force.ref"), "the exact force for the system");
@@ -48,6 +52,9 @@ int main (int argc, char * argv[])
   if (vm.count("help")){
     std::cout << desc<< "\n";
     return 0;
+  }
+  if (vm.count("grid-number")){
+    ksizex = ksizey = ksizez = ksize;
   }
   if (method != std::string("bspline") && 
       method != std::string("fbspline") &&
@@ -114,7 +121,9 @@ int main (int argc, char * argv[])
 	    << "# method is " << method << "\n"
 	    << "# order is " << order << "\n"
 	    << "# beta is " << beta << "\n"
-	    << "# K is " << ksize << "\n"
+	    << "# Kx is " << ksizex << "\n"
+	    << "# Ky is " << ksizey << "\n"
+	    << "# Kz is " << ksizez << "\n"
 	    << "# rcut is " << rcut << "\n"
 	    << "# box is " << boxlx << "\n"
 	    << "# npart is " << npart << "\n"
@@ -124,7 +133,11 @@ int main (int argc, char * argv[])
 	    << std::endl;
   ////////////////////////////////////////
   
-  std::vector<unsigned > K(3, ksize);
+  std::vector<unsigned > K(3);
+  K[0] = ksizex;
+  K[1] = ksizey;
+  K[2] = ksizez;
+  
   // K[0] += 2;
   // K[1] += 1;
 //   double beta = 3;

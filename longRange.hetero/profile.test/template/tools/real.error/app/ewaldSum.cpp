@@ -28,13 +28,17 @@ int main (int argc, char * argv[])
   double precision;
   double definedbeta;
   unsigned definedk;
+  unsigned definedkx, definedky, definedkz;
   
   desc.add_options()
       ("help,h", "print this message")
       ("config,c", po::value<std::string > (&config)->default_value("conf.gro"), "config file")
       ("beta,b", po::value<double > (&definedbeta)->default_value(2.), "value of beta")
       ("rcut,r", po::value<double > (&refRcut)->default_value(2.), "value of rcut")
-      ("grid-number,k", po::value<unsigned > (&definedk)->default_value(32), "number of grid on three dimesions")
+      ("kx", po::value<unsigned > (&definedkx)->default_value(32), "value of Kx")
+      ("ky", po::value<unsigned > (&definedky)->default_value(32), "value of Ky")
+      ("kz", po::value<unsigned > (&definedkz)->default_value(32), "value of Kz")
+      ("grid-number,k", po::value<unsigned > (&definedk), "number of grid on three dimesions")
       ("precision,p", po::value<double > (&precision), "required precision of the reference force. if this option is used, then beta and grid-number are ignored")
       ("output-force,o", po::value<std::string > (&forceFile)->default_value ("force.out"), "the output exact force for the system");
   
@@ -45,6 +49,9 @@ int main (int argc, char * argv[])
   if (vm.count("help")){
     std::cout << desc<< "\n";
     return 0;
+  }
+  if (vm.count("grid-number")){
+    definedkx = definedky = definedkz = definedk;
   }
 
   if (vm.count("precision")){
@@ -68,7 +75,9 @@ int main (int argc, char * argv[])
 	      << "# configuration file is " << config << "\n"
 	      << "# rcut is " << refRcut << "\n"
 	      << "# beta is " << definedbeta << "\n"
-	      << "# K is " << definedk << "\n"
+	      << "# Kx is " << definedkx << "\n"
+	      << "# Ky is " << definedky << "\n"
+	      << "# Kz is " << definedkz << "\n"
 	      << "# output reference force file is " << forceFile << "\n"
 	      << "##############################\n"
 	      << std::endl;
@@ -190,9 +199,9 @@ int main (int argc, char * argv[])
   }
   else {
     refbeta = definedbeta;
-    refK[0] = definedk;
-    refK[1] = definedk;
-    refK[2] = definedk;
+    refK[0] = definedkx;
+    refK[1] = definedky;
+    refK[2] = definedkz;
     refEle.init (refbeta, refK, refRcut, box, InterpolationInfo::ES);
     std::cout << "### initilized elector calculater" << std::endl;
     refEle.errorEstimatePME (c2, Npart, tmp0, tmp1);
