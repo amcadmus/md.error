@@ -6,6 +6,8 @@ if test ! -d $record_dir; then
     echo "no record dir $record_dir"
     exit
 fi
+rm -f $record_dir/parameters.make.ref.sh
+cp parameters.sh $record_dir/parameters.make.ref.sh
 
 mylog=make.ref.log
 

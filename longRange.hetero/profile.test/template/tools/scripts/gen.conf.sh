@@ -11,6 +11,7 @@ if test -d $record_dir; then
 fi
 rm -fr $record_dir
 mkdir -p $record_dir
+cp parameters.sh $record_dir
 
 make -j8 -C ./tools/profile/ &> make.log
 make -j8 -C ./tools/real.error/ &>> make.log

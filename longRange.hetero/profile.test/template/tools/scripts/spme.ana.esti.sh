@@ -10,6 +10,8 @@ if test ! -d $errors_dir; then
     echo "# no errors dir $errors_dir, make it"
     mkdir -p $errors_dir
 fi
+rm -f $errors_dir/parameters.spme.ana.esti.sh
+cp parameters.sh $errors_dir/parameters.spme.ana.esti.sh
 
 mylog=spme.ana.esti.log
 rm -f $mylog

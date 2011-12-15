@@ -10,6 +10,8 @@ if test ! -d $errors_dir; then
     echo "# no errors dir $errors_dir, make it"
     mkdir -p $errors_dir
 fi
+rm -f $errors_dir/parameters.ewald.esti.sh
+cp parameters.sh $errors_dir/parameters.ewald.esti.sh
 
 mylog=ewald.esti.log
 rm -f $mylog
