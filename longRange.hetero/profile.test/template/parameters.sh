@@ -2,6 +2,7 @@
 
 nframe_real_error=5
 nframe_traj=100
+config_pool=~/study/longRange.hetero/profile.test/config.pool
 
 # gen conf parameters
 Lx=30
@@ -35,6 +36,7 @@ ref_Kx=`printf "%03d" $ref_Kx`
 ref_Ky=`printf "%03d" $ref_Ky`
 ref_Kz=`printf "%03d" $ref_Kz`
 record_dir=$project_name.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K${ref_Kx}x${ref_Ky}x${ref_Kz}
+record_dir=$config_pool/$record_dir
 
 # param for error estimate
 cal_rcut=3.0
