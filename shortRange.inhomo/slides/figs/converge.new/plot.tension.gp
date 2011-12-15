@@ -36,3 +36,11 @@ pl \
    't0.85.tension.uni.out'   u 1:2:3 w e ls 11 not, '' u 1:2 w l ls 11 t 'URC+LPC',\
    't0.85.tension.adapt.out' u 1:2:3 w e ls 21 not, '' u 1:2 w l ls 21 t 'ARC+LPC',\
    't0.85.tension.fcorr.out' u 1:2:3 w e ls 31 not, '' u 1:2 w l ls 31 t 'LFC+LPC'
+
+
+set out 'tension-t0p85-1.eps'
+
+pl \
+   't0.85.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+   't0.85.tension.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
+   't0.85.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 11 not

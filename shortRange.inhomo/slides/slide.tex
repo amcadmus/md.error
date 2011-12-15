@@ -60,7 +60,7 @@
 \begin{document}
 %\title{Comparative atomistic and coarse-grained study of water: Simulation details vs. Simulation feasibility}
 %\title[Optimizing SPME]{Optimizing Working Parameters of the Smooth Particle Mesh Ewald Algorithm}
-\title[]{Accuracy and Efficiency Considerations  for the Non-bonded Interactions}
+\title[]{Accurate and Efficient Calculation of the Non-bonded Particle Interactions}
 %
 \author{Han Wang}
 \institute[FUB] {
@@ -77,7 +77,7 @@ Joint with: Florian Dommert, Christian Holm, Pingwen Zhang}
   \item<1-> Molecular dynamics simulation:
     \bluec{
       \begin{align*}
-        m_i \frac{\d d^2\v r}{\d dt^2} = \v F_i, \quad i = 1, 2, \cdots, N
+        m_i \frac{\d d^2\v r_i}{\d dt^2} = \v F_i, \quad i = 1, 2, \cdots, N
       \end{align*}
     }
   \item<2-> Pairwise interaction:
@@ -123,9 +123,9 @@ Joint with: Florian Dommert, Christian Holm, Pingwen Zhang}
     \end{figure}
   \begin{itemize}
   \item<1-> However, there is \redc{NO} free lunch... Error of force.
-  \item<2-> How cut-off method works. Cost \redc{$\mathcal O(r_c^3)$}.
-  \item<3-> Mostly used $r_c$: 2.5 -- 4.0 $\sigma$. \redc{Convergence check} required.
-  \item<4-> Qualitatively: \redc{error estimate}.
+  \item<2-> Mostly used $r_c$: 2.5 -- 4.0 $\sigma$. \redc{Convergence check} required.
+  \item<3-> How cut-off method works. Cost \redc{$\mathcal O(r_c^3)$}.
+  \item<4-> Quantitatively: the \redc{error estimate}.
   \end{itemize}
 \end{frame}
 
@@ -163,7 +163,7 @@ Joint with: Florian Dommert, Christian Holm, Pingwen Zhang}
     \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
       Conditions & Short-range & Long-range \\\hline
       1+2 & \bluec{\tickYes\quad$\mathcal O(1)$}  & \redc{\tickYes\quad$\mathcal O(1)$} \\
-      1   & \redc{\tickYes\quad$\mathcal O(N\log N)$} & \redc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      2   & \redc{\tickYes\quad$\mathcal O(N\log N)$} & \redc{\tickYes\quad$\mathcal O(N\log N)$} \\
       none& \redc{\tickNo\quad$\mathcal O(N^2\log N)$} & \redc{\tickNo\quad$\mathcal O(N^2\log N)$} \\\hline\hline
     \end{tabular*}
   \end{table}
@@ -181,7 +181,7 @@ Joint with: Florian Dommert, Christian Holm, Pingwen Zhang}
     \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
       Conditions & Short-range & Long-range \\\hline
       1+2 & \bluec{\tickYes\quad$\mathcal O(1)$}  & \shadowc{\tickYes\quad$\mathcal O(1)$} \\
-      1   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      2   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
       none& \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} & \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} \\\hline\hline
     \end{tabular*}
   \end{table}
@@ -198,19 +198,12 @@ Joint with: Florian Dommert, Christian Holm, Pingwen Zhang}
     where \bluec{$u(r)$} is the pairwise interaction potential.
     \vfill
     \vskip 1.cm
-  \item<2-> Notice \bluec{$\langle\Delta\v F\rangle = 0$}
+  \item<2-> Homogeneity $\Rightarrow$ \bluec{$\langle\Delta\v F\rangle = 0$}
     \bluec{
       \begin{align*}
         \mathcal E^2 = \textrm{Var}(\Delta\v F)
       \end{align*}
     }
-    \vfill
-  \item<3-> Energy and pressure correction:
-    \bluec{
-    \begin{align*}
-      \Delta u &= 2\pi\rho\int_{r_c}^\infty r^2 u(r) \,\d dr\\
-      \Delta P &= -\frac{2\pi\rho^2}{3}\int_{r_c}^\infty r^3u'(r)\,\d dr
-    \end{align*}}
     \vfill
   \end{itemize}
 \end{frame}
@@ -225,12 +218,27 @@ Joint with: Florian Dommert, Christian Holm, Pingwen Zhang}
     \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
       Conditions & Short-range & Long-range \\\hline
       1+2 & \shadowc{\tickYes\quad$\mathcal O(1)$}  & \shadowc{\tickYes\quad$\mathcal O(1)$} \\
-      1   & \redc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      2   & \redc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
       none& \redc{\tickNo\quad$\mathcal O(N^2\log N)$} & \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} \\\hline\hline
     \end{tabular*}
   \end{table}
 \end{frame}
 
+\begin{frame}{Short-range, inhomogeneous, correlated}
+  \begin{itemize}\itemsep 10pt
+  \item<1-> Example system:
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.9\textwidth]{figs/t0.85-n16000-rc07.5uni/confout-02.eps}
+    \end{figure}
+  \item<2-> Equilibrium densities:
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.49\textwidth]{figs/converge.new/t0p85-gas-1.eps} 
+    \includegraphics[width=0.49\textwidth]{figs/converge.new/t0p85-liquid-1.eps} 
+  \end{figure}  
+  \end{itemize}
+\end{frame}
 
 \begin{frame}{Short-range, inhomogeneous, correlated}
   \begin{itemize}\itemsep -10pt
@@ -319,7 +327,9 @@ Joint with: Florian Dommert, Christian Holm, Pingwen Zhang}
   \item<1->   Force correction:
   \bluec{
 \begin{align*}
-  \v F_{\textrm{corr}}(\v r) = \tilde{\v F}(\v r) + \langle\Delta\v F(\v r)\rangle.
+  \v F_{\textrm{corr}}(\v r) =
+  \tilde{\v F}(\v r) +
+  \redc{\langle\Delta\v F(\v r)\rangle}.
 \end{align*}}
 \item<2->   The mean of
   the corrected error force vanishes:
@@ -336,8 +346,8 @@ Joint with: Florian Dommert, Christian Holm, Pingwen Zhang}
 \begin{align*} \nonumber
   \langle\vert\Delta\v F_{\textrm{corr}}(\v r)\vert^2\rangle
    =
-  \mathcal E^2_{\textrm{homo}}(\v r) +
-  \mathcal E_{\textrm{correlation}}(\v r).
+   \redc{\mathcal E^2_{\textrm{homo}}(\v r)} +
+   \redc{\mathcal E_{\textrm{correlation}}(\v r)}.
 \end{align*}}
 which contains \redc{NO} inhomogeneous part.
   \end{itemize}
@@ -351,12 +361,37 @@ which contains \redc{NO} inhomogeneous part.
   \end{figure}
 \end{frame}
 
+\renewcommand\arraystretch{1.1}
+\begin{frame}{Accuracy and efficiency}
+  \begin{table}
+  \centering
+  \begin{tabular*}{0.8\textwidth}{c|@{\extracolsep{\fill}}lcc}\hline\hline
+    $r^\ast_{c}$ & \textrm{method} & $\max\mathcal E^\ast$ & Cost($\times 10^{-6}$) \\ \hline
+     &\textrm{uniform} & $8.6\times 10^{-2}$ & 2.9 \\
+ 3.5 &\textrm{adaptive} & $8.6\times 10^{-2}$ & 1.9 \\
+     &\textrm{force corr} & $1.4\times 10^{-2}$ & 3.1 \\\cline{1-4}
+     &\textrm{uniform} & $2.2\times 10^{-2}$ & 7.8 \\
+ 5.0 &\textrm{adaptive} & $2.2\times 10^{-2}$ & 4.5 \\
+     &\textrm{force corr} & $1.9\times 10^{-3}$ & 7.9 \\\cline{1-4}
+ 6.0 &\textrm{uniform} & $1.1\times 10^{-2}$ & 13 \\\cline{1-4}
+     &\textrm{uniform} & $4.5\times 10^{-3}$ & 24 \\
+ 7.5 &\textrm{adaptive} & $4.3\times 10^{-3}$ & 12 \\
+     &\textrm{force corr} & $2.3\times 10^{-4}$ & 24 \\\cline{1-4}
+     &\textrm{uniform} & $1.4\times 10^{-3}$ & 53 \\
+10.0 &\textrm{adaptive} & $1.4\times 10^{-3}$ & 26 \\
+     &\textrm{force corr} & $5.3\times 10^{-5}$ & 53 \\ \hline\hline
+  \end{tabular*}
+\end{table}
+\end{frame}
+\renewcommand\arraystretch{1.5}
+
+
 \begin{frame}{Equilibrium gas density}
   \begin{figure}
     \centering
     \includegraphics[]{figs/converge.new/t0p85-gas.eps} 
   \end{figure}
-  URC: unifrom cut-off, ARC: adaptive cut-off, LFC: long-range force correction.
+  URC: uniform cut-off, ARC: adaptive cut-off, LFC: long-range force correction.
 \end{frame}
 
 \begin{frame}{Equilibrium liquid density}
@@ -364,33 +399,13 @@ which contains \redc{NO} inhomogeneous part.
     \centering
     \includegraphics[]{figs/converge.new/t0p85-liquid.eps} 
   \end{figure}
-  URC: unifrom cut-off, ARC: adaptive cut-off, LFC: long-range force correction.
+  URC: uniform cut-off, ARC: adaptive cut-off, LFC: long-range force correction.
 \end{frame}
 
-\renewcommand\arraystretch{1.1}
-\begin{frame}{Accuracy and efficiency}
-  \begin{table}
-  \centering
-  \begin{tabular*}{0.8\textwidth}{c|@{\extracolsep{\fill}}ccc}\hline\hline
-    $r^\ast_{c}$ & \textrm{method} & $\max\mathcal E^\ast$ & Cost($\times 10^{-6}$) \\ \hline
-     &\textrm{URC} & $8.6\times 10^{-2}$ & 2.9 \\
- 3.5 &\textrm{ARC} & $8.6\times 10^{-2}$ & 1.9 \\
-     &\textrm{LFC} & $1.4\times 10^{-2}$ & 3.1 \\\cline{1-4}
-     &\textrm{URC} & $2.2\times 10^{-2}$ & 7.8 \\
- 5.0 &\textrm{ARC} & $2.2\times 10^{-2}$ & 4.5 \\
-     &\textrm{LFC} & $1.9\times 10^{-3}$ & 7.9 \\\cline{1-4}
- 6.0 &\textrm{URC} & $1.1\times 10^{-2}$ & 13 \\\cline{1-4}
-     &\textrm{URC} & $4.5\times 10^{-3}$ & 24 \\
- 7.5 &\textrm{ARC} & $4.3\times 10^{-3}$ & 12 \\
-     &\textrm{LFC} & $2.3\times 10^{-4}$ & 24 \\\cline{1-4}
-     &\textrm{URC} & $1.4\times 10^{-3}$ & 53 \\
-10.0 &\textrm{ARC} & $1.4\times 10^{-3}$ & 26 \\
-     &\textrm{LFC} & $5.3\times 10^{-5}$ & 53 \\ \hline\hline
-  \end{tabular*}
-\end{table}
-\end{frame}
-\renewcommand\arraystretch{1.5}
 
+\begin{frame}{Conclusion}
+  \centerline{\redc{The inhomogeneity error is bad}}.
+\end{frame}
 
 \begin{frame}{Electrostatic interaction and Ewald summation}
   \begin{itemize}
@@ -459,8 +474,8 @@ which contains \redc{NO} inhomogeneous part.
   \begin{itemize}
     \item \redc{$\beta$} \quad The controlling parameter.
     \item \redc{$r_c$} \quad The direct space cut-off radius.
-    \item \redc{$n$} \quad The order of cardinal B-splines.
     \item \redc{$\v K$} \quad The reciprocal space cut-off. The number of FFT grid points.
+    \item \redc{$n$} \quad The order of cardinal B-spline interpolation.
   \end{itemize}
   \vfill An arbitrary combination may lead to \redc{totally wrong
     results}. \vfill
@@ -476,7 +491,7 @@ which contains \redc{NO} inhomogeneous part.
     \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
       Conditions & Short-range & Long-range \\\hline
       1+2 & \shadowc{\tickYes\quad$\mathcal O(1)$}  & \redc{\tickYes\quad$\mathcal O(1)$} \\
-      1   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      2   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
       none& \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} & \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} \\\hline\hline
     \end{tabular*}
   \end{table}
@@ -491,7 +506,7 @@ which contains \redc{NO} inhomogeneous part.
   is available in MD package Gromacs \redc{now}.
 \end{frame}
 
-\begin{frame}{SPME, homogeneous, uncorrelated}{Parameter tunning}
+\begin{frame}{SPME, homogeneous, uncorrelated}{Parameter tuning}
   The parameter tuning is a constrained optimization problem:\footnote{
     \bluec{H. Wang, F. Dommert and C. Holm, J. Chem. Phys. \textbf{133}, 034117 (2010).}}
   \bluec{
@@ -512,7 +527,7 @@ Available in MD package Gromacs \bluec{soon}.
     \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
       Conditions & Short-range & Long-range \\\hline
       1+2 & \shadowc{\tickYes\quad$\mathcal O(1)$}  & \shadowc{\tickYes\quad$\mathcal O(1)$} \\
-      1   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \redc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      2   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \redc{\tickYes\quad$\mathcal O(N\log N)$} \\
       none& \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} & \redc{\tickNo\quad$\mathcal O(N^2\log N)$} \\\hline\hline
     \end{tabular*}
   \end{table}
@@ -568,7 +583,7 @@ Available in MD package Gromacs \bluec{soon}.
         \bigg\rangle
       }
     \end{align*}
-    Varnishes if the system is \redc{locally} neutral.
+    Varnishes if the system is \redc{locally neutral}.
   \item<2-> The Fourier modes of mean error force:
     \bluec{
       \begin{align*}
@@ -626,7 +641,7 @@ Available in MD package Gromacs \bluec{soon}.
 
 \begin{frame}{SPME, inhomogeneous, correlated}
   \centerline{
-    The \redc{same}, with different convolution kernels.}
+    The \redc{same}. With different convolution kernels.}
 \end{frame}
 
 \begin{frame}{Summary}
@@ -654,7 +669,7 @@ Available in MD package Gromacs \bluec{soon}.
   \item<4-> Homogeneity error estimate for SPME: \redc{parameter tuning}.
     \vfill
   \item<5-> The inhomogeneity error estimate for long-range interaction:
-    we are \redc{safe}.
+    we are \redc{safe} in most simulations.
     \vfill
   \end{itemize}
 \end{frame}
@@ -668,7 +683,7 @@ Available in MD package Gromacs \bluec{soon}.
 \begin{frame}
   \vfill
   \centerline{ \Huge
-    Thanks! }
+    Thanks!  }
   \vfill
   \bluec{
     \begin{align*} \nonumber

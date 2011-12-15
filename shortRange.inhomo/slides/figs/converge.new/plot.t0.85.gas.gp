@@ -35,3 +35,9 @@ pl \
 't0.85.gas.uni.out'   u 1:($2):3 w e ls 11 not, '' u 1:($2) w l ls 11 t'URC',\
 't0.85.gas.adapt.out' u 1:($2):3 w e ls 21 not, '' u 1:($2) w l ls 21 t'ARC',\
 't0.85.gas.fcorr.out' u 1:($2):3 w e ls 31 not, '' u 1:($2) w l ls 31 t'LFC'
+
+set out 't0p85-gas-1.eps'
+pl \
+'t0.85.gas.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+'t0.85.gas.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
+'t0.85.gas.uni.out'   u 1:($2):3 w e ls 11 not, '' u 1:($2) w l ls 11 not
