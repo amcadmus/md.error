@@ -5,7 +5,7 @@ if test ! -d $record_dir; then
     exit
 fi
 
-if test ! -f $record_dir/esti.dir.error.out; then
+if test ! -f $errors_dir/esti.dir.error.out; then
     ./tools/scripts/dir.esti.sh
 fi  
 
