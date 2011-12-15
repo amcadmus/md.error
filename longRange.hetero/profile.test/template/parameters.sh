@@ -13,14 +13,14 @@ peak_size=20
 rhoh=0.50
 rhol=0.05
 
-project_name=one.peak
+project_name=one_peak
 profile_command="$project_name -x $Lx -y $Ly -z $Lz -p $peak_size -t $layerWith -u $rhoh -l $rhol -n 0"
 
 project_name=uniform
 profile_command="$project_name -x $Lx -y $Ly -z $Lz --rho $rhoh -n 0"
 
 peak_dist=5.0
-project_name=two.peaks
+project_name=two_peaks
 profile_command="$project_name -d $peak_dist -x $Lx -y $Ly -z $Lz -p $peak_size -t $layerWith -u $rhoh -l $rhol -n 0"
 
 # param for reference force
