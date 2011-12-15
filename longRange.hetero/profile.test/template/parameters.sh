@@ -23,6 +23,9 @@ peak_dist=5.0
 project_name=two_peaks
 profile_command="$project_name -d $peak_dist -x $Lx -y $Ly -z $Lz -p $peak_size -t $layerWith -u $rhoh -l $rhol -n 0"
 
+project_name=two_peaks_sep
+profile_command="$project_name -x $Lx -y $Ly -z $Lz --layer $layerWith --rho $rhoh -n 0"
+
 # param for reference force
 beta=1.0
 ref_rcut=5.0
