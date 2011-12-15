@@ -20,7 +20,7 @@ touch $mylog
 make -C ./tools/analyze/ &>> make.log
 
 # esti the rec error
-./tools/analyze/error.spme.ana -t $record_dir/traj.xtc -k $cal_K --beta $beta --order $cal_order &>> $mylog
+./tools/analyze/error.spme.ana -t $record_dir/traj.xtc --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order &>> $mylog
 mv -f rho.x.avg.out $errors_dir/
 mv -f error.out $errors_dir/esti.rec.spme.ana.error.out
 mv -f meanf.out $errors_dir/esti.rec.spme.ana.meanf.out

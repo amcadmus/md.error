@@ -26,7 +26,7 @@ do
     echo "# #############################################################################" &>> $mylog
     echo "# doing $iname" &>> $mylog
     echo "# #############################################################################" &>> $mylog
-    ./tools/real.error/spme --config $record_dir/$i --method bspline --beta $beta --rcut $cal_rcut --grid-number $cal_K --order $cal_order --output-force force.spme.ik.out &>> $mylog
+    ./tools/real.error/spme --config $record_dir/$i --method bspline --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force force.spme.ik.out &>> $mylog
     
     tools/real.error/compare.force --config $record_dir/$i --refh $real_h --force-0 $record_dir/force.ref.$iname.out --force-1 force.spme.ik.out -o error.spme.ik.$iname.out -m meanf.spme.ik.$iname.out &>> $mylog
 

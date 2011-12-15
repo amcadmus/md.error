@@ -20,7 +20,7 @@ touch $mylog
 make -C ./tools/analyze/ &>> make.log
 
 # esti the rec error
-./tools/analyze/error.ewald -t $record_dir/traj.xtc --kmax $cal_K -k $ref_K --beta $beta &>> $mylog
+./tools/analyze/error.ewald -t $record_dir/traj.xtc --kmaxx $cal_Kx --kmaxy $cal_Ky --kmaxz $cal_Kz --kx $ref_Kx --ky $ref_Ky --kz $ref_Kz --beta $beta &>> $mylog
 mv -f rho.x.avg.out $errors_dir/
 mv -f error.out $errors_dir/esti.rec.ewald.error.out
 mv -f meanf.out $errors_dir/esti.rec.ewald.meanf.out
