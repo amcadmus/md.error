@@ -5,6 +5,10 @@ source parameters.sh
 mylog=gen.conf.log
 
 rm -f $mylog
+if test -d $record_dir; then
+    echo "# existing record dir $record_dir, mv to backup"
+    mv -f $record_dir $record_dir.`date +%s`
+fi
 rm -fr $record_dir
 mkdir -p $record_dir
 
