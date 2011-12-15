@@ -209,8 +209,12 @@ int main (int argc, char * argv[])
     tmp1 *= unitScale;
   }
   std::cout << "ref beta is " << refbeta << std::endl;
-  std::cout << "ref K0 is " << refK[0] << std::endl;
-  std::cout << "size of K is " << refK[0] << std::endl;
+  std::cout << "ref K0x is " << refK[0] << std::endl;
+  std::cout << "ref K0y is " << refK[1] << std::endl;
+  std::cout << "ref K0z is " << refK[2] << std::endl;
+  std::cout << "size of Kx is " << refK[0] << std::endl;
+  std::cout << "size of Ky is " << refK[1] << std::endl;
+  std::cout << "size of Kz is " << refK[2] << std::endl;
   std::cout << "the ref ES dir error is " << tmp0 << std::endl;
   std::cout << "the ref ES rec error is " << tmp1 << std::endl;
 
