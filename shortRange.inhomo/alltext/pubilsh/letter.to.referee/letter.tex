@@ -1,0 +1,172 @@
+\documentclass{scrlttr2}
+\usepackage{graphicx}
+\usepackage{hyperref}
+% provides a justified text without hyphenation
+\usepackage[none]{hyphenat}
+\renewcommand{\baselinestretch}{1.0}
+\setlength{\footskip}{0cm}
+%\addtolength{\textheight}{10cm}
+\sloppy
+
+
+\KOMAoptions{foldmarks=false,fromalign=left,fromrule=true,fromlogo=false,backaddress=false}
+\setkomavar{fromname}{Dr. Han Wang}
+\setkomavar{fromaddress}
+{Department of Mathematics \& Computer Science \\
+  Freie Universit\"at Berlin\\
+  Arnimallee 6\\
+  14195 Berlin, Germany 
+}
+
+\def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}
+\def\urlunder{\lower .1ex\hbox{\_{}}\kern .04em}
+\def\urldot{\kern -.10em.\kern -.10em}
+\def\urlhttp{http\kern -.10em\lower -.1ex\hbox{:}\kern -.12em\lower 0ex\hbox{/}\kern -.18em\lower 0ex\hbox{/}}
+\parindent0ex
+
+
+\begin{document}
+\makeatletter
+\@setplength{toaddrvpos}{6em}
+\@setplength{sigbeforevskip}{0.5em}
+\@setplength{sigindent}{0em}
+\@setplength{refvpos}{35ex}
+
+\begin{letter}{
+    The Referees of\\
+    Physical Chemistry Chemical Physics\\
+    \vskip 0cm
+  }
+\begin{picture}(0,0)
+  \put(-30,22){
+    \parbox{0.25\textwidth}{
+%	\includegraphics[scale=0.4]{logo-icp-notext.pdf}
+    }
+  }
+  \put(264,10){
+    \parbox{0.25\textwidth}{
+	\includegraphics[scale=0.28]{Fub-logo.pdf}
+    }
+  }
+\end{picture}
+
+\opening{Dear Referees,}
+Hereby we would like to submit our article:\\
+
+\textbf{The Error Estimate of Force Calculation in the Inhomogeneous Molecular Systems}\\
+
+by H. Wang, Christof Sch\"utte and P. Zhang to:\\
+
+\textbf{Physical Chemistry Chemical Physics}, as a regular article.\\
+
+The molecular dynamics simulation of the inhomogeneous molecular
+systems, in which the density of a certain type of atom is lack of
+uniformity, will encounter non-trivial difficulties by using the
+standard cut-off method. The simulation results are found to converge
+only at a very large cut-off radius, so it is computationally very
+expensive to obtain precise measurement of the physical properties.\\
+
+To quantitatively study the cut-off artifact, we developed an accurate
+error estimate of the standard cut-off method for the inhomogeneous
+systems. We proved that the root mean square force error is decomposed
+into three additive parts: the homogeneity error, the inhomogeneity
+error and the correlation error.  An important observation is that the
+inhomogeneity error is dominant in the interfacial regions where the
+density changes rapidly, and can be more than one order of magnitude
+larger than the error in the bulk regions where the density is
+comparatively uniform.  Therefore, a large cut-off value should be
+used to suppress the maximum error in the interfacial regions, but at
+the mean time,
+considerable computational effort is wasted in the bulk regions. \\
+
+We proposed the adaptive cut-off and the force correction method to
+avoid the mentioned problem. The adaptive cut-off method uses different
+cut-off radii for the interfacial and bulk regions so that the error
+is uniformly distributed across the system. The force correction
+method removes the inhomogeneity error, therefore, the precision of
+force calculation is improved, so a smaller cut-off radius is
+acceptable. Both of the proposed methods relies on the quantitative
+analysis of the short-range force error.  The effectiveness of
+the proposed methods were checked by molecular dynamics simulations of
+the liquid-vapor equilibrium and the nanoscale
+particle collision.\\
+
+Most of previous error estimates in this field assumed the homogeneity
+of the system. As far as we know, the present work for the first time
+proposed an error estimate for the short-range interactions in the
+inhomogeneous molecular systems, presenting new phenomena that do not
+happen in the homogeneous systems.  We shew that the adaptive cut-off
+and the force correction methods greatly improve the efficiency and
+accuracy, and successfully avoid the problem of the standard cut-off
+method, so they should be of special interest for designing high
+performance molecular simulation software.
+\\
+
+\closing{Best regards,
+  % \put(-85,-50){\includegraphics[scale=0.2]{zhang-signature.pdf}}
+}
+
+
+% \newpage
+
+% \parindent0ex \textbf{Corresponding author}:\\
+
+% \qquad Pingwen Zhang
+
+% \qquad LMAM and School of Mathematical Sciences
+
+% \qquad Peking University
+
+% \qquad 100871 Beijing, P.R. China
+
+% \qquad Phone: +86-10-62759851
+
+% \qquad Fax: +86-10-62751801
+
+% \qquad \href{mailto:pzhang@pku.edu.cn}{\tt pzhang@pku.edu.cn} \\
+
+
+% \parindent0ex\textbf{Referees}:\\
+% Furthermore as knowledgeable referees in this field we suggest:
+% \begin{itemize}
+% \item Christoph Dellago \\
+%   Faculty of Physics\\
+%   University of Vienna\\
+%   Boltzmanngasse 5 (1st floor, room 3105) \\
+%   1090 Vienna\\
+%   Austria\\
+%   \href{mailto:Christoph.Dellago@univie.ac.at}{\tt Christoph.Dellago@univie.ac.at}
+% \item Giovanni Ciccotti \\
+%   Department of Physics \\
+%   University of Roma "La Sapienza"\\
+%   P.le Aldo Moro 5\\
+%   00185 Roma\\
+%   Italy\\
+%   \href{mailto:giovanni.ciccotti@phys.uniroma1.it}{\tt giovanni.ciccotti@phys.uniroma1.it}
+% \item Daan Frenkel\\
+%   Cambridge University Centre for Computational Chemistry\\
+%   Department of Chemistry\\
+%   Lensfield Road\\
+%   Cambridge CB2 1EW\\
+%   United Kindom\\
+%   \href{mailto:df246@cam.ac.uk}{\tt df246@cam.ac.uk}
+% \item Kurt Binder\\
+%   KOMET 331 \\
+%   Institute of Physics\\
+%   Johannes Gutenberg University Mainz \\
+%   D 55099 Mainz \\
+%   Germany\\
+%   \href{mailto:kurt.binder@uni-mainz.de}{\tt kurt.binder@uni-mainz.de}
+% \end{itemize}
+
+% \parindent0ex\textbf{Color figures}:
+% \begin{itemize}
+%   \item[] A main aspect of the article is accuracy, therefore even smallest
+%     deviations should be recognizable in the plots. Though we already used
+%     different line styles, coloring is inevitable to distinguish the various
+%     amount of information correctly. Therefore we regard colored versions of
+%     Figure 1 and 2 as essential to provide a clear picture for the reader.
+% \end{itemize}
+
+
+\end{letter} \end{document}
