@@ -21,6 +21,7 @@
 
 \title{The Error Estimate of Force Calculation in the Inhomogeneous Molecular Systems}
 \author{Han Wang}
+\email{han.wang@fu-berlin.de}
 \affiliation{LMAM and School of Mathematical
   Sciences, Peking University}
 \affiliation{Institute for Mathematics, Freie Universit\"at Berlin, Germany}
@@ -34,7 +35,7 @@
 \begin{abstract}
   {
     In the present paper, we develop an accurate error estimate of the
-    non-bonded short-range interaction for the inhomogeneous molecular
+    non-bonded short-range interactions for the inhomogeneous molecular
     systems.
     The root mean square force error is proved to be decomposed into
     three additive parts: the homogeneity error, the inhomogeneity error
@@ -65,7 +66,7 @@
 \maketitle
 
 \section{Introduction}
-Non-bonded short-range interaction is encountered in nearly every
+Non-bonded short-range interactions are encountered in nearly every
 molecular simulation.  A naive idea to calculate short-range
 interactions is to explicitly calculate all pairwise
 interactions. This results in a computational cost scaling $\mathcal
@@ -75,7 +76,7 @@ radius, outside of which all pairwise interactions are simply
 neglected. In combination with the cell list and the neighbor list
 algorithms \cite{frenkel02b}, the total computational cost of the
 short-range interactions can be reduced to an acceptable level of
-$\mathcal O(N)$.  The cut-off radius neglect all pairwise interactions
+$\mathcal O(N)$.  The cut-off radius neglects all pairwise interactions
 outside the cut-off radius, so it introduces an error in the interaction
 calculation. Since the cut-offed system can be viewed as an approximation of
 the original system, it is very important to test the
@@ -86,18 +87,19 @@ radius.
 Fortunately,
 in most homogeneous systems, a satisfactory convergence can be
 achieved even with a very small cut-off value, for example,
-$2.5\sigma$.  Moreover, it is possible to correct the systematic error
+$2.5\sigma$ for the standard Lennard-Jones 6-12 interaction.
+Moreover, it is possible to correct the systematic error
 of the potential energy, the pressure and the free energy by applying
 the standard long range correction (LRC)~\cite{allen87a}, which
 assumes the uniformity outside the cut-off radius and integrates the
 contribution of the mentioned properties to infinity. 
-% The spacial inhomogenety of the system in terms of particle density,
+% The spacial inhomogeneity of the system in terms of particle density,
 % particle type and change distribution is very common in natrual
 % system.
-Instead for inhomogeneous systems, in which the density of certain type of
-atom changes within the length scale of several molecules, 
+Instead for inhomogeneous systems, in which the density of a certain type of
+atom may change within the length scale of a few molecules, 
 and thus lack of uniformity, 
-the direct molecular simulation 
+the standard molecular simulation 
 by the cut-off method will encounter non-trivial
 difficulties.
 The simulation results are found to converge only at a very large
@@ -134,7 +136,7 @@ A promising way to quantitatively analyze the undesirable cut-off
 effects is to express these artifacts in terms of the difference
 between the cut-offed interaction and the exact interaction, namely
 the error. In homogeneous systems, the error analysis of the cut-off
-method has been well established, see~\cite{kolafa1992cutoff} for
+method has been well established, see~\cite{kolafa1992cutoff, wang2011} for
 example. Also the error estimates~\cite{hummer1995numerical,
   kolafa1992cutoff, petersen1995accuracy, deserno1998mue2,
   wang2010optimizing} for long-range Ewald family
@@ -151,16 +153,19 @@ in inhomogeneous systems. We prove that the
 force error is comprised of a homogeneity error and an inhomogeneity
 error, regardless of the particle-particle correlation outside the
 cut-off radius.  In an inhomogeneous system composed by several bulk
-regions, an important observation is that the inhomogeneity error can
-be more than one order of magnitude larger than the homogeneity
-error, and plays a dominant role in the interfacial region. An
+regions connected by interfacial regions where the density changes
+rapidly, an important observation is that the
+inhomogeneity error plays a dominant role in the interfacial regions,
+and can be more than one order of magnitude larger than
+the error in the bulk regions. An
 adaptive cut-off method is hereby proposed to equally distribute the
-error across the simulation region, so that a substantial
-computational effort can be saved while the precision of simulation is
+error across the simulation region, so that a considerable
+computational effort can be saved in the bulk regions
+while the precision of simulation is
 preserved. We also proposed a long-range force correction (LFC) method
-based on the error estimate to screen out the contribution of the
-inhomogeneity error, which can tremendously improve the precision of
-simulation without much extra computational load. To show the
+to screen out the contribution of the
+inhomogeneity error, therefore,  the precision of
+simulation is improved without much extra computational load. To show the
 effectiveness of the error estimate and the proposed methods, two
 systems are tested: the liquid-vapor equilibrium for equilibrium
 properties, and the colliding nanoscale clusters for dynamical
@@ -433,7 +438,7 @@ where $u(r)$ is the isotropic pairwise potential.
 \subsection{Adaptive cut-off radius method}
 
 % In Fig. \ref{fig:tmp1}, the testing system containing $N=16000$
-% standard Lennard-Jone particles is set up in a tube with periodic
+% standard Lennard-Jones particles is set up in a tube with periodic
 % boundary condition. The liquid droplet (in the middle of the tube) is
 % in equilibrium with the surrounding vapor environment. The red line in
 % the Fig. \ref{fig:tmp2} denotes the density profile (on direction $x$)
@@ -1570,20 +1575,20 @@ is worthwhile because it improves the simulation results significantly.
 \section{Conclusions}\label{sec:conclusion}
 
 In this paper, we developed the force error estimate for non-bonded
-short-range interaction in the inhomogeneous molecular system.  The
+short-range interactions in the inhomogeneous molecular systems. The
 RMS force error can be expressed by a summation of a homogeneity
 error, an inhomogeneity error and a correlation error. In the present
 paper, we only considered the cases, in which the correlation error
 does not dominate. In an inhomogeneous system, the basic observation
 of the error distribution was that the homogeneity error dominates the
-bulk material region, whereas the inhomogeneity error dominates the
-interfacial region where the density changes within the length scale
-of several molecules. The inhomogeneity error can be more than one
+bulk material regions, whereas the inhomogeneity error dominates the
+interfacial regions where the density changes within the length scale
+of a few molecules. The inhomogeneity error can be more than one
 order of magnitude larger than the homogeneity error.  Two methods
 were proposed to improve the efficiency and accuracy of the
 simulation. The adaptive cut-off method uses smaller cut-off radius
-for the low-error bulk region and larger cut-off radius for the
-high-error interfacial region, so that the RMS force error is
+for the low-error bulk regions and larger cut-off radius for the
+high-error interfacial regions, so that the RMS force error is
 uniformly distributed over the simulation region. The long-range force
 correction method corrects the force computation by the mean error
 force, so that the inhomogeneity error is removed from the system.
