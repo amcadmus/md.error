@@ -367,6 +367,8 @@ print_meanf (const std::string & file,
     exit(1);
   }
 
+  fprintf (fp, "# 1          2        3       4                5        6       7\n");
+  fprintf (fp, "# x  meanFx(r)  meanFxR meanFxI  meanFyR meanFyI  meanFzR meanFzI\n");
   for (int i = 0; i < K.x; ++i){
     IntVectorType idx;
     idx.x = i;
@@ -379,14 +381,16 @@ print_meanf (const std::string & file,
     	(dp.getProfileP(index) - dp.getProfileN(index)) ;
     scalor = 1.;
     
-    fprintf (fp, "# 1       2    3-5\n");
-    fprintf (fp, "# x  meanFx  meanF\n");
-    fprintf (fp, "%f %e     %e %e %e\n",
+    fprintf (fp, "%f %e     %e %e  %e %e  %e %e\n",
 	     (i + 0.5) * vecA.xx / K.x,
 	     error1x[index][0],
 	     error1x[index][0] * scalor,
+	     error1x[index][1] * scalor,
 	     error1y[index][0] * scalor,
-	     error1z[index][0] * scalor
+	     error1y[index][1] * scalor,
+	     error1z[index][0] * scalor,
+	     error1z[index][1] * scalor
+
 	);
   }
   fclose (fp);
