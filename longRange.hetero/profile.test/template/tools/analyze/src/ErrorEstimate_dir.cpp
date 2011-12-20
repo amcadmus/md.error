@@ -216,7 +216,7 @@ makeS2k ()
       ky = myi.y / boxsize[1];
       if (myi.y < 0) loc.y = myi.y + K.y;
       else loc.y = myi.y;
-      for (myi.z = -K.z/2; myi.z < K.x - K.z/2; ++myi.z){
+      for (myi.z = -K.z/2; myi.z < K.z - K.z/2; ++myi.z){
 	kz = myi.z / boxsize[2];
 	if (myi.z < 0) loc.z = myi.z + K.z;
 	else loc.z = myi.z;
