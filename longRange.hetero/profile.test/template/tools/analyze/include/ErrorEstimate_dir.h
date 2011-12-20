@@ -89,10 +89,10 @@ private:
   fftw_complex *error1;
   fftw_complex *error2;
   fftw_plan p_forward_rho1, p_forward_rho2;
-  fftw_plan p_backward_s2kx;
-  fftw_plan p_backward_s2ky;
-  fftw_plan p_backward_s2kz;
-  fftw_plan p_forward_s1k;
+  // fftw_plan p_backward_s2kx;
+  // fftw_plan p_backward_s2ky;
+  // fftw_plan p_backward_s2kz;
+  // fftw_plan p_forward_s1k;
   fftw_plan p_backward_error1x;
   fftw_plan p_backward_error1y;
   fftw_plan p_backward_error1z;

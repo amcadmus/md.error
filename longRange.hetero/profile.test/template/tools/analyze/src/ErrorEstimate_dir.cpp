@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 
+const unsigned global_init_integral_div = 10;
+
 ErrorEstimate_dir::
 ErrorEstimate_dir ()
     : malloced (false)
@@ -59,10 +61,10 @@ freeAll ()
     free (error2);
     fftw_destroy_plan (p_forward_rho1);
     fftw_destroy_plan (p_forward_rho2);
-    fftw_destroy_plan (p_backward_s2kx);
-    fftw_destroy_plan (p_backward_s2ky);
-    fftw_destroy_plan (p_backward_s2kz);
-    fftw_destroy_plan (p_forward_s1k);
+    // fftw_destroy_plan (p_backward_s2kx);
+    // fftw_destroy_plan (p_backward_s2ky);
+    // fftw_destroy_plan (p_backward_s2kz);
+    // fftw_destroy_plan (p_forward_s1k);
     fftw_destroy_plan (p_backward_error1x);
     fftw_destroy_plan (p_backward_error1y);
     fftw_destroy_plan (p_backward_error1z);
@@ -109,10 +111,10 @@ reinit (const double & beta_,
 
   p_forward_rho1 = fftw_plan_dft_3d (K.x, K.y, K.z, rho1, rho1, FFTW_FORWARD,  FFTW_MEASURE);
   p_forward_rho2 = fftw_plan_dft_3d (K.x, K.y, K.z, rho2, rho2, FFTW_FORWARD,  FFTW_MEASURE);
-  p_backward_s2kx = fftw_plan_dft_3d (K.x, K.y, K.z, s2kx, s2kx, FFTW_BACKWARD, FFTW_MEASURE);
-  p_backward_s2ky = fftw_plan_dft_3d (K.x, K.y, K.z, s2ky, s2ky, FFTW_BACKWARD, FFTW_MEASURE);
-  p_backward_s2kz = fftw_plan_dft_3d (K.x, K.y, K.z, s2kz, s2kz, FFTW_BACKWARD, FFTW_MEASURE);
-  p_forward_s1k = fftw_plan_dft_3d (K.x, K.y, K.z, s1k, s1k, FFTW_FORWARD, FFTW_MEASURE);
+  // p_backward_s2kx = fftw_plan_dft_3d (K.x, K.y, K.z, s2kx, s2kx, FFTW_BACKWARD, FFTW_MEASURE);
+  // p_backward_s2ky = fftw_plan_dft_3d (K.x, K.y, K.z, s2ky, s2ky, FFTW_BACKWARD, FFTW_MEASURE);
+  // p_backward_s2kz = fftw_plan_dft_3d (K.x, K.y, K.z, s2kz, s2kz, FFTW_BACKWARD, FFTW_MEASURE);
+  // p_forward_s1k = fftw_plan_dft_3d (K.x, K.y, K.z, s1k, s1k, FFTW_FORWARD, FFTW_MEASURE);
   p_backward_error1x = fftw_plan_dft_3d (K.x, K.y, K.z, error1x, error1x, FFTW_BACKWARD, FFTW_MEASURE);
   p_backward_error1y = fftw_plan_dft_3d (K.x, K.y, K.z, error1y, error1y, FFTW_BACKWARD, FFTW_MEASURE);
   p_backward_error1z = fftw_plan_dft_3d (K.x, K.y, K.z, error1z, error1z, FFTW_BACKWARD, FFTW_MEASURE);
@@ -155,13 +157,13 @@ makeS1k ()
 	int posi = index3to1 (loc, K);
 	if (k != 0){
 	  double an;
-	  an = integral_s1k_numerical (k, rcut, 30, 1e-12);
+	  an = integral_s1k_numerical (k, rcut, 30, 1e-23);
 	  s1k[posi][0] = 2. / k * an;
 	  s1k[posi][1] = 0.;
 	}
 	else {
 	  double an;
-	  an = integral_s1k1_numerical (k, rcut, 30, 1e-12);
+	  an = integral_s1k1_numerical (k, rcut, 30, 1e-23);
 	  s1k[posi][0] = 4. * M_PI * an;
 	  s1k[posi][1] = 0.;
 	}
@@ -182,7 +184,8 @@ integral_s1k_numerical (const double & k,
   return inte_s1k.cal_int (Integral1DInfo::Gauss4,
 			   f_s1k,
 			   r1, r2,
-			   prec);
+			   prec,
+			   global_init_integral_div);
 }
 
 double ErrorEstimate_dir::
@@ -196,7 +199,8 @@ integral_s1k1_numerical (const double & k,
   return inte_s1k1.cal_int (Integral1DInfo::Gauss4,
 			    f_s1k1,
 			    r1, r2,
-			    prec);
+			    prec,
+			    global_init_integral_div);
 }
 
 
@@ -224,7 +228,7 @@ makeS2k ()
 	int posi = index3to1 (loc, K);
 	if (k != 0){
 	  double an;
-	  an = integral_s2k_numerical (k, rcut, 30, 1e-16) / k;
+	  an = integral_s2k_numerical (k, rcut, 30, 1e-20) / k;
 	  // printf ("%d %d %d    %e    %e\n", myi.x, myi.y, myi.z, k, an * k);
 	  s2kx[posi][1] = 2 * M_PI * kx * an;
 	  s2ky[posi][1] = 2 * M_PI * ky * an;
@@ -264,7 +268,8 @@ integral_s2k_numerical (const double & k,
   return inte_s2k.cal_int (Integral1DInfo::Gauss4,
 			   f_s2k,
 			   r1, r2,
-			   prec);
+			   prec,
+			   global_init_integral_div);
 }
 
 
