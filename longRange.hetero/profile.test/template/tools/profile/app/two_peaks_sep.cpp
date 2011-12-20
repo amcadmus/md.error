@@ -21,7 +21,7 @@ namespace po = boost::program_options;
 int main(int argc, char * argv[])
 {
   double Lx, Ly, Lz;
-  double rho;
+  double rhoh, rhol;
   double layer;
   std::string cfile, tfile;
   int nframe;
@@ -35,7 +35,8 @@ int main(int argc, char * argv[])
       ("Ly,y", po::value<double > (&Ly)->default_value(30.), "box dim of y")
       ("Lz,z", po::value<double > (&Lz)->default_value(30.), "box dim of z")
       ("layer,t", po::value<double > (&layer)->default_value(4.), "layer thickness")
-      ("rho,r", po::value<double > (&rho)->default_value(0.50), "charge density")
+      ("rhoh", po::value<double > (&rhoh)->default_value(0.50), "charge density")
+      ("rhol", po::value<double > (&rhol)->default_value(0.05), "charge density")
       ("nframe,n", po::value<int > (&nframe)->default_value(100), "number of frame in trajctory")
       ("output-conf",  po::value<std::string > (&cfile)->default_value ("conf.gro"), "the output conf file")
       ("output-traj",  po::value<std::string > (&tfile)->default_value ("traj.xtc"), "the output traj file");
@@ -53,7 +54,8 @@ int main(int argc, char * argv[])
   printf ("## print two peaks seperating the box\n");
   printf ("## Lx Ly Lz: %f %f %f\n", Lx, Ly, Lz);
   printf ("## layer: %f\n", layer);
-  printf ("## rho: %f\n", rho);
+  printf ("## rhoh: %f\n", rhoh);
+  printf ("## rhol: %f\n", rhol);
   printf ("## nframe: %d\n", nframe);
   printf ("#######################################################\n");
 
@@ -71,19 +73,19 @@ int main(int argc, char * argv[])
 
   xn = xp;
 
-  yp[0] = 0.0;
-  yp[1] = 0.0;
-  yp[2] = rho;
-  yp[3] = rho;
-  yp[4] = 0.0;
-  yp[5] = 0.0;
+  yp[0] = rhol;
+  yp[1] = rhol;
+  yp[2] = rhoh;
+  yp[3] = rhoh;
+  yp[4] = rhol;
+  yp[5] = rhol;
 
-  yn[0] = rho;
-  yn[1] = rho;
-  yn[2] = 0.0;
-  yn[3] = 0.0;
-  yn[4] = rho;
-  yn[5] = rho;
+  yn[0] = rhoh;
+  yn[1] = rhoh;
+  yn[2] = rhol;
+  yn[3] = rhol;
+  yn[4] = rhoh;
+  yn[5] = rhoh;
   
   SystemDensityFunction sdf;
   sdf.reinit (xp, xn, yp, yn, Ly, Lz);
