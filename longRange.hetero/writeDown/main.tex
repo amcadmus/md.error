@@ -140,7 +140,8 @@ is defined by
   \left\{
     \begin{aligned}
       &\,0, &\quad & \vert\v r\vert \leq r_c;\\
-      &\frac{\textrm{erfc}(\beta\vert\v r\vert)}{\vert\v r\vert},& & \vert\v r\vert > r_c,
+      &,& & \vert\v r\vert > r_c,
+      % \frac{\textrm{erfc}(\beta\vert\v r\vert)}{\vert\v r\vert}
     \end{aligned}
   \right.
 \end{align}
@@ -287,7 +288,7 @@ differentiation}.
 \subsection{Error estimate of the ik-differentiation}
 The error force is 
 \begin{align}\nonumber
-  \Delta\v F(\v r_i)
+  \Delta\v F^{\textrm{ik}}(\v r_i)
   =\;&
   q_i
   \sum_{
@@ -343,7 +344,7 @@ And if the high wave number terms are neglected, it is proved that the
 mean error force is
 \begin{align}
   \big\langle
-  \Delta\v F(\v r_i)
+  \Delta\v F^{\textrm{ik}}(\v r_i)
   \big\rangle
   & \approx
   - 2 q_i
@@ -357,7 +358,7 @@ mean error force is
 Also neglect the high wave number terms, the mean squared error force is 
 \begin{align}\nonumber
   \big\langle
-  \vert\Delta\v F(\v r_i)\vert^2
+  \vert\Delta\v F^{\textrm{ik}}(\v r_i)\vert^2
   \big\rangle
   \approx&\, 
   2q_i^2
@@ -379,7 +380,7 @@ Also neglect the high wave number terms, the mean squared error force is
   \bigg] (\v r_i) \\
   &\,+
   \big\langle
-  \Delta\v F(\v r_i)
+  \Delta\v F^{\textrm{ik}}(\v r_i)
   \big\rangle  ^2
 \end{align}
 
@@ -392,7 +393,7 @@ Also neglect the high wave number terms, the mean squared error force is
 
 The error force is 
 \begin{align}\nonumber
-  \Delta\v F(\v r_i)
+  \Delta\v F^{\textrm{ana}}(\v r_i)
   =\;&
   q_i
   \sum_{
@@ -420,7 +421,7 @@ The error force is
   \sum_{j\neq i}q_j\,
   e^{-2\pi i\v m\cdot\v r_j} \\\nonumber
   & +\,
-  q_i
+  q^2_i
   \sum_{
     \begin{subarray}{c}
       \vert m_{\alpha}\vert < K_\alpha/2\\
@@ -429,7 +430,7 @@ The error force is
   -2f(\v m)\,
   A(-\v m, \v r_i)\,e^{2\pi i\v m\cdot \v r_i} \nabla_{\v r_i}e^{2\pi i\v m\cdot\v r_i} \\
   & +\,
-  q_i
+  q^2_i
   \sum_{
     \begin{subarray}{c}
       \vert m_{\alpha}\vert < K_\alpha/2\\
@@ -452,7 +453,7 @@ The error force is
   \sum_{j\neq i}q_j\,
   e^{-2\pi i\v m\cdot\v r_j} \\
   & +\,
-  q_i
+  q^2_i
   \sum_{
     \begin{subarray}{c}
       \vert m_{\alpha}\vert < K_\alpha/2\\
@@ -503,22 +504,28 @@ For convenience, we denote
 \end{align}
 We prove:
 \begin{align} \nonumber
-  \langle \Delta\v F(\v r_i)\rangle
+  \langle \Delta\v F^{\textrm{ana}}(\v r_i)\rangle
   =\;&
   \langle \Delta\v F^{\textrm{ik}}(\v r_i)\rangle\\\nonumber
   &+\,
   q_i\sum_{\alpha}\sum_{l\neq 0}
   2\pi i\,l K_\alpha\v a_\alpha^\ast\,e^{2\pi i\,l K_\alpha\v a^\ast_\alpha\cdot \v r_i}
-  [F_{\alpha,l}\ast\rho_q](\v r_i) \\
+  [F_{\alpha,l}\ast\rho_q](\v r_i) \\\label{eqn:tmp30}
   &+\,
-  q_i\sum_{\alpha}\sum_{l\neq 0}
+  q^2_i\sum_{\alpha}\sum_{l\neq 0}
   2\pi i\,l K_\alpha\v a_\alpha^\ast\,e^{2\pi i\,l K_\alpha\v a^\ast_\alpha\cdot \v r_i}
   C_{\alpha,l}^{\textrm{self}}
+\end{align}
+Neglecting all high frequency terms, we have:
+\begin{align}\label{eqn:tmp31}
+  \langle \Delta\v F^{\textrm{ana}}(\v r_i)\rangle
+  \approx
+  \langle \Delta\v F^{\textrm{ik}}(\v r_i)\rangle,
 \end{align}
 The ensemble average of the squared force error is
 \begin{align}\nonumber
   \big\langle
-  \vert \Delta\v F(\v r_i)\vert^2
+  \vert \Delta\v F^{\textrm{ana}}(\v r_i)\vert^2
   \big\rangle
   =&\,
   q_i^2
@@ -528,16 +535,7 @@ The ensemble average of the squared force error is
   \vert \v G_{\alpha,l}\vert^2
   \big)
   \ast \rho_{q^2}
-  \,\bigg] (\v r_i)
-  +\,
-  4q_i^2\,
-  \bigg[
-  \big(
-  \sum_{\alpha} \sum_{l\neq 0}  
-  \v G_{\alpha,l}
-  \big)^2
-  \ast \rho_{q^2}\,
-  \bigg] (\v r_i) \\\nonumber
+  \,\bigg] (\v r_i)\\\nonumber
   & +\,
   q_i^2
   \bigg[
@@ -548,14 +546,249 @@ The ensemble average of the squared force error is
   \big)
   \ast \rho_{q^2}
   \bigg]
-  (\v r_i) \\
+  (\v r_i) \\\nonumber
   & +\,
-  \big\langle \Delta\v F(\v r_i)\big\rangle ^2
+  4q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i) \\
+  & +\,
+  \big\langle \Delta\v F^{\textrm{ana}}(\v r_i)\big\rangle ^2
 \end{align}
+It worthwhile noting that it will be problemetic to use
+Eq. \eqref{eqn:tmp31} to calculate $\langle \Delta\v F^{\textrm{ana}}(\v r_i)\rangle
+^2$, because by squaring the mean error force, the second and third
+terms in Eq. \eqref{eqn:tmp30} will generate non-trivial low frequency
+terms. Neglecting all high frequency terms, we have:
+\begin{align}\nonumber
+  \big\langle \Delta\v F^{\textrm{ana}}(\v r_i)\big\rangle ^2
+  \approx&\,
+  \big\langle \Delta\v F^{\textrm{ik}}(\v r_i)\big\rangle ^2 \\\nonumber
+  &\,
+  +q_i^2 \sum_{\alpha}\sum_{l\neq 0}
+  4\pi^2l^2K_\alpha^2\vert\v a_{\alpha}^\ast\vert^2[F_{\alpha,l}\ast\rho_q]^2 (\v r_i) \\
+  &\,
+  +q_i^4 \sum_{\alpha}\sum_{l\neq 0}
+  4\pi^2l^2K_\alpha^2\vert\v a_{\alpha}^\ast\vert^2[C_{\alpha,l}^{\textrm{self}}]^2 
+\end{align}
+the second one on the right hand side is always small, so
+\begin{align}\nonumber
+  \big\langle
+  \vert \Delta\v F^{\textrm{ana}}(\v r_i)\vert^2
+  \big\rangle
+  =&\,
+  q_i^2
+  \bigg[\,
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}
+  \vert \v G_{\alpha,l}\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \,\bigg] (\v r_i) \\\nonumber
+  & +\,
+  q_i^2
+  \bigg[
+  \big(
+  \sum_{\alpha}\sum_{l\neq 0}
+  \vert
+  \v G_{\alpha,l} + 2\pi i\,l K_\alpha F_{\alpha,l} \v a_\alpha^\ast\vert^2
+  \big)
+  \ast \rho_{q^2}
+  \bigg]
+  (\v r_i) \\ \nonumber
+  & +\,
+  4q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i) \\\nonumber
+  & +\,
+  \big\langle \Delta\v F^{\textrm{ik}}(\v r_i)\big\rangle ^2\\
+  &+\,
+  q_i^4 \sum_{\alpha}\sum_{l\neq 0}
+  4\pi^2l^2K_\alpha^2\vert\v a_{\alpha}^\ast\vert^2[C_{\alpha,l}^{\textrm{self}}]^2 
+\end{align}
+the last one is a constant that stems from the self-interaction.
 
 
 
 \section{Numerical tests}
+
+We consider two inhomogeneous charge system to verify our error
+estimate.  The first is locally neutral and globally inhomogeneous
+charge system. In the second system, the positive and negative charges
+are well seperated, while the number density of the charges is
+uniform.
+
+\subsection{Example 1: locally neutral}
+
+In this example, 16800 charges are put into a $40\textsf{nm}\times
+20\textsf{nm}\times 20\textsf{nm}$ periodic simulation box. Half of
+them are carrying a unit positive charge of $+e$, and the other half
+are carrying negative charge of $-e$. The position of these charges
+are randomly generated subject to density distribution shown in
+Fig.~\ref{fig:tmp-rho0}. Both the positive and negative charge
+distributions are spacially inhomogeneous, while the system is locally
+neutral, because the positive and negative charge distributions cancel
+each other.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.48\textwidth]{fig/error.one_peak.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.rho.eps}
+  \caption{Charge distribution of Example 1. The red line
+    denotes the positive charge distribution, while the blue line
+    denotes the negative charge distribution. Since all distributions
+    are uniform on $y$ and $z$ direction, they are plotted as a
+    function of $x$.}
+  \label{fig:tmp-rho0}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[]{fig/error.one_peak.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ana.ewald.meanf.eps}
+  \caption{Example 1: the actual (denoted by dots) and estimated
+    (denoted by straight lines) mean error force of the direct part
+    $\langle\Delta \v F_{\textrm{dir}}(\v r)\rangle$ (red), reciprocal
+    part of Ewald summation $\langle\Delta \v F_{\textrm{rec}}(\v
+    r)\rangle$ (green) and the reciprocal part of the analytical
+    differentiation $\langle\Delta \v
+    F^{\textrm{ana}}_{\textrm{rec}}(\v r)\rangle$ (blue). The total
+    mean error force of analytical differentiation $\langle\Delta \v
+    F^{\textrm{ana}}(\v r)\rangle$ is given in pink.  Since the charge
+    distribution is uniform on the $y$ and $z$ direction, the $y$ and
+    $z$ dimension of the mean error force is averaged, and the errors
+    are plotted on $x$ direction.  The cut-off in the real space is 3
+    \textsf{nm}, the number of freedom in the reciprocal space is
+    $100\times 50\times 50$, the parameter $\beta$ is $1.0\;
+    \textsf{nm}^{-1}$ and the order of B-spline interpolation used for
+    the analytical differentiation is 6.}
+  \label{fig:meanf1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[]{fig/error.one_peak.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ana.ewald.error.eps}
+  \caption{Example 1: the actual (denoted by dots) and estimated
+    (denoted by straight lines) RMS force error of the direct part
+    $\sqrt{\langle\vert\Delta \v F_{\textrm{dir}}(\v
+      r)\vert^2\rangle}$ (red), reciprocal part of Ewald summation
+    $\sqrt{\langle\vert\Delta \v F_{\textrm{rec}}(\v
+      r)\vert^2\rangle}$ (green) and the reciprocal part of the
+    analytical differentiation $\sqrt{\langle\vert\Delta \v
+      F^{\textrm{ana}}_{\textrm{rec}}(\v r)\vert^2\rangle}$
+    (blue). The RMS force error of analytical differentiation
+    $\sqrt{\langle\vert\Delta \v F^{\textrm{ana}}(\v
+      r)\vert^2\rangle}$ is given in pink.  Since the charge
+    distribution is uniform on the $y$ and $z$ direction, the $y$ and
+    $z$ dimension of the mean error force is averaged, and the errors
+    are plotted on $x$ direction.  The cut-off in the real space is 3
+    \textsf{nm}, the number of freedom in the reciprocal space is
+    $100\times 50\times 50$, the parameter $\beta$ is $1.0\;
+    \textsf{nm}^{-1}$ and the order of B-spline interpolation used for
+    the analytical differentiation is 6.}
+  \label{fig:error1}
+\end{figure}
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=.48\textwidth]{fig/error.one_peak.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ik.meanf.eps}
+%   \includegraphics[width=.48\textwidth]{fig/error.one_peak.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ana.meanf.eps}
+%   \caption{Resulting mean error force}
+%   \label{fig:tmp1}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=.48\textwidth]{fig/error.one_peak.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ik.error.eps}
+%   \includegraphics[width=.48\textwidth]{fig/error.one_peak.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ana.error.eps}
+%   \caption{Resulting RMS errors}
+%   \label{fig:tmp2}
+% \end{figure}
+
+\subsection{Example 2: seperated positive and negative charge}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.48\textwidth]{fig/error.two_peaks_sep.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.rho.eps}
+  \caption{Charge distribution of Example 2. The red line
+    denotes the positive charge distribution, while the blue line
+    denotes the negative charge distribution. Since all distributions
+    are uniform on $y$ and $z$ direction, they are plotted as a
+    function of $x$.}
+  \label{fig:tmp-rho2}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[]{fig/error.two_peaks_sep.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ana.ewald.meanf.eps}
+  \caption{Example 2: the actual (denoted by dots) and estimated
+    (denoted by straight lines) mean error force of the direct part
+    $\langle\Delta \v F_{\textrm{dir}}(\v r)\rangle$ (red), reciprocal
+    part of Ewald summation $\langle\Delta \v F_{\textrm{rec}}(\v
+    r)\rangle$ (green) and the reciprocal part of the analytical
+    differentiation $\langle\Delta \v
+    F^{\textrm{ana}}_{\textrm{rec}}(\v r)\rangle$ (blue). The total
+    mean error force of analytical differentiation $\langle\Delta \v
+    F^{\textrm{ana}}(\v r)\rangle$ is given in pink.  Since the charge
+    distribution is uniform on the $y$ and $z$ direction, the $y$ and
+    $z$ dimension of the mean error force is averaged, and the errors
+    are plotted on $x$ direction.  The cut-off in the real space is 3
+    \textsf{nm}, the number of freedom in the reciprocal space is
+    $100\times 50\times 50$, the parameter $\beta$ is $1.0\;
+    \textsf{nm}^{-1}$ and the order of B-spline interpolation used for
+    the analytical differentiation is 6.}
+  \label{fig:meanf2}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[]{fig/error.two_peaks_sep.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ana.ewald.error.eps}
+  \caption{Example 2: the actual (denoted by dots) and estimated
+    (denoted by straight lines) RMS force error of the direct part
+    $\sqrt{\langle\vert\Delta \v F_{\textrm{dir}}(\v
+      r)\vert^2\rangle}$ (red), reciprocal part of Ewald summation
+    $\sqrt{\langle\vert\Delta \v F_{\textrm{rec}}(\v
+      r)\vert^2\rangle}$ (green) and the reciprocal part of the
+    analytical differentiation $\sqrt{\langle\vert\Delta \v
+      F^{\textrm{ana}}_{\textrm{rec}}(\v r)\vert^2\rangle}$
+    (blue). The RMS force error of analytical differentiation
+    $\sqrt{\langle\vert\Delta \v F^{\textrm{ana}}(\v
+      r)\vert^2\rangle}$ is given in pink.  Since the charge
+    distribution is uniform on the $y$ and $z$ direction, the $y$ and
+    $z$ dimension of the mean error force is averaged, and the errors
+    are plotted on $x$ direction.  The cut-off in the real space is 3
+    \textsf{nm}, the number of freedom in the reciprocal space is
+    $100\times 50\times 50$, the parameter $\beta$ is $1.0\;
+    \textsf{nm}^{-1}$ and the order of B-spline interpolation used for
+    the analytical differentiation is 6.}
+  \label{fig:error2}
+\end{figure}
+
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=.48\textwidth]{fig/error.two_peaks_sep.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ik.meanf.eps}
+%   \includegraphics[width=.48\textwidth]{fig/error.two_peaks_sep.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ana.meanf.eps}
+%   \caption{Resulting mean error force}
+%   \label{fig:tmp3}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=.48\textwidth]{fig/error.two_peaks_sep.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ik.error.eps}
+%   \includegraphics[width=.48\textwidth]{fig/error.two_peaks_sep.box40x20x20.b1.000.r3.00.n6.K101x051x051/fig.ana.error.eps}
+%   \caption{Resulting RMS errors}
+%   \label{fig:tmp4}
+% \end{figure}
+
 
 
 
