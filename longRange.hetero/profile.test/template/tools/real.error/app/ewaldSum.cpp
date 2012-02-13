@@ -25,6 +25,7 @@ int main (int argc, char * argv[])
   po::options_description desc ("Allow options");
   std::string config;
   std::string forceFile;
+  std::string qfile;
   double precision;
   double definedbeta;
   unsigned definedk;
@@ -40,6 +41,7 @@ int main (int argc, char * argv[])
       ("kz", po::value<unsigned > (&definedkz)->default_value(32), "value of Kz")
       ("grid-number,k", po::value<unsigned > (&definedk), "number of grid on three dimesions")
       ("precision,p", po::value<double > (&precision), "required precision of the reference force. if this option is used, then beta and grid-number are ignored")
+      ("charge-table,q", po::value<std::string > (&qfile), "the charge table")
       ("output-force,o", po::value<std::string > (&forceFile)->default_value ("force.out"), "the output exact force for the system");
   
   po::variables_map vm;
@@ -107,6 +109,28 @@ int main (int argc, char * argv[])
   std::vector<double > zero3 (3, 0.);
   std::vector<std::vector<double > > dir_force (npart, zero3);
   std::vector<std::vector<double > > rec_force (npart, zero3);
+  std::vector<double > charge (npart, 1.);
+  for (unsigned i = npart / 2; i < npart; ++i){
+    charge[i] = -1.;
+  }
+  if (vm.count("charge-table")){
+    std::cout << "# use charge table " << qfile << std::endl;
+    FILE * fptable = fopen(qfile.c_str(), "r");
+    if (fptable == NULL){
+      std::cerr << "cannot open file " << qfile << std::endl;
+      return 1;
+    }
+    for (unsigned i = 0; i < npart; ++i){
+      double tmp;
+      int st = fscanf(fptable, "%lf", &tmp);
+      if (st != 1){
+	std::cerr << "wrong file format " << qfile << std::endl;
+	return 1;
+      }
+      charge[i] = tmp;
+    }
+    fclose(fptable);
+  }
   
   ToolBox::init_genrand (seed);
   for (unsigned i = 0; i < npart; ++i){
@@ -119,12 +143,13 @@ int main (int argc, char * argv[])
     tmpp.mass() = 1.;
     tmpp.id() = i ;
     tmpp.type() = 0;
-    if (i < npart / 2) {
-      tmpp.charge() = 1.;
-    }
-    else {
-      tmpp.charge() = -1.;
-    }
+    tmpp.charge() = charge[i];
+    // if (i < npart / 2) {
+    //   tmpp.charge() = 1.;
+    // }
+    // else {
+    //   tmpp.charge() = -1.;
+    // }
     refParticles.push_back (tmpp);
   }
   boxlx = tmpbox[0];

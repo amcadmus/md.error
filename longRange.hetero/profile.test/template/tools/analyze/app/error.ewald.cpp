@@ -20,7 +20,7 @@ namespace po = boost::program_options;
 
 int main(int argc, char * argv[])
 {
-  std::string tfile, efile, rfile;
+  std::string tfile, efile, rfile, qfile;
   double beta;
   IntVectorType Kmax;
   IntVectorType K;
@@ -31,6 +31,7 @@ int main(int argc, char * argv[])
   desc.add_options()
       ("help,h", "print this message")
       ("trajactory,t", po::value<std::string > (&tfile)->default_value("traj.xtc"), "trajactory file")
+      ("charge-table,q", po::value<std::string > (&qfile), "charge table")      
       ("start,s", po::value<float > (&start)->default_value(0.f), "start time")
       ("end,e",   po::value<float > (&end  )->default_value(0.f), "end   time")
       ("beta,b", po::value<double > (&beta)->default_value(1.), "value of beta")
@@ -66,12 +67,20 @@ int main(int argc, char * argv[])
   printf ("## beta is %.2f\n", beta);  
   printf ("## K    is %d %d %d\n", K.x, K.y, K.z);
   printf ("## Kmax is %d %d %d\n", Kmax.x, Kmax.y, Kmax.z);
+  if (vm.count("charge-table")){
+    printf ("## charge table: %s", qfile.c_str());
+  }
   printf ("#######################################################\n");
   
 
   DensityProfile_PiecewiseConst dp;
 
-  dp.reinit_xtc (tfile.c_str(), K.x, K.y, K.z, start, end);
+  if (vm.count("charge-table")){
+    dp.reinit_xtc (tfile.c_str(), qfile.c_str(), K.x, K.y, K.z, start, end);
+  }
+  else {
+    dp.reinit_xtc (tfile.c_str(), K.x, K.y, K.z, start, end);
+  }
   dp.print_avg_x (rfile.c_str());
 
   ErrorEstimate_Ewald eee;

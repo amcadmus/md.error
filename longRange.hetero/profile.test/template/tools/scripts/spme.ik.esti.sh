@@ -20,7 +20,11 @@ touch $mylog
 make -C ./tools/analyze/ &>> make.log
 
 # esti the rec error
-./tools/analyze/error.spme.ik -t $record_dir/traj.xtc --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order &>> $mylog
+if echo $project_name | grep one_peak &> /dev/null; then
+    ./tools/analyze/error.spme.ik -t $record_dir/traj.xtc -q $record_dir/charge.tab --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order &>> $mylog
+else
+    ./tools/analyze/error.spme.ik -t $record_dir/traj.xtc --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order &>> $mylog
+fi
 mv -f rho.x.avg.out $errors_dir/
 mv -f error.out $errors_dir/esti.rec.spme.ik.error.out
 mv -f meanf.out $errors_dir/esti.rec.spme.ik.meanf.out

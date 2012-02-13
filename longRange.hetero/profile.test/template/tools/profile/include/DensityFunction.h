@@ -46,6 +46,7 @@ public:
   void genXtc (const char * filename,
 	       const int & nframe);
   void genConf_native (const char * filename);
+  unsigned get_natom () const {return natom;}
 };
 
 

@@ -32,6 +32,9 @@ done
 
 mv -f confFilenames.record $record_dir
 ./tools/profile/conf2traj -r $record_dir/confFilenames.record -o $record_dir/traj.xtc
+if test -f charge.tab; then
+    mv -f charge.tab $record_dir
+fi
 
 for i in `seq $(($nframe_real_error+1)) $nframe_traj`;
 do

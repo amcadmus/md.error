@@ -38,6 +38,13 @@ public:
 		   const int & nz,
 		   const float & start,
 		   const float & end);
+  void reinit_xtc (const char * filename,
+		   const char * chargeTable,
+		   const int & nx,
+		   const int & ny,
+		   const int & nz,
+		   const float & start,
+		   const float & end);
   // void deposit (const std::string & filename,
   // 		const float & start,
   // 		const float & end);
