@@ -26,7 +26,11 @@ do
     echo "# #############################################################################" &>> $mylog
     echo "# doing $iname" &>> $mylog
     echo "# #############################################################################" &>> $mylog
-    ./tools/real.error/ewaldSum --config $record_dir/$i --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --output-force force.ewald.out &>> $mylog
+    if echo $project_name | grep one_peak &> /dev/null; then
+	./tools/real.error/ewaldSum --config $record_dir/$i --charge-table $record_dir/charge.tab --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --output-force force.ewald.out &>> $mylog
+    else
+	./tools/real.error/ewaldSum --config $record_dir/$i --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --output-force force.ewald.out &>> $mylog
+    fi
     
     tools/real.error/compare.force --config $record_dir/$i --refh $real_h --force-0 $record_dir/force.ref.$iname.out --force-1 force.ewald.out -o error.ewald.$iname.out -m meanf.ewald.$iname.out &>> $mylog
 

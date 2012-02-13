@@ -68,12 +68,14 @@ int main(int argc, char * argv[])
   double beta, rcut, refh;
   IntVectorType K;
   float start, end;
+  double pcharge;
   
   po::options_description desc ("Allow options");
   desc.add_options()
       ("help,h", "print this message")
       ("trajactory,t", po::value<std::string > (&tfile)->default_value("traj.xtc"), "trajactory file")
-      ("charge-table,q", po::value<std::string > (&qfile), "charge table")      
+      ("charge-table,q", po::value<std::string > (&qfile), "charge table")
+      ("my-charge", po::value<double > (&pcharge)->default_value(1.), "point positive charge as testing charge")
       ("start,s", po::value<float > (&start)->default_value(0.f), "start time")
       ("end,e",   po::value<float > (&end  )->default_value(0.f), "end   time")
       ("beta,b", po::value<double > (&beta)->default_value(1.), "value of beta")
@@ -98,6 +100,7 @@ int main(int argc, char * argv[])
   printf ("## beta is %.2f\n", beta);  
   printf ("## rcut is %.2f\n", rcut);  
   printf ("## K    is %d %d %d\n", K.x, K.y, K.z);
+  printf ("## test charge is %.2f\n", pcharge);  
   if (vm.count("charge-table")){
     printf ("## charge table: %s", qfile.c_str());
   }
@@ -115,7 +118,7 @@ int main(int argc, char * argv[])
 
   ErrorEstimate_dir eee;
   eee.reinit (beta, rcut, dp);
-  eee.calError (dp);
+  eee.calError (dp, pcharge);
   eee.print_error (efile.c_str());
   eee.print_meanf ("meanf.out", dp);
 

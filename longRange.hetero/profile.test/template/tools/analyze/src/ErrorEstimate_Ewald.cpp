@@ -198,7 +198,8 @@ array_multiply (fftw_complex * a,
 
 
 void ErrorEstimate_Ewald::
-calError (const DensityProfile_PiecewiseConst & dp)
+calError (const DensityProfile_PiecewiseConst & dp,
+	  const double charge)
 {
   double scalor = volume/double(nele);
   for (int i = 0; i < nele; ++i){
@@ -221,10 +222,14 @@ calError (const DensityProfile_PiecewiseConst & dp)
   fftw_execute (p_backward_error2);
 
   for (int i = 0; i < nele; ++i){
-    error1x[i][0] /= volume;
-    error1y[i][0] /= volume;
-    error1z[i][0] /= volume;
-    error2[i][0] /= volume;
+    // error1x[i][0] /= volume;
+    // error1y[i][0] /= volume;
+    // error1z[i][0] /= volume;
+    // error2[i][0] /= volume;
+    error1x[i][0] *= charge / volume;
+    error1y[i][0] *= charge / volume;
+    error1z[i][0] *= charge / volume;
+    error2[i][0] *= charge * charge / volume;
   }
   for (int i = 0; i < nele; ++i){
     error1[i][0] =

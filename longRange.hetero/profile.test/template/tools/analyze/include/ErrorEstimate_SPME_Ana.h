@@ -40,6 +40,7 @@ private:
   fftw_complex *error1;
   fftw_complex *error2;
   double self_error;
+  double qself_error;
 
   fftw_plan p_forward_rho1, p_forward_rho2;
   fftw_plan p_backward_k1mx;
@@ -79,7 +80,8 @@ public:
 	       const int & order,
 	       // const IntVectorType Kmax,
 	       const DensityProfile_PiecewiseConst & dp);
-  void calError (const DensityProfile_PiecewiseConst & dp);
+  void calError (const DensityProfile_PiecewiseConst & dp,
+		 const double charge = 1.);
   void print_error (const std::string & file) const;
   void print_meanf (const std::string & file,
 		    const DensityProfile_PiecewiseConst & dp) const;

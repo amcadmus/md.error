@@ -117,7 +117,8 @@ public:
   void reinit (const double & beta,
 	       const double & rcut,
 	       const DensityProfile_PiecewiseConst & dp);
-  void calError (const DensityProfile_PiecewiseConst & dp);
+  void calError (const DensityProfile_PiecewiseConst & dp,
+		 const double charge = 1.);
   void print_error (const std::string & file) const;
   void print_meanf (const std::string & file,
 		    const DensityProfile_PiecewiseConst & dp) const;

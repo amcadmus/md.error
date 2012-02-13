@@ -21,7 +21,7 @@ make -C ./tools/analyze/ &>> make.log
 
 # esti the rec error
 if echo $project_name | grep one_peak &> /dev/null; then
-    ./tools/analyze/error.spme.ik -t $record_dir/traj.xtc -q $record_dir/charge.tab --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order &>> $mylog
+    ./tools/analyze/error.spme.ik -t $record_dir/traj.xtc -q $record_dir/charge.tab --my-charge $charge --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order &>> $mylog
 else
     ./tools/analyze/error.spme.ik -t $record_dir/traj.xtc --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order &>> $mylog
 fi

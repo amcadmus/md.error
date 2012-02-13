@@ -672,7 +672,8 @@ calKernel()
 
 
 void ErrorEstimate_SPME_Ana::
-calError (const DensityProfile_PiecewiseConst & dp)
+calError (const DensityProfile_PiecewiseConst & dp,
+	  const double charge)
 {
   double scalor = volume/double(nele);
   for (int i = 0; i < nele; ++i){
@@ -706,10 +707,14 @@ calError (const DensityProfile_PiecewiseConst & dp)
   }
 
   for (int i = 0; i < nele; ++i){
-    error1x[i][0] /= volume;
-    error1y[i][0] /= volume;
-    error1z[i][0] /= volume;
-    error2[i][0] /= volume;
+    // error1x[i][0] /= volume;
+    // error1y[i][0] /= volume;
+    // error1z[i][0] /= volume;
+    // error2[i][0] /= volume;
+    error1x[i][0] *= charge / volume;
+    error1y[i][0] *= charge / volume;
+    error1z[i][0] *= charge / volume;
+    error2[i][0] *= charge * charge / volume;
   }
   for (int kk = -kcut; kk <= kcut; ++kk){
     if (kk == 0) continue;
@@ -735,24 +740,26 @@ calError (const DensityProfile_PiecewiseConst & dp)
 	error1z[i][1] * error1z[i][1] ;
   }
 
-  for (int kk = -kcut; kk <= kcut; ++kk){
-    if (kk == 0) continue;
-    int myk = kk + kcut;
-    for (int i = 0; i < nele; ++i){
-      error2[i][0] += 4. * M_PI * M_PI * kk * kk *
-	  K.x * K.x * vecAStar.xx * vecAStar.xx *
-	  (FConvRho1x[myk][i][0] * FConvRho1x[myk][i][0] +
-	   FConvRho1x[myk][i][1] * FConvRho1x[myk][i][1]);
-      error2[i][0] += 4. * M_PI * M_PI * kk * kk *
-	  K.y * K.y * vecAStar.yy * vecAStar.yy *
-	  (FConvRho1y[myk][i][0] * FConvRho1y[myk][i][0] +
-	   FConvRho1y[myk][i][1] * FConvRho1y[myk][i][1]);
-      error2[i][0] += 4. * M_PI * M_PI * kk * kk *
-	  K.z * K.z * vecAStar.zz * vecAStar.zz *
-	  (FConvRho1z[myk][i][0] * FConvRho1z[myk][i][0] +
-	   FConvRho1z[myk][i][1] * FConvRho1z[myk][i][1]);
-    }
-  }
+  // for (int kk = -kcut; kk <= kcut; ++kk){
+  //   if (kk == 0) continue;
+  //   int myk = kk + kcut;
+  //   for (int i = 0; i < nele; ++i){
+  //     error2[i][0] += 4. * M_PI * M_PI * kk * kk *
+  // 	  K.x * K.x * vecAStar.xx * vecAStar.xx *
+  // 	  (FConvRho1x[myk][i][0] * FConvRho1x[myk][i][0] +
+  // 	   FConvRho1x[myk][i][1] * FConvRho1x[myk][i][1]);
+  //     error2[i][0] += 4. * M_PI * M_PI * kk * kk *
+  // 	  K.y * K.y * vecAStar.yy * vecAStar.yy *
+  // 	  (FConvRho1y[myk][i][0] * FConvRho1y[myk][i][0] +
+  // 	   FConvRho1y[myk][i][1] * FConvRho1y[myk][i][1]);
+  //     error2[i][0] += 4. * M_PI * M_PI * kk * kk *
+  // 	  K.z * K.z * vecAStar.zz * vecAStar.zz *
+  // 	  (FConvRho1z[myk][i][0] * FConvRho1z[myk][i][0] +
+  // 	   FConvRho1z[myk][i][1] * FConvRho1z[myk][i][1]);
+  //   }
+  // }
+
+  qself_error = self_error * charge * charge * charge * charge;
 }
 
 
@@ -778,12 +785,12 @@ print_error (const std::string & file) const
 
     fprintf (fp, "%f %e   %e %e %e %e   %e %e %e\n",
 	     (i + 0.5) * vecA.xx / K.x,
-	     sqrt(error1[index][0] + error2[index][0] + self_error),
+	     sqrt(error1[index][0] + error2[index][0] + qself_error),
 	     error1[index][0],
 	     error1[index][1],
 	     error2[index][0],
 	     error2[index][1],
-	     self_error,
+	     qself_error,
 	     sqrt(4. * M_PI * M_PI * kk * kk *
 	     K.x * K.x * vecAStar.xx * vecAStar.xx *
 		  FConvRho1x[myk][i][0] * FConvRho1x[myk][i][0]),

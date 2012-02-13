@@ -21,7 +21,7 @@ namespace po = boost::program_options;
 int main(int argc, char * argv[])
 {
   std::string tfile, efile, rfile, qfile;
-  double beta;
+  double beta, pcharge;
   IntVectorType K;
   int order;
   int kValue;
@@ -31,7 +31,8 @@ int main(int argc, char * argv[])
   desc.add_options()
       ("help,h", "print this message")
       ("trajactory,t", po::value<std::string > (&tfile)->default_value("traj.xtc"), "trajactory file")
-      ("charge-table,q", po::value<std::string > (&qfile), "charge table")      
+      ("charge-table,q", po::value<std::string > (&qfile), "charge table")
+      ("my-charge", po::value<double > (&pcharge)->default_value(1.), "point positive charge as testing charge")
       ("start,s", po::value<float > (&start)->default_value(0.f), "start time")
       ("end,e",   po::value<float > (&end  )->default_value(0.f), "end   time")
       ("beta,b", po::value<double > (&beta)->default_value(1.), "value of beta")
@@ -61,6 +62,7 @@ int main(int argc, char * argv[])
   printf ("## beta  is %.2f\n", beta);  
   printf ("## K     is %d %d %d\n", K.x, K.y, K.z);
   printf ("## order is %d\n", order);
+  printf ("## test charge is %.2f\n", pcharge);  
   if (vm.count("charge-table")){
     printf ("## charge table: %s", qfile.c_str());
   }
@@ -79,7 +81,7 @@ int main(int argc, char * argv[])
 
   ErrorEstimate_SPME_Ik eesi;
   eesi.reinit (beta, order, dp);
-  eesi.calError (dp);
+  eesi.calError (dp, pcharge);
   eesi.print_error (efile.c_str());
   eesi.print_meanf ("meanf.out", dp);
 
