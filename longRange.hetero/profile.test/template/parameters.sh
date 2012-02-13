@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nframe_real_error=5
+nframe_real_error=1
 nframe_traj=100
 config_pool=~/study/longRange.hetero/profile.test/config.pool
 
@@ -49,9 +49,9 @@ record_dir=$config_pool/$record_dir
 
 # param for error estimate
 cal_rcut=3.0
-cal_Kx=80
-cal_Ky=40
-cal_Kz=40
+cal_Kx=101
+cal_Ky=51
+cal_Kz=51
 cal_order=6
 real_h=1.0
 
@@ -61,4 +61,8 @@ cal_Kx=`printf "%03d" $cal_Kx`
 cal_Ky=`printf "%03d" $cal_Ky`
 cal_Kz=`printf "%03d" $cal_Kz`
 cal_order=`printf "%01d" $cal_order`
-errors_dir=error.$project_name.box${Lx}x${Ly}x${Lz}.b$beta.r$cal_rcut.n$cal_order.K${cal_Kx}x${cal_Ky}x${cal_Kz}
+if echo $project_name | grep one_peak &> /dev/null; then
+    errors_dir=error.$project_name.charge${charge}.box${Lx}x${Ly}x${Lz}.b$beta.r$cal_rcut.n$cal_order.K${cal_Kx}x${cal_Ky}x${cal_Kz}
+else
+    errors_dir=error.$project_name.box${Lx}x${Ly}x${Lz}.b$beta.r$cal_rcut.n$cal_order.K${cal_Kx}x${cal_Ky}x${cal_Kz}
+fi

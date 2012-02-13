@@ -27,7 +27,7 @@ do
     echo "# doing $iname" &>> $mylog
     echo "# #############################################################################" &>> $mylog
     if echo $project_name | grep one_peak &> /dev/null; then
-	./tools/real.error/spme --config $record_dir/$i --charge-table $record_dir/charge.table --method bspline --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force force.spme.ik.out &>> $mylog
+	./tools/real.error/spme --config $record_dir/$i --charge-table $record_dir/charge.tab --method bspline --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force force.spme.ik.out &>> $mylog
     else
 	./tools/real.error/spme --config $record_dir/$i --method bspline --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force force.spme.ik.out &>> $mylog
     fi
