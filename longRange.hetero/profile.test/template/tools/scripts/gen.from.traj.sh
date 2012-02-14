@@ -26,7 +26,7 @@ mkdir tmp
 mv `ls | grep conf | grep gro | head -n $nframe_real_error ` tmp
 rm -f conf*gro
 mv tmp/*gro .
-rm -f tmp
+rm -fr tmp
 cd -
 
 mv -f make.log $mylog $record_dir
