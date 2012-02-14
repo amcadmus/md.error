@@ -12,7 +12,7 @@ layerWith=2
 peak_size=20
 rhoh=1.00
 rhol=0.05
-charge=0.5
+charge=1.0
 
 project_name=uniform
 profile_command="$project_name -x $Lx -y $Ly -z $Lz --rho $rhoh -n 0"

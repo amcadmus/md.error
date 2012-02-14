@@ -87,6 +87,8 @@ int main(int argc, char * argv[])
   }
   for (unsigned i = 0; i < sdf.get_natom(); ++i){
     double mycharge ;
+    // if (i%3 == 0) mycharge = charge;
+    // else	  mycharge = -charge/2.;
     if (i%2 == 0) mycharge = charge;
     else	  mycharge = -charge;
     fprintf (fp_table, "%f\n", mycharge);
