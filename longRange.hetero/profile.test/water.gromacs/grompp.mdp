@@ -37,7 +37,7 @@ nstcheckpoint            = 10000000
 nstlog                   = 0
 nstenergy                = 100
 ; Output frequency and precision for xtc file
-nstxtcout                = 100
+nstxtcout                = 1000
 xtc-precision            = 1000
 ; This selects the subset of atoms for the xtc file. You can
 ; select multiple groups. By default all atoms will be written.
@@ -54,33 +54,33 @@ ns_type                  = grid
 ; or full (infinite systems only)
 pbc                      = xyz
 ; nblist cut-off        
-rlist                    = 0.9
+rlist                    = 2.0
 ;domain-decomposition     = no
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
 coulombtype              = pme
 rcoulomb-switch          = 0
-rcoulomb                 = 0.9
+rcoulomb                 = 2.0
 ; Dielectric constant (DC) for cut-off or DC of reaction field
 epsilon-r                = 1
 ; Method for doing Van der Waals
 vdw-type                 = cut-off
 ; cut-off lengths       
 rvdw-switch              = 0
-rvdw                     = 0.9
+rvdw                     = 2.0
 ; Apply long range dispersion corrections for Energy and Pressure
 DispCorr                 = EnerPres
 ; Extension of the potential lookup tables beyond the cut-off
 table-extension          = 1
 ; Spacing for the PME/PPPM FFT grid
-fourierspacing           = 0.12
+fourierspacing           = 0.10
 ; FFT grid size, when a value is 0 fourierspacing will be used
 fourier_nx               = 0
 fourier_ny               = 0
 fourier_nz               = 0
 ; EWALD/PME/PPPM parameters
-pme_order                = 4
+pme_order                = 6
 ewald_rtol               = 1e-05
 ewald_geometry           = 3d
 epsilon_surface          = 0
