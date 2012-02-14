@@ -3,6 +3,8 @@
 nframe_real_error=1
 nframe_traj=100
 config_pool=~/study/longRange.hetero/profile.test/config.pool
+project_prefix=water
+water_template=$config_pool/water.one_peak
 
 # gen conf parameters
 Lx=40
@@ -26,6 +28,10 @@ profile_command="$project_name -x $Lx -y $Ly -z $Lz --layer $layerWith --rhoh $r
 
 project_name=one_peak
 profile_command="$project_name -x $Lx -y $Ly -z $Lz -p $peak_size -t $layerWith -u $rhoh -l $rhol -n 0 --charge $charge"
+
+if echo $project_name | grep one_peak &> /dev/null; then
+    project_name=$project_prefix.$project_name
+fi
 
 # param for reference force
 beta=1.0
