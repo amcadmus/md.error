@@ -39,7 +39,7 @@ ref_rcut=`printf "%.2f" $ref_rcut`
 ref_Kx=`printf "%03d" $ref_Kx`
 ref_Ky=`printf "%03d" $ref_Ky`
 ref_Kz=`printf "%03d" $ref_Kz`
-charge=`printf "%.2f" $charge`
+charge=`printf "%.3f" $charge`
 if echo $project_name | grep one_peak &> /dev/null; then
     record_dir=$project_name.charge${charge}.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K${ref_Kx}x${ref_Ky}x${ref_Kz}
 else
