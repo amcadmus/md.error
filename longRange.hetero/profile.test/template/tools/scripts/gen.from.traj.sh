@@ -21,7 +21,7 @@ make -j8 -C ./tools/profile/ &> make.log
 mv -f conf*gro $record_dir/
 
 cd $record_dir/
-rm -f tmp
+rm -fr tmp
 mkdir tmp
 mv `ls | grep conf | grep gro | head -n $nframe_real_error ` tmp
 rm -f conf*gro
