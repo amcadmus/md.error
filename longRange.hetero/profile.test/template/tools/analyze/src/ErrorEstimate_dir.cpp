@@ -157,13 +157,13 @@ makeS1k ()
 	int posi = index3to1 (loc, K);
 	if (k != 0){
 	  double an;
-	  an = integral_s1k_numerical (k, rcut, 30, 1e-23);
+	  an = integral_s1k_numerical (k, rcut, 30, 1e-20);
 	  s1k[posi][0] = 2. / k * an;
 	  s1k[posi][1] = 0.;
 	}
 	else {
 	  double an;
-	  an = integral_s1k1_numerical (k, rcut, 30, 1e-23);
+	  an = integral_s1k1_numerical (k, rcut, 30, 1e-20);
 	  s1k[posi][0] = 4. * M_PI * an;
 	  s1k[posi][1] = 0.;
 	}
@@ -356,7 +356,7 @@ print_error (const std::string & file) const
     unsigned index = index3to1 (idx, K);
     fprintf (fp, "%f %e   %e %e %e %e\n",
 	     (i + 0.5) * vecA.xx / K.x,
-	     sqrt(error1[index][0] + error2[index][0]),
+	     sqrt(fabs(error1[index][0] + error2[index][0])),
 	     error1[index][0],
 	     error1[index][1],
 	     error2[index][0],

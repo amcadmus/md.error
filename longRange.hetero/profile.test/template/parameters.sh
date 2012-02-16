@@ -16,6 +16,7 @@ rhoh=1.00
 rhol=0.05
 charge=1.0
 
+# project command
 project_name=uniform
 profile_command="$project_name -x $Lx -y $Ly -z $Lz --rho $rhoh -n 0"
 
@@ -40,6 +41,7 @@ ref_Kx=129
 ref_Ky=65
 ref_Kz=65
 # regulate parameters. DO NOT MOVE
+nframe_real_error=`printf "%03d" $nframe_real_error`
 beta=`printf "%.3f" $beta`
 ref_rcut=`printf "%.2f" $ref_rcut`
 ref_Kx=`printf "%03d" $ref_Kx`
@@ -50,9 +52,9 @@ Ly=`printf "%.1f" $Ly`
 Lz=`printf "%.1f" $Lz`
 charge=`printf "%.3f" $charge`
 if echo $project_name | grep one_peak &> /dev/null; then
-    record_dir=$project_name.charge${charge}.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K${ref_Kx}x${ref_Ky}x${ref_Kz}
+    record_dir=$project_name.charge${charge}.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K${ref_Kx}x${ref_Ky}x${ref_Kz}.nconf${nframe_real_error}
 else
-    record_dir=$project_name.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K${ref_Kx}x${ref_Ky}x${ref_Kz}
+    record_dir=$project_name.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K${ref_Kx}x${ref_Ky}x${ref_Kz}.nconf${nframe_real_error}
 fi
 record_dir=$config_pool/$record_dir
 
