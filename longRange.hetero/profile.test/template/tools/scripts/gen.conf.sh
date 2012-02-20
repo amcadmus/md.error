@@ -36,7 +36,9 @@ if test -f charge.tab; then
     mv -f charge.tab $record_dir
 fi
 
-for i in `seq $(($nframe_real_error+1)) $nframe_traj`;
+tmp_start_num=`echo "$nframe_real_error+1" | bc `
+
+for i in `seq $tmp_start_num $nframe_traj`;
 do
     iname=`printf "%04d" $i`
     rm -f $record_dir/conf.$iname.gro
