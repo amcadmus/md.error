@@ -59,11 +59,11 @@ int main(int argc, char * argv[])
   std::vector<double > xp (6, 20);
   std::vector<double > xn (6, 20);
 
-  xp[0] = 0.0;
-  xp[1] = 0.25 * Lx - 0.50 * layer;
-  xp[2] = 0.25 * Lx + 0.50 * layer;
-  xp[3] = 0.75 * Lx - 0.50 * layer;
-  xp[4] = 0.75 * Lx + 0.50 * layer;
+  xp[0] = 0.;
+  xp[1] = 0.5 * (Lx - peak - layer);
+  xp[2] = 0.5 * (Lx - peak + layer);
+  xp[3] = xp[1] + peak;
+  xp[4] = xp[2] + peak;
   xp[5] = Lx;
   xn = xp;
 

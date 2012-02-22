@@ -33,6 +33,9 @@ integral () const
   double sum = 0.;
   for (unsigned i = 0; i < mysize; ++i){
     sum += 0.5 * (yy[i] + yy[i+1]) * (xx[i+1] - xx[i]);
+    // printf ("# int is %f %f %f %f       %f\n",
+    // 	    yy[i], yy[i+1], xx[i+1], xx[i],
+    // 	    0.5 * (yy[i] + yy[i+1]) * (xx[i+1] - xx[i]));
   }
   return sum;
 }
