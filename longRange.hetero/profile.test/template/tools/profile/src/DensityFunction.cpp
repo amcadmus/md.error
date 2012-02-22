@@ -5,6 +5,7 @@
 #include "xdrfile/xdrfile.h"
 #include "xdrfile/xdrfile_xtc.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void DensityFunction::
 reinit (const std::vector<double > & x,
@@ -98,6 +99,14 @@ reinit (const std::vector<double > & xp,
 
   np = (positive.integral() * Ly * Lz);
   nn = (negative.integral() * Ly * Lz);
+
+  // double tmpa = positive.integral();
+  // np = (tmpa * Ly * Lz);
+  // printf ("# integral is + %f\n", tmpa);
+  // double tmpb = negative.integral();
+  // nn = (tmpb * Ly * Lz);
+  // printf ("# integral is - %f\n", tmpb);
+
   natom = np + nn;
 }
 

@@ -3,7 +3,6 @@
 nframe_real_error=1
 nframe_traj=100
 config_pool=~/study/longRange.hetero/profile.test/config.pool
-project_prefix=water.
 water_template=$config_pool/water.one_peak
 
 # gen conf parameters
@@ -30,16 +29,17 @@ profile_command="$project_name -x $Lx -y $Ly -z $Lz --layer $layerWith --rhoh $r
 project_name=one_peak
 profile_command="$project_name -x $Lx -y $Ly -z $Lz -p $peak_size -t $layerWith -u $rhoh -l $rhol -n 0 --charge $charge"
 
-if echo $project_name | grep one_peak &> /dev/null; then
-    project_name=${project_prefix}$project_name
-fi
+project_name=rand_water_2
+profile_command="$project_name -x $Lx -y $Ly -z $Lz -p $peak_size -t $layerWith -u $rhoh -l $rhol -n 0 --charge $charge"
+
+project_name=water
 
 # param for reference force
 beta=1.0
-ref_rcut=6.0
-ref_Kx=129
-ref_Ky=65
-ref_Kz=65
+ref_rcut=5.0
+ref_Kx=81
+ref_Ky=41
+ref_Kz=41
 # regulate parameters. DO NOT MOVE
 nframe_real_error=`printf "%03d" $nframe_real_error`
 beta=`printf "%.3f" $beta`
@@ -51,18 +51,14 @@ Lx=`printf "%.1f" $Lx`
 Ly=`printf "%.1f" $Ly`
 Lz=`printf "%.1f" $Lz`
 charge=`printf "%.3f" $charge`
-if echo $project_name | grep one_peak &> /dev/null; then
-    record_dir=$project_name.charge${charge}.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K${ref_Kx}x${ref_Ky}x${ref_Kz}.nconf${nframe_real_error}
-else
-    record_dir=$project_name.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K${ref_Kx}x${ref_Ky}x${ref_Kz}.nconf${nframe_real_error}
-fi
+record_dir=$project_name.charge${charge}.box${Lx}x${Ly}x${Lz}.b$beta.r$ref_rcut.K${ref_Kx}x${ref_Ky}x${ref_Kz}.nconf${nframe_real_error}
 record_dir=$config_pool/$record_dir
 
 # param for error estimate
-cal_rcut=3.0
-cal_Kx=101
-cal_Ky=51
-cal_Kz=51
+cal_rcut=2.0
+cal_Kx=81
+cal_Ky=41
+cal_Kz=41
 cal_order=6
 real_h=1.0
 
@@ -72,8 +68,4 @@ cal_Kx=`printf "%03d" $cal_Kx`
 cal_Ky=`printf "%03d" $cal_Ky`
 cal_Kz=`printf "%03d" $cal_Kz`
 cal_order=`printf "%01d" $cal_order`
-if echo $project_name | grep one_peak &> /dev/null; then
-    errors_dir=error.$project_name.charge${charge}.box${Lx}x${Ly}x${Lz}.b$beta.r$cal_rcut.n$cal_order.K${cal_Kx}x${cal_Ky}x${cal_Kz}
-else
-    errors_dir=error.$project_name.box${Lx}x${Ly}x${Lz}.b$beta.r$cal_rcut.n$cal_order.K${cal_Kx}x${cal_Ky}x${cal_Kz}
-fi
+errors_dir=error.$project_name.charge${charge}.box${Lx}x${Ly}x${Lz}.b$beta.r$cal_rcut.n$cal_order.K${cal_Kx}x${cal_Ky}x${cal_Kz}

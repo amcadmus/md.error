@@ -47,6 +47,8 @@ public:
 	       const int & nframe);
   void genConf_native (const char * filename);
   unsigned get_natom () const {return natom;}
+  unsigned get_natom_posi () const {return np;}
+  unsigned get_natom_nega () const {return nn;}
 };
 
 

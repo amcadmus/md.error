@@ -2,7 +2,12 @@
 
 source parameters.sh
 
-if echo $project_prefix | grep water &> /dev/null; then
+if test ! -d $water_template; then
+    echo "no water template $water_template"
+    exit
+fi
+
+if echo $project_name | grep water | grep -v rand &> /dev/null; then
     if test -d $record_dir; then
 	echo "# find $record_dir, backup"
 	mv $record_dir $record_dir.`date +%s`
