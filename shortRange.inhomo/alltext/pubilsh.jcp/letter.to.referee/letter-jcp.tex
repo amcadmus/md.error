@@ -1,0 +1,121 @@
+\documentclass{letter}
+
+\usepackage{graphicx}
+
+\renewcommand{\baselinestretch}{1.0}
+% \setlength{\footskip}{0cm}
+%\addtolength{\textheight}{10cm}
+% \sloppy
+
+\address{Institute for Mathematics \\
+  Freie Universit\"at Berlin\\
+  Arnimallee 6\\
+  14195 Berlin, Germany 
+}
+\signature{Han Wang}
+
+% \def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}
+% \def\urlunder{\lower .1ex\hbox{\_{}}\kern .04em}
+% \def\urldot{\kern -.10em.\kern -.10em}
+% \def\urlhttp{http\kern -.10em\lower -.1ex\hbox{:}\kern -.12em\lower 0ex\hbox{/}\kern -.18em\lower 0ex\hbox{/}}
+% \parindent0ex
+
+
+\begin{document}
+
+\begin{letter}{
+    The Editors of\\
+    The Journal of Chemical Physics\\
+    % \vskip 1cm
+  }
+% \begin{picture}(0,0)
+%   \put(-30,22){
+%     \parbox{0.25\textwidth}{
+% %	\includegraphics[scale=0.4]{logo-icp-notext.pdf}
+%     }
+%   }
+%   \put(264,10){
+%     \parbox{0.25\textwidth}{
+% 	\includegraphics[scale=0.28]{Fub-logo.eps}
+%     }
+%   }
+% \end{picture}
+
+\opening{Dear Editors,\vskip .5cm}
+Hereby we would like to submit our article:\\
+
+\textbf{The Error Estimate of Force Calculation in the Inhomogeneous Molecular Systems}\\
+
+by H. Wang, Christof Sch\"utte and P. Zhang to:\\
+
+\textbf{The Journal of Chemical Physics}, as a regular article.\\
+
+The molecular dynamics simulation of the inhomogeneous molecular
+systems, in which the density of a certain type of atom is lack of
+uniformity, will encounter non-trivial difficulties by using the
+standard cut-off method. The simulation results are found to converge
+only at a very large cut-off radius, so it is computationally very
+expensive to obtain precise measurement of the physical properties.\\
+
+To quantitatively study the cut-off artifact, we developed an accurate
+error estimate of the standard cut-off method for the inhomogeneous
+systems. We proved that the root mean square force error is decomposed
+into three additive parts: the homogeneity error, the inhomogeneity
+error and the correlation error.  An important observation is that the
+inhomogeneity error is dominant in the interfacial regions where the
+density changes rapidly, and can be more than one order of magnitude
+larger than the error in the bulk regions where the density is
+comparatively uniform.  Therefore, a large cut-off value should be
+used to suppress the maximum error in the interfacial regions, but at
+the mean time,
+considerable computational effort is wasted in the bulk regions. \\
+
+We proposed the adaptive cut-off and the force correction method to
+avoid the mentioned problem. The adaptive cut-off method uses different
+cut-off radii for the interfacial and bulk regions so that the error
+is uniformly distributed across the system. The force correction
+method removes the inhomogeneity error, therefore, the precision of
+force calculation is improved, so a smaller cut-off radius is
+acceptable. Both of the proposed methods relies on the quantitative
+analysis of the short-range force error.  The effectiveness of
+the proposed methods were checked by molecular dynamics simulations of
+the liquid-vapor equilibrium and the nanoscale
+particle collision.\\
+
+Most of previous error estimates in this field assumed the homogeneity
+of the system. As far as we know, the present work for the first time
+proposed an error estimate for the short-range interactions in the
+inhomogeneous molecular systems, presenting new phenomena that do not
+happen in the homogeneous systems.  We showed that the adaptive cut-off
+and the force correction methods greatly improve the efficiency and
+accuracy, and successfully avoid the problem of the standard cut-off
+method, so they should be of special interest for
+understanding the inhomogeneous molecular systems, and for
+designing high
+performance molecular simulation softwares.
+\\
+\vskip 1cm
+
+\closing{Best regards,}
+  % \put(-85,-50){\includegraphics[scale=0.2]{zhang-signature.pdf}}
+% }
+
+\vskip 1cm
+\parindent0ex \textbf{Corresponding author}:\\
+
+\qquad Han Wang
+
+\qquad Institute for Mathematics
+
+\qquad Freie Universit\"at Berlin
+
+\qquad Arnimallee 6
+
+\qquad 14195 Berlin, Germany
+
+\qquad {\tt han.wang@fu-berlin.de} \\
+
+
+
+
+\end{letter} \end{document}
