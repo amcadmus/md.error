@@ -1,0 +1,163 @@
+# #############################################################################
+# doing 0001
+# #############################################################################
+########################################
+# summary of parameters
+# method is bspline
+# order is 6
+# beta is 1.000000e+00
+# Kx is 101
+# Ky is 51
+# Kz is 51
+# rcut is 3.000000e+00
+# box is 4.000000e+01
+# npart is 16800
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/two_peaks_sep.box40x20x20.b1.000.r6.00.K161x081x081/conf.0001.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.800e-01
+### build up calculator
+the solver ES dir error is 1.4602044939869788e-04
+the solver ES rec error is 2.4168038824170185e-08
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is 2.9862492047910448e+06
+### interaction is applied
+the estimated error of rec part SPME 1.1236181486158435e-04
+# #############################################################################
+# doing 0002
+# #############################################################################
+########################################
+# summary of parameters
+# method is bspline
+# order is 6
+# beta is 1.000000e+00
+# Kx is 101
+# Ky is 51
+# Kz is 51
+# rcut is 3.000000e+00
+# box is 4.000000e+01
+# npart is 16800
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/two_peaks_sep.box40x20x20.b1.000.r6.00.K161x081x081/conf.0002.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.700e-01
+### build up calculator
+the solver ES dir error is 1.4602044939869788e-04
+the solver ES rec error is 2.4168038824170185e-08
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is 2.9842994835503385e+06
+### interaction is applied
+the estimated error of rec part SPME 1.1236181486158435e-04
+# #############################################################################
+# doing 0003
+# #############################################################################
+########################################
+# summary of parameters
+# method is bspline
+# order is 6
+# beta is 1.000000e+00
+# Kx is 101
+# Ky is 51
+# Kz is 51
+# rcut is 3.000000e+00
+# box is 4.000000e+01
+# npart is 16800
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/two_peaks_sep.box40x20x20.b1.000.r6.00.K161x081x081/conf.0003.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.800e-01
+### build up calculator
+the solver ES dir error is 1.4602044939869788e-04
+the solver ES rec error is 2.4168038824170185e-08
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is 3.0251673574465592e+06
+### interaction is applied
+the estimated error of rec part SPME 1.1236181486158435e-04
+# #############################################################################
+# doing 0004
+# #############################################################################
+########################################
+# summary of parameters
+# method is bspline
+# order is 6
+# beta is 1.000000e+00
+# Kx is 101
+# Ky is 51
+# Kz is 51
+# rcut is 3.000000e+00
+# box is 4.000000e+01
+# npart is 16800
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/two_peaks_sep.box40x20x20.b1.000.r6.00.K161x081x081/conf.0004.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.700e-01
+### build up calculator
+the solver ES dir error is 1.4602044939869788e-04
+the solver ES rec error is 2.4168038824170185e-08
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is 3.0153869543464412e+06
+### interaction is applied
+the estimated error of rec part SPME 1.1236181486158435e-04
+# #############################################################################
+# doing 0005
+# #############################################################################
+########################################
+# summary of parameters
+# method is bspline
+# order is 6
+# beta is 1.000000e+00
+# Kx is 101
+# Ky is 51
+# Kz is 51
+# rcut is 3.000000e+00
+# box is 4.000000e+01
+# npart is 16800
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/two_peaks_sep.box40x20x20.b1.000.r6.00.K161x081x081/conf.0005.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.800e-01
+### build up calculator
+the solver ES dir error is 1.4602044939869788e-04
+the solver ES rec error is 2.4168038824170185e-08
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is 3.0317884270594642e+06
+### interaction is applied
+the estimated error of rec part SPME 1.1236181486158435e-04
+# #############################################################################
+# combine results
+# #############################################################################
