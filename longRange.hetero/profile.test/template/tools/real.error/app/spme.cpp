@@ -32,6 +32,7 @@ int main (int argc, char * argv[])
   std::string forceFile;
   std::string qfile;
   std::vector<double > betaSet;
+  std::vector<double > shift (3);
   
   desc.add_options()
       ("help,h", "print this message")
@@ -44,6 +45,9 @@ int main (int argc, char * argv[])
       ("grid-number,k", po::value<unsigned > (&ksize), "number of grid on three dimesions")
       ("rcut,r", po::value<double > (&rcut)->default_value(2.5), "cut of radius")
       ("config,c",    po::value<std::string > (&config)->default_value ("conf.gro"), "config file")
+      ("shift-x,x", po::value<double > (&shift[0])->default_value(0.), "shift on x")
+      ("shift-y,y", po::value<double > (&shift[1])->default_value(0.), "shift on y")
+      ("shift-z,z", po::value<double > (&shift[2])->default_value(0.), "shift on z")
       ("charge-table,q", po::value<std::string > (&qfile), "the charge table")
       ("output-force,o", po::value<std::string > (&forceFile)->default_value ("force.ref"), "the exact force for the system");
   
@@ -83,6 +87,17 @@ int main (int argc, char * argv[])
 			posi, velo,
 			tmpbox);
   npart = posi.size();
+  for (unsigned i = 0; i < posi.size(); ++i){
+    for (unsigned dd = 0; dd < 3; ++dd){
+      posi[i][dd] += shift[dd];
+      if (posi[i][dd] >= tmpbox[dd]){
+	posi[i][dd] -= tmpbox[dd];
+      }
+      else if (posi[i][dd] < 0.){
+	posi[i][dd] += tmpbox[dd];
+      }
+    }
+  }
 
   std::vector<double > zero3 (3, 0.);
   std::vector<std::vector<double > > dir_force (npart, zero3);
@@ -149,6 +164,9 @@ int main (int argc, char * argv[])
 	    << "# Kx is " << ksizex << "\n"
 	    << "# Ky is " << ksizey << "\n"
 	    << "# Kz is " << ksizez << "\n"
+	    << "# shift x is " << shift[0] << "\n"
+	    << "# shift y is " << shift[1] << "\n"
+	    << "# shift z is " << shift[2] << "\n"
 	    << "# rcut is " << rcut << "\n"
 	    << "# box is " << boxlx << "\n"
 	    << "# npart is " << npart << "\n"

@@ -20,11 +20,10 @@ namespace po = boost::program_options;
 int main(int argc, char * argv[])
 {
   po::options_description desc ("Allow options");
-  std::string force0, force1, out, config;
+  std::string force0, force1, out;
   
   desc.add_options()
       ("help,h", "print this message")
-      ("config,c", po::value<std::string > (&config)->default_value("conf.gro"), "config file")
       ("force-0", po::value<std::string > (&force0)->default_value("force0.out"), "force file 0")
       ("force-1", po::value<std::string > (&force1)->default_value("force1.out"), "force file 1")
       ("output,o", po::value<std::string > (&out)->default_value("avg.force.out"), "error file")
