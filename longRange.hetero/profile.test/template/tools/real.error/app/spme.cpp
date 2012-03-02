@@ -12,6 +12,7 @@
 namespace po = boost::program_options;
 
 #include "GroFileManager.h"
+#include "SelfCorr.h"
 
 // static double unitScale = 138.935485;
 static double unitScale = 1.;
@@ -33,6 +34,7 @@ int main (int argc, char * argv[])
   std::string qfile;
   std::vector<double > betaSet;
   std::vector<double > shift (3);
+  std::string do_selfCorr;
   
   desc.add_options()
       ("help,h", "print this message")
@@ -48,6 +50,7 @@ int main (int argc, char * argv[])
       ("shift-x,x", po::value<double > (&shift[0])->default_value(0.), "shift on x")
       ("shift-y,y", po::value<double > (&shift[1])->default_value(0.), "shift on y")
       ("shift-z,z", po::value<double > (&shift[2])->default_value(0.), "shift on z")
+      ("self-corr,s", po::value<std::string > (&do_selfCorr)->default_value("no"), "self corr for analytical diff")
       ("charge-table,q", po::value<std::string > (&qfile), "the charge table")
       ("output-force,o", po::value<std::string > (&forceFile)->default_value ("force.ref"), "the exact force for the system");
   
@@ -159,6 +162,7 @@ int main (int argc, char * argv[])
   std::cout << "########################################\n"
 	    << "# summary of parameters\n"
 	    << "# method is " << method << "\n"
+	    << "# selfCorr is " << do_selfCorr << "\n"
 	    << "# order is " << order << "\n"
 	    << "# beta is " << beta << "\n"
 	    << "# Kx is " << ksizex << "\n"
@@ -259,6 +263,12 @@ int main (int argc, char * argv[])
 // 	    << particles[0].f()[1] << '\t'
 // 	    << particles[0].f()[2] << '\n';
 
+  if (method == std::string("fbspline") && do_selfCorr == std::string("yes")){
+    SelfCorr sc ;
+    sc.reinit (beta, order, K[0], K[1], K[2], tmpbox[0], tmpbox[1], tmpbox[2]);
+    sc.correction (posi, rec_force);
+  }
+  
   double errorRec;
   ele.errorEstimateInterpolRec (errorRec);
   errorRec *= unitScale;
@@ -274,9 +284,12 @@ int main (int argc, char * argv[])
 	     dir_force[i][0],
 	     dir_force[i][1],
 	     dir_force[i][2],
-	     unitScale * particles[i].f()[0],
-	     unitScale * particles[i].f()[1],
-	     unitScale * particles[i].f()[2],
+	     rec_force[i][0],
+	     rec_force[i][1],
+	     rec_force[i][2],
+	     // unitScale * particles[i].f()[0],
+	     // unitScale * particles[i].f()[1],
+	     // unitScale * particles[i].f()[2],
 	     dir_force[i][0] + rec_force[i][0],
 	     dir_force[i][1] + rec_force[i][1],
 	     dir_force[i][2] + rec_force[i][2]

@@ -10,7 +10,7 @@ if test ! -d $errors_dir; then
     echo "# no errors dir $errors_dir, make it"
     mkdir -p $errors_dir
 fi
-rm -f $errors_dir/parameters.spme.ik.st.real.sh
+	rm -f $errors_dir/parameters.spme.ik.st.real.sh
 cp parameters.sh $errors_dir/parameters.spme.ik.st.real.sh
 
 mylog=spme.ik.st.real.log
@@ -34,10 +34,8 @@ do
     hhx=`echo "$Lx / $cal_Kx / 2.0" | bc -l`
     hhy=`echo "$Ly / $cal_Ky / 2.0" | bc -l`
     hhz=`echo "$Lz / $cal_Kz / 2.0" | bc -l`
-    ./tools/profile/shift_conf -x $hhx -y $hhy -z $hhz -i $record_dir/$i -o $record_dir/shift.$i &>> $mylog
-    ./tools/real.error/spme --config $record_dir/shift.$i --charge-table $record_dir/charge.tab --method bspline --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force shift.force.spme.ik.out &>> $mylog
+    ./tools/real.error/spme -x $hhx -y $hhy -z $hhz --config $record_dir/$i --charge-table $record_dir/charge.tab --method bspline --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force shift.force.spme.ik.out &>> $mylog
     ./tools/real.error/average.force --force-0 force.spme.ik.out --force-1 shift.force.spme.ik.out -o force.spme.ik.st.out
-    rm -f $record_dir/shift.$i
     
     ./tools/real.error/compare.force --config $record_dir/$i --charge-table $record_dir/charge.tab --refh $real_h --force-0 $record_dir/force.ref.$iname.out --force-1 force.spme.ik.st.out -o error.spme.ik.st.$iname.out -m meanf.spme.ik.st.$iname.out &>> $mylog
 
