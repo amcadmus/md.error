@@ -69,8 +69,10 @@ public:
 	       const double & by,
 	       const double & bz);
   void correction (const std::vector<double > & posi,
+		   const double & charge,
 		   std::vector<double > & force);
   void correction (const std::vector<std::vector<double > > & posi,
+		   const std::vector<double > & charge,
 		   std::vector<std::vector<double > > & force);
 }
     ;

@@ -1,7 +1,7 @@
 #include "SelfCorr.h"
 #include <stdlib.h>
 
-const int global_half_N_k_sum = 2;
+const int global_half_N_k_sum = 3;
 
 inline double
 calsum (const double & u,
@@ -189,28 +189,30 @@ calKernel()
 
 void SelfCorr::
 correction (const std::vector<double > & posi,
+	    const double & charge,
 	    std::vector<double > & force)
 {
 
   for (int kk = 1; kk <= kcut; ++kk){
     int myk = kk + kcut;    
-    force[0] -= selfx[myk][0] * sin (2. * M_PI * kk * K.x * vecAStar.xx * posi[0]);
-    force[1] -= selfy[myk][0] * sin (2. * M_PI * kk * K.y * vecAStar.yy * posi[1]);
-    force[2] -= selfz[myk][0] * sin (2. * M_PI * kk * K.z * vecAStar.zz * posi[2]);
+    force[0] -= selfx[myk][0] * charge * charge * sin(2. * M_PI * kk * K.x * vecAStar.xx * posi[0]);
+    force[1] -= selfy[myk][0] * charge * charge * sin(2. * M_PI * kk * K.y * vecAStar.yy * posi[1]);
+    force[2] -= selfz[myk][0] * charge * charge * sin(2. * M_PI * kk * K.z * vecAStar.zz * posi[2]);
   }
 }
 
 
 void SelfCorr::
 correction (const std::vector<std::vector<double > > & posi,
+	    const std::vector<double > & charge,
 	    std::vector<std::vector<double > > & force)
 {
   for (unsigned i = 0; i < posi.size(); ++i){
     for (int kk = 1; kk <= kcut; ++kk){
       int myk = kk + kcut;    
-      force[i][0] -= selfx[myk][0] * sin (2. * M_PI * kk * K.x * vecAStar.xx * posi[i][0]);
-      force[i][1] -= selfy[myk][0] * sin (2. * M_PI * kk * K.y * vecAStar.yy * posi[i][1]);
-      force[i][2] -= selfz[myk][0] * sin (2. * M_PI * kk * K.z * vecAStar.zz * posi[i][2]);
+      force[i][0] -= selfx[myk][0] * charge[i] * charge[i] * sin(2. * M_PI * kk * K.x * vecAStar.xx * posi[i][0]);
+      force[i][1] -= selfy[myk][0] * charge[i] * charge[i] * sin(2. * M_PI * kk * K.y * vecAStar.yy * posi[i][1]);
+      force[i][2] -= selfz[myk][0] * charge[i] * charge[i] * sin(2. * M_PI * kk * K.z * vecAStar.zz * posi[i][2]);
     }
   }
 }

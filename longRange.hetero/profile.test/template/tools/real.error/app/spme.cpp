@@ -266,7 +266,7 @@ int main (int argc, char * argv[])
   if (method == std::string("fbspline") && do_selfCorr == std::string("yes")){
     SelfCorr sc ;
     sc.reinit (beta, order, K[0], K[1], K[2], tmpbox[0], tmpbox[1], tmpbox[2]);
-    sc.correction (posi, rec_force);
+    sc.correction (posi, charge, rec_force);
   }
   
   double errorRec;
