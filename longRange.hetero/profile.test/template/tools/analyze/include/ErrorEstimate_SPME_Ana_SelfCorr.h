@@ -1,12 +1,12 @@
-#ifndef __ErrorEstimate_SPME_Ana_h_wanghan__
-#define __ErrorEstimate_SPME_Ana_h_wanghan__
+#ifndef __ErrorEstimate_SPME_Ana_SelfCorr_h_wanghan__
+#define __ErrorEstimate_SPME_Ana_SelfCorr_h_wanghan__
 
 #include <fftw3.h>
 #include <gsl/gsl_math.h>
 #include "Defines.h"
 #include "DensityProfile.h"
 
-class ErrorEstimate_SPME_Ana
+class ErrorEstimate_SPME_Ana_SelfCorr
 {
   IntVectorType K;
   // IntVectorType Kmax;
@@ -74,8 +74,8 @@ private:
   
   bool malloced;
 public:
-  ErrorEstimate_SPME_Ana();
-  ~ErrorEstimate_SPME_Ana();
+  ErrorEstimate_SPME_Ana_SelfCorr();
+  ~ErrorEstimate_SPME_Ana_SelfCorr();
   void reinit (const double & beta,
 	       const int & order,
 	       // const IntVectorType Kmax,
@@ -89,14 +89,14 @@ public:
     ;
 
 
-int ErrorEstimate_SPME_Ana::
+int ErrorEstimate_SPME_Ana_SelfCorr::
 index3to1 (const IntVectorType i,
 	   const IntVectorType N) const
 {
   return i.z + N.z * (i.y + N.y * i.x);
 }
 
-void ErrorEstimate_SPME_Ana::
+void ErrorEstimate_SPME_Ana_SelfCorr::
 index1to3 (const unsigned input,
 	   const IntVectorType N,
 	   IntVectorType * i) const
