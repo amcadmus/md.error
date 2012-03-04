@@ -450,17 +450,21 @@ the term $e^{2\pi i\v m\cdot\v r}$ by the B-spline
 interpolation. Denote the error introduced by this approximation by
 $A(\v m, \v r)\,e^{2\pi i\v m\cdot \v r}$, we are fortunate to have
 the analytical expression of $A(\v m, \v r)$:
-\begin{align}\label{eqn:tmp18}
+\begin{align}\label{eqn:error-A}
   A(\v m, \v r)
   =
   \sum_{\alpha=1}^3\sum_{l\neq 0}
-  \frac
+  Z_{\alpha,l}(\v m)
+  (
+  e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r} - 1
+  ),
+\end{align}
+with
+\begin{align}
+  Z_{\alpha,l}(\v m) = \frac
   {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
   {\sum\limits_{l=-\infty}^{+\infty}
-    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
-  \bigg(
-  e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r} - 1
-  \bigg).
+    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}.
 \end{align}
 The error force of the ik-differentiation is therfore
 \begin{align}\nonumber
@@ -500,15 +504,41 @@ The error force of the ik-differentiation is therfore
   \big].
 \end{align}
 The last ``self-interacting term'' is zero, because of the
-symmetricity of $\v g(\v m)$ and $A(\v m, \v r)$.  Unfortunately, the
-error force of ik-differentiation~\eqref{eqn:tmp19} cannot be written
+symmetricity of $\v g(\v m)$ and $A(\v m, \v r)$.
+Therefore,
+\begin{align}\nonumber
+  \Delta\v F_{\textrm{rec}}^{\textrm{ik}}(\v r_i)
+  =\;&
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \v g(\v m)\,
+  A(\v m, \v r_i)\,
+  e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,e^{-2\pi i\v m\cdot\v r_j} \\\label{eqn:ik.error.force}
+  & +\,
+  q_i
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  \v g(\v m)\,
+  e^{2\pi i\v m\cdot \v r_i}
+  \sum_{j\neq i}q_j\,A(\v m, -\v r_j)\,e^{-2\pi i\v m\cdot\v r_j}
+\end{align}
+Unfortunately, the
+error force of ik-differentiation~\eqref{eqn:ik.error.force} cannot be written
 in the form of~\eqref{eqn:tmp11}, so the error estimate derived by
 Theorem~\ref{thm:tmp1} cannot be used here. However, it is still
 possible to develop the error estimate for the ik-differentiation.
 Here we only want to present the key idea and the formula of the error
 estimate, and leave all details to the Appendix \ref{}.  We notice the
 term $e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot\v r}$ with $l\neq 0$
-in Eqn.~\eqref{eqn:tmp18} introduces some high-wave-number terms in
+in Eqn.~\eqref{eqn:error-A} introduces some high-wave-number terms in
 the expression of the error estimate.  If $K_\alpha$ is large enough,
 then due to the thermal fluctuation of the system, the peaks and
 valleys of the high-wave-number terms may canncels in the the
@@ -519,7 +549,7 @@ emsemble-averaged error estimate.
 % And if the high wave number terms are neglected,
 Therefore, by neglecting these terms, it is proved that the mean error
 force of the ik-differentiation is
-\begin{align}
+\begin{align}\label{eqn:ik.meanf}
   \big\langle
   \Delta\v F_{\textrm{rec}}^{\textrm{ik}}(\v r_i)
   \big\rangle
@@ -546,8 +576,8 @@ and the RMS force error is
   \vert \v G_{\alpha,l}\vert^2
   \big)
   \ast \rho_{q^2}
-  \,\bigg] (\v r_i)
-  +
+  \,\bigg] (\v r_i)\\\nonumber
+  &\,+
   4q_i^2\,
   \bigg[
   \big(
@@ -555,7 +585,7 @@ and the RMS force error is
   \v G_{\alpha,l}
   \big)^2
   \ast \rho_{q^2}\,
-  \bigg] (\v r_i) \\
+  \bigg] (\v r_i) \\\label{eqn:ik.error}
   &\,+
   \big\langle
   \Delta\v F_{\textrm{rec}}^{\textrm{ik}}(\v r_i)
@@ -570,10 +600,7 @@ Where
       \v m\neq 0
     \end{subarray}}
   \v g(\v m)\,
-  \frac
-  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
-  {\sum\limits_{l=-\infty}^{+\infty}
-    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  Z_{\alpha,l}(\v m)\,
   e^{2\pi i\v m\cdot\v r}.
 \end{align}
 $G_{\alpha,l}(\v r)$ does not depends on the coordinates of particles,
@@ -620,7 +647,7 @@ The error force of the analytical differetiation is
       \v m\neq 0
     \end{subarray}}
   -2f(\v m)\,
-  A(-\v m, \v r_i)\,e^{2\pi i\v m\cdot \v r_i} \nabla_{\v r_i}e^{2\pi i\v m\cdot\v r_i} \\
+  A(-\v m, \v r_i)\,e^{2\pi i\v m\cdot \v r_i} \nabla_{\v r_i}e^{2\pi i\v m\cdot\v r_i} \\\nonumber
   & +\,
   q^2_i
   \sum_{
@@ -657,13 +684,10 @@ With $\v B(\v m, \v r)$ defined by
 \begin{align}\nonumber
   \v B(\v m, \v r)
   &=
-  \nabla_{\v r_i}A(\v m, \v r)\\
+  \nabla_{\v r}\,A(\v m, \v r)\\
   &=
   \sum_{\alpha=1}^3\sum_{l\neq 0}
-  \frac
-  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
-  {\sum\limits_{l=-\infty}^{+\infty}
-    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
+  Z_{\alpha,l}(\v m)\,
   2\pi i l K_\alpha\v a_\alpha^\ast\,e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r} 
 \end{align}
 The last term in Eqn.~\eqref{eqn:ana.error.force} is due to the
@@ -676,7 +700,7 @@ force calculation.
 
 Neglecting all high frequency terms, we have the mean error force of
 analytical differetiation:
-\begin{align}\label{eqn:tmp31}
+\begin{align}\label{eqn:ana.meanf}
   \langle \Delta\v F_{\textrm{rec}}^{\textrm{ana}}(\v r_i)\rangle
   \approx
   \langle \Delta\v F_{\textrm{rec}}^{\textrm{ik}}(\v r_i)\rangle.
@@ -716,7 +740,7 @@ The RMS force error is
   \ast \rho_{q^2}\,
   \bigg] (\v r_i) \\\nonumber
   & +\,
-  \big\langle \Delta\v F_{\textrm{rec}}^{\textrm{ana}}(\v r_i)\big\rangle ^2\\
+  \big\langle \Delta\v F_{\textrm{rec}}^{\textrm{ana}}(\v r_i)\big\rangle ^2\\\label{eqn:ana.error}
   &+\,
   q_i^4 \sum_{\alpha}\sum_{l\neq 0}
   4\pi^2l^2K_\alpha^2\vert\v a_{\alpha}^\ast\vert^2[C_{\alpha,l}^{\textrm{self}}]^2 .
@@ -733,10 +757,7 @@ Where
       \v m\neq 0
     \end{subarray}}
   (-2)f(\v m)\,
-  \frac
-  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
-  {\sum\limits_{l=-\infty}^{+\infty}
-    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}\,
+  Z_{\alpha,l}(\v m)\,
   e^{2\pi i\v m\cdot \v r},\\
   C_{\alpha,l}^{\textrm{self}}
   &= 
@@ -746,14 +767,137 @@ Where
       \v m\neq 0
     \end{subarray}}
   (-2)f(\v m)\,
-  \frac
-  {\big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}
-  {\sum\limits_{l=-\infty}^{+\infty}
-    \big(\dfrac{2\pi m_\alpha}{K_\alpha} + 2\pi l\big)^{-n}}.
+  Z_{\alpha,l}(\v m).
 \end{align}
 $F_{\alpha,l} (\v r)$ and $C_{\alpha,l}^{\textrm{self}}$ 
 do not depends on the coordinates of particles,
 so they can be tabulated in advance for the simulation.
+
+\subsection{The staggered Mesh Ewald method}
+
+The staggered Method Ewald method~\cite{cerutti2009staggered,
+  neelov2010interlaced} calculate the reciprocal force on two meshes,
+one of which locates at the middle of the other.  Then the two forces
+are averaged to cancel the error. Here we study the staggered Mesh
+Ewald method from the error point of view.
+The shift of the mesh can be effective treated as shifting all
+particles on the opposite direction. Since the system is periodic, the
+shift to which direction is not important. For convenience, we shift
+all particles to the positive direction for half the grid size, namely
+by a vector $\v s = \sum_\alpha\frac1{2K_\alpha}\v a_\alpha$. From
+Eqn.~\eqref{eqn:error-A}, we have
+\begin{align}
+  \frac12\, [A(\v m, \v r) + A(\v m, \v r+\v s)]
+  =&
+  \sum_{\alpha=1}^3\sum_{l\neq 0}
+  \frac12\,
+  Z_{\alpha,l}(\v m)\,
+  \bigg[
+  (1 + e^{\pi i l})e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r} - 2
+  \bigg].
+\end{align}
+Therefore, when $l$ is odd, $1 + e^{\pi i l}$ vanishes. So the $\frac12\,[A(\v
+m, \v r) + A(\v m, \v r+\v s)]$ can be approximated by the leading
+order:
+\begin{align}
+  \frac12\, [A(\v m, \v r) + A(\v m, \v r+\v s)]
+  \approx&
+  -\sum_{\alpha=1}^3\sum_{l\neq 0}
+  Z_{\alpha,l}(\v m).
+\end{align}
+Then from Eqn.~\eqref{eqn:ik.error.force}, we have the error force of
+the staggered ik-differentiation:
+\begin{align}
+  \Delta\v F^{\textrm{ik,st}}_{\textrm{rec}}(\v r_i)
+  \approx -2q_i
+  \sum_jq_j
+  \sum_\alpha\sum_{l\neq 0}
+  \sum_{
+    \begin{subarray}{c}
+      \vert m_{\alpha}\vert < K_\alpha/2\\
+      \v m\neq 0
+    \end{subarray}}
+  g(\v m) Z_{\alpha,l}(\v m)\,e^{2\pi i\v m\cdot(\v r_i-\v r_j)}.
+\end{align}
+This is a pairwise interaction, therefore, from
+Theorem~\ref{thm:tmp1}, we have the error estimates:
+\begin{align}\label{eqn:ik.st.meanf}
+  \big\langle
+  \Delta\v F_{\textrm{rec}}^{\textrm{ik,st}}(\v r_i)
+  \big\rangle
+  & \approx
+  - 2 q_i
+  \bigg[
+  \big(
+  \sum_{\alpha}\sum_{l\neq 0}\v G_{\alpha,l}
+  \big)
+  \ast\rho_q\,
+  \bigg] (\v r_i),
+\end{align}
+% Also neglect the high wave number terms,
+and the RMS force error is 
+\begin{align}\label{eqn:ik.st.error}
+  \big\langle
+  \vert\Delta\v F_{\textrm{rec}}^{\textrm{ik,st}}(\v r_i)\vert^2
+  \big\rangle
+  \approx&\,
+  4q_i^2\,
+  \bigg[
+  \big(
+  \sum_{\alpha} \sum_{l\neq 0}  
+  \v G_{\alpha,l}
+  \big)^2
+  \ast \rho_{q^2}\,
+  \bigg] (\v r_i) +
+  \big\langle
+  \Delta\v F_{\textrm{rec}}^{\textrm{ik,st}}(\v r_i)
+  \big\rangle^2.
+\end{align}
+The superscript ``st'' denotes the staggered mesh method.
+The mean error force of the staggered ik-differentiation is the
+same as the staggered ik-differentiation. The RMS error is improved, because
+$\big\langle\vert\Delta\v F_{\textrm{rec}}^{\textrm{ik}}(\v r_i)\vert^2\big\rangle -
+\big\langle\vert\Delta\v F_{\textrm{rec}}^{\textrm{ik,st}}(\v r_i)\vert^2\big\rangle=
+2q_i^2
+\big[\,
+\big(
+\sum_{\alpha} \sum_{l\neq 0}
+\vert \v G_{\alpha,l}\vert^2
+\big)
+\ast \rho_{q^2}
+\,\big] (\v r_i) \geq 0$.
+
+For the analytical differetiation, similarly we have: $\frac12\,[\v
+B(\v m,\v r) + \v B(\v m, \v r+\v s)] \approx 0$. Therefore, from
+Eqn.~\eqref{eqn:ana.error.force}, the error force of the staggered
+analytical differetiation is approximately the same as the staggered
+ik-differentiation, so are all the error estimates:
+\begin{align}
+  \Delta\v F^{\textrm{ana,st}}_{\textrm{rec}}(\v r_i)
+  &\approx
+  \Delta\v F^{\textrm{ik,st}}_{\textrm{rec}}(\v r_i)\\
+  \big\langle
+  \Delta\v F_{\textrm{rec}}^{\textrm{ana,st}}(\v r_i)
+  \big\rangle
+  &\approx
+  \big\langle
+  \Delta\v F_{\textrm{rec}}^{\textrm{ik,st}}(\v r_i)
+  \big\rangle\\
+  \big\langle
+  \vert\Delta\v F_{\textrm{rec}}^{\textrm{ana,st}}(\v r_i)\vert^2
+  \big\rangle
+  &\approx
+  \big\langle
+  \vert\Delta\v F_{\textrm{rec}}^{\textrm{ik,st}}(\v r_i)\vert^2
+  \big\rangle
+\end{align}
+The error from the self-interaction term is automatically fixed by the
+staggered mesh. The RMS force error is improved because it is not
+difficult to see 
+$\big\langle\vert\Delta\v F_{\textrm{rec}}^{\textrm{ana}}(\v r_i)\vert^2\big\rangle -
+\big\langle\vert\Delta\v F_{\textrm{rec}}^{\textrm{ana,st}}(\v r_i)\vert^2\big\rangle
+\geq 0$.
+
 
 \subsection{The error estimate of the total force}
 
@@ -884,7 +1028,7 @@ given.  The real and estimated mean error forces are denoted by dots
 and straight lines, respectively. All estimates are consistent very
 well with real errors.  Since the system is locally neutral, the first
 order charge distribution $\rho_q$ is naturally zero, therefore, by
-Eqn. \eqref{eqn:tmp10}, \eqref{eqn:tmp18} and \eqref{eqn:tmp31}, all
+Eqn. \eqref{eqn:tmp10}, \eqref{eqn:tmp18} and \eqref{eqn:ana.meanf}, all
 the mean error forces should varnish. Numerical resutls in
 Fig. \ref{fig:meanf1} verifies with the above discussion.
 
