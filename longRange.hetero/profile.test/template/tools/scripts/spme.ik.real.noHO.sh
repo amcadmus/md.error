@@ -19,6 +19,7 @@ spme_ik_record=spme.ik.noHO.record
 rm -f $spme_ik_record
 
 make -C ./tools/real.error.exclude.H2O/ &>> make.log
+make -C ./tools/real.error/ &>> make.log
 
 for i in `ls $record_dir | grep conf | grep gro`;
 do
