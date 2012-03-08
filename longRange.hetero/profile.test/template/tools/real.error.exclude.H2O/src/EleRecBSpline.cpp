@@ -590,10 +590,10 @@ value_type ElectrostaticInteraction_rec_BSpline::applyInteractionCalPotential (
 	}
       }
       }
-      std::cout << forceCorr[0][1][0] <<  "  "
-		<< forceCorr[0][1][1] <<  "  "
-		<< forceCorr[0][1][2] <<  "  "
-		<< std::endl;
+      // std::cout << forceCorr[0][1][0] <<  "  "
+      // 		<< forceCorr[0][1][1] <<  "  "
+      // 		<< forceCorr[0][1][2] <<  "  "
+      // 		<< std::endl;
       patom = ppart;
       (*patom)->f()[0] -= forceCorr[0][1][0];
       (*patom)->f()[1] -= forceCorr[0][1][1];
@@ -616,7 +616,7 @@ value_type ElectrostaticInteraction_rec_BSpline::applyInteractionCalPotential (
       (*patom)->f()[1] += forceCorr[0][2][1];
       (*patom)->f()[2] += forceCorr[0][2][2];
     } // end for
-    std::cout << "hit" << std::endl;
+    // std::cout << "hit" << std::endl;
     
     //   std::vector<double > force (3, 0);
     //   std::vector<value_type > u(3);
