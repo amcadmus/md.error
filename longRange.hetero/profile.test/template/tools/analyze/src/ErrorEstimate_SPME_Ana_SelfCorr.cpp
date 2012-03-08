@@ -1,6 +1,5 @@
-#include <iostream>
-
 #include "ErrorEstimate_SPME_Ana_SelfCorr.h"
+#include <iostream>
 
 const int global_half_N_k_sum = 2;
 

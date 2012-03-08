@@ -391,8 +391,8 @@ value_type ElectrostaticInteraction_rec_BSpline::calPotential (
 
 
 value_type ElectrostaticInteraction_rec_BSpline::applyInteractionCalPotential (
-      std::vector<StandardParticle * >::iterator beginPool,
-      std::vector<StandardParticle * >::iterator endPool)
+    std::vector<StandardParticle * >::iterator beginPool,
+    std::vector<StandardParticle * >::iterator endPool)
 {
   // cal potential part
   // b[0];
@@ -450,10 +450,11 @@ value_type ElectrostaticInteraction_rec_BSpline::applyInteractionCalPotential (
   double ii0 = 1./ value_type(K[0]);
   double ii1 = 1./ value_type(K[1]);
   double ii2 = 1./ value_type(K[2]);
-  bool fast = ((n < K[0]) && (n < K[1]) && (n < K[2]));
+  // bool fast = ((n < K[0]) && (n < K[1]) && (n < K[2]));
   
   for (std::vector<StandardParticle * >::iterator ppart = beginPool;
        ppart != endPool; ppart ++){
+    std::vector<double > force (3, 0);
     std::vector<value_type > u(3);
     u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*ppart)->r());
     u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*ppart)->r());
@@ -464,70 +465,200 @@ value_type ElectrostaticInteraction_rec_BSpline::applyInteractionCalPotential (
     value_type posi0 = u[0] + A0 * K[0];
     value_type posi1 = u[1] + A1 * K[1];
     value_type posi2 = u[2] + A2 * K[2];
-    value_type tmp0 = 0;
-    value_type tmp1 = 0;
-    value_type tmp2 = 0;
-    value_type tmp;
-    std::vector<double > force (3, 0);
-    unsigned index0, index1;
-    
-    if (!fast){
-      int count = 0;
-      for (unsigned k0 = 0; k0 < K[0]; k0 ++){
-	for (unsigned k1 = 0; k1 < K[1]; k1 ++){
-	  for (unsigned k2 = 0; k2 < K[2]; k2 ++, count ++){
-	    value_type n0 = floor ((u[0] - k0) * ii0);
-	    if (u[0] - k0 - n0 * K[0] < n){
-	      Mn->value (u[0] - k0 - n0 * K[0], tmp0);
-	    }
-	    else{
-	      continue;
-	    }
-	    value_type n1 = floor ((u[1] - k1) * ii1);
-	    if (u[1] - k1 - n1 * K[1] < n){
-	      Mn->value (u[1] - k1 - n1 * K[1], tmp1);
-	    }
-	    else{
-	      continue;
-	    }
-	    value_type n2 = floor ((u[2] - k2) * ii2);
-	    if (u[2] - k2 - n2 * K[2] < n){
-	      Mn->value (u[2] - k2 - n2 * K[2], tmp2);
-	    }
-	    else{
-	      continue;
-	    }
-	    tmp = tmp0 * tmp1 * tmp2;
-	    force[0] += QConvPhi0[count] * tmp;
-	    force[1] += QConvPhi1[count] * tmp;
-	    force[2] += QConvPhi2[count] * tmp;
-	  }
+    std::vector<int > start (3, 0);
+    start[0] = int(posi0) - n + 1;
+    start[1] = int(posi1) - n + 1;
+    start[2] = int(posi2) - n + 1;
+    value_type tmp0, tmp1, tmp2;
+    int index0, index1, index2;
+    for (int kk0 = start[0]; kk0 < start[0] + int(n); ++kk0){
+      kk0 < 0 ? (index0 = kk0 + K[0]) : (index0 = kk0);
+      Mn->value (posi0 - kk0, tmp0);
+      for (int kk1 = start[1]; kk1 < start[1] + int(n); ++kk1){
+	kk1 < 0 ? (index1 = kk1 + K[1]) : (index1 = kk1);
+	Mn->value (posi1 - kk1, tmp1);
+	for (int kk2 = start[2]; kk2 < start[2] + int(n); ++kk2){
+	  kk2 < 0 ? (index2 = kk2 + K[2]) : (index2 = kk2);
+	  Mn->value (posi2 - kk2, tmp2);
+	  int index = index2 + K[2] * (index1 + K[1] * index0);
+	  double tmp = tmp0 * tmp1 * tmp2;
+      	  force[0] += QConvPhi0[index] * tmp;
+	  force[1] += QConvPhi1[index] * tmp;
+	  force[2] += QConvPhi2[index] * tmp;
 	}
       }
     }
-    else{
-      for (int k0 = int(ceil(posi0-n)); k0 < int(ceil(posi0)); ++ k0){
-	Mn->value (posi0 - k0, tmp0);
-	index0 = K[1] * (k0<0 ? k0+K[0] : k0);
-	for (int k1 = int(ceil(posi1-n)); k1 < int(ceil(posi1)); ++ k1){
-	  Mn->value (posi1 - k1, tmp1);
-	  index1 = K[2] * ((k1<0 ? k1+K[1] : k1) + index0);
-	  for (int k2 = int(ceil(posi2-n)); k2 < int(ceil(posi2)); ++ k2){
-	    Mn->value (posi2 - k2, tmp2);
-	    tmp = tmp0 * tmp1 * tmp2;
-	    unsigned index = (k2<0 ? k2+K[2] : k2) + index1;
-	    force[0] += QConvPhi0[index] * tmp;
-	    force[1] += QConvPhi1[index] * tmp;
-	    force[2] += QConvPhi2[index] * tmp;
-	  }
-	}
-      }
-    }
-
     (*ppart)->f()[0] += (*ppart)->charge() * force[0];
     (*ppart)->f()[1] += (*ppart)->charge() * force[1];
     (*ppart)->f()[2] += (*ppart)->charge() * force[2];
   }
+
+
+  {
+    for (std::vector<StandardParticle * >::iterator ppart = beginPool;
+	 ppart != endPool; ++(++(++ppart))){
+      std::vector<std::vector<value_type > > posi (3);
+      std::vector<std::vector<int > > start (3);
+      std::vector<double > atomcharge(3);
+      std::vector<StandardParticle * >::iterator patom = ppart;
+      for (unsigned molc = 0; molc < 3; ++molc, ++patom){
+	atomcharge[molc] = (*patom)->charge();
+	std::vector<value_type > u(3);
+	u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*patom)->r());
+	u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*patom)->r());
+	u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*patom)->r());
+	std::vector<value_type > tmpposi(3);
+	tmpposi[0] = u[0] -int(floor ((u[0]) * ii0)) * K[0];
+	tmpposi[1] = u[1] -int(floor ((u[1]) * ii1)) * K[1];
+	tmpposi[2] = u[2] -int(floor ((u[2]) * ii2)) * K[2];
+	posi[molc] = tmpposi;
+	start[molc].resize (3);
+	for (unsigned dd = 0; dd < 3; ++dd) start[molc][dd] = int (posi[molc][dd]) - n + 1;
+      }
+
+      // forceCorr and initialization
+      std::vector<std::vector<std::vector<double > > > forceCorr (3);
+      {
+	for (unsigned dd = 0; dd < 3; ++dd) forceCorr[dd].resize (3);
+	std::vector<double > tmp (3, 0.);
+	for (unsigned ii = 0; ii < 3; ++ii){
+	  for (unsigned jj = 0; jj < 3; ++jj){
+	    forceCorr[ii][jj] = tmp;
+	  }
+	}
+      }
+      
+      for (int mol0 = 0; mol0 < 3; ++mol0){
+      for (int mol1 = mol0 + 1; mol1 < 3; ++mol1){
+	std::vector<std::vector<double > > mn_mol0(3);
+	std::vector<std::vector<double > > mn_mol1(3);
+	for (unsigned dd = 0; dd < 3; ++dd){
+	  mn_mol0[dd].resize(n, 0.);
+	  mn_mol1[dd].resize(n, 0.);
+	}	
+	for (unsigned dd = 0; dd < 3; ++dd){
+	  for (unsigned kk = start[mol0][dd]; kk < start[mol0][dd] + n; ++kk){
+	    Mn->value (posi[mol0][dd] - kk, mn_mol0[dd][kk - start[mol0][dd]]);
+	  }
+	}
+	for (unsigned dd = 0; dd < 3; ++dd){
+	  for (unsigned kk = start[mol1][dd]; kk < start[mol1][dd] + n; ++kk){
+	    Mn->value (posi[mol1][dd] - kk, mn_mol1[dd][kk - start[mol1][dd]]);
+	  }
+	}	
+	  
+	std::vector<int > kk(3);
+	std::vector<int > ll(3);
+	std::vector<int > diffkl (3);
+	for (kk[0] = start[mol0][0]; kk[0] < start[mol0][0] + int(n); ++kk[0]){
+	for (ll[0] = start[mol1][0]; ll[0] < start[mol1][0] + int(n); ++ll[0]){
+	  diffkl[0] = kk[0] - ll[0];
+	  if      (diffkl[0] <  0        ) diffkl[0] += int(K[0]);
+	  else if (diffkl[0] >= int(K[0])) diffkl[0] -= int(K[0]);
+	for (kk[1] = start[mol0][1]; kk[1] < start[mol0][1] + int(n); ++kk[1]){
+	for (ll[1] = start[mol1][1]; ll[1] < start[mol1][1] + int(n); ++ll[1]){
+	  diffkl[1] = kk[1] - ll[1];
+	  if      (diffkl[1] <  0        ) diffkl[1] += int(K[1]);
+	  else if (diffkl[1] >= int(K[1])) diffkl[1] -= int(K[1]);
+	for (kk[2] = start[mol0][2]; kk[2] < start[mol0][2] + int(n); ++kk[2]){
+	for (ll[2] = start[mol1][2]; ll[2] < start[mol1][2] + int(n); ++ll[2]){
+	  diffkl[2] = kk[2] - ll[2];
+	  if      (diffkl[2] <  0        ) diffkl[2] += int(K[2]);
+	  else if (diffkl[2] >= int(K[2])) diffkl[2] -= int(K[2]);
+	  double scalor =
+	      atomcharge[mol0] * atomcharge[mol1] *
+	      mn_mol0[0][kk[0] - start[mol0][0]] *
+	      mn_mol0[1][kk[1] - start[mol0][1]] *
+	      mn_mol0[2][kk[2] - start[mol0][2]] *
+	      mn_mol1[0][ll[0] - start[mol1][0]] *
+	      mn_mol1[1][ll[1] - start[mol1][1]] *
+	      mn_mol1[2][ll[2] - start[mol1][2]] ;
+	  forceCorr[mol0][mol1][0] += scalor *
+	      phiFr0[diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0])][0];
+	  forceCorr[mol0][mol1][1] += scalor *
+	      phiFr1[diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0])][0];
+	  forceCorr[mol0][mol1][2] += scalor *
+	      phiFr2[diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0])][0];
+	  // std::cout << scalor << std::endl;
+	  // std::cout << diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0]) << std::endl;
+	  // std::cout << phiFr1[diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0])][0] << std::endl;
+	}
+	}
+	}
+	}
+	}
+	}
+      }
+      }
+      std::cout << forceCorr[0][1][0] <<  "  "
+		<< forceCorr[0][1][1] <<  "  "
+		<< forceCorr[0][1][2] <<  "  "
+		<< std::endl;
+      patom = ppart;
+      (*patom)->f()[0] -= forceCorr[0][1][0];
+      (*patom)->f()[1] -= forceCorr[0][1][1];
+      (*patom)->f()[2] -= forceCorr[0][1][2];
+      (*patom)->f()[0] -= forceCorr[0][2][0];
+      (*patom)->f()[1] -= forceCorr[0][2][1];
+      (*patom)->f()[2] -= forceCorr[0][2][2];
+      ++patom;
+      (*patom)->f()[0] -= forceCorr[1][2][0];
+      (*patom)->f()[1] -= forceCorr[1][2][1];
+      (*patom)->f()[2] -= forceCorr[1][2][2];
+      (*patom)->f()[0] += forceCorr[0][1][0];
+      (*patom)->f()[1] += forceCorr[0][1][1];
+      (*patom)->f()[2] += forceCorr[0][1][2];
+      ++patom;
+      (*patom)->f()[0] += forceCorr[1][2][0];
+      (*patom)->f()[1] += forceCorr[1][2][1];
+      (*patom)->f()[2] += forceCorr[1][2][2];
+      (*patom)->f()[0] += forceCorr[0][2][0];
+      (*patom)->f()[1] += forceCorr[0][2][1];
+      (*patom)->f()[2] += forceCorr[0][2][2];
+    } // end for
+    std::cout << "hit" << std::endl;
+    
+    //   std::vector<double > force (3, 0);
+    //   std::vector<value_type > u(3);
+    //   u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*ppart)->r());
+    //   u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*ppart)->r());
+    //   u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*ppart)->r());
+    //   int A0 = -int(floor ((u[0]) * ii0)) ;
+    //   int A1 = -int(floor ((u[1]) * ii1)) ;
+    //   int A2 = -int(floor ((u[2]) * ii2)) ;
+    //   value_type posi0 = u[0] + A0 * K[0];
+    //   value_type posi1 = u[1] + A1 * K[1];
+    //   value_type posi2 = u[2] + A2 * K[2];
+    //   std::vector<int > start (3, 0);
+    //   start[0] = int(posi0) - n + 1;
+    //   start[1] = int(posi1) - n + 1;
+    //   start[2] = int(posi2) - n + 1;
+    //   value_type tmp0, tmp1, tmp2;
+    //   int index0, index1, index2;
+    //   for (int kk0 = start[0]; kk0 < start[0] + int(n); ++kk0){
+    // 	kk0 < 0 ? (index0 = kk0 + K[0]) : (index0 = kk0);
+    // 	Mn->value (posi0 - kk0, tmp0);
+    // 	for (int kk1 = start[1]; kk1 < start[1] + int(n); ++kk1){
+    // 	  kk1 < 0 ? (index1 = kk1 + K[1]) : (index1 = kk1);
+    // 	  Mn->value (posi1 - kk1, tmp1);
+    // 	  for (int kk2 = start[2]; kk2 < start[2] + int(n); ++kk2){
+    // 	    kk2 < 0 ? (index2 = kk2 + K[2]) : (index2 = kk2);
+    // 	    Mn->value (posi2 - kk2, tmp2);
+    // 	    int index = index2 + K[2] * (index1 + K[1] * index0);
+    // 	    double tmp = tmp0 * tmp1 * tmp2;
+    // 	    force[0] += QConvPhi0[index] * tmp;
+    // 	    force[1] += QConvPhi1[index] * tmp;
+    // 	    force[2] += QConvPhi2[index] * tmp;
+    // 	  }
+    // 	}
+    //   }
+    //   (*ppart)->f()[0] += (*ppart)->charge() * force[0];
+    //   (*ppart)->f()[1] += (*ppart)->charge() * force[1];
+    //   (*ppart)->f()[2] += (*ppart)->charge() * force[2];
+    // }
+      
+  } // end out brace
+
 
   watch.stop();
   loop_time += watch.user();
@@ -676,6 +807,9 @@ void ElectrostaticInteraction_rec_BSpline::build()
   phiF0	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
   phiF1	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
   phiF2	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  phiFr0= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  phiFr1= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  phiFr2= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
   QF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
   QFProdPsiF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
   QFProdPhiF0	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
@@ -692,6 +826,10 @@ void ElectrostaticInteraction_rec_BSpline::build()
   backwardQFProdPhiF1 = fftw_plan_dft_c2r_3d (K[0], K[1], K[2], QFProdPhiF1, QConvPhi1, FFTW_MEASURE);
   backwardQFProdPhiF2 = fftw_plan_dft_c2r_3d (K[0], K[1], K[2], QFProdPhiF2, QConvPhi2, FFTW_MEASURE);
 
+  backward_phiF0 = fftw_plan_dft_3d (K[0], K[1], K[2], phiFr0, phiFr0, +1, FFTW_MEASURE);
+  backward_phiF1 = fftw_plan_dft_3d (K[0], K[1], K[2], phiFr1, phiFr1, +1, FFTW_MEASURE);
+  backward_phiF2 = fftw_plan_dft_3d (K[0], K[1], K[2], phiFr2, phiFr2, +1, FFTW_MEASURE);
+  
   calPsiFPhiF();
   unBuild = false;
 }
@@ -821,6 +959,9 @@ void ElectrostaticInteraction_rec_BSpline::calPsiFPhiF ()
   phiFtmp1[0][1] = 0;
   phiFtmp2[0][0] = 0;
   phiFtmp2[0][1] = 0;
+  phiFr0[0][0] = phiFr0[0][1] = 0.;
+  phiFr1[0][0] = phiFr1[0][1] = 0.;
+  phiFr2[0][0] = phiFr2[0][1] = 0.;
   std::vector<value_type > m (3);
   for (unsigned i = 0; i < K[0]; i ++){
     int ip ;    
@@ -849,10 +990,39 @@ void ElectrostaticInteraction_rec_BSpline::calPsiFPhiF ()
 	phiFtmp1[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[1] * size;
 	phiFtmp2[k + K[2] * (j + K[1] * i)][0] = 0;
 	phiFtmp2[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[2] * size;
+	phiFr0[k + K[2] * (j + K[1] * i)][0] = 0.;
+	phiFr1[k + K[2] * (j + K[1] * i)][0] = 0.;
+	phiFr2[k + K[2] * (j + K[1] * i)][0] = 0.;
+	phiFr0[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[0];
+	phiFr1[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[1];
+	phiFr2[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[2];
+	// std::cout << phiFr1[k + K[2] * (j + K[1] * i)][1] << std::endl;
       }
     }
   }
-  
+
+  // for (unsigned i = 0; i < K[0]; i ++){
+  //   for (unsigned j = 0; j < K[1]; j ++){
+  //     for (unsigned k = 0; k < K[2]; k ++){
+  // 	std::cout << phiFr1[k + K[2] * (j + K[1] * i)][1] << std::endl;
+  //     }
+  //   }
+  // }
+	
+  fftw_execute (backward_phiF0);
+  fftw_execute (backward_phiF1);
+  fftw_execute (backward_phiF2);
+
+  // for (unsigned i = 0; i < K[0]; i ++){
+  //   for (unsigned j = 0; j < K[1]; j ++){
+  //     for (unsigned k = 0; k < K[2]; k ++){
+  // 	std::cout << phiFr1[k + K[2] * (j + K[1] * i)][1] << std::endl;
+  //     }
+  //   }
+  // }
+
+  // std::cout << phiFr1[100][0] << std::endl;
+  // std::cout << phiFr1[100][1] << std::endl;
 
   for (unsigned i = 0; i < K[0]; ++ i){
     for (unsigned j = 0; j < K[1]; ++ j){

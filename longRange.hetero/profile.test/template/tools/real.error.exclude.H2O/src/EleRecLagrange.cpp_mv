@@ -1,0 +1,1837 @@
+#include "ElectrostaticInteraction.h"
+#include "Polynominal.h"
+#include "VectorOperation.h"
+#include <numeric>
+#include <math.h>
+#include <time.h>
+#include "ToolBox.h"
+
+
+
+
+double intPow (const double & x, const unsigned & alpha_);
+
+
+unsigned factorial (const unsigned & n)
+{
+  if (n <= 1){
+    return 1;
+  }
+  else {
+    return n * factorial(n-1);
+  }
+}
+    
+value_type P (const value_type & r, const unsigned & p)
+{
+  value_type sum = 1;
+  for (unsigned i = 0; i < p; ++ i){
+    sum *= (r+i) * (1-r+i);
+  }
+  return sum;
+}
+
+    
+value_type ElectrostaticInteraction_rec_Lagrange::errorEstimateDir (double rcut)
+{
+  
+  std::vector<double > qs;
+  for (std::vector<StandardParticle * >::iterator pp = partPool.begin();
+       pp != partPool.end(); ++pp){
+    qs.push_back ((*pp)->charge());
+  }
+  std::sort (qs.begin(), qs.end());
+  double qmax = qs[qs.size()-1];
+  double Q = 0;
+  for (std::vector<double >::iterator i = qs.begin();
+       i != qs.end(); ++ i){
+    Q += *i * *i;
+  }  
+
+  return 2 * qmax * sqrt (Q / rcut / V) * exp (- beta*beta*rcut*rcut);
+}
+
+
+value_type ElectrostaticInteraction_rec_Lagrange::errorEstimate ()
+{
+  unsigned p = W2p.getP();
+  //p = 4;
+  
+  double h0 = 1./K[0];
+  double h1 = 1./K[1];
+  double h2 = 1./K[2];
+
+  double constant = 1./ double (factorial(2*p)) * intPow(2, 2*p);
+  
+  // for alpha = 0
+  std::vector<double > KK (3);
+  KK[0] = K[0];
+  KK[1] = K[1];
+  KK[2] = K[2];
+  std::sort (KK.begin(), KK.end());
+  int M;
+  if (KK[KK.size()-1] < 32) M = 32;
+  else M = int(KK[KK.size()-1]);
+  
+  std::vector<double > qs;
+  for (std::vector<StandardParticle * >::iterator pp = partPool.begin();
+       pp != partPool.end(); ++pp){
+    qs.push_back ((*pp)->charge());
+  }
+  double Q = 0;
+  for (std::vector<double >::iterator i = qs.begin();
+       i != qs.end(); ++ i){
+    Q += *i * *i;
+  }
+
+  double sum = 0;
+  std::vector<double > errorForce(3, 0);
+  for (int m0 = -int(KK[0]/2); m0 < KK[0]/2; ++m0){
+    for (int m1 = -int(KK[1]/2); m1 < KK[1]/2; ++m1){
+      for (int m2 = -int(KK[2]/2); m2 < KK[2]/2; ++m2){
+	if (fabs(m0) + fabs(m1) + fabs(m2) == 0) continue;
+	std::vector<value_type > m (3);
+	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+	double mm = VectorOperation::dot (m, m);
+	double ee = 0;
+	int count = 0;
+	for (; count < 100; ++count){
+	  double r0 = ToolBox::genrand_real2();
+	  double r1 = ToolBox::genrand_real2();
+	  double r2 = ToolBox::genrand_real2();
+	  double xi00 = ToolBox::genrand_real2() - r0;
+	  double xi10 = ToolBox::genrand_real2() - r1;
+	  double xi20 = ToolBox::genrand_real2() - r2;
+	  std::vector<double > errorfunc (2, 0);
+	  errorfunc[0] = constant * (intPow (M_PI*m0*h0, 2*p) * (cos(2*M_PI*m0*xi00)) * P(r0, p) +  
+				     intPow (M_PI*m1*h1, 2*p) * (cos(2*M_PI*m1*xi10)) * P(r1, p) +
+				     intPow (M_PI*m2*h2, 2*p) * (cos(2*M_PI*m2*xi20)) * P(r2, p) );
+	  errorfunc[1] = constant * (intPow (M_PI*m0*h0, 2*p) * (sin(2*M_PI*m0*xi00)) * P(r0, p) +  
+				     intPow (M_PI*m1*h1, 2*p) * (sin(2*M_PI*m1*xi10)) * P(r1, p) +
+				     intPow (M_PI*m2*h2, 2*p) * (sin(2*M_PI*m2*xi20)) * P(r2, p) );
+	  ee += errorfunc[0]*errorfunc[0] + errorfunc[1]*errorfunc[1];
+	  
+	}
+	ee /= count;
+	double expp = exp (- 2*M_PI*M_PI/beta/beta*mm) / (mm) * 2/V * 2/V;
+	sum += 2 * expp * ee;
+      }
+    }
+  }
+  sum *= Q*Q/double(partPool.size());
+  return sqrt(sum);
+}
+
+
+
+
+
+
+
+
+
+
+// value_type ElectrostaticInteraction_rec_Lagrange::errorEstimate ()
+// {
+//   unsigned p = W2p.getP();
+//   //p = 4;
+  
+//   double h0 = 1./K[0];
+//   double h1 = 1./K[1];
+//   double h2 = 1./K[2];
+//   double ii0 = 1./ value_type(K[0]);
+//   double ii1 = 1./ value_type(K[1]);
+//   double ii2 = 1./ value_type(K[2]);
+  
+//   double constant = double (factorial(2*p)) 
+//       / intPow(2, 2*p) 
+//       / factorial(p) 
+//       / factorial(p)
+//       * intPow(M_PI, 2*p);
+  
+//   // for alpha = 0
+//   int M = int (sqrt(beta / M_PI * beta / M_PI * 40));
+//   ++ M;
+//   M = 20;
+  
+// //   double a0a0 = VectorOperation::dot (vecAStar[0], vecAStar[0]);
+// //   double a1a1 = VectorOperation::dot (vecAStar[1], vecAStar[1]);
+// //   double a2a2 = VectorOperation::dot (vecAStar[2], vecAStar[2]);
+
+//   value_type sum0 = 0;
+//   for (int m0 = -M; m0 < M; ++m0){
+//     for (int m1 = -M; m1 < M; ++m1){
+//       for (int m2 = -M; m2 < M; ++m2){
+// 	if (fabs(m0) + fabs(m1) + fabs(m2) == 0) continue;
+// 	std::vector<value_type > m (3);
+// 	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+// 	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+// 	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+// 	double mm = VectorOperation::dot (m, m);
+// 	sum0 += exp (- M_PI * M_PI / beta / beta * mm) / mm * intPow (m0*h0, 2*p) / (2 * M_PI);// / V;
+// // 	sum0 += exp (- M_PI * M_PI / beta / beta * mm) / sqrt(mm) * intPow (m0*h0, 2*p) * 2 / V;
+//       }
+//     }
+//   }
+//   sum0 *= constant * 2 ;
+  
+//   value_type sum1 = 0;
+//   for (int m0 = -M; m0 < M; ++m0){
+//     for (int m1 = -M; m1 < M; ++m1){
+//       for (int m2 = -M; m2 < M; ++m2){
+// 	if (fabs(m0) + fabs(m1) + fabs(m2) == 0) continue;
+// 	std::vector<value_type > m (3);
+// 	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+// 	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+// 	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+// 	double mm = VectorOperation::dot (m, m);
+// 	sum1 += exp (- M_PI * M_PI / beta / beta * mm) / mm * intPow (m1*h1, 2*p) / (2 * M_PI);// / V;
+// // 	sum1 += exp (- M_PI * M_PI / beta / beta * mm) / sqrt(mm) * intPow (m1*h1, 2*p) * 2/ V;
+//       }
+//     }
+//   }
+//   sum1 *= constant * 2 ;
+  
+//   value_type sum2 = 0;
+//   for (int m0 = -M; m0 < M; ++m0){
+//     for (int m1 = -M; m1 < M; ++m1){
+//       for (int m2 = -M; m2 < M; ++m2){
+// 	if (fabs(m0) + fabs(m1) + fabs(m2) == 0) continue;
+// 	std::vector<value_type > m (3);
+// 	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+// 	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+// 	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+// 	double mm = VectorOperation::dot (m, m);
+// 	sum2 += exp (- M_PI * M_PI / beta / beta * mm) / mm * intPow (m2*h2, 2*p) / (2 * M_PI);// / V;
+// // 	sum2 += exp (- M_PI * M_PI / beta / beta * mm) / sqrt(mm) * intPow (m2*h2, 2*p) * 2 / V;
+//       }
+//     }
+//   }
+//   sum2 *= constant * 2 ;
+   
+
+
+
+//   M = 16;
+//   std::vector<value_type > sm (2, 0);
+//   std::vector<value_type > s (2, 0);
+//   std::vector<value_type > sdiff (2, 0);
+//   double sumsum = 0;
+  
+//   for (int m0 = -M; m0 <= M; m0 ++){
+//     for (int m1 = -M; m1 <= M; m1 ++){
+//       for (int m2 = -M; m2 <= M; m2 ++){
+// 	if (m0 == 0 && m1 == 0 && m2 == 0 ) continue;
+// 	std::vector<value_type > m (3);
+// 	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+// 	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+// 	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+// 	double mm = VectorOperation::dot (m, m);
+// 	double expp = exp (-M_PI * M_PI * mm / beta / beta) / mm / (2 * M_PI) / V;
+	
+// 	std::vector<value_type > diff (partPool[0]->r());
+// 	VectorOperation::add (diff, -1, partPool[1]->r());
+// 	double tmp = 2 * M_PI * VectorOperation::dot (m, diff);
+// 	sm[0] += expp * cos(tmp);
+// 	sm[1] += expp * sin(tmp);
+
+// 	std::vector<double > s0 (2, 0);
+// 	std::vector<double > u(3);
+// 	u[0] = K[0] * VectorOperation::dot (vecAStar[0], partPool[0]->r());
+// 	u[1] = K[1] * VectorOperation::dot (vecAStar[1], partPool[0]->r());
+// 	u[2] = K[2] * VectorOperation::dot (vecAStar[2], partPool[0]->r());
+	
+// 	std::vector<double > tmps;
+// 	std::vector<value_type > tt (2, 0);
+// 	tt[0] = expp;
+// 	tt[1] = 0;
+
+// 	tmps.clear();
+// 	tmps.resize(2, 0);
+// 	for (unsigned k0 = 0; k0 < K[0]; k0 ++){
+// 	  value_type n0 = floor ((u[0] - k0 + p) * ii0);
+// 	  double scale;
+// 	  if (u[0] - k0 + p - n0 * K[0] < 2*p){
+// 	    W2p.value (u[0] - k0 - n0 * K[0], scale);
+// 	  }
+// 	  else continue;
+// 	  double tmp = 2 * M_PI * m0 * k0 * h0;
+// 	  tmps[0] += scale * cos (tmp);
+// 	  tmps[1] += scale * sin (tmp);
+// 	}
+// 	double swap = tt[0] * tmps[0] - tt[1] * tmps[1];
+// 	tt[1] = tt[1] * tmps[0] + tt[0] * tmps[1];
+// 	tt[0] = swap;
+// 	tmps.clear();
+// 	tmps.resize(2, 0);
+// 	for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+// 	  value_type n1 = floor ((u[1] - k1 + p) * ii1);
+// 	  double scale;
+// 	  if (u[1] - k1 + p - n1 * K[1] < 2*p){
+// 	    W2p.value (u[1] - k1 - n1 * K[1], scale);
+// 	  }
+// 	  else continue;
+// 	  double tmp = 2 * M_PI * m1 * k1 * h1;
+// 	  tmps[0] += scale * cos (tmp);
+// 	  tmps[1] += scale * sin (tmp);
+// 	}
+// 	swap = tt[0] * tmps[0] - tt[1] * tmps[1];
+// 	tt[1] = tt[1] * tmps[0] + tt[0] * tmps[1];
+// 	tt[0] = swap;
+// 	tmps.clear();
+// 	tmps.resize(2, 0);
+// 	for (unsigned k2 = 0; k2 < K[2]; k2 ++){
+// 	  value_type n2 = floor ((u[2] - k2 + p) * ii2);
+// 	  double scale;
+// 	  if (u[2] - k2 + p - n2 * K[2] < 2*p){
+// 	    W2p.value (u[2] - k2 - n2 * K[2], scale);
+// 	  }
+// 	  else continue;
+// 	  double tmp = 2 * M_PI * m2 * k2 * h2;
+// 	  tmps[0] += scale * cos (tmp);
+// 	  tmps[1] += scale * sin (tmp);
+// 	}
+// 	swap = tt[0] * tmps[0] - tt[1] * tmps[1];
+// 	tt[1] = tt[1] * tmps[0] + tt[0] * tmps[1];
+// 	tt[0] = swap;
+	  
+
+	
+
+// // 	for (unsigned k0 = 0; k0 < K[0]; k0 ++){
+// // 	  for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+// // 	    for (unsigned k2 = 0; k2 < K[2]; k2 ++){
+// // 	      double tmp0, tmp1, tmp2;
+// // 	      value_type n0 = floor ((u[0] - k0 + p) * ii0);
+// // 	      if (u[0] - k0 + p - n0 * K[0] < 2*p){
+// // 		W2p.value (u[0] - k0 - n0 * K[0], tmp0);
+// // 	      }
+// // 	      else{
+// // 		continue;
+// // 	      }
+// // 	      value_type n1 = floor ((u[1] - k1 + p) * ii1);
+// // 	      if (u[1] - k1 + p - n1 * K[1] < 2*p){
+// // 		W2p.value (u[1] - k1 - n1 * K[1], tmp1);
+// // 	      }
+// // 	      else{
+// // 		continue;
+// // 	      }
+// // 	      value_type n2 = floor ((u[2] - k2 + p) * ii2);
+// // 	      if (u[2] - k2 + p - n2 * K[2] < 2*p){
+// // 		W2p.value (u[2] - k2 - n2 * K[2], tmp2);
+// // 	      }
+// // 	      else{
+// // 		continue;
+// // 	      }
+// // 	      double tmp = 2 * M_PI * (m0 * k0 * h0 + m1 * k1 * h1 + m2 * k2 * h2);
+// // 	      s0[0] += expp * tmp0 * tmp1 * tmp2 * cos (tmp);
+// // 	      s0[1] += expp * tmp0 * tmp1 * tmp2 * sin (tmp);
+// // 	    }
+// // 	  }
+// // 	}
+	
+	
+// 	std::vector<double > s1 (2, 0);
+// 	u[0] = K[0] * VectorOperation::dot (vecAStar[0], partPool[1]->r());
+// 	u[1] = K[1] * VectorOperation::dot (vecAStar[1], partPool[1]->r());
+// 	u[2] = K[2] * VectorOperation::dot (vecAStar[2], partPool[1]->r());
+
+// 	tmps.clear();
+// 	tmps.resize(2, 0);
+// 	for (int k0 = 0; k0 < K[0]; k0 ++){
+// 	  value_type n0 = floor ((u[0] - k0 + p) * ii0);
+// 	  double scale;
+// 	  if (u[0] - k0 + p - n0 * K[0] < 2*p){
+// 	    W2p.value (u[0] - k0 - n0 * K[0], scale);
+// 	  }
+// 	  else continue;
+// 	  double tmp = 2 * M_PI * m0 * k0 * h0;
+// 	  tmps[0] += scale * cos (-tmp);
+// 	  tmps[1] += scale * sin (-tmp);
+// 	}
+// 	swap = tt[0] * tmps[0] - tt[1] * tmps[1];
+// 	tt[1] = tt[1] * tmps[0] + tt[0] * tmps[1];
+// 	tt[0] = swap;
+// 	tmps.clear();
+// 	tmps.resize(2, 0);
+// 	for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+// 	  value_type n1 = floor ((u[1] - k1 + p) * ii1);
+// 	  double scale;
+// 	  if (u[1] - k1 + p - n1 * K[1] < 2*p){
+// 	    W2p.value (u[1] - k1 - n1 * K[1], scale);
+// 	  }
+// 	  else continue;
+// 	  double tmp = 2 * M_PI * m1 * k1 * h1;
+// 	  tmps[0] += scale * cos (-tmp);
+// 	  tmps[1] += scale * sin (-tmp);
+// 	}
+// 	swap = tt[0] * tmps[0] - tt[1] * tmps[1];
+// 	tt[1] = tt[1] * tmps[0] + tt[0] * tmps[1];
+// 	tt[0] = swap;
+// 	tmps.clear();
+// 	tmps.resize(2, 0);
+// 	for (unsigned k2 = 0; k2 < K[2]; k2 ++){
+// 	  value_type n2 = floor ((u[2] - k2 + p) * ii2);
+// 	  double scale;
+// 	  if (u[2] - k2 + p - n2 * K[2] < 2*p){
+// 	    W2p.value (u[2] - k2 - n2 * K[2], scale);
+// 	  }
+// 	  else continue;
+// 	  double tmp = 2 * M_PI * m2 * k2 * h2;
+// 	  tmps[0] += scale * cos (-tmp);
+// 	  tmps[1] += scale * sin (-tmp);
+// 	}
+// 	swap = tt[0] * tmps[0] - tt[1] * tmps[1];
+// 	tt[1] = tt[1] * tmps[0] + tt[0] * tmps[1];
+// 	tt[0] = swap;
+	  
+// 	s[0] += tt[0];
+// 	s[1] += tt[1];
+	
+
+// // 	for (unsigned k0 = 0; k0 < K[0]; k0 ++){
+// // 	  for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+// // 	    for (unsigned k2 = 0; k2 < K[2]; k2 ++){
+// // 	      double tmp0, tmp1, tmp2;
+// // 	      value_type n0 = floor ((u[0] - k0 + p) * ii0);
+// // 	      if (u[0] - k0 + p - n0 * K[0] < 2*p){
+// // 		W2p.value (u[0] - k0 - n0 * K[0], tmp0);
+// // 	      }
+// // 	      else{
+// // 		continue;
+// // 	      }
+// // 	      value_type n1 = floor ((u[1] - k1 + p) * ii1);
+// // 	      if (u[1] - k1 + p - n1 * K[1] < 2*p){
+// // 		W2p.value (u[1] - k1 - n1 * K[1], tmp1);
+// // 	      }
+// // 	      else{
+// // 		continue;
+// // 	      }
+// // 	      value_type n2 = floor ((u[2] - k2 + p) * ii2);
+// // 	      if (u[2] - k2 + p - n2 * K[2] < 2*p){
+// // 		W2p.value (u[2] - k2 - n2 * K[2], tmp2);
+// // 	      }
+// // 	      else{
+// // 		continue;
+// // 	      }
+// // 	      double tmp = 2 * M_PI * (m0 * k0 * h0 + m1 * k1 * h1 + m2 * k2 * h2);
+// // 	      s1[0] += tmp0 * tmp1 * tmp2 * cos (-tmp);
+// // 	      s1[1] += tmp0 * tmp1 * tmp2 * sin (-tmp);
+// // 	    }
+// // 	  }
+// // 	}
+// // 	s[0] += s0[0]*s1[0] - s0[1]*s1[1];
+// // 	s[1] += s0[0]*s1[1] + s0[1]*s1[0];
+
+//       }
+//     }
+//     std::cout << m0 << std::endl;
+//   }
+
+//   sdiff[0] = s[0] - sm[0];
+//   sdiff[1] = s[1] - sm[1];
+//   sumsum += VectorOperation::dot (sdiff, sdiff);
+//   std::cout << "sumsum is " << sqrt(sumsum) << std::endl;
+
+
+//   return (sum2 + sum1 + sum0);// * 8*8*8;
+// }
+
+
+
+
+value_type ElectrostaticInteraction_rec_Lagrange::calPotential_tmp (const double & time, 
+								    const BoxGeometry & box)
+{
+  int M = 32; 
+  std::cout << "cal poten exact with beta " << beta << std::endl;
+  double poten = 0;
+  for (int m0 = -M; m0 <= M; m0 ++){
+    for (int m1 = -M; m1 <= M; m1 ++){
+      for (int m2 = -M; m2 <= M; m2 ++){
+	if (m0 == 0 && m1 == 0 && m2 == 0 ) continue;
+	std::vector<value_type > m (3);
+	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+	double mm = VectorOperation::dot (m, m);
+	double expp = exp (-M_PI * M_PI * mm / beta / beta) / mm;
+	std::vector<value_type > sm (2);
+	sm[0] = 0;
+	sm[1] = 0;
+	for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+	     ppart != partPool.end(); ppart ++){
+	  double tmp = 2 * M_PI * VectorOperation::dot (m, (*ppart)->r());
+	  sm[0] += (*ppart)->charge() * cos(tmp);
+	  sm[1] += (*ppart)->charge() * sin(tmp);
+	}
+	poten += expp * (sm[0] * sm[0] + sm[1] * sm[1]);
+      }
+    }
+  }
+  poten /= 2 * M_PI * V;
+  return poten;
+}
+
+
+// value_type ElectrostaticInteraction_rec_Lagrange::calPotential_tmp (const double & time, 
+// 							   const BoxGeometry & box)
+// {
+//   int M = 32;
+//   double L = 6;
+//   std::cout << "cal poten exact\n" ;
+//   double poten = 0;
+//   for (int m0 = -M; m0 <= M; m0 ++){
+//     for (int m1 = -M; m1 <= M; m1 ++){
+//       for (int m2 = -M; m2 <= M; m2 ++){
+// 	if (m0 == 0 && m1 == 0 && m2 == 0 ) continue;
+// 	std::vector<value_type > m (3);
+// 	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+// 	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+// 	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+// 	double mm = VectorOperation::dot (m, m);
+// 	double expp = exp (-M_PI * M_PI * mm / beta / beta) / mm;
+// 	std::vector<value_type > sm (2);
+// 	sm[0] = 0;
+// 	sm[1] = 0;
+// 	for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+// 	     ppart != partPool.end(); ppart ++){
+// 	  double tmp = 2 * M_PI * VectorOperation::dot (m, (*ppart)->r());
+// 	  sm[0] += (*ppart)->charge() * cos(tmp);
+// 	  sm[1] += (*ppart)->charge() * sin(tmp);
+// 	}
+// 	poten += expp * (sm[0] * sm[0] + sm[1] * sm[1]);
+//       }
+//     }
+//   }
+//   poten /= 2 * M_PI * V;
+//   return poten;
+// }
+
+
+void ElectrostaticInteraction_rec_Lagrange::calForce_tmp (const double & time, 
+							  const BoxGeometry & box,
+							  std::vector<double > & force)
+{
+  int M = 16;
+  force.clear();
+  force.resize(3, 0);
+  std::cout << "tmp force calculater" << std::endl;
+  
+  for (int m0 = -M; m0 <= M; m0 ++){
+    for (int m1 = -M; m1 <= M; m1 ++){
+      for (int m2 = -M; m2 <= M; m2 ++){
+	if (m0 == 0 && m1 == 0 && m2 == 0 ) continue;
+	std::vector<value_type > m (3);
+	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+	double mm = VectorOperation::dot (m, m);
+	double expp = exp (-M_PI * M_PI * mm / beta / beta) / mm;
+	double sum = 0;
+	for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+	     ppart != partPool.end(); ppart ++){
+	  std::vector<double > diff = (partPool[0])->r();
+	  VectorOperation::add (diff, -1, (*ppart)->r());
+	  double tmp = 2 * M_PI * VectorOperation::dot (m, diff);
+	  sum += (*ppart)->charge() * sin (tmp);
+	}
+	sum *= (partPool[0])->charge();
+	force[0] += expp * sum * 2./ V * m[0];
+	force[1] += expp * sum * 2./ V * m[1];
+	force[2] += expp * sum * 2./ V * m[2];
+      }
+    }
+  }
+//   std::cout << "tmp force calculater: force Of part" << std::endl;
+//   std::cout << (partPool[0])->r() [0] << '\t'
+// 	    << (partPool[0])->r() [1] << '\t'
+// 	    << (partPool[0])->r() [2] << '\n';
+  std::cout << "the force is " << std::endl;
+  std::cout << force [0] << '\t'
+	    << force [1] << '\t'
+	    << force [2] << '\n';
+  std::cout << std::endl;
+  
+}
+
+void ElectrostaticInteraction_rec_Lagrange::applyInteraction (const double & time, 
+							      const BoxGeometry & box)
+{
+  //calForce_tmp (time, box);
+
+  unsigned p = W2p.getP();
+  unsigned size = K[0] * K[1] * K[2];
+  unsigned sizeHalf = K[0] * K[1] * (K[2]/2+1);
+  value_type sizei = 1./size;
+
+  clock_t tic, toc;
+  
+  tic = clock();
+  for (unsigned i = 0; i < sizeHalf; i ++){
+    QFProdPhiF0[i][0] = QF[i][0] * phiF0[i][0] - QF[i][1] * phiF0[i][1];
+    QFProdPhiF0[i][1] = QF[i][0] * phiF0[i][1] + QF[i][1] * phiF0[i][0];
+    QFProdPhiF1[i][0] = QF[i][0] * phiF1[i][0] - QF[i][1] * phiF1[i][1];
+    QFProdPhiF1[i][1] = QF[i][0] * phiF1[i][1] + QF[i][1] * phiF1[i][0];
+    QFProdPhiF2[i][0] = QF[i][0] * phiF2[i][0] - QF[i][1] * phiF2[i][1];
+    QFProdPhiF2[i][1] = QF[i][0] * phiF2[i][1] + QF[i][1] * phiF2[i][0];
+  }
+  fftw_execute (backwardQFProdPhiF0);
+  fftw_execute (backwardQFProdPhiF1);
+  fftw_execute (backwardQFProdPhiF2);
+  
+  for (unsigned i = 0; i < size; i ++){
+    QConvPhi0[i] *= sizei;
+    QConvPhi1[i] *= sizei;
+    QConvPhi2[i] *= sizei;
+  }
+  toc = clock();
+//   std::cout << "time rec force conv part: " << (toc - tic) / double(CLOCKS_PER_SEC) << std::endl;
+
+  tic = clock();
+  double ii0 = 1./ value_type(K[0]);
+  double ii1 = 1./ value_type(K[1]);
+  double ii2 = 1./ value_type(K[2]);
+  bool fast = ((2*p < K[0]) && (2*p < K[1]) && (2*p < K[2]));
+  
+  for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+       ppart != partPool.end(); ppart ++){
+    std::vector<value_type > u(3);
+    u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*ppart)->r());
+    u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*ppart)->r());
+    u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*ppart)->r());
+    int A0 = -int(floor ((u[0]+p) * ii0)) ;
+    int A1 = -int(floor ((u[1]+p) * ii1)) ;
+    int A2 = -int(floor ((u[2]+p) * ii2)) ;
+    value_type posi0 = u[0] + p + A0 * K[0];
+    value_type posi1 = u[1] + p + A1 * K[1];
+    value_type posi2 = u[2] + p + A2 * K[2];
+    value_type tmp0 = 0;
+    value_type tmp1 = 0;
+    value_type tmp2 = 0;
+    std::vector<double > force (3, 0);
+    
+    if (!fast){
+      int count = 0;
+      for (unsigned k0 = 0; k0 < K[0]; k0 ++){
+	for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+	  for (unsigned k2 = 0; k2 < K[2]; k2 ++, count ++){
+	    value_type n0 = floor ((u[0] - k0 + p) * ii0);
+	    if (u[0] - k0 + p - n0 * K[0] < 2*p){
+	      W2p.value (u[0] - k0 - n0 * K[0], tmp0);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n1 = floor ((u[1] - k1 + p) * ii1);
+	    if (u[1] - k1 + p - n1 * K[1] < 2*p){
+	      W2p.value (u[1] - k1 - n1 * K[1], tmp1);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n2 = floor ((u[2] - k2 + p) * ii2);
+	    if (u[2] - k2 + p - n2 * K[2] < 2*p){
+	      W2p.value (u[2] - k2 - n2 * K[2], tmp2);
+	    }
+	    else{
+	      continue;
+	    }
+	    force[0] += QConvPhi0[count] * tmp0 * tmp1 * tmp2;
+	    force[1] += QConvPhi1[count] * tmp0 * tmp1 * tmp2;
+	    force[2] += QConvPhi2[count] * tmp0 * tmp1 * tmp2;
+	  }
+	}
+      }
+    }
+    else {
+      if (posi0 < 2*p){
+	for (unsigned k0 = 0; k0 < unsigned (ceil(posi0)); k0 ++){
+	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);	      	
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+	for (unsigned k0 = unsigned(ceil(posi0+K[0]-2*p)); k0 < K[0]; k0 ++){
+	  W2p.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+      else{
+	for (unsigned k0 = unsigned(ceil(posi0-2*p)); k0 < unsigned(ceil(posi0)); k0 ++){
+	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    
+
+
+    (*ppart)->f()[0] += (*ppart)->charge() * force[0];
+    (*ppart)->f()[1] += (*ppart)->charge() * force[1];
+    (*ppart)->f()[2] += (*ppart)->charge() * force[2];
+  }
+  toc = clock();
+//   std::cout << "time rec force loop part: " << (toc - tic) / double(CLOCKS_PER_SEC) << std::endl;
+
+}
+
+
+
+//       if (posi0 < 2*p){
+// 	for (unsigned k0 = 0; k0 < unsigned (ceil(posi0)); k0 ++){
+// 	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	  ...;
+// 	}
+// 	for (unsigned k0 = unsigned(ceil(posi0+K[0]-2*p)); k0 < K[0]; k0 ++){
+// 	  W2p.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+// 	  ...;
+// 	}
+//       }
+//       else{
+// 	for (unsigned k0 = unsigned(ceil(posi0-2*p)); k0 < unsigned(ceil(posi0)); k0 ++){
+// 	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	  ...;
+// 	}
+//       }
+
+
+
+//       if (posi1 < 2*p){
+// 	for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+// 	  W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	  ...;
+// 	}
+// 	for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+// 	  W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+// 	  ...;
+// 	}
+//       }
+//       else{
+// 	for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+// 	  W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	  ...;
+// 	}
+//       }
+
+		
+//       if (posi2 < 2*p){
+// 	for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+// 	  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	  unsigned index = k2+K[2]*(k1+K[1]*k0);
+// 	  force[0] += QConvPhi0[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[1] += QConvPhi1[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[2] += QConvPhi2[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	}
+// 	for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+// 	  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+// 	  unsigned index = k2+K[2]*(k1+K[1]*k0);
+// 	  force[0] += QConvPhi0[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[1] += QConvPhi1[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[2] += QConvPhi2[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	}
+//       }
+//       else{
+// 	for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+// 	  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	  unsigned index = k2+K[2]*(k1+K[1]*k0);
+// 	  force[0] += QConvPhi0[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[1] += QConvPhi1[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[2] += QConvPhi2[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	}
+//       }
+
+
+
+value_type ElectrostaticInteraction_rec_Lagrange::calPotential (const double & time, 
+						       const BoxGeometry & box)
+{
+  clock_t tic = clock();
+  calQ();
+  clock_t toc = clock();
+//   std::cout << "time rec potential Q part: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+  tic = clock();
+  fftw_execute (forwardQ);
+  for (unsigned i = 0; i < K[0]*K[1]*(K[2]/2+1); i ++){
+    QFProdPsiF[i][0] = QF[i][0] * psiF[i][0] - QF[i][1] * psiF[i][1];
+    QFProdPsiF[i][1] = QF[i][0] * psiF[i][1] + QF[i][1] * psiF[i][0];
+  }
+  fftw_execute (backwardQFProdPsiF);
+  int size = K[0]*K[1]*K[2];
+  value_type sizei = 1./size;
+  value_type value = 0;
+  for (int i = 0; i < size; i ++){
+    value += Q[i] * QConvPsi [i] * sizei;
+  }
+  value *= 0.5;
+  toc = clock();
+//   std::cout << "time rec potential conv part: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+  return value;
+}
+
+
+
+void ElectrostaticInteraction_rec_Lagrange::calQ ()
+{
+//   std::cerr << "K0  " << K[0] << std::endl;
+  
+  unsigned p = W2p.getP();
+
+  for (unsigned i = 0; i < K[0] * K[1] * K[2]; i ++){
+    Q[i] = 0;
+  }
+  double ii0 = 1./ value_type(K[0]);
+  double ii1 = 1./ value_type(K[1]);
+  double ii2 = 1./ value_type(K[2]);
+  bool fast = ((2*p < K[0]) && (2*p < K[1]) && (2*p < K[2]));
+  for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+       ppart != partPool.end(); ppart ++){
+    std::vector<value_type > u(3);
+    u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*ppart)->r());
+    u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*ppart)->r());
+    u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*ppart)->r());
+    int A0 = -int(floor ((u[0]+p) * ii0)) ;
+    int A1 = -int(floor ((u[1]+p) * ii1)) ;
+    int A2 = -int(floor ((u[2]+p) * ii2)) ;
+    value_type posi0 = u[0] + p + A0 * K[0];
+    value_type posi1 = u[1] + p + A1 * K[1];
+    value_type posi2 = u[2] + p + A2 * K[2];
+    value_type tmp0 = 0;
+    value_type tmp1 = 0;
+    value_type tmp2 = 0;
+
+    if (!fast){
+      int count = 0;
+      for (unsigned k0 = 0; k0 < K[0]; k0 ++){
+	for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+	  for (unsigned k2 = 0; k2 < K[2]; k2 ++, count ++){
+	    value_type n0 = floor ((u[0] - k0 + p) * ii0);
+	    if (u[0] - k0 + p - n0 * K[0] < 2*p){
+	      W2p.value (u[0] - k0 - n0 * K[0], tmp0);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n1 = floor ((u[1] - k1 + p) * ii1);
+	    if (u[1] - k1 + p - n1 * K[1] < 2*p){
+	      W2p.value (u[1] - k1 - n1 * K[1], tmp1);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n2 = floor ((u[2] - k2 + p) * ii2);
+	    if (u[2] - k2 + p - n2 * K[2] < 2*p){
+	      W2p.value (u[2] - k2 - n2 * K[2], tmp2);
+	    }
+	    else{
+	      continue;
+	    }
+	    Q[count] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+	  }
+	}
+      }
+    }
+    else {
+      if (posi0 < 2*p){
+	unsigned top0 = unsigned (ceil(posi0));
+	for (unsigned k0 = 0; k0 < top0; k0 ++){
+	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    unsigned top1 = unsigned (ceil(posi1));
+	    for (unsigned k1 = 0; k1 < top1; k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+	for (unsigned k0 = unsigned(ceil(posi0+K[0]-2*p)); k0 < K[0]; k0 ++){
+	  W2p.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    unsigned top1 = unsigned (ceil(posi1));
+	    for (unsigned k1 = 0; k1 < top1; k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+      else{
+	for (unsigned k0 = unsigned(ceil(posi0-2*p)); k0 < unsigned(ceil(posi0)); k0 ++){
+	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    unsigned top1 = unsigned (ceil(posi1));
+	    for (unsigned k1 = 0; k1 < top1; k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    
+//     if (posi0 < 2*p){
+//       unsigned top0 = unsigned (ceil(posi0));
+//       for (unsigned k0 = 0; k0 < top0; k0 ++){
+// 	W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	...;
+//       }
+//       for (unsigned k0 = unsigned(ceil(posi0+K[0]-2*p)); k0 < K[0]; k0 ++){
+// 	W2p.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+// 	...;
+//       }
+//     }
+//     else{
+//       for (unsigned k0 = unsigned(ceil(posi0-2*p)); k0 < unsigned(ceil(posi0)); k0 ++){
+// 	W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	...;
+//       }
+//     }
+
+
+
+//     if (posi1 < 2*p){
+//       unsigned top1 = unsigned (ceil(posi1));
+//       for (unsigned k1 = 0; k1 < top1; k1 ++){
+// 	W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	...;
+//       }
+//       for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+// 	W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+// 	...;
+//       }
+//     }
+//     else{
+//       for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+// 	W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	...;
+//       }
+//     }
+
+		
+//     if (posi2 < 2*p){
+//       unsigned top2 = unsigned (ceil(posi2));
+//       for (unsigned k2 = 0; k2 < top2; k2 ++){
+// 	W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+//       }
+//       for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+// 	W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+// 	Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+//       }
+//     }
+//     else{
+//       for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+// 	W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+//       }
+//     }
+
+  }
+}
+
+void ElectrostaticInteraction_rec_Lagrange::calV()
+{
+  V = vecA[0][0] * (vecA[1][1]*vecA[2][2] - vecA[2][1]*vecA[1][2]) - 
+      vecA[0][1] * (vecA[1][0]*vecA[2][2] - vecA[2][0]*vecA[1][2]) +
+      vecA[0][2] * (vecA[1][0]*vecA[2][1] - vecA[2][0]*vecA[1][1]);
+//   std::cout << "V  " << V << std::endl;
+}
+  
+void ElectrostaticInteraction_rec_Lagrange::calAStar ()
+{
+  vecAStar.resize (3);
+  vecAStar[0].resize (3);
+  vecAStar[1].resize (3);
+  vecAStar[2].resize (3);
+  vecAStar[0][0] =( vecA[1][1]*vecA[2][2] - vecA[2][1]*vecA[1][2]) / V;
+  vecAStar[1][1] =( vecA[0][0]*vecA[2][2] - vecA[2][0]*vecA[0][2]) / V;
+  vecAStar[2][2] =( vecA[0][0]*vecA[1][1] - vecA[1][0]*vecA[0][1]) / V;
+  vecAStar[1][0] =(-vecA[1][0]*vecA[2][2] + vecA[2][0]*vecA[1][2]) / V;
+  vecAStar[2][0] =( vecA[1][0]*vecA[2][1] - vecA[2][0]*vecA[1][1]) / V;
+  vecAStar[0][1] =(-vecA[0][1]*vecA[2][2] + vecA[2][1]*vecA[0][2]) / V;
+  vecAStar[2][1] =(-vecA[0][0]*vecA[2][1] + vecA[2][0]*vecA[0][1]) / V;
+  vecAStar[0][2] =( vecA[0][1]*vecA[1][2] - vecA[1][1]*vecA[0][2]) / V;
+  vecAStar[1][2] =(-vecA[0][0]*vecA[1][2] + vecA[1][0]*vecA[0][2]) / V;
+//   std::cout << vecAStar[0][0] << '\t'
+// 	    << vecAStar[0][1] << '\t'
+// 	    << vecAStar[0][2] << '\n'
+// 	    << vecAStar[1][0] << '\t'
+// 	    << vecAStar[1][1] << '\t'
+// 	    << vecAStar[1][2] << '\n'
+// 	    << vecAStar[2][0] << '\t'
+// 	    << vecAStar[2][1] << '\t'
+// 	    << vecAStar[2][2] << '\n';
+}
+
+// void ElectrostaticInteraction_rec_Lagrange::calPsiFPhiF ()
+// {
+//   fftw_complex * C;
+//   fftw_complex * D0;
+//   fftw_complex * D1;
+//   fftw_complex * D2;
+//   fftw_complex * psiFtmp;
+//   fftw_complex * phiFtmp0;
+//   fftw_complex * phiFtmp1;
+//   fftw_complex * phiFtmp2;
+  
+//   C =	(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   D0 =	(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   D1 =	(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   D2 =	(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   psiFtmp= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   phiFtmp0=(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   phiFtmp1=(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   phiFtmp2=(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+
+//   fftw_plan forwardPsi;
+//   fftw_plan forwardPhi0;
+//   fftw_plan forwardPhi1;
+//   fftw_plan forwardPhi2;
+//   fftw_plan backwardC;
+//   fftw_plan backwardD0;
+//   fftw_plan backwardD1;
+//   fftw_plan backwardD2;
+//   backwardC = fftw_plan_dft_3d (K[0], K[1], K[2], C, C, 1, FFTW_MEASURE);
+//   backwardD0 = fftw_plan_dft_3d (K[0], K[1], K[2], D0, D0, 1, FFTW_MEASURE);
+//   backwardD1 = fftw_plan_dft_3d (K[0], K[1], K[2], D1, D1, 1, FFTW_MEASURE);
+//   backwardD2 = fftw_plan_dft_3d (K[0], K[1], K[2], D2, D2, 1, FFTW_MEASURE);
+//   forwardPsi = fftw_plan_dft_3d (K[0], K[1], K[2], psiFtmp, psiFtmp, -1, FFTW_MEASURE);
+//   forwardPhi0 = fftw_plan_dft_3d (K[0], K[1], K[2], phiFtmp0, phiFtmp0, -1, FFTW_MEASURE);
+//   forwardPhi1 = fftw_plan_dft_3d (K[0], K[1], K[2], phiFtmp1, phiFtmp1, -1, FFTW_MEASURE);
+//   forwardPhi2 = fftw_plan_dft_3d (K[0], K[1], K[2], phiFtmp2, phiFtmp2, -1, FFTW_MEASURE);
+
+//   value_type oneOverPiV = 1. / (M_PI * V);
+//   value_type scale = M_PI * M_PI / beta / beta;
+//   value_type minousTwoOverV = -2./V;
+//   unsigned size = K[0]*K[1]*K[2];
+  
+//   for (unsigned i =0; i < size; i ++){
+//     psiFtmp[i][0] =0;
+//     psiFtmp[i][1] =0 ;
+//     phiFtmp0[i][0] =0;
+//     phiFtmp0[i][1] =0;
+//     phiFtmp1[i][0] =0;
+//     phiFtmp1[i][1] =0;
+//     phiFtmp2[i][0] =0;
+//     phiFtmp2[i][1] =0;
+//   }
+
+//   std::vector<int > halfNumOfBlock (3, 0);
+  
+// // 	for (unsigned i = 0; i < K[0]; i ++){ 
+// // 	  if (i <= K[0] / 2) ip = i;
+// // 	  else ip = i - K[0];
+// // 	  for (unsigned j = 0; j < K[1]; j ++){
+// // 	    int jp = j + swj * K[1] - K[1] / 2;      
+// // 	    if (j <= K[1] / 2) jp = j;
+// // 	    else jp = j - K[1];
+// // 	    for (unsigned k = 0; k < K[2]; k ++){
+// // 	      int kp = k + swk * K[2] - K[2] / 2;        
+// // 	      if (k <= K[2] / 2) kp = k;
+// // 	      else kp = k - K[2];
+// // 	      if (kp == 0 && jp == 0 && ip == 0) continue;
+// // 	      m[0] = ip * vecAStar[0][0] + jp * vecAStar[1][0] + kp * vecAStar[2][0];
+// // 	      m[1] = ip * vecAStar[0][1] + jp * vecAStar[1][1] + kp * vecAStar[2][1];
+// // 	      m[2] = ip * vecAStar[0][2] + jp * vecAStar[1][2] + kp * vecAStar[2][2];
+// // 	      value_type mm = VectorOperation::dot (m, m);
+// // 	      value_type expm = exp (-scale * mm) / mm;
+// // 	      psiFtmp[k + K[2] * (j + K[1] * i)][0] = oneOverPiV * expm / size;
+// // 	      psiFtmp[k + K[2] * (j + K[1] * i)][1] = 0;
+// // 	      D0[k + K[2] * (j + K[1] * i)][0] = 0;
+// // 	      D0[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[0] / size;
+// // 	      D1[k + K[2] * (j + K[1] * i)][0] = 0;
+// // 	      D1[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[1] / size;
+// // 	      D2[k + K[2] * (j + K[1] * i)][0] = 0;
+// // 	      D2[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[2] / size;
+  
+//   for (int swi = -halfNumOfBlock[0]; swi <= halfNumOfBlock[0]; ++ swi){
+//     for (int swj = -halfNumOfBlock[1]; swj <= halfNumOfBlock[1]; ++ swj){
+//       for (int swk = -halfNumOfBlock[2]; swk <= halfNumOfBlock[2]; ++ swk){
+// 	C[0][0] = 0;
+// 	C[0][1] = 0;
+// 	D0[0][0] = 0;
+// 	D0[0][1] = 0;
+// 	D1[0][0] = 0;
+// 	D1[0][1] = 0;
+// 	D2[0][0] = 0;
+// 	D2[0][1] = 0;
+// 	std::vector<value_type > m (3);
+// 	for (unsigned i = 0; i < K[0]; i ++){
+// 	  int ip = i + swi * K[0] - K[0] / 2;    
+// // 	  if (i <= K[0] / 2) ip = i;
+// // 	  else ip = i - K[0];
+// 	  for (unsigned j = 0; j < K[1]; j ++){
+// 	    int jp = j + swj * K[1] - K[1] / 2;      
+// // 	    if (j <= K[1] / 2) jp = j;
+// // 	    else jp = j - K[1];
+// 	    for (unsigned k = 0; k < K[2]; k ++){
+// 	      int kp = k + swk * K[2] - K[2] / 2;        
+// // 	      if (k <= K[2] / 2) kp = k;
+// // 	      else kp = k - K[2];
+
+// 	      if (kp == 0 && jp == 0 && ip == 0) continue;
+// 	      m[0] = ip * vecAStar[0][0] + jp * vecAStar[1][0] + kp * vecAStar[2][0];
+// 	      m[1] = ip * vecAStar[0][1] + jp * vecAStar[1][1] + kp * vecAStar[2][1];
+// 	      m[2] = ip * vecAStar[0][2] + jp * vecAStar[1][2] + kp * vecAStar[2][2];
+// 	      value_type mm = VectorOperation::dot (m, m);
+// 	      value_type expm = exp (-scale * mm) / mm;
+// 	      C[k + K[2] * (j + K[1] * i)][0] = oneOverPiV * expm;
+// 	      C[k + K[2] * (j + K[1] * i)][1] = 0;
+// 	      D0[k + K[2] * (j + K[1] * i)][0] = 0;
+// 	      D0[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[0];
+// 	      D1[k + K[2] * (j + K[1] * i)][0] = 0;
+// 	      D1[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[1];
+// 	      D2[k + K[2] * (j + K[1] * i)][0] = 0;
+// 	      D2[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[2];
+// 	    }
+// 	  }
+// 	}
+// 	fftw_execute (backwardC);
+// 	fftw_execute (backwardD0);
+// 	fftw_execute (backwardD1);
+// 	fftw_execute (backwardD2);
+// 	for (unsigned i = 0; i < K[0]; i ++){
+// 	  for (unsigned j = 0; j < K[1]; j ++){
+// 	    for (unsigned k = 0; k < K[2]; k ++){
+// 	      double tmp = 1;
+// 	      if ((i+j+k) % 2 == 0) tmp = 1;
+// 	      else tmp = -1;
+// 	      psiFtmp[k+K[2]*(j+K[1]*i)][0] += tmp *  C[k+K[2]*(j+K[1]*i)][0];
+// 	      psiFtmp[k+K[2]*(j+K[1]*i)][1] += tmp *  C[k+K[2]*(j+K[1]*i)][1];
+// 	      phiFtmp0[k+K[2]*(j+K[1]*i)][0] += tmp *  D0[k+K[2]*(j+K[1]*i)][0];
+// 	      phiFtmp0[k+K[2]*(j+K[1]*i)][1] += tmp *  D0[k+K[2]*(j+K[1]*i)][1];
+// 	      phiFtmp1[k+K[2]*(j+K[1]*i)][0] += tmp *  D1[k+K[2]*(j+K[1]*i)][0];
+// 	      phiFtmp1[k+K[2]*(j+K[1]*i)][1] += tmp *  D1[k+K[2]*(j+K[1]*i)][1];
+// 	      phiFtmp2[k+K[2]*(j+K[1]*i)][0] += tmp *  D2[k+K[2]*(j+K[1]*i)][0];
+// 	      phiFtmp2[k+K[2]*(j+K[1]*i)][1] += tmp *  D2[k+K[2]*(j+K[1]*i)][1];
+// 	    }
+// 	  }
+// 	}
+//       }
+//     }
+//   }
+  
+//   fftw_execute (forwardPsi);
+//   fftw_execute (forwardPhi0);
+//   fftw_execute (forwardPhi1);
+//   fftw_execute (forwardPhi2);
+
+//   for (unsigned i = 0; i < K[0]; ++ i){
+//     for (unsigned j = 0; j < K[1]; ++ j){
+//       for (unsigned k = 0; k < K[2]/2+1; ++ k){
+// 	psiF[k+(K[2]/2+1)*(j+K[1]*i)][0] = psiFtmp[k+K[2]*(j+K[1]*i)][0];
+// 	psiF[k+(K[2]/2+1)*(j+K[1]*i)][1] = psiFtmp[k+K[2]*(j+K[1]*i)][1];
+// 	phiF0[k+(K[2]/2+1)*(j+K[1]*i)][0] = phiFtmp0[k+K[2]*(j+K[1]*i)][0];
+// 	phiF0[k+(K[2]/2+1)*(j+K[1]*i)][1] = phiFtmp0[k+K[2]*(j+K[1]*i)][1];
+// 	phiF1[k+(K[2]/2+1)*(j+K[1]*i)][0] = phiFtmp1[k+K[2]*(j+K[1]*i)][0];
+// 	phiF1[k+(K[2]/2+1)*(j+K[1]*i)][1] = phiFtmp1[k+K[2]*(j+K[1]*i)][1];
+// 	phiF2[k+(K[2]/2+1)*(j+K[1]*i)][0] = phiFtmp2[k+K[2]*(j+K[1]*i)][0];
+// 	phiF2[k+(K[2]/2+1)*(j+K[1]*i)][1] = phiFtmp2[k+K[2]*(j+K[1]*i)][1];
+//       }
+//     }
+//   }
+
+//   fftw_destroy_plan (backwardC);
+//   fftw_destroy_plan (backwardD0);
+//   fftw_destroy_plan (backwardD1);
+//   fftw_destroy_plan (backwardD2);
+//   fftw_destroy_plan (forwardPsi);
+//   fftw_destroy_plan (forwardPhi0);
+//   fftw_destroy_plan (forwardPhi1);
+//   fftw_destroy_plan (forwardPhi2);
+  
+//   fftw_free (C);
+//   fftw_free (D0);
+//   fftw_free (D1);
+//   fftw_free (D2);
+//   fftw_free (psiFtmp);
+//   fftw_free (phiFtmp0);
+//   fftw_free (phiFtmp1);
+//   fftw_free (phiFtmp2);
+//   //   std::cout << "beta  " << beta << "  V  " << V << std::endl;
+// }
+
+
+void ElectrostaticInteraction_rec_Lagrange::calPsiFPhiF ()
+{
+  fftw_complex * psiFtmp;
+  fftw_complex * phiFtmp0;
+  fftw_complex * phiFtmp1;
+  fftw_complex * phiFtmp2;
+  
+  psiFtmp= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  phiFtmp0=(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  phiFtmp1=(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  phiFtmp2=(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+
+  value_type oneOverPiV = 1. / (M_PI * V);
+  value_type scale = M_PI * M_PI / beta / beta;
+  value_type minousTwoOverV = -2./V;
+  unsigned size = K[0]*K[1]*K[2];
+  
+  psiFtmp[0][0] = 0;
+  psiFtmp[0][1] = 0;
+  phiFtmp0[0][0] = 0;
+  phiFtmp0[0][1] = 0;
+  phiFtmp1[0][0] = 0;
+  phiFtmp1[0][1] = 0;
+  phiFtmp2[0][0] = 0;
+  phiFtmp2[0][1] = 0;
+  std::vector<value_type > m (3);
+  for (unsigned i = 0; i < K[0]; i ++){
+    int ip ;    
+    if (i <= K[0] / 2) ip = i;
+    else ip = i - K[0];
+    for (unsigned j = 0; j < K[1]; j ++){
+      int jp;      
+      if (j <= K[1] / 2) jp = j;
+      else jp = j - K[1];
+      for (unsigned k = 0; k < K[2]; k ++){
+	int kp ;        
+	if (k <= K[2] / 2) kp = k;
+	else kp = k - K[2];
+
+	if (kp == 0 && jp == 0 && ip == 0) continue;
+	m[0] = ip * vecAStar[0][0] + jp * vecAStar[1][0] + kp * vecAStar[2][0];
+	m[1] = ip * vecAStar[0][1] + jp * vecAStar[1][1] + kp * vecAStar[2][1];
+	m[2] = ip * vecAStar[0][2] + jp * vecAStar[1][2] + kp * vecAStar[2][2];
+	value_type mm = VectorOperation::dot (m, m);
+	value_type expm = exp (-scale * mm) / mm;
+	psiFtmp[k + K[2] * (j + K[1] * i)][0] = oneOverPiV * expm * size;
+	psiFtmp[k + K[2] * (j + K[1] * i)][1] = 0;
+	phiFtmp0[k + K[2] * (j + K[1] * i)][0] = 0;
+	phiFtmp0[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[0] * size;
+	phiFtmp1[k + K[2] * (j + K[1] * i)][0] = 0;
+	phiFtmp1[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[1] * size;
+	phiFtmp2[k + K[2] * (j + K[1] * i)][0] = 0;
+	phiFtmp2[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[2] * size;
+      }
+    }
+  }
+  
+
+  for (unsigned i = 0; i < K[0]; ++ i){
+    for (unsigned j = 0; j < K[1]; ++ j){
+      for (unsigned k = 0; k < K[2]/2+1; ++ k){
+	psiF[k+(K[2]/2+1)*(j+K[1]*i)][0] = psiFtmp[k+K[2]*(j+K[1]*i)][0];
+	psiF[k+(K[2]/2+1)*(j+K[1]*i)][1] = psiFtmp[k+K[2]*(j+K[1]*i)][1];
+	phiF0[k+(K[2]/2+1)*(j+K[1]*i)][0] = phiFtmp0[k+K[2]*(j+K[1]*i)][0];
+	phiF0[k+(K[2]/2+1)*(j+K[1]*i)][1] = phiFtmp0[k+K[2]*(j+K[1]*i)][1];
+	phiF1[k+(K[2]/2+1)*(j+K[1]*i)][0] = phiFtmp1[k+K[2]*(j+K[1]*i)][0];
+	phiF1[k+(K[2]/2+1)*(j+K[1]*i)][1] = phiFtmp1[k+K[2]*(j+K[1]*i)][1];
+	phiF2[k+(K[2]/2+1)*(j+K[1]*i)][0] = phiFtmp2[k+K[2]*(j+K[1]*i)][0];
+	phiF2[k+(K[2]/2+1)*(j+K[1]*i)][1] = phiFtmp2[k+K[2]*(j+K[1]*i)][1];
+      }
+    }
+  }
+
+  fftw_free (psiFtmp);
+  fftw_free (phiFtmp0);
+  fftw_free (phiFtmp1);
+  fftw_free (phiFtmp2);
+  //   std::cout << "beta  " << beta << "  V  " << V << std::endl;
+}
+
+// void ElectrostaticInteraction_rec_Lagrange::calPsiFPhiF ()
+// {
+//   fftw_complex * psiFtmp;
+//   fftw_complex * phiFtmp0;
+//   fftw_complex * phiFtmp1;
+//   fftw_complex * phiFtmp2;
+//   psiFtmp= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   phiFtmp0=(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   phiFtmp1=(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+//   phiFtmp2=(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+
+//   value_type oneOverPiV = 1. / (M_PI * V);
+//   value_type scale = M_PI * M_PI / beta / beta;
+//   value_type minousTwoOverV = -2./V;
+  
+  
+//   C[0][0] = 0;
+//   C[0][1] = 0;
+//   D0[0][0] = 0;
+//   D0[0][1] = 0;
+//   D1[0][0] = 0;
+//   D1[0][1] = 0;
+//   D2[0][0] = 0;
+//   D2[0][1] = 0;
+  
+//   std::vector<value_type > m (3);
+//   for (unsigned i = 0; i < K[0]; i ++){
+//     int ip;
+//     if (i <= K[0] / 2) ip = i;
+//     else ip = i - K[0];
+//     for (unsigned j = 0; j < K[1]; j ++){
+//       int jp;
+//       if (j <= K[1] / 2) jp = j;
+//       else jp = j - K[1];
+//       for (unsigned k = 0; k < K[2]; k ++){
+// 	if (k == 0 && j == 0 && i == 0) continue;
+// 	int kp;
+// 	if (k <= K[2] / 2) kp = k;
+// 	else kp = k - K[2];
+// 	m[0] = ip * vecAStar[0][0] + jp * vecAStar[1][0] + kp * vecAStar[2][0];
+// 	m[1] = ip * vecAStar[0][1] + jp * vecAStar[1][1] + kp * vecAStar[2][1];
+// 	m[2] = ip * vecAStar[0][2] + jp * vecAStar[1][2] + kp * vecAStar[2][2];
+// 	value_type mm = VectorOperation::dot (m, m);
+// 	value_type expm = exp (-scale * mm) / mm;
+// 	C[k + K[2] * (j + K[1] * i)][0] = oneOverPiV * expm;
+// 	C[k + K[2] * (j + K[1] * i)][1] = 0;
+// 	D0[k + K[2] * (j + K[1] * i)][0] = 0;
+// 	D0[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[0];
+// 	D1[k + K[2] * (j + K[1] * i)][0] = 0;
+// 	D1[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[1];
+// 	D2[k + K[2] * (j + K[1] * i)][0] = 0;
+// 	D2[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[2];
+//       }
+//     }
+//   }
+
+
+//   fftw_execute (backwardC);
+//   fftw_execute (backwardD0);
+//   fftw_execute (backwardD1);
+//   fftw_execute (backwardD2);
+//   fftw_execute (forwardPsi);
+//   fftw_execute (forwardPhi0);
+//   fftw_execute (forwardPhi1);
+//   fftw_execute (forwardPhi2);
+
+//   fftw_destroy_plan (backwardC);
+//   fftw_destroy_plan (backwardD0);
+//   fftw_destroy_plan (backwardD1);
+//   fftw_destroy_plan (backwardD2);
+//   fftw_destroy_plan (forwardPsi);
+//   fftw_destroy_plan (forwardPhi0);
+//   fftw_destroy_plan (forwardPhi1);
+//   fftw_destroy_plan (forwardPhi2);
+  
+//   for (unsigned i = 0; i < K[0]; ++ i){
+//     for (unsigned j = 0; j < K[1]; ++ j){
+//       for (unsigned k = 0; k < K[2]/2+1; ++ k){
+// 	psiF[k+(K[2]/2+1)*(j+K[1]*i)][0] = psiFtmp[k+K[2]*(j+K[1]*i)][0];
+// 	psiF[k+(K[2]/2+1)*(j+K[1]*i)][1] = psiFtmp[k+K[2]*(j+K[1]*i)][1];
+// 	phiF0[k+(K[2]/2+1)*(j+K[1]*i)][0] = phiFtmp0[k+K[2]*(j+K[1]*i)][0];
+// 	phiF0[k+(K[2]/2+1)*(j+K[1]*i)][1] = phiFtmp0[k+K[2]*(j+K[1]*i)][1];
+// 	phiF1[k+(K[2]/2+1)*(j+K[1]*i)][0] = phiFtmp1[k+K[2]*(j+K[1]*i)][0];
+// 	phiF1[k+(K[2]/2+1)*(j+K[1]*i)][1] = phiFtmp1[k+K[2]*(j+K[1]*i)][1];
+// 	phiF2[k+(K[2]/2+1)*(j+K[1]*i)][0] = phiFtmp2[k+K[2]*(j+K[1]*i)][0];
+// 	phiF2[k+(K[2]/2+1)*(j+K[1]*i)][1] = phiFtmp2[k+K[2]*(j+K[1]*i)][1];
+//       }
+//     }
+//   }
+
+//   fftw_free (psiFtmp);
+//   fftw_free (phiFtmp0);
+//   fftw_free (phiFtmp1);
+//   fftw_free (phiFtmp2);
+
+//   fftw_free (C);
+//   fftw_free (D0);
+//   fftw_free (D1);
+//   fftw_free (D2);
+//   fftw_free (psi);
+//   fftw_free (phi0);
+//   fftw_free (phi1);
+//   fftw_free (phi2);
+// //   std::cout << "beta  " << beta << "  V  " << V << std::endl;
+// }
+
+
+
+void ElectrostaticInteraction_rec_Lagrange::init (const std::vector<std::vector<value_type > > &vecA_, 
+						  const std::vector<unsigned > K_,
+						  const value_type & beta_)
+{
+  K = K_;
+  beta = beta_;
+  vecA = vecA_;
+  calV();
+  calAStar();  
+
+  int size = K[0] * K[1] * K[2];
+  int sizeHalf = K[0] * K[1] * (K[2] / 2 + 1);
+  Q	= (value_type *) fftw_malloc (sizeof(value_type) * size);
+  psiF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  phiF0	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  phiF1	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  phiF2	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  QF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  QFProdPsiF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  QFProdPhiF0	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  QFProdPhiF1	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  QFProdPhiF2	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  QConvPsi	= (value_type *) fftw_malloc (sizeof(value_type) * size);
+  QConvPhi0	= (value_type *) fftw_malloc (sizeof(value_type) * size);
+  QConvPhi1	= (value_type *) fftw_malloc (sizeof(value_type) * size);
+  QConvPhi2	= (value_type *) fftw_malloc (sizeof(value_type) * size);
+
+  forwardQ	= fftw_plan_dft_r2c_3d (K[0], K[1], K[2], Q  , QF  , FFTW_MEASURE);
+  backwardQFProdPsiF = fftw_plan_dft_c2r_3d (K[0], K[1], K[2], QFProdPsiF, QConvPsi, FFTW_MEASURE);
+  backwardQFProdPhiF0 = fftw_plan_dft_c2r_3d (K[0], K[1], K[2], QFProdPhiF0, QConvPhi0, FFTW_MEASURE);
+  backwardQFProdPhiF1 = fftw_plan_dft_c2r_3d (K[0], K[1], K[2], QFProdPhiF1, QConvPhi1, FFTW_MEASURE);
+  backwardQFProdPhiF2 = fftw_plan_dft_c2r_3d (K[0], K[1], K[2], QFProdPhiF2, QConvPhi2, FFTW_MEASURE);
+
+  calPsiFPhiF();
+}
+
+void ElectrostaticInteraction_rec_Lagrange::clear()
+{
+  fftw_free (Q);
+  fftw_free (QF);
+  fftw_free (phiF0);
+  fftw_free (phiF1);
+  fftw_free (phiF2);
+  fftw_free (QFProdPsiF);
+  fftw_free (QFProdPhiF0);
+  fftw_free (QFProdPhiF1);
+  fftw_free (QFProdPhiF2);
+  fftw_free (QConvPsi);
+  fftw_free (QConvPhi0);
+  fftw_free (QConvPhi1);
+  fftw_free (QConvPhi2);
+  
+  fftw_destroy_plan (forwardQ);
+  fftw_destroy_plan (backwardQFProdPsiF);
+  fftw_destroy_plan (backwardQFProdPhiF0);
+  fftw_destroy_plan (backwardQFProdPhiF1);
+  fftw_destroy_plan (backwardQFProdPhiF2);
+}
