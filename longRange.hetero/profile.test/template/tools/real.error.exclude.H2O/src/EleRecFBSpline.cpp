@@ -900,6 +900,169 @@ value_type ElectrostaticInteraction_rec_FBSpline::applyInteractionCalPotential (
     (*ppart)->f()[1] += 2 * (*ppart)->charge() * force[1];
     (*ppart)->f()[2] += 2 * (*ppart)->charge() * force[2];
   }
+
+
+
+  {
+    int count = 0;
+    for (std::vector<StandardParticle * >::iterator ppart = beginPool;
+	 ppart != endPool; ++(++(++ppart)), ++count){
+      std::vector<std::vector<value_type > > posi (3);
+      std::vector<std::vector<int > > start (3);
+      std::vector<double > atomcharge(3);
+      std::vector<StandardParticle * >::iterator patom = ppart;
+      for (unsigned molc = 0; molc < 3; ++molc, ++patom){
+	atomcharge[molc] = (*patom)->charge();
+	std::vector<value_type > u(3);
+	u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*patom)->r());
+	u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*patom)->r());
+	u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*patom)->r());
+	// std::vector<value_type > tmpposi(3);
+	// tmpposi[0] = u[0] -int(floor ((u[0]) * ii0)) * K[0];
+	// tmpposi[1] = u[1] -int(floor ((u[1]) * ii1)) * K[1];
+	// tmpposi[2] = u[2] -int(floor ((u[2]) * ii2)) * K[2];
+	if      (u[0] <  0           ) u[0] += double(K[0]);
+	else if (u[0] >= double(K[0])) u[0] -= double(K[0]);
+	if      (u[1] <  0           ) u[1] += double(K[1]);
+	else if (u[1] >= double(K[1])) u[1] -= double(K[1]);
+	if      (u[2] <  0           ) u[2] += double(K[2]);
+	else if (u[2] >= double(K[2])) u[2] -= double(K[2]);
+	posi[molc] = u;
+	start[molc].resize (3);
+	for (unsigned dd = 0; dd < 3; ++dd) start[molc][dd] = int (posi[molc][dd]) - n + 1;
+      }
+
+      // forceCorr and initialization
+      std::vector<std::vector<std::vector<double > > > forceCorr (3);
+      {
+	for (unsigned dd = 0; dd < 3; ++dd) forceCorr[dd].resize (3);
+	std::vector<double > tmp (3, 0.);
+	for (unsigned ii = 0; ii < 3; ++ii){
+	  for (unsigned jj = 0; jj < 3; ++jj){
+	    forceCorr[ii][jj] = tmp;
+	  }
+	}
+      }
+      
+      for (int mol0 = 0; mol0 < 3; ++mol0){
+      for (int mol1 = 0; mol1 < 3; ++mol1){
+	if (mol0 == mol1) continue;
+	std::vector<std::vector<double > > mn_mol0(3);
+	std::vector<std::vector<double > > dmn_mol0(3);
+	std::vector<std::vector<double > > mn_mol1(3);
+	for (unsigned dd = 0; dd < 3; ++dd){
+	  mn_mol0[dd].resize(n, 0.);
+	  dmn_mol0[dd].resize(n, 0.);
+	  mn_mol1[dd].resize(n, 0.);
+	}	
+	for (unsigned dd = 0; dd < 3; ++dd){
+	  for (int kk = start[mol0][dd]; kk < start[mol0][dd] + int(n); ++kk){
+	    Mn->value (posi[mol0][dd] - kk, mn_mol0[dd][kk - start[mol0][dd]]);
+	    Mn->derivative (posi[mol0][dd] - kk, dmn_mol0[dd][kk - start[mol0][dd]]);
+	  }
+	}
+	for (unsigned dd = 0; dd < 3; ++dd){
+	  for (int kk = start[mol1][dd]; kk < start[mol1][dd] + int(n); ++kk){
+	    Mn->value (posi[mol1][dd] - kk, mn_mol1[dd][kk - start[mol1][dd]]);
+	  }
+	}	
+	  
+	std::vector<int > kk(3);
+	std::vector<int > ll(3);
+	std::vector<int > diffkl (3);
+	for (kk[0] = start[mol0][0]; kk[0] < start[mol0][0] + int(n); ++kk[0]){
+	for (ll[0] = start[mol1][0]; ll[0] < start[mol1][0] + int(n); ++ll[0]){
+	  diffkl[0] = kk[0] - ll[0];
+	  if      (diffkl[0] <  0        ) {diffkl[0] += 3*int(K[0]); diffkl[0] = diffkl[0] % int(K[0]);}
+	  else if (diffkl[0] >= int(K[0])) diffkl[0] -= int(K[0]);
+	for (kk[1] = start[mol0][1]; kk[1] < start[mol0][1] + int(n); ++kk[1]){
+	for (ll[1] = start[mol1][1]; ll[1] < start[mol1][1] + int(n); ++ll[1]){
+	  diffkl[1] = kk[1] - ll[1];
+	  if      (diffkl[1] <  0        ) {diffkl[1] += 3*int(K[1]); diffkl[1] = diffkl[1] % int(K[1]);}
+	  else if (diffkl[1] >= int(K[1])) diffkl[1] -= int(K[1]);
+	for (kk[2] = start[mol0][2]; kk[2] < start[mol0][2] + int(n); ++kk[2]){
+	for (ll[2] = start[mol1][2]; ll[2] < start[mol1][2] + int(n); ++ll[2]){
+	  diffkl[2] = kk[2] - ll[2];
+	  if      (diffkl[2] <  0        ) {diffkl[2] += 3*int(K[2]); diffkl[2] = diffkl[2] % int(K[2]);}
+	  else if (diffkl[2] >= int(K[2])) diffkl[2] -= int(K[2]);
+	  // if (count == 2){
+	  // printf ("%d   kk:%d %d %d   ll:%d %d %d    kl:%d %d %d    K:%d %d %d\n",
+	  // 	  diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0]),
+	  // 	  kk[0], kk[1], kk[2],
+	  // 	  ll[0], ll[1], ll[2],
+	  // 	  diffkl[0], diffkl[1], diffkl[2],
+	  // 	  K[0], K[1], K[2]
+	  //     );
+	  // printf ("%f\n",
+	  // 	  psir [diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0])][0]);
+	  // printf ("%d   %f\n",
+	  // 	  diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0]),
+	  // 	  psir [diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0])][0]);
+	  // }
+	  double psi = psir [diffkl[2] + K[2] * (diffkl[1] + K[1] * diffkl[0])][0];
+	  double Pj =
+	      mn_mol1[0][ll[0] - start[mol1][0]] *
+	      mn_mol1[1][ll[1] - start[mol1][1]] *
+	      mn_mol1[2][ll[2] - start[mol1][2]] ;
+	  double scalor0 =
+	      - 2. * psi *
+	      atomcharge[mol0] * atomcharge[mol1] *
+	      dmn_mol0[0][kk[0] - start[mol0][0]] *
+	      mn_mol0[1][kk[1] - start[mol0][1]] *
+	      mn_mol0[2][kk[2] - start[mol0][2]] *
+	      K[0] *
+	      Pj;
+	  double scalor1 =
+	      - 2. * psi *
+	      atomcharge[mol0] * atomcharge[mol1] *
+	      mn_mol0[0][kk[0] - start[mol0][0]] *
+	      dmn_mol0[1][kk[1] - start[mol0][1]] *
+	      mn_mol0[2][kk[2] - start[mol0][2]] *
+	      K[1] *
+	      Pj;
+	  double scalor2 =
+	      - 2. * psi *
+	      atomcharge[mol0] * atomcharge[mol1] *
+	      mn_mol0[0][kk[0] - start[mol0][0]] *
+	      mn_mol0[1][kk[1] - start[mol0][1]] *
+	      dmn_mol0[2][kk[2] - start[mol0][2]] *
+	      K[2] *
+	      Pj;
+	  VectorOperation::add (forceCorr[mol0][mol1], scalor0, vecAStar[0]);
+	  VectorOperation::add (forceCorr[mol0][mol1], scalor1, vecAStar[1]);
+	  VectorOperation::add (forceCorr[mol0][mol1], scalor2, vecAStar[2]);
+	}
+	}
+	}
+	}
+	}
+	}
+      }
+      }
+      patom = ppart;
+      (*patom)->f()[0] -= forceCorr[0][1][0];
+      (*patom)->f()[1] -= forceCorr[0][1][1];
+      (*patom)->f()[2] -= forceCorr[0][1][2];
+      (*patom)->f()[0] -= forceCorr[0][2][0];
+      (*patom)->f()[1] -= forceCorr[0][2][1];
+      (*patom)->f()[2] -= forceCorr[0][2][2];
+      ++patom;
+      (*patom)->f()[0] -= forceCorr[1][2][0];
+      (*patom)->f()[1] -= forceCorr[1][2][1];
+      (*patom)->f()[2] -= forceCorr[1][2][2];
+      (*patom)->f()[0] -= forceCorr[1][0][0];
+      (*patom)->f()[1] -= forceCorr[1][0][1];
+      (*patom)->f()[2] -= forceCorr[1][0][2];
+      ++patom;
+      (*patom)->f()[0] -= forceCorr[2][0][0];
+      (*patom)->f()[1] -= forceCorr[2][0][1];
+      (*patom)->f()[2] -= forceCorr[2][0][2];
+      (*patom)->f()[0] -= forceCorr[2][1][0];
+      (*patom)->f()[1] -= forceCorr[2][1][1];
+      (*patom)->f()[2] -= forceCorr[2][1][2];
+    } // end for
+  } // end out brace  
+
   watch.stop();
   loop_time += watch.user();
   
@@ -1043,12 +1206,14 @@ void ElectrostaticInteraction_rec_FBSpline::build ()
   int sizeHalf = K[0] * K[1] * (K[2] / 2 + 1);
   Q	= (value_type *) fftw_malloc (sizeof(value_type) * size);
   psiF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  psir	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
   QF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
   QFProdPsiF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
   QConvPsi	= (value_type *) fftw_malloc (sizeof(value_type) * size);
 
   forwardQ	= fftw_plan_dft_r2c_3d (K[0], K[1], K[2], Q  , QF  , FFTW_MEASURE);
   backwardQFProdPsiF = fftw_plan_dft_c2r_3d (K[0], K[1], K[2], QFProdPsiF, QConvPsi, FFTW_MEASURE);
+  backward_psi  = fftw_plan_dft_3d (K[0], K[1], K[2], psir, psir, +1, FFTW_MEASURE);
 
   calPsiFPhiF();
   unBuild = false;
@@ -1062,11 +1227,13 @@ void ElectrostaticInteraction_rec_FBSpline::clear()
   fftw_free (Q);
   fftw_free (QF);
   fftw_free (psiF);
+  fftw_free (psir);
   fftw_free (QFProdPsiF);
   fftw_free (QConvPsi);
   
   fftw_destroy_plan (forwardQ);
   fftw_destroy_plan (backwardQFProdPsiF);
+  fftw_destroy_plan (backward_psi);
   }
 }
 
@@ -1155,6 +1322,8 @@ void ElectrostaticInteraction_rec_FBSpline::calPsiFPhiF ()
   
   psiFtmp[0][0] = 0;
   psiFtmp[0][1] = 0;
+  psir[0][0] = 0;
+  psir[0][1] = 0;
   std::vector<value_type > m (3);
   for (unsigned i = 0; i < K[0]; i ++){
     int ip ;    
@@ -1177,11 +1346,21 @@ void ElectrostaticInteraction_rec_FBSpline::calPsiFPhiF ()
 	value_type expm = exp (-scale * mm) / mm * b0[i] * b1[j] * b2[k];
 	psiFtmp[k + K[2] * (j + K[1] * i)][0] = oneOver2PiV * expm * size;
 	psiFtmp[k + K[2] * (j + K[1] * i)][1] = 0;
+	psir[k + K[2] * (j + K[1] * i)][0] = oneOver2PiV * expm;
+	psir[k + K[2] * (j + K[1] * i)][1] = 0;
       }
     }
   }
-  
 
+  fftw_execute (backward_psi);
+  // for (unsigned i = 0; i < K[0]; i ++){
+  //   for (unsigned j = 0; j < K[1]; j ++){
+  //     for (unsigned k = 0; k < K[2]; k ++){
+  // 	printf ("%f %f\n", psir[k + K[2] * (j + K[1] * i)][0], psir[k + K[2] * (j + K[1] * i)][1]);
+  //     }
+  //   }
+  // }
+  
   for (unsigned i = 0; i < K[0]; ++ i){
     for (unsigned j = 0; j < K[1]; ++ j){
       for (unsigned k = 0; k < K[2]/2+1; ++ k){

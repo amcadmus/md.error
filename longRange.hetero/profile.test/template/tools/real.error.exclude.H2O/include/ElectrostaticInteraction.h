@@ -244,10 +244,12 @@ private:
   fftw_complex * psiF;
   fftw_complex * QFProdPsiF;
   value_type * QConvPsi;
+  fftw_complex * psir;
   
   fftw_plan forwardQ;
   fftw_plan backwardQFProdPsiF;
-
+  fftw_plan backward_psi;
+  
   bool unBuild;
 
   Stopwatch watch;

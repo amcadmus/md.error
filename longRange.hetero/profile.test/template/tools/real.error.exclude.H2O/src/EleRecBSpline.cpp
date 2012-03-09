@@ -507,11 +507,17 @@ value_type ElectrostaticInteraction_rec_BSpline::applyInteractionCalPotential (
 	u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*patom)->r());
 	u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*patom)->r());
 	u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*patom)->r());
-	std::vector<value_type > tmpposi(3);
-	tmpposi[0] = u[0] -int(floor ((u[0]) * ii0)) * K[0];
-	tmpposi[1] = u[1] -int(floor ((u[1]) * ii1)) * K[1];
-	tmpposi[2] = u[2] -int(floor ((u[2]) * ii2)) * K[2];
-	posi[molc] = tmpposi;
+	// std::vector<value_type > tmpposi(3);
+	// tmpposi[0] = u[0] -int(floor ((u[0]) * ii0)) * K[0];
+	// tmpposi[1] = u[1] -int(floor ((u[1]) * ii1)) * K[1];
+	// tmpposi[2] = u[2] -int(floor ((u[2]) * ii2)) * K[2];
+	if      (u[0] <  0           ) u[0] += double(K[0]);
+	else if (u[0] >= double(K[0])) u[0] -= double(K[0]);
+	if      (u[1] <  0           ) u[1] += double(K[1]);
+	else if (u[1] >= double(K[1])) u[1] -= double(K[1]);
+	if      (u[2] <  0           ) u[2] += double(K[2]);
+	else if (u[2] >= double(K[2])) u[2] -= double(K[2]);
+	posi[molc] = u;
 	start[molc].resize (3);
 	for (unsigned dd = 0; dd < 3; ++dd) start[molc][dd] = int (posi[molc][dd]) - n + 1;
       }
@@ -523,7 +529,7 @@ value_type ElectrostaticInteraction_rec_BSpline::applyInteractionCalPotential (
 	std::vector<double > tmp (3, 0.);
 	for (unsigned ii = 0; ii < 3; ++ii){
 	  for (unsigned jj = 0; jj < 3; ++jj){
-	    forceCorr[ii][jj] = tmp;
+ 	    forceCorr[ii][jj] = tmp;
 	  }
 	}
       }
@@ -537,12 +543,12 @@ value_type ElectrostaticInteraction_rec_BSpline::applyInteractionCalPotential (
 	  mn_mol1[dd].resize(n, 0.);
 	}	
 	for (unsigned dd = 0; dd < 3; ++dd){
-	  for (unsigned kk = start[mol0][dd]; kk < start[mol0][dd] + n; ++kk){
+	  for (int kk = start[mol0][dd]; kk < start[mol0][dd] + int(n); ++kk){
 	    Mn->value (posi[mol0][dd] - kk, mn_mol0[dd][kk - start[mol0][dd]]);
 	  }
 	}
 	for (unsigned dd = 0; dd < 3; ++dd){
-	  for (unsigned kk = start[mol1][dd]; kk < start[mol1][dd] + n; ++kk){
+	  for (int kk = start[mol1][dd]; kk < start[mol1][dd] + int(n); ++kk){
 	    Mn->value (posi[mol1][dd] - kk, mn_mol1[dd][kk - start[mol1][dd]]);
 	  }
 	}	
@@ -553,17 +559,20 @@ value_type ElectrostaticInteraction_rec_BSpline::applyInteractionCalPotential (
 	for (kk[0] = start[mol0][0]; kk[0] < start[mol0][0] + int(n); ++kk[0]){
 	for (ll[0] = start[mol1][0]; ll[0] < start[mol1][0] + int(n); ++ll[0]){
 	  diffkl[0] = kk[0] - ll[0];
-	  if      (diffkl[0] <  0        ) diffkl[0] += int(K[0]);
+	  if      (diffkl[0] <  0        ) {diffkl[0] += 3*int(K[0]); diffkl[0] = diffkl[0] % int(K[0]);}
+	  // if      (diffkl[0] <  0        ) diffkl[0] += int(K[0]);
 	  else if (diffkl[0] >= int(K[0])) diffkl[0] -= int(K[0]);
 	for (kk[1] = start[mol0][1]; kk[1] < start[mol0][1] + int(n); ++kk[1]){
 	for (ll[1] = start[mol1][1]; ll[1] < start[mol1][1] + int(n); ++ll[1]){
 	  diffkl[1] = kk[1] - ll[1];
-	  if      (diffkl[1] <  0        ) diffkl[1] += int(K[1]);
+	  if      (diffkl[1] <  0        ) {diffkl[1] += 3*int(K[1]); diffkl[1] = diffkl[1] % int(K[1]);}
+	  // if      (diffkl[1] <  0        ) diffkl[1] += int(K[1]);
 	  else if (diffkl[1] >= int(K[1])) diffkl[1] -= int(K[1]);
 	for (kk[2] = start[mol0][2]; kk[2] < start[mol0][2] + int(n); ++kk[2]){
 	for (ll[2] = start[mol1][2]; ll[2] < start[mol1][2] + int(n); ++ll[2]){
 	  diffkl[2] = kk[2] - ll[2];
-	  if      (diffkl[2] <  0        ) diffkl[2] += int(K[2]);
+	  if      (diffkl[2] <  0        ) {diffkl[2] += 3*int(K[2]); diffkl[2] = diffkl[2] % int(K[2]);}
+	  // if      (diffkl[2] <  0        ) diffkl[2] += int(K[2]);
 	  else if (diffkl[2] >= int(K[2])) diffkl[2] -= int(K[2]);
 	  double scalor =
 	      atomcharge[mol0] * atomcharge[mol1] *
@@ -846,6 +855,9 @@ void ElectrostaticInteraction_rec_BSpline::clear()
     fftw_free (phiF0);
     fftw_free (phiF1);
     fftw_free (phiF2);
+    fftw_free (phiFr0);
+    fftw_free (phiFr1);
+    fftw_free (phiFr2);
     fftw_free (QFProdPsiF);
     fftw_free (QFProdPhiF0);
     fftw_free (QFProdPhiF1);
@@ -860,6 +872,10 @@ void ElectrostaticInteraction_rec_BSpline::clear()
     fftw_destroy_plan (backwardQFProdPhiF0);
     fftw_destroy_plan (backwardQFProdPhiF1);
     fftw_destroy_plan (backwardQFProdPhiF2);
+
+    fftw_destroy_plan (backward_phiF0);
+    fftw_destroy_plan (backward_phiF1);
+    fftw_destroy_plan (backward_phiF2);
   }
 }
 
