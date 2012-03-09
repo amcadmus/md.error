@@ -17,7 +17,7 @@ mylog=ewald.esti.log
 rm -f $mylog
 touch $mylog
 
-make -C ./tools/analyze/ &>> make.log
+make -j8 -C ./tools/analyze/ &>> make.log
 
 # esti the rec error
 ./tools/analyze/error.ewald -t $record_dir/traj.xtc -q $record_dir/charge.tab --my-charge $charge --kmaxx $cal_Kx --kmaxy $cal_Ky --kmaxz $cal_Kz --kx $ref_Kx --ky $ref_Ky --kz $ref_Kz --beta $beta &>> $mylog

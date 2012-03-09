@@ -18,7 +18,7 @@ rm -f $mylog
 ewald_record=ewald.record
 rm -f $ewald_record
 
-make -C ./tools/real.error/ &>> make.log
+make -j8 -C ./tools/real.error/ &>> make.log
 
 for i in `ls $record_dir | grep conf | grep gro`;
 do

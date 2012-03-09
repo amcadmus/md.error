@@ -18,8 +18,8 @@ rm -f $mylog
 spme_ik_record=spme.ik.noHO.record
 rm -f $spme_ik_record
 
-make -C ./tools/real.error.exclude.H2O/ &>> make.log
-make -C ./tools/real.error/ &>> make.log
+make -j8 -C ./tools/real.error.exclude.H2O/ &>> make.log
+make -j8 -C ./tools/real.error/ &>> make.log
 
 for i in `ls $record_dir | grep conf | grep gro`;
 do
@@ -28,7 +28,7 @@ do
     echo "# doing $iname" &>> $mylog
     echo "# #############################################################################" &>> $mylog
     ./tools/real.error.exclude.H2O/spme --config $record_dir/$i --charge-table $record_dir/charge.tab --method bspline --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force force.spme.ik.noHO.out &>> $mylog
-    tools/real.error/compare.force --config $record_dir/$i --charge-table $record_dir/charge.tab --refh $real_h --force-0 $record_dir/force.ref.$iname.out --force-1 force.spme.ik.noHO.out -o error.spme.ik.noHO.$iname.out -m meanf.spme.ik.noHO.$iname.out &>> $mylog
+    tools/real.error/compare.force --config $record_dir/$i --charge-table $record_dir/charge.tab --refh $real_h --force-0 $record_dir/force.noHO.ref.$iname.out --force-1 force.spme.ik.noHO.out -o error.spme.ik.noHO.$iname.out -m meanf.spme.ik.noHO.$iname.out &>> $mylog
 
     mv error.spme.ik.noHO.$iname.out meanf.spme.ik.noHO.$iname.out $errors_dir
     echo "$errors_dir/error.spme.ik.noHO.$iname.out $errors_dir/meanf.spme.ik.noHO.$iname.out" >> $spme_ik_record

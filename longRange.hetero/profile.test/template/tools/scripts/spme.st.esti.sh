@@ -17,7 +17,7 @@ mylog=spme.st.esti.log
 rm -f $mylog
 touch $mylog
 
-make -C ./tools/analyze/ &>> make.log
+make -C -j8 ./tools/analyze/ &>> make.log
 
 # esti the rec error
 ./tools/analyze/error.spme.st -t $record_dir/traj.xtc -q $record_dir/charge.tab --my-charge $charge --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order &>> $mylog

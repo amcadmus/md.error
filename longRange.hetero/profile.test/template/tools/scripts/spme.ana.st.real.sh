@@ -18,7 +18,7 @@ rm -f $mylog
 spme_ana_st_record=spme.ana.st.record
 rm -f $spme_ana_st_record
 
-make -C ./tools/real.error/ &>> make.log
+make -j8 -C ./tools/real.error/ &>> make.log
 
 for i in `ls $record_dir | grep conf | grep gro`;
 do
