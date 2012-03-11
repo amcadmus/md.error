@@ -64,7 +64,7 @@ int main(int argc, char * argv[])
   printf ("## order is %d\n", order);
   printf ("## test charge is %.2f\n", pcharge);  
   if (vm.count("charge-table")){
-    printf ("## charge table: %s", qfile.c_str());
+    printf ("## charge table: %s\n", qfile.c_str());
   }
   printf ("#######################################################\n");
   
