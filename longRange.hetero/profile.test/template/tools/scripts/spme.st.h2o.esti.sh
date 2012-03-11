@@ -20,7 +20,11 @@ touch $mylog
 make -C -j8 ./tools/analyze/ &>> make.log
 
 # esti the rec error
-./tools/analyze/error.spme.st.h2o -t $record_dir/traj.xtc -q $record_dir/charge.tab --my-charge $charge --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order &>> $mylog
+if test ! -f $record_dir/water.gro; then
+    echo "# no orientation file $record_dir/water.gro"
+    exit
+fi
+./tools/analyze/error.spme.st.h2o -t $record_dir/traj.xtc -q $record_dir/charge.tab --my-charge $charge --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --beta $beta --order $cal_order --orientation $record_dir/water.gro &>> $mylog
 mv -f rho.x.avg.out $errors_dir/
 mv -f error.out $errors_dir/esti.rec.spme.st.h2o.error.out
 mv -f meanf.out $errors_dir/esti.rec.spme.st.h2o.meanf.out
