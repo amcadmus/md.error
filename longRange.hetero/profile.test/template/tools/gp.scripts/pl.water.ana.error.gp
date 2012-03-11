@@ -1,5 +1,5 @@
 set term post eps enh color solid font 16 size 8.5cm,6cm
-set out 'fig.ana.error.eps'
+set out 'fig.water.ana.error.eps'
 
 set style line 11 lc 1 lw 3 pt 1 lt 1
 set style line 21 lc 2 lw 3 pt 1 lt 2
