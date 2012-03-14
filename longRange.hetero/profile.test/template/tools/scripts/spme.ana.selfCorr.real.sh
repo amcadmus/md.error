@@ -26,7 +26,7 @@ do
     echo "# #############################################################################" &>> $mylog
     echo "# doing $iname" &>> $mylog
     echo "# #############################################################################" &>> $mylog
-    echo "command is: ./tools/real.error/spme --config $record_dir/$i --method fbspline --self-corr yes --charge-table $record_dir/charge.tab --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force force.spme.ana.selfCorr.out"
+#    echo "command is: ./tools/real.error/spme --config $record_dir/$i --method fbspline --self-corr yes --charge-table $record_dir/charge.tab --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force force.spme.ana.selfCorr.out"
     ./tools/real.error/spme --config $record_dir/$i --method fbspline --self-corr yes --charge-table $record_dir/charge.tab --beta $beta --rcut $cal_rcut --kx $cal_Kx --ky $cal_Ky --kz $cal_Kz --order $cal_order --output-force force.spme.ana.selfCorr.out &>> $mylog
     tools/real.error/compare.force --config $record_dir/$i --charge-table $record_dir/charge.tab --refh $real_h --force-0 $record_dir/force.ref.$iname.out --force-1 force.spme.ana.selfCorr.out -o error.spme.ana.selfCorr.$iname.out -m meanf.spme.ana.selfCorr.$iname.out &>> $mylog
 
