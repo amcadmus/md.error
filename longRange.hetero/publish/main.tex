@@ -1730,16 +1730,31 @@ for the error estimates.
 \end{figure}
 
 The real and estimated error of the staggered mesh analytical
-differentiation are presented in Fig.~\ref{fig:water-error}.  In this
+differentiation are presented in Fig.~\ref{fig:water-error0}
+and Fig.~\ref{fig:water-error}.  In this
 case, due to the correlation of the charge positions, the assumption
 of independent positions is disturbed, so all estimates overestimate
 the real errors.
+The quality of the direct
+part errors estimates is still good (though not perfect):
+the error is overestimated by~50\%.
+The ik-differentiation error is overestimated by 2.6 times,
+while the analytical differentiation error is overestimated by 4.7 times.
+% This indecates that the
+% first neigbor correlation is not that important in the error estimate of
+% the direct part.
+Ref.~\cite{wang2010optimizing} showed that the error estimate
+(ik-differentiation in a homogeneous water system) that
+is even three times larger than the real error
+still works well in the parameter tuning process, so 
+error estimate for the ik-differentiation is acceptable, but the error
+estimate for the analytical differentiation is problematic.
 The error estimate of the staggered mesh analytical differentiation is 6.8 times
-larger than the real error, which is not acceptable.
-This means in the water system, the
+larger than the real error,
+which means the
 positional correlation of charges plays a very important role
 in the error estimate. More surprisingly, the correlation
-actually reduces the error in force computation.
+actually greatly reduces the error in force computation.
 Currently we have no explaination for this phenomenon.
 Anyway, the correlation error $\mathcal
 E_{\textrm{correlation}}$ should be included to develop a more accurate error
@@ -1754,16 +1769,8 @@ the hydrogen bonds, etc.), the first neighbor correlation (chemical bond)
 is the most important one, and all
 the rest account for the remaining discrepancy between the estimated and real
 error.
-The quality of the error estimate for the direct
-part is still good (though not perfect): the error is overestimated by~50\%.
-This indecates that the
-first neigbor correlation is not that important in the error estimate of
-the direct part.
-Ref.~\cite{wang2010optimizing} showed that the error estimate that
-is even three times larger than the real error
-still works well in the parameter tuning process,
-so the error estimate provided by the present paper is good enough
-for the such practical applications.
+The error estimate for staggered mesh Ewald is now good enough
+for the parameter tuning application.
 % In this example, although both error estimates are
 % not as sharp as the uncorrelated examples (Example 1 \& 2), they are
 % good enough to derive for the parameter
@@ -1821,7 +1828,7 @@ case: positive and negative charges are globally seperated.
 In the water system,  all estimates overestimate the real error,
 because of the correlation of charges.
 The qulitity of  error estimates for the
-real space  and the original SPME is acceptable.
+real space  and the original ik-differentiation is acceptable.
 However, the error estimate neglecting the charge correlation
 is not applicable  for the staggered mesh Ewald method.
 We included the correlation error by the first neighbor approximation,
