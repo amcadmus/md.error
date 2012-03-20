@@ -65,7 +65,7 @@ int main(int argc, char * argv[])
   printf ("## order is %d\n", order);
   printf ("## test charge is %.2f\n", pcharge);  
   if (vm.count("charge-table")){
-    printf ("## charge table: %s", qfile.c_str());
+    printf ("## charge table: %s\n", qfile.c_str());
   }
   printf ("#######################################################\n");
     
@@ -89,7 +89,7 @@ int main(int argc, char * argv[])
   eesi.reinit (beta, order, dp);
   eesi.calError (dp, pcharge);
   eesi.print_meanf ("meanf.out", dp);
-  eesi.print_error ("error.out");
+  eesi.print_error (efile.c_str());
 
   return 0;
 }

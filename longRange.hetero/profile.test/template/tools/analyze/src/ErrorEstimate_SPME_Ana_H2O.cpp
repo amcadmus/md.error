@@ -464,50 +464,50 @@ calKernel()
     // GG on x
     {
       for (idx.x = 0; idx.x < K.x; ++idx.x){
-	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
-	else posi.x = idx.x;
-	for (idx.y = 0; idx.y < K.y; ++idx.y){
-	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
-	  else posi.y = idx.y;
-	  for (idx.z = 0; idx.z < K.z; ++idx.z){
-	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
-	    else posi.z = idx.z;
-	    unsigned index = index3to1 (idx, K);
-	    k1mx[index][0] = k1mx[index][1] = 0.;
-	    k1my[index][0] = k1my[index][1] = 0.;
-	    k1mz[index][0] = k1mz[index][1] = 0.;
-	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
-	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
-	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
-	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
-	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
-	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
-	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
-	    double uu = 2. * M_PI * double(posi.x) * Ki.x;
-	    double fenmu = 1./calsum (uu, order);
-	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
+  	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+  	else posi.x = idx.x;
+  	for (idx.y = 0; idx.y < K.y; ++idx.y){
+  	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+  	  else posi.y = idx.y;
+  	  for (idx.z = 0; idx.z < K.z; ++idx.z){
+  	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+  	    else posi.z = idx.z;
+  	    unsigned index = index3to1 (idx, K);
+  	    k1mx[index][0] = k1mx[index][1] = 0.;
+  	    k1my[index][0] = k1my[index][1] = 0.;
+  	    k1mz[index][0] = k1mz[index][1] = 0.;
+  	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
+  	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
+  	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
+  	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
+  	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
+  	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
+  	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+  	    double uu = 2. * M_PI * double(posi.x) * Ki.x;
+  	    double fenmu = 1./calsum (uu, order);
+  	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
 
-	    k1mx[index][1] = gmi[index].x * sum;
-	    k1my[index][1] = gmi[index].y * sum;
-	    k1mz[index][1] = gmi[index].z * sum;
-	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
-	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
-	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
-	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
-	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
-	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
+  	    k1mx[index][1] = gmi[index].x * sum;
+  	    k1my[index][1] = gmi[index].y * sum;
+  	    k1mz[index][1] = gmi[index].z * sum;
+  	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
+  	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
+  	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
+  	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
+  	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
+  	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
 	
-	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
-	  }
-	}
+  	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+  	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
+  	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
+  	  }
+  	}
       }
       fftw_execute (p_backward_k1mx);
       fftw_execute (p_backward_k1my);
@@ -520,21 +520,21 @@ calKernel()
       fftw_execute (p_backward_coH_k1mz);
   
       for (int i = 0; i < nele; ++i){
-	k2mb[i][0] += (
-	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
-	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
-	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	k2mb[i][1] = 0.;
-	coO_k2mb[i][0] += (
-	    (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
-	    (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
-	    (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coO_k2mb[i][1] = 0.;	
-	coH_k2mb[i][0] += (
-	    (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
-	    (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
-	    (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coH_k2mb[i][1] = 0.;	
+  	k2mb[i][0] += (
+  	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+  	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+  	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	k2mb[i][1] = 0.;
+  	// coO_k2mb[i][0] += (
+  	//     (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
+  	//     (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
+  	//     (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	// coO_k2mb[i][1] = 0.;	
+  	// coH_k2mb[i][0] += (
+  	//     (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
+  	//     (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
+  	//     (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	// coH_k2mb[i][1] = 0.;	
       }
     }
 
@@ -542,51 +542,52 @@ calKernel()
     // GF on x
     {
       for (idx.x = 0; idx.x < K.x; ++idx.x){
-	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
-	else posi.x = idx.x;
-	for (idx.y = 0; idx.y < K.y; ++idx.y){
-	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
-	  else posi.y = idx.y;
-	  for (idx.z = 0; idx.z < K.z; ++idx.z){
-	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
-	    else posi.z = idx.z;
-	    unsigned index = index3to1 (idx, K);
-	    k1mx[index][0] = k1mx[index][1] = 0.;
-	    k1my[index][0] = k1my[index][1] = 0.;
-	    k1mz[index][0] = k1mz[index][1] = 0.;
-	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
-	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
-	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
-	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
-	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
-	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
-	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
-	    double uu = 2. * M_PI * double(posi.x) * Ki.x;
-	    double fenmu = 1./calsum (uu, order);
-	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
-	    double tmpf = -4. * M_PI * myk * double(K.x) * vecAStar.xx * fm[index] * sum;
+    	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+    	else posi.x = idx.x;
+    	for (idx.y = 0; idx.y < K.y; ++idx.y){
+    	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+    	  else posi.y = idx.y;
+    	  for (idx.z = 0; idx.z < K.z; ++idx.z){
+    	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+    	    else posi.z = idx.z;
+    	    unsigned index = index3to1 (idx, K);
+    	    k1mx[index][0] = k1mx[index][1] = 0.;
+    	    k1my[index][0] = k1my[index][1] = 0.;
+    	    k1mz[index][0] = k1mz[index][1] = 0.;
+    	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
+    	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
+    	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
+    	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
+    	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
+    	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
+    	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+    	    double uu = 2. * M_PI * double(posi.x) * Ki.x;
+    	    double fenmu = 1./calsum (uu, order);
+    	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
+    	    double tmpf = -4. * M_PI * myk * double(K.x) * vecAStar.xx * fm[index] * sum;
+    	    // double tmpf = 0.;
 	    
-	    k1mx[index][1] = gmi[index].x * sum + tmpf;
-	    k1my[index][1] = gmi[index].y * sum;
-	    k1mz[index][1] = gmi[index].z * sum;
-	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
-	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
-	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
-	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
-	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
-	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
+    	    k1mx[index][1] = gmi[index].x * sum + tmpf;
+    	    k1my[index][1] = gmi[index].y * sum;
+    	    k1mz[index][1] = gmi[index].z * sum;
+    	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
+    	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
+    	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
+    	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
+    	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
+    	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
 	
-	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
-	  }
-	}
+    	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+    	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+    	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+    	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
+    	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
+    	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
+    	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
+    	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
+    	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
+    	  }
+    	}
       }
       fftw_execute (p_backward_k1mx);
       fftw_execute (p_backward_k1my);
@@ -599,71 +600,71 @@ calKernel()
       fftw_execute (p_backward_coH_k1mz);
   
       for (int i = 0; i < nele; ++i){
-	k2mb[i][0] += (
-	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
-	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
-	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	k2mb[i][1] = 0.;
-	coO_k2mb[i][0] += (
-	    (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
-	    (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
-	    (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coO_k2mb[i][1] = 0.;	
-	coH_k2mb[i][0] += (
-	    (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
-	    (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
-	    (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coH_k2mb[i][1] = 0.;	
+    	k2mb[i][0] += (
+    	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+    	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+    	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+    	k2mb[i][1] = 0.;
+    	coO_k2mb[i][0] += (
+    	    (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
+    	    (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
+    	    (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+    	coO_k2mb[i][1] = 0.;	
+    	coH_k2mb[i][0] += (
+    	    (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
+    	    (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
+    	    (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+    	coH_k2mb[i][1] = 0.;	
       }
     }
 
     // GG on y
     {
       for (idx.x = 0; idx.x < K.x; ++idx.x){
-	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
-	else posi.x = idx.x;
-	for (idx.y = 0; idx.y < K.y; ++idx.y){
-	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
-	  else posi.y = idx.y;
-	  for (idx.z = 0; idx.z < K.z; ++idx.z){
-	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
-	    else posi.z = idx.z;
-	    unsigned index = index3to1 (idx, K);
-	    k1mx[index][0] = k1mx[index][1] = 0.;
-	    k1my[index][0] = k1my[index][1] = 0.;
-	    k1mz[index][0] = k1mz[index][1] = 0.;
-	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
-	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
-	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
-	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
-	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
-	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
-	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
-	    double uu = 2. * M_PI * double(posi.y) * Ki.y;
-	    double fenmu = 1./calsum (uu, order);
-	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
+  	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+  	else posi.x = idx.x;
+  	for (idx.y = 0; idx.y < K.y; ++idx.y){
+  	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+  	  else posi.y = idx.y;
+  	  for (idx.z = 0; idx.z < K.z; ++idx.z){
+  	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+  	    else posi.z = idx.z;
+  	    unsigned index = index3to1 (idx, K);
+  	    k1mx[index][0] = k1mx[index][1] = 0.;
+  	    k1my[index][0] = k1my[index][1] = 0.;
+  	    k1mz[index][0] = k1mz[index][1] = 0.;
+  	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
+  	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
+  	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
+  	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
+  	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
+  	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
+  	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+  	    double uu = 2. * M_PI * double(posi.y) * Ki.y;
+  	    double fenmu = 1./calsum (uu, order);
+  	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
 
-	    k1mx[index][1] = gmi[index].x * sum;
-	    k1my[index][1] = gmi[index].y * sum;
-	    k1mz[index][1] = gmi[index].z * sum;
-	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
-	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
-	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
-	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
-	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
-	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
+  	    k1mx[index][1] = gmi[index].x * sum;
+  	    k1my[index][1] = gmi[index].y * sum;
+  	    k1mz[index][1] = gmi[index].z * sum;
+  	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
+  	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
+  	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
+  	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
+  	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
+  	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
 	
-	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
-	  }
-	}
+  	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+  	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
+  	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
+  	  }
+  	}
       }
       fftw_execute (p_backward_k1mx);
       fftw_execute (p_backward_k1my);
@@ -676,72 +677,73 @@ calKernel()
       fftw_execute (p_backward_coH_k1mz);
   
       for (int i = 0; i < nele; ++i){
-	k2mb[i][0] += (
-	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
-	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
-	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	k2mb[i][1] = 0.;
-	coO_k2mb[i][0] += (
-	    (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
-	    (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
-	    (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coO_k2mb[i][1] = 0.;	
-	coH_k2mb[i][0] += (
-	    (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
-	    (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
-	    (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coH_k2mb[i][1] = 0.;	
+  	k2mb[i][0] += (
+  	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+  	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+  	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	k2mb[i][1] = 0.;
+  	// coO_k2mb[i][0] += (
+  	//     (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
+  	//     (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
+  	//     (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	// coO_k2mb[i][1] = 0.;	
+  	// coH_k2mb[i][0] += (
+  	//     (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
+  	//     (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
+  	//     (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	// coH_k2mb[i][1] = 0.;	
       }
     }
 
     // GF on y
     {
       for (idx.x = 0; idx.x < K.x; ++idx.x){
-	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
-	else posi.x = idx.x;
-	for (idx.y = 0; idx.y < K.y; ++idx.y){
-	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
-	  else posi.y = idx.y;
-	  for (idx.z = 0; idx.z < K.z; ++idx.z){
-	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
-	    else posi.z = idx.z;
-	    unsigned index = index3to1 (idx, K);
-	    k1mx[index][0] = k1mx[index][1] = 0.;
-	    k1my[index][0] = k1my[index][1] = 0.;
-	    k1mz[index][0] = k1mz[index][1] = 0.;
-	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
-	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
-	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
-	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
-	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
-	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
-	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
-	    double uu = 2. * M_PI * double(posi.y) * Ki.y;
-	    double fenmu = 1./calsum (uu, order);
-	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
-	    double tmpf = -4. * M_PI * myk * K.y * vecAStar.yy * fm[index] * sum;
-
-	    k1mx[index][1] = gmi[index].x * sum;
-	    k1my[index][1] = gmi[index].y * sum + tmpf;
-	    k1mz[index][1] = gmi[index].z * sum;
-	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
-	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
-	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
-	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
-	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
-	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
+    	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+    	else posi.x = idx.x;
+    	for (idx.y = 0; idx.y < K.y; ++idx.y){
+    	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+    	  else posi.y = idx.y;
+    	  for (idx.z = 0; idx.z < K.z; ++idx.z){
+    	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+    	    else posi.z = idx.z;
+    	    unsigned index = index3to1 (idx, K);
+    	    k1mx[index][0] = k1mx[index][1] = 0.;
+    	    k1my[index][0] = k1my[index][1] = 0.;
+    	    k1mz[index][0] = k1mz[index][1] = 0.;
+    	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
+    	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
+    	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
+    	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
+    	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
+    	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
+    	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+    	    double uu = 2. * M_PI * double(posi.y) * Ki.y;
+    	    double fenmu = 1./calsum (uu, order);
+    	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
+    	    double tmpf = -4. * M_PI * myk * K.y * vecAStar.yy * fm[index] * sum;
+    	    // double tmpf = 0.f;
+	    
+    	    k1mx[index][1] = gmi[index].x * sum;
+    	    k1my[index][1] = gmi[index].y * sum + tmpf;
+    	    k1mz[index][1] = gmi[index].z * sum;
+    	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
+    	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
+    	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
+    	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
+    	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
+    	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
 	
-	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
-	  }
-	}
+    	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+    	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+    	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+    	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
+    	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
+    	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
+    	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
+    	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
+    	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
+    	  }
+    	}
       }
       fftw_execute (p_backward_k1mx);
       fftw_execute (p_backward_k1my);
@@ -754,71 +756,71 @@ calKernel()
       fftw_execute (p_backward_coH_k1mz);
   
       for (int i = 0; i < nele; ++i){
-	k2mb[i][0] += (
-	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
-	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
-	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	k2mb[i][1] = 0.;
-	coO_k2mb[i][0] += (
-	    (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
-	    (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
-	    (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coO_k2mb[i][1] = 0.;	
-	coH_k2mb[i][0] += (
-	    (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
-	    (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
-	    (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coH_k2mb[i][1] = 0.;	
+    	k2mb[i][0] += (
+    	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+    	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+    	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+    	k2mb[i][1] = 0.;
+    	coO_k2mb[i][0] += (
+    	    (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
+    	    (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
+    	    (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+    	coO_k2mb[i][1] = 0.;	
+    	coH_k2mb[i][0] += (
+    	    (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
+    	    (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
+    	    (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+    	coH_k2mb[i][1] = 0.;	
       }
     }
 
     // GG on z
     {
       for (idx.x = 0; idx.x < K.x; ++idx.x){
-	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
-	else posi.x = idx.x;
-	for (idx.y = 0; idx.y < K.y; ++idx.y){
-	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
-	  else posi.y = idx.y;
-	  for (idx.z = 0; idx.z < K.z; ++idx.z){
-	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
-	    else posi.z = idx.z;
-	    unsigned index = index3to1 (idx, K);
-	    k1mx[index][0] = k1mx[index][1] = 0.;
-	    k1my[index][0] = k1my[index][1] = 0.;
-	    k1mz[index][0] = k1mz[index][1] = 0.;
-	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
-	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
-	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
-	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
-	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
-	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
-	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
-	    double uu = 2. * M_PI * double(posi.z) * Ki.z;
-	    double fenmu = 1./calsum (uu, order);
-	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
+  	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+  	else posi.x = idx.x;
+  	for (idx.y = 0; idx.y < K.y; ++idx.y){
+  	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+  	  else posi.y = idx.y;
+  	  for (idx.z = 0; idx.z < K.z; ++idx.z){
+  	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+  	    else posi.z = idx.z;
+  	    unsigned index = index3to1 (idx, K);
+  	    k1mx[index][0] = k1mx[index][1] = 0.;
+  	    k1my[index][0] = k1my[index][1] = 0.;
+  	    k1mz[index][0] = k1mz[index][1] = 0.;
+  	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
+  	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
+  	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
+  	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
+  	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
+  	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
+  	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+  	    double uu = 2. * M_PI * double(posi.z) * Ki.z;
+  	    double fenmu = 1./calsum (uu, order);
+  	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
 
-	    k1mx[index][1] = gmi[index].x * sum;
-	    k1my[index][1] = gmi[index].y * sum;
-	    k1mz[index][1] = gmi[index].z * sum;
-	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
-	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
-	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
-	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
-	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
-	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
+  	    k1mx[index][1] = gmi[index].x * sum;
+  	    k1my[index][1] = gmi[index].y * sum;
+  	    k1mz[index][1] = gmi[index].z * sum;
+  	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
+  	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
+  	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
+  	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
+  	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
+  	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
 	
-	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
-	  }
-	}
+  	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+  	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
+  	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
+  	  }
+  	}
       }
       fftw_execute (p_backward_k1mx);
       fftw_execute (p_backward_k1my);
@@ -831,72 +833,73 @@ calKernel()
       fftw_execute (p_backward_coH_k1mz);
   
       for (int i = 0; i < nele; ++i){
-	k2mb[i][0] += (
-	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
-	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
-	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	k2mb[i][1] = 0.;
-	coO_k2mb[i][0] += (
-	    (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
-	    (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
-	    (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coO_k2mb[i][1] = 0.;	
-	coH_k2mb[i][0] += (
-	    (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
-	    (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
-	    (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coH_k2mb[i][1] = 0.;	
+  	k2mb[i][0] += (
+  	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+  	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+  	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	k2mb[i][1] = 0.;
+  	// coO_k2mb[i][0] += (
+  	//     (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
+  	//     (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
+  	//     (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	// coO_k2mb[i][1] = 0.;	
+  	// coH_k2mb[i][0] += (
+  	//     (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
+  	//     (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
+  	//     (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	// coH_k2mb[i][1] = 0.;	
       }
     }
 
     // GF on z
     {
       for (idx.x = 0; idx.x < K.x; ++idx.x){
-	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
-	else posi.x = idx.x;
-	for (idx.y = 0; idx.y < K.y; ++idx.y){
-	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
-	  else posi.y = idx.y;
-	  for (idx.z = 0; idx.z < K.z; ++idx.z){
-	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
-	    else posi.z = idx.z;
-	    unsigned index = index3to1 (idx, K);
-	    k1mx[index][0] = k1mx[index][1] = 0.;
-	    k1my[index][0] = k1my[index][1] = 0.;
-	    k1mz[index][0] = k1mz[index][1] = 0.;
-	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
-	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
-	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
-	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
-	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
-	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
-	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
-	    double uu = 2. * M_PI * double(posi.z) * Ki.z;
-	    double fenmu = 1./calsum (uu, order);
-	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
-	    double tmpf = -4. * M_PI * myk * K.z * vecAStar.zz * fm[index] * sum;
-
-	    k1mx[index][1] = gmi[index].x * sum;
-	    k1my[index][1] = gmi[index].y * sum;
-	    k1mz[index][1] = gmi[index].z * sum + tmpf;
-	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
-	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
-	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
-	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
-	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
-	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
+  	if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+  	else posi.x = idx.x;
+  	for (idx.y = 0; idx.y < K.y; ++idx.y){
+  	  if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+  	  else posi.y = idx.y;
+  	  for (idx.z = 0; idx.z < K.z; ++idx.z){
+  	    if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+  	    else posi.z = idx.z;
+  	    unsigned index = index3to1 (idx, K);
+  	    k1mx[index][0] = k1mx[index][1] = 0.;
+  	    k1my[index][0] = k1my[index][1] = 0.;
+  	    k1mz[index][0] = k1mz[index][1] = 0.;
+  	    coO_k1mx[index][0] = coO_k1mx[index][1] = 0.;
+  	    coO_k1my[index][0] = coO_k1my[index][1] = 0.;
+  	    coO_k1mz[index][0] = coO_k1mz[index][1] = 0.;
+  	    coH_k1mx[index][0] = coH_k1mx[index][1] = 0.;
+  	    coH_k1my[index][0] = coH_k1my[index][1] = 0.;
+  	    coH_k1mz[index][0] = coH_k1mz[index][1] = 0.;
+  	    if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+  	    double uu = 2. * M_PI * double(posi.z) * Ki.z;
+  	    double fenmu = 1./calsum (uu, order);
+  	    double sum = 1./gsl_pow_int(uu + 2.*M_PI * myk, order) * fenmu;
+  	    double tmpf = -4. * M_PI * double(myk) * K.z * vecAStar.zz * fm[index] * sum;
+  	    // double tmpf = 0.;
+	    
+  	    k1mx[index][1] = gmi[index].x * sum;
+  	    k1my[index][1] = gmi[index].y * sum;
+  	    k1mz[index][1] = gmi[index].z * sum + tmpf;
+  	    coO_k1mx[index][1] = k1mx[index][1] * TO[index][0];
+  	    coO_k1my[index][1] = k1my[index][1] * TO[index][0];
+  	    coO_k1mz[index][1] = k1mz[index][1] * TO[index][0];
+  	    coH_k1mx[index][1] = k1mx[index][1] * TH[index][0];
+  	    coH_k1my[index][1] = k1my[index][1] * TH[index][0];
+  	    coH_k1mz[index][1] = k1mz[index][1] * TH[index][0];
 	
-	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
-	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
-	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
-	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
-	  }
-	}
+  	    if (idx.x == (K.x >> 1) && cleanX) k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) k1mz[index][1] = 0.;
+  	    if (idx.x == (K.x >> 1) && cleanX) coO_k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) coO_k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) coO_k1mz[index][1] = 0.;
+  	    if (idx.x == (K.x >> 1) && cleanX) coH_k1mx[index][1] = 0.;
+  	    if (idx.y == (K.y >> 1) && cleanY) coH_k1my[index][1] = 0.;
+  	    if (idx.z == (K.z >> 1) && cleanZ) coH_k1mz[index][1] = 0.;
+  	  }
+  	}
       }
       fftw_execute (p_backward_k1mx);
       fftw_execute (p_backward_k1my);
@@ -909,21 +912,21 @@ calKernel()
       fftw_execute (p_backward_coH_k1mz);
   
       for (int i = 0; i < nele; ++i){
-	k2mb[i][0] += (
-	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
-	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
-	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	k2mb[i][1] = 0.;
-	coO_k2mb[i][0] += (
-	    (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
-	    (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
-	    (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coO_k2mb[i][1] = 0.;	
-	coH_k2mb[i][0] += (
-	    (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
-	    (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
-	    (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
-	coH_k2mb[i][1] = 0.;	
+  	k2mb[i][0] += (
+  	    (k1rx[i][0] * k1rx[i][0] + k1rx[i][1] * k1rx[i][1]) +
+  	    (k1ry[i][0] * k1ry[i][0] + k1ry[i][1] * k1ry[i][1]) +
+  	    (k1rz[i][0] * k1rz[i][0] + k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	k2mb[i][1] = 0.;
+  	coO_k2mb[i][0] += (
+  	    (coO_k1rx[i][0] * k1rx[i][0] + coO_k1rx[i][1] * k1rx[i][1]) +
+  	    (coO_k1ry[i][0] * k1ry[i][0] + coO_k1ry[i][1] * k1ry[i][1]) +
+  	    (coO_k1rz[i][0] * k1rz[i][0] + coO_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	coO_k2mb[i][1] = 0.;	
+  	coH_k2mb[i][0] += (
+  	    (coH_k1rx[i][0] * k1rx[i][0] + coH_k1rx[i][1] * k1rx[i][1]) +
+  	    (coH_k1ry[i][0] * k1ry[i][0] + coH_k1ry[i][1] * k1ry[i][1]) +
+  	    (coH_k1rz[i][0] * k1rz[i][0] + coH_k1rz[i][1] * k1rz[i][1]) ) * volume / double(nele);
+  	coH_k2mb[i][1] = 0.;	
       }
     }
   }
@@ -1126,7 +1129,8 @@ print_error (const std::string & file) const
     fprintf (fp, "%f %e   %e %e   %e %e   %e %e\n",
 	     (i + 0.5) * vecA.xx / K.x,
 	     sqrt(error1[index][0] + error2[index][0] +
-		  coO_error2[index][0] + coH_error2[index][0]),
+	     	  coO_error2[index][0] + coH_error2[index][0]),
+	     // sqrt(error1[index][0] + error2[index][0]),
 	     error1[index][0],
 	     error1[index][1],
 	     error2[index][0],
