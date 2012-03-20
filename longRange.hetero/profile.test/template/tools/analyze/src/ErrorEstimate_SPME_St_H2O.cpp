@@ -419,6 +419,12 @@ calTm (const std::vector<std::vector<double > > & dirs,
   bool cleanY = ( ((K.y >> 1) << 1) == K.y);
   bool cleanZ = ( ((K.z >> 1) << 1) == K.z);
 
+  double svalue = (dirs[0][0] * dirs[0][0] +
+		   dirs[0][1] * dirs[0][1] +
+		   dirs[0][2] * dirs[0][2] );
+  svalue = sqrt(svalue);
+  // printf ("svalue is %f\n", svalue);
+
   for (int ii = 0; ii < nele; ++ii){
     out[ii][0] = out[ii][1] = 0.;
   }
@@ -461,6 +467,32 @@ calTm (const std::vector<std::vector<double > > & dirs,
     out[ii][0] /= double (dirs.size());
     out[ii][1] /= double (dirs.size());
   }
+
+  
+  for (idx.x = 0; idx.x < K.x; ++idx.x){
+    if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
+    else posi.x = idx.x;
+    for (idx.y = 0; idx.y < K.y; ++idx.y){
+      if (idx.y > (K.y >> 1)) posi.y = idx.y - K.y;
+      else posi.y = idx.y;
+      for (idx.z = 0; idx.z < K.z; ++idx.z){
+	if (idx.z > (K.z >> 1)) posi.z = idx.z - K.z;
+	else posi.z = idx.z;
+	if (idx.x == 0 && idx.y == 0 && idx.z == 0) continue;
+	unsigned index = index3to1 (idx, K);
+	VectorType mm;
+	mm.x = posi.x * vecAStar.xx + posi.y * vecAStar.yx + posi.z * vecAStar.zx;
+	mm.y = posi.x * vecAStar.xy + posi.y * vecAStar.yy + posi.z * vecAStar.zy;
+	mm.z = posi.x * vecAStar.xz + posi.y * vecAStar.yz + posi.z * vecAStar.zz;
+	double mvalue = (mm.x * mm.x + mm.y * mm.y + mm.z * mm.z);
+	mvalue = sqrt(mvalue);
+	double result = (1./ (4. * M_PI * svalue * svalue)) *
+	    charges[0] * 2. * svalue / mvalue * sin (2. * M_PI * mvalue * svalue);
+	// printf ("%e  %e   %e\n", out[index][0], result, fabs(out[index][0]-result));
+      }
+    }
+  }
+
 }
 
 void ErrorEstimate_SPME_St_H2O::
