@@ -18,6 +18,10 @@ echo "# esti spme ana self"
 echo "# esti spme st"
 ./tools/scripts/spme.st.esti.sh
 if echo $project_name | grep -v rand | grep water &> /dev/null; then
+    echo "# esti spme ik h2o"
+    ./tools/scripts/spme.ik.h2o.esti.sh
+    echo "# esti spme ana h2o"
+    ./tools/scripts/spme.ana.h2o.esti.sh
     echo "# esti spme st h2o"
     ./tools/scripts/spme.st.h2o.esti.sh
 fi
