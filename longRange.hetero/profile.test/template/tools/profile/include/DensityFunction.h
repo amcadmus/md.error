@@ -43,8 +43,13 @@ public:
 	       const double & Ly,
 	       const double & Lz);
   void genConf_gro (const char * filename);
+  void genConf_rand_water_gro (const char * filename,
+			       const std::vector<std::vector<double > > & posi);
   void genXtc (const char * filename,
 	       const int & nframe);
+  void genXtc_rand_water (const char * filename,
+			  const int & nframe,
+			  const std::vector<std::vector<double > > & posi);
   void genConf_native (const char * filename);
   unsigned get_natom () const {return natom;}
   unsigned get_natom_posi () const {return np;}
