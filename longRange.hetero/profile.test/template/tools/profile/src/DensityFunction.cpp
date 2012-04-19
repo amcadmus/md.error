@@ -170,7 +170,7 @@ genConf_rand_water_gro (const char * filename,
     do{
       posi[3*i][0] = RandomGenerator_MT19937::genrand_real2() * Lx;
     } while (RandomGenerator_MT19937::genrand_real1() > 
-	     positive (posi[i][0]) / max);
+	     positive (posi[3*i][0]) / max);
     posi[3*i][1] = RandomGenerator_MT19937::genrand_real2() * Ly;
     posi[3*i][2] = RandomGenerator_MT19937::genrand_real2() * Lz;
     std::vector<double > shift(3, 0.);
@@ -280,7 +280,7 @@ genXtc_rand_water (const char * filename,
       do{
 	posi[3*i][0] = RandomGenerator_MT19937::genrand_real2() * Lx;
       } while (RandomGenerator_MT19937::genrand_real1() > 
-	       positive (posi[i][0]) / max);
+	       positive (posi[3*i][0]) / max);
       posi[3*i][1] = RandomGenerator_MT19937::genrand_real2() * Ly;
       posi[3*i][2] = RandomGenerator_MT19937::genrand_real2() * Lz;
       std::vector<double > shift(3, 0.);
