@@ -1,0 +1,1853 @@
+# #############################################################################
+# doing 0001
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0001.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.440e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9105618834232300e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0002
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0002.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.490e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9110363409558748e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0003
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0003.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.490e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9093060863063263e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0004
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0004.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.510e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9101103762053113e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0005
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0005.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.940e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9105978395997852e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0006
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0006.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.640e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9111725769533587e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0007
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0007.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.760e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9109153589658483e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0008
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0008.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.910e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9079606186988502e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0009
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0009.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.430e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9092055941727536e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0010
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0010.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.420e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9109151060915756e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0011
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0011.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.470e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9094571622834948e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0012
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0012.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.430e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9097090736209662e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0013
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0013.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.480e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9103650088545503e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0014
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0014.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.480e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9094760508240579e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0015
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0015.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.590e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9111466777775611e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0016
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0016.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.510e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9096421331682694e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0017
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0017.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.530e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9099791312844827e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0018
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0018.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.840e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9105801023162232e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0019
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0019.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.500e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9108158449396680e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0020
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0020.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.520e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9101179887106395e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0021
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0021.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.510e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9113789491552947e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0022
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0022.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.540e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9107728244274229e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0023
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0023.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.400e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9083884293187788e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0024
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0024.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.530e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9094153655496193e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0025
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0025.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.520e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9099993821612996e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0026
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0026.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.880e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9109835758664049e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0027
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0027.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.490e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9103056772437616e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0028
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0028.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.620e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9110634178876891e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0029
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0029.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.510e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9104329669675964e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0030
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0030.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.530e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9093486453821999e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0031
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0031.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.480e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9083859523851468e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0032
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0032.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.510e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9103826171456109e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0033
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0033.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.450e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9095551679786338e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0034
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0034.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.500e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9096811049777316e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0035
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0035.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.520e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9117575513072123e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0036
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0036.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.510e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9103511924212275e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0037
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0037.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.480e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9093247534663824e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0038
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0038.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.450e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9100685175850362e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0039
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0039.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.470e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9102311943567693e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0040
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0040.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.490e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9102576948013739e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0041
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0041.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.550e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9107447559274558e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0042
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0042.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.550e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9100647039309100e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0043
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0043.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 1.004e+01
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9097904302334820e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0044
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0044.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.920e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9095648088676186e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0045
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0045.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.630e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9129258268006161e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0046
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0046.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 1.002e+01
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9107446290875421e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0047
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0047.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.500e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9113415282317234e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0048
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0048.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.860e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9091419733611940e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0049
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0049.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.570e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9102078140467536e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# doing 0050
+# #############################################################################
+# use charge table /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/charge.tab
+########################################
+# summary of parameters
+# method is fbspline
+# selfCorr is no
+# order is 6
+# beta is 2.500000e+00
+# Kx is 121
+# Ky is 61
+# Kz is 61
+# shift x is 0.000000e+00
+# shift y is 0.000000e+00
+# shift z is 0.000000e+00
+# rcut is 1.350000e+00
+# box is 1.489648e+01
+# npart is 41472
+# random seed is 0
+# configuration file is /home/cocktail/wanghan/study/longRange.hetero/profile.test/config.pool/water.charge0.834.box14.9x7.4x7.4.b2.500.r2.10.K161x081x081.nconf050/conf.0050.gro
+########################################
+### initilized elector calculater
+### registered Particle
+build up time cost 9.520e+00
+### build up calculator
+the solver ES dir error is 4.7924946076255115e-05
+the solver ES rec error is 1.8952205807179639e-12
+### force is cleared
+time rec 0.000e+00
+time rec loop 0.000e+00
+time rec conv 0.000e+00
+time dir 0.000e+00
+time total 0.000e+00
+potential energy is -8.9101964271027537e+04
+### interaction is applied
+the estimated error of rec part SPME 1.4216502574192059e-04
+# #############################################################################
+# combine results
+# #############################################################################
