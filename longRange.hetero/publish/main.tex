@@ -1,4 +1,5 @@
 \documentclass[aps,pre,preprint,unsortedaddress]{revtex4}
+% \documentclass[aps,pre,unsortedaddress]{revtex4-1}
 %\documentclass[aps,pre,twocolumn]{revtex4-1}
 %\documentclass[aps,jcp,groupedaddress,twocolumn,unsortedaddress]{revtex4}
 
@@ -101,7 +102,7 @@ computational effort.
 This problem can be solved by an
 in-depth study of the error introduced by these algorithms, namely the
 error estimate~\cite{kolafa1992cutoff, hummer1995numerical,
-  petersen1995accuracy, deserno1998mue2,
+  petersen1995accuracy, deserno1998mue2, stern2008mesh,
   wang2010optimizing, neelov2010interlaced, ballenegger2012convert},
 by which the error is described by a function of the working
 parameters.  Using the error estimates, a work flow has been designed to
@@ -301,10 +302,10 @@ pairwise interactions:
     q_jq_k\v K(\v r_i, \v r_j)\cdot\v K(\v r_i, \v r_k)\bigg\rangle \\ \nonumber
     =\,&
     q_i^2\bigg\langle\sum_{j=1}^N
-    q_j^2\vert\v K(\v r, \v r_j)\vert^2
+    q_j^2\vert\v K(\v r_i, \v r_j)\vert^2
     \bigg\rangle +
     q_i^2\bigg\langle\sum_{j\neq k}
-    q_jq_k \v K(\v r, \v r_j)\cdot\v K(\v r, \v r_k)
+    q_jq_k \v K(\v r_i, \v r_j)\cdot\v K(\v r_i, \v r_k)
     \bigg\rangle \\ \nonumber
     =\,&
     q_i^2\int_{\mathbb R^3}
@@ -2206,7 +2207,7 @@ Some minor contributions of the present work are:
   the original SPME.
 \item Unlike the original analytical differentiation
   that violates the Newton's third law, the staggered mesh analytical
-  differentiation strictly preserves it.
+  differentiation preserves it to the leading order.
 \item We also proved the equivalence of the staggered mesh ik- and analytical
   differentiation, to the leading order of the force error.
   The staggered mesh analytical differentiation requires only one half
@@ -2251,7 +2252,6 @@ work, and will be discuss in the following research.
 
 
 
-\newpage
 \appendix
 \section{Error estimate of the smooth particle mesh
 Ewald method}
@@ -2824,7 +2824,6 @@ correlation error:
 
 
 
-\newpage
 
 \bibliography{ref}{}
 \bibliographystyle{unsrt}
