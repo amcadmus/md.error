@@ -1,0 +1,4 @@
+command is: /home/wanghan/study/shortRange.inhomo/result/t0.7-n16000-rc03.0uni/tools/simulation.uniform.cutoff/lj.nhc conf.gro 4000000 1 > gpu-md.out 2> gpu-md.perf
+command is: /home/wanghan/study/shortRange.inhomo/result/t0.7-n16000-rc05.0uni/tools/simulation.uniform.cutoff/lj.nhc conf.gro 4000000 1 > gpu-md.out 2> gpu-md.perf
+command is: /home/wanghan/study/shortRange.inhomo/result/t0.85-n16000-rc05.0uni/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
+command is: /home/wanghan/study/shortRange.inhomo/result/t0.85-n16000-rc07.5uni/tools/simulation.uniform.cutoff/lj.nhc conf.gro 3000000 1 > gpu-md.out 2> gpu-md.perf
