@@ -90,7 +90,7 @@ achieved even with a very small cut-off value, for example,
 $2.5\sigma$ for the standard Lennard-Jones 6-12 interaction.
 Moreover, it is possible to correct the systematic error
 of the potential energy, the pressure and the free energy by applying
-the standard long range correction (LRC)~\cite{allen87a}, which
+the standard long-range correction (LRC)~\cite{allen87a}, which
 assumes the uniformity outside the cut-off radius and integrates the
 contribution of the mentioned properties to infinity. 
 % The spacial inhomogeneity of the system in terms of particle density,
@@ -112,6 +112,26 @@ study the precision of the short-range interaction calculation, and to
 develop methods for screening out the aforementioned cut-off artifact in
 the inhomogeneous systems.
 
+\recheck{ One possible way to avoid the cut-off difficulty is to
+  modify the short-range interaction by a shifting approach: inside a
+  certain radius the origianl interaction is kept, while outside it the
+  interaction is screen by a shift function, so that goes to
+  zero smoothly. The amount of Shifting is minor in most cases,
+  however, it actually changes the way of
+  modelling molecules. For example, it
+  has been shown that shifting the dispersion remarkably changes the
+  phase diagram of the Lennard-Jones system~\cite{smit1992phase}.
+  Since the dispersion term 
+  can be derived by quantum mechanical arguments, and has the physical
+  reality, the unshifted interaction is
+  prefered and investigated by most studies
+  (see e.g. Ref.~\cite{potoff1998critical, perez2006critical, wang2010optimizing}).
+  % Shifting the direct part of the Ewald summation actually
+  % violates the Coulomb's law in the way that depends on the
+  % splitting parameter, so it should be treated carefully.
+  % Here we would like to suggest treating the shifting approach
+  % as a special case 
+}
 % In this paper, we focus on the systems in which
 % atoms/particles are interacting via short-range interactions, because
 % it is a good starting point of the study of more complex systems, for
@@ -140,8 +160,8 @@ method has been well established, see~\cite{kolafa1992cutoff, wang2011} for
 example. Also the error estimates~\cite{hummer1995numerical,
   kolafa1992cutoff, petersen1995accuracy, deserno1998mue2,
   wang2010optimizing} for long-range Ewald family
-methods~\cite{ewald1921die, hockney1988computer, deserno1998mue1,
-  darden1993pme, essmann1995spm} have provided a profound
+methods~\cite{ewald1921die, hockney1988computer, 
+  darden1993pme, essmann1995spm, deserno1998mue1} have provided a profound
 understanding of the accuracy of force calculation, and introduced
 parameter tuning algorithms~\cite{limbach06a, wang2010optimizing} that
 boost the efficiency of the computation with a good control of the
@@ -165,12 +185,40 @@ while the precision of simulation is
 preserved. We also proposed a long-range force correction (LFC) method
 to screen out the contribution of the
 inhomogeneity error, therefore,  the precision of
-simulation is improved without much extra computational load. To show the
+simulation is improved without much extra computational load.
+
+
+To show the
 effectiveness of the error estimate and the proposed methods, two
 systems are tested: the liquid-vapor equilibrium for equilibrium
 properties, and the colliding nanoscale clusters for dynamical
-properties. Finally, conclusions are given in section
-\ref{sec:conclusion}.
+properties.
+\recheck{
+  In these example, we investigate the Lennard-Jones interaction, which
+  is one of the most widely used in molecular simulations.
+  However, the error estimate,
+  the adaptive cut-off and long-range correction methods
+  are not restricted to the Lennard-Jones: it can
+  be applied to other types of short-range interactions without 
+  difficulty, such as
+  Buckingham, the direct part of Ewald summation~\cite{ewald1921die}, etc..
+  We want to stress that the main contribution and the research interest is the
+  quantitative study of the force computation error by cuting-off
+  the short-range interaction.
+  The examples, which are comparatively simple and ideal,
+  are used only for testing the validity of the error
+  estimate and the proposed methods,
+  and demostrating the role of different errors in the simulations.
+  The error study in more realistic systems requires the
+  estimates of the electrostatic interaction,
+  which are calculated by the long-range algorithms, such as
+  PME~\cite{darden1993pme}, SPME~\cite{essmann1995spm},
+  P3M~\cite{deserno1998mue1}, etc..
+  The space of the present paper is not enough for
+  these algorithms, so they will be delivered in the future work.
+}
+% Finally, conclusions are given in section
+% \ref{sec:conclusion}.
 
 % The error estimate of long-range algorithms, for example the Ewald
 % family method~\cite{ewald1921die, hockney1988computer,
@@ -189,7 +237,7 @@ In this paper, for simplicity,
 we will consider one-component systems, but
 % we only consider the single-component system. Because
 % this assumption simplifies the discussion, and
-the error estimates for
+the error estimate for
 the one-component system can be straightforwardly extended to the
 multi-component systems.  We consider
 the force error in the present paper, because the
@@ -1637,10 +1685,29 @@ inconsistency of the cluster movement and the correction force
 computation, small deviations of angular velocity and momentum were
 observed.
 
+\recheck{
+  We want to stress again the main research interest of the present paper is the
+  error estimate, the proposed adaptive cut-off and long-range
+  correction methods. The examples are used to demonstrate
+  the validity of these theoretical results. The applications
+  of the error estimate can be more general than the studied examples.
+  Other kind the short-range interaction (not only the Lennard-Jones
+  but also the Buckingham,
+  the direct part of the Ewald summation, etc.),
+  and other kinds of inhomogeneity
+  (not only  planar and merging spirical interfaces)
+  can be easily studied by the error estiamtes and the proposed methods.
+  The error study of
+  more realistic systems requires the error estiamtes of the long-range
+  algoritms, and careful comparisons with the short-range error.
+  Since the present paper is focusing on the short-range
+  interactions, and the space is limited,
+  they will be given in the future work.
+}
 
 
 \section*{Acknowledgments}
-The authors gratefully thank Luigi Delle Site for for useful comments
+The authors gratefully thank Luigi Delle Site for useful comments
 on the manuscript. The work of P.Z. is supported by grants from
 National Natural Science Foundation of China (50930003).
 
