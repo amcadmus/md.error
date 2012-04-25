@@ -56,16 +56,17 @@
   some state-of-art algorithms of long-range electrostatic interaction
   in inhomogeneous and correlated molecular systems.
   They are the Ewald summation, the smooth particle mesh Ewald (SPME) and
-  the stggered mesh Ewald method. Two branches of force comptation, namely
+  the staggered mesh Ewald method. Two branches of force computation, namely
   the ik- and analytical differentiation, are considered. All the
   estimates are developed by proposing a more general framework:
   if the error force is of pairwise form,
-  then the root mean square force error is composed by three addtive parts,
+  then the root mean square force error is composed by three additive parts,
   the homogeneity error, the inhomogeneity error and the correlation
   error. Computationally scalable estimates (estimating the errors
   at the cost $\mathcal O(N\log N)$) are developed for all the considered
   algorithms.
-  The effectiveness of the proposed estimates are carefully checked by
+  The effectiveness of the proposed estimates and the important role of
+  the correlation error are carefully checked and demonstrated by
   example systems.
 \end{abstract}
 
@@ -2218,7 +2219,7 @@ When the error force has a pairwise form,
 the RMS error was proved to be composed by three additive parts:
 the homogeneity error, the inhomogeneity error and the correlation
 error.
-Moreover, the framework quantitatively provided the esitmate
+Moreover, the framework quantitatively provided the estimate
 of all these error components, and suggested a computationally
 scalable way (at the cost of $\mathcal O(N\log N)$) to calculate them.
 
