@@ -1,4 +1,4 @@
-\documentclass[preprint]{revtex4}
+\documentclass[aps, pre, preprint]{revtex4}
 % \documentclass[aps,pre,twocolumn]{revtex4-1}
 % \documentclass[aps,jcp,groupedaddress,twocolumn,unsortedaddress]{revtex4}
 
@@ -19,7 +19,7 @@
 
 \begin{document}
 
-\title{The Error Estimate of Force Calculation in the Inhomogeneous Molecular Systems}
+\title{The Error Estimate of Short-Range Force Calculation in the Inhomogeneous Molecular Systems}
 \author{Han Wang}
 \email{han.wang@fu-berlin.de}
 \affiliation{LMAM and School of Mathematical
@@ -54,6 +54,8 @@
     Therefore, based on the error estimate, the adaptive cut-off
     and long-range force correction methods are proposed to
     boost the efficiency and accuracy of the simulation, respectively.
+    The way of correcting the long-range contribution of pressure
+    is also developed for the inhomogeneous system.
     The
     effectiveness of the proposed methods are demonstrated by
     molecular dynamics 
@@ -112,11 +114,11 @@ study the precision of the short-range interaction calculation, and to
 develop methods for screening out the aforementioned cut-off artifact in
 the inhomogeneous systems.
 
-\recheck{ One possible way to avoid the cut-off difficulty is to
+{ One possible way to avoid the cut-off difficulty is to
   modify the short-range interaction by a shifting approach: inside a
   certain radius the original interaction is kept, while outside it the
-  interaction is screen by a shift function, so that goes to
-  zero smoothly. The amount of Shifting is minor in most cases,
+  interaction is screened by a shift function, so that it goes to
+  zero smoothly and rapidly. The amount of shifting is minor in most cases,
   however, it actually changes the way of
   modeling molecules. For example, it
   has been shown that shifting the dispersion remarkably changes the
@@ -168,8 +170,9 @@ boost the efficiency of the computation with a good control of the
 error. However, in inhomogeneous systems the error study is still
 scarce, even for the simplest cut-off method.
 
-In this work, we develop the error estimate of the short-range force
-in inhomogeneous systems. We prove that the 
+In this work, we develop the error estimate of the short-range interaction,
+and the long-range force and pressure corrections
+for the inhomogeneous systems. We prove that the 
 force error is comprised of a homogeneity error and an inhomogeneity
 error, regardless of the particle-particle correlation outside the
 cut-off radius.  In an inhomogeneous system composed by several bulk
@@ -192,8 +195,7 @@ To show the
 effectiveness of the error estimate and the proposed methods, two
 systems are tested: the liquid-vapor equilibrium for equilibrium
 properties, and the colliding nanoscale clusters for dynamical
-properties.
-\recheck{
+properties.{
   In these example, we investigate the Lennard-Jones interaction, which
   is one of the most widely used in molecular simulations.
   However, the error estimate,
@@ -201,7 +203,7 @@ properties.
   are not restricted to the Lennard-Jones: it can
   be applied to other types of short-range interactions without 
   difficulty, such as
-  Buckingham, the direct part of Ewald summation~\cite{ewald1921die}, etc..
+  Buckingham, the direct part of Ewald family algorithms~\cite{ewald1921die, darden1993pme, essmann1995spm, deserno1998mue1}, etc..
   We want to stress that the main contribution and the research interest is the
   quantitative study of the force computation error by cutting-off
   the short-range interaction.
@@ -249,13 +251,24 @@ applications are based on molecular dynamics simulations.
 Suppose the system is composed by $N$ identical particles located at
 $\v r_1, \v r_2, \cdots, \v r_N$ with periodic boundary condition.
 These particles are interacting via a short-range pairwise interaction
-$u(\v r)$ with a cut-off radius $r_c > 0$. The corresponding force is
+$u(\v r)$ with a cut-off radius $r_c > 0$.
+The corresponding force is
 denoted by $\v f(\v r)$. 
+Most short-range interactions satisfy $\vert
+u(r)\vert\leq C r^{-m}$, $m>3$, which guarantees an absolute convergence of the
+energy.
+Throughout the paper, the only assumptions made on the interaction are:
+(1) the interaction is short-ranged and (2)
+it is calculated by the cut-off method.
+Therefore, our approach works for a large group of widely used interactions, 
+for example, the Lennard-Jones interaction, the Buckingham interaction,
+the direct part of Ewald family algorithms, and so forth.
 % An infinite cut-off radius will lead to
 % a precise calculation of interaction, but it is impractical.
 % The error of computing interaction is mainly introduced by a finit
 % value of the cut-off radius.
-The force error mainly stems from the neglected interaction outside
+
+The force error stems from the neglected interaction outside
 the cut-off radius, so it is convenient to consider the complementary
 of the cut-offed force that is defined by
 \begin{align}
@@ -576,7 +589,8 @@ $\mathcal E_{\textrm{C}}$, a satisfactory cut-off radius for a bin is
 chosen such that it is the smallest one satisfying the precision
 constraint $\mathcal E(\v r_{i_1,i_2,i_3}) \leq \mathcal
 E_{\textrm{C}}$. The computational cost of this algorithm is $\mathcal
-O(MN\log N)$.  The idea of this algorithm is based on the observation
+O(MN\log N)$.
+The idea of this algorithm is based on the observation
 that the cut-off radius may not be calculated at a very high
 precision.
 % a slightly (at most $r_c^{\textrm{step}}$) larger
@@ -599,6 +613,16 @@ position) needs to be refined by the following scheme:
 so that the fluctuating large-error regions are safely covered by bins
 with large cut-off radius.
 
+Since the density profile of the system changes
+very slow comparing with the typical time step used in the MD simulation,
+the cut-off distribution is not calculated every time step.
+Instead,
+for example, in the liquid-vapor equilibrium simulation
+(see Sec.~\ref{sec:tmp2.1}),
+the cut-off distribution is calculated every 20,000 time steps,
+so the extra load of adapting the cut-off is only marginal
+in the simulation, i.e. proportional to $ \frac{M}{20,000}N\log N$.
+
 % This
 % means the force error is a combination of a homogeneous contribution,
 % an inhomogeneous contribution and a correlational contribution. The
@@ -607,7 +631,7 @@ with large cut-off radius.
 %   \v F_{\textrm{inhomo}} = \int_{\mathbb R^3}\v F^c(\v r - \v r')\rho(\v r')\,\d d\v r'
 % \end{align}
 
-\subsection{Long-range Force correction}
+\subsection{Long-range force correction}
 
 In an inhomogeneous system, the inhomogeneity error may play a
 dominate role in the simulation, (see examples in section~\ref{sec:tmp2}).
@@ -654,6 +678,15 @@ error force: $\langle\vert\Delta\v
 F_{\textrm{corr}}(\v r)\vert^2\rangle = \textrm{Var}[\Delta\v
 F_{\textrm{corr}}(\v r)] = \textrm{Var}[\Delta\v F(\v r)]$.
 
+In most cases, the ensemble average of the error force
+does not change very fast comparing with the typical time step used in a MD
+simulation. Therefore, it is not necessary to calculate
+the correction force every time step. Instead, for example,
+we calculate it every 40 time steps in the liquid-vapor equilibrium
+testing system (see Sec.~\ref{sec:tmp2.1}), which takes
+no more than 10\% of the total computational cost.
+If the long-range interaction calculations (which needs FFTs anyway)
+are involved, this ratio should be even lower.
 The idea of the long-range force correction is very similar to those
 proposed by earlier works~\cite{guo1997long, mecke1997molecular,
   janecek2006long, shen2007comparative}. In those works, the density
@@ -911,7 +944,11 @@ error in the uniform cut-off simulation with $r_c^\ast=7.5$.
 }
 The
 cut-off distribution is calculated every 20,000 time steps, and is
-refined twice by Eqn.~\eqref{eqn:rc-refine}. In the interfacial
+refined twice by Eqn.~\eqref{eqn:rc-refine}.
+Due to this low cut-off redistribution frequency,
+the extra cost of this adaptive method is only marginal
+comparing with the total computational cost.
+In the interfacial
 regions, the same cut-off radius as the uniform cut-off simulation,
 namely $7.5$, is used.  In the bulk
 liquid and vapor regions, the cut-off radii are $4.75$ and $3.5$,
@@ -944,7 +981,10 @@ inhomogeneity error dominates in the interfacial region.
 
 In Fig. \ref{fig:tmp4}, the red solid line presents the $x$ component
 of the 
-correction force that is calculated every 40 time steps. The $y$ and
+correction force that is calculated every 40 time steps.
+The extra computational cost is no more than 10\% of the total
+computational costs in all the tested cases.
+The $y$ and
 $z$ components are not shown because their magnitudes are negligible.
 On the left interface, the correction force is along the positive
 direction of $x$ axis, namely pointing right.  On the right interface,
@@ -1540,7 +1580,8 @@ figure for reference. The same as the liquid-vapor equilibrium
 simulation, the force error dominates in the interfacial regions,
 namely the boundaries of the clusters. Inside and outside the
 clusters, the error is much lower. The cut-off distribution of the
-adaptive cut-off method is updated every 200 time steps. The third row
+adaptive cut-off method is updated every 200 time steps.
+The third row
 of Fig. \ref{fig:tmp10} shows that the large cut-off region follows the cluster
 boundaries perfectly. It is much broader than the
 large error region, because it is refined by Eqn. \eqref{eqn:rc-refine}
@@ -1685,7 +1726,7 @@ inconsistency of the cluster movement and the correction force
 computation, small deviations of angular velocity and momentum were
 observed.
 
-\recheck{
+{
   We want to stress again the main research interest of the present paper is the
   error estimate, the proposed adaptive cut-off and long-range
   correction methods. The examples are used to demonstrate
@@ -1693,7 +1734,7 @@ observed.
   of the error estimate can be more general than the studied examples.
   Other kind the short-range interaction (not only the Lennard-Jones
   but also the Buckingham,
-  the direct part of the Ewald summation, etc.),
+  the direct part of the Ewald family algorithms, etc.),
   and other kinds of inhomogeneity
   (not only  planar and merging spherical interfaces)
   can be easily studied by the error estimates and the proposed methods.
