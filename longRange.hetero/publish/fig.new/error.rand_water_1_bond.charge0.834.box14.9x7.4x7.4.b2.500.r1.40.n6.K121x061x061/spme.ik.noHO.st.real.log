@@ -22,7 +22,7 @@
 ########################################
 ### initilized elector calculater
 ### registered Particle
-build up time cost 1.567e+01
+build up time cost 1.482e+01
 ### build up calculator
 the solver ES dir error is 1.9927034785114917e-05
 the solver ES rec error is 1.8952205807179639e-12
@@ -56,7 +56,7 @@ the estimated error of rec part SPME 6.6876227824033322e-05
 ########################################
 ### initilized elector calculater
 ### registered Particle
-build up time cost 1.550e+01
+build up time cost 1.462e+01
 ### build up calculator
 the solver ES dir error is 1.9927034785114917e-05
 the solver ES rec error is 1.8952205807179639e-12
