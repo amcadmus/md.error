@@ -203,7 +203,7 @@ properties.{
   are not restricted to the Lennard-Jones: it can
   be applied to other types of short-range interactions without 
   difficulty, such as
-  Buckingham, the direct part of Ewald family algorithms~\cite{ewald1921die, darden1993pme, essmann1995spm, deserno1998mue1}, etc..
+  Buckingham, the direct part of Ewald family algorithms~\cite{ewald1921die, darden1993pme, essmann1995spm, deserno1998mue1}, etc..  
   We want to stress that the main contribution and the research interest is the
   quantitative study of the force computation error by cutting-off
   the short-range interaction.
@@ -1661,7 +1661,7 @@ effort is spent on calculating the correction force. This extra expense
 is worthwhile because it improves the simulation results significantly.
 
 
-\section{Conclusions}\label{sec:conclusion}
+\section{Conclusions and discussions}\label{sec:conclusion}
 
 In this paper, we developed the force error estimate for non-bonded
 short-range interactions in the inhomogeneous molecular systems. The
@@ -1731,13 +1731,16 @@ observed.
   error estimate, the proposed adaptive cut-off and long-range
   correction methods. The examples are used to demonstrate
   the validity of these theoretical results. The applications
-  of the error estimate can be more general than the studied examples.
+  of the error estimate is more general than the studied examples,
+  because we only assumed the interaction is short-ranged and
+  treated by the cut-off method.
   Other kind the short-range interaction (not only the Lennard-Jones
   but also the Buckingham,
   the direct part of the Ewald family algorithms, etc.),
   and other kinds of inhomogeneity
   (not only  planar and merging spherical interfaces)
   can be easily studied by the error estimates and the proposed methods.
+  However, it is impossible to test all possible cases within one paper.
   The error study of
   more realistic systems requires the error estimates of the long-range
   algorithms, and careful comparisons with the short-range error.
