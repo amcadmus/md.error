@@ -1,0 +1,183 @@
+\begin{thebibliography}{10}
+
+\bibitem{frenkel02b}
+Daan Frenkel and Berend Smit.
+\newblock {\em Understanding Molecular Simulation}.
+\newblock Academic Press, San Diego, second edition, 2002.
+
+\bibitem{allen87a}
+Mike~P. Allen and Dominik~J. Tildesley.
+\newblock {\em Computer Simulation of Liquids}.
+\newblock Oxford Science Publications. Clarendon Press, Oxford, 1 edition,
+  1987.
+
+\bibitem{duque2004some}
+D.~Duque and L.F. Vega.
+\newblock Some issues on the calculation of interfacial properties by molecular
+  simulation.
+\newblock {\em The Journal of chemical physics}, 121:8611, 2004.
+
+\bibitem{ismail2007application}
+P.J. in~'t Veld, A.E. Ismail, and G.S. Grest.
+\newblock Application of ewald summations to long-range dispersion forces.
+\newblock {\em The Journal of Chemical Physics}, 127:144711, 2007.
+
+\bibitem{trokhymchuk1999computer}
+A.~Trokhymchuk and J.~Alejandre.
+\newblock Computer simulations of liquid/vapor interface in lennard-jones
+  fluids: Some questions and answers.
+\newblock {\em The Journal of Chemical Physics}, 111:8510, 1999.
+
+\bibitem{guo1997long}
+MX~Guo and BC~Lu.
+\newblock Long-range corrections to thermodynamic properties of inhomogeneous
+  systems with planar interfaces.
+\newblock {\em Journal of Chemical Physics}, 106(9):3688--3695, 1997.
+
+\bibitem{mecke1997molecular}
+M.~Mecke, J.~Winkelmann, and J.~Fischer.
+\newblock Molecular dynamics simulation of the liquid-vapor interface: The
+  lennard-jones fluid.
+\newblock {\em Journal of Chemical Physics}, 107(21):9264--9270, 1997.
+
+\bibitem{janecek2006long}
+J.~Jane{c}ek.
+\newblock Long range corrections in inhomogeneous simulations.
+\newblock {\em J. Phys. Chem. B}, 110(12):6264--6269, 2006.
+
+\bibitem{goujon2004monte}
+F.~Goujon, P.~Malfreyt, J.M. Simon, A.~Boutin, B.~Rousseau, and A.H. Fuchs.
+\newblock Monte carlo versus molecular dynamics simulations in heterogeneous
+  systems: An application to the n-pentane liquid-vapor interface.
+\newblock {\em The Journal of chemical physics}, 121:12559, 2004.
+
+\bibitem{shen2007comparative}
+V.K. Shen, R.D. Mountain, and J.R. Errington.
+\newblock Comparative study of the effect of tail corrections on surface
+  tension determined by molecular simulation.
+\newblock {\em J. Phys. Chem. B}, 111(22):6198--6207, 2007.
+
+\bibitem{smit1992phase}
+B.~Smit.
+\newblock Phase diagrams of lennard-jones fluids.
+\newblock {\em The Journal of Chemical Physics}, 96(11):8639, 1992.
+
+\bibitem{potoff1998critical}
+J.J. Potoff and A.Z. Panagiotopoulos.
+\newblock Critical point and phase behavior of the pure fluid and a
+  lennard-jones mixture.
+\newblock {\em The Journal of Chemical Physics}, 109:10914, 1998.
+
+\bibitem{perez2006critical}
+J.~P{\'e}rez-Pellitero, P.~Ungerer, G.~Orkoulas, and A.D. Mackie.
+\newblock Critical point estimation of the lennard-jones pure fluid and binary
+  mixtures.
+\newblock {\em The Journal of chemical physics}, 125:054515, 2006.
+
+\bibitem{wang2010optimizing}
+H.~Wang, F.~Dommert, and C.~Holm.
+\newblock Optimizing working parameters of the smooth particle mesh ewald
+  algorithm in terms of accuracy and efficiency.
+\newblock {\em The Journal of chemical physics}, 133:034117, 2010.
+
+\bibitem{kolafa1992cutoff}
+J.~Kolafa and J.W. Perram.
+\newblock Cutoff errors in the ewald summation formulae for point charge
+  systems.
+\newblock {\em Molecular Simulation}, 9(5):351--368, 1992.
+
+\bibitem{wang2011}
+H.~Wang and P.~Zhang.
+\newblock Optimizing working parameters of the twin-range cutoff method in
+  terms of accuracy and efficiency.
+\newblock {\em submitted}, 2011.
+
+\bibitem{hummer1995numerical}
+G.~Hummer.
+\newblock The numerical accuracy of truncated ewald sums for periodic systems
+  with long-range coulomb interactions.
+\newblock {\em Chemical physics letters}, 235(3-4):297--302, 1995.
+
+\bibitem{petersen1995accuracy}
+H.G. Petersen.
+\newblock Accuracy and efficiency of the particle mesh ewald method.
+\newblock {\em The Journal of chemical physics}, 103:3668, 1995.
+
+\bibitem{deserno1998mue2}
+M.~Deserno and C.~Holm.
+\newblock How to mesh up ewald sums. ii. an accurate error estimate for the
+  particle--particle--particle-mesh algorithm.
+\newblock {\em The Journal of Chemical Physics}, 109:7694, 1998.
+
+\bibitem{ewald1921die}
+P.~P. Ewald.
+\newblock Die berechnung optischer und elektrostatischer gitterpotentiale.
+\newblock {\em Ann. Phys.}, 369(3):253--287, 1921.
+
+\bibitem{hockney1988computer}
+R.~W. Hockney and J.~W. Eastwood.
+\newblock {\em Computer Simulation Using Particles}.
+\newblock IOP, London, 1988.
+
+\bibitem{darden1993pme}
+T.~Darden, D.~York, and L.~Pedersen.
+\newblock Particle mesh ewald: An n· log (n) method for ewald sums in large
+  systems.
+\newblock {\em The Journal of Chemical Physics}, 98:10089, 1993.
+
+\bibitem{essmann1995spm}
+U.~Essmann, L.~Perera, M.L. Berkowitz, T.~Darden, H.~Lee, and L.G. Pedersen.
+\newblock A smooth particle mesh ewald method.
+\newblock {\em The Journal of Chemical Physics}, 103(19):8577, 1995.
+
+\bibitem{deserno1998mue1}
+M.~Deserno and C.~Holm.
+\newblock How to mesh up ewald sums. i. a theoretical and numerical comparison
+  of various particle mesh routines.
+\newblock {\em The Journal of Chemical Physics}, 109:7678, 1998.
+
+\bibitem{limbach06a}
+H.~J. Limbach, A.~Arnold, B.~A. Mann, and C.~Holm.
+\newblock {ESPResSo} -- an extensible simulation package for research on soft
+  matter systems.
+\newblock {\em Comp. Phys. Comm.}, 174(9):704--727, May 2006.
+
+\bibitem{flyvbjerg1989error}
+H.~Flyvbjerg and HG~Petersen.
+\newblock Error estimates on averages of correlated data.
+\newblock {\em The Journal of Chemical Physics}, 91:461, 1989.
+
+\bibitem{nose1984molecular}
+S.~Nos{\'e}.
+\newblock A molecular dynamics method for simulations in the canonical
+  ensemble.
+\newblock {\em Molecular Physics}, 52(2):255--268, 1984.
+
+\bibitem{hoover1985canonical}
+W.G. Hoover.
+\newblock Canonical dynamics: Equilibrium phase-space distributions.
+\newblock {\em Physical Review A}, 31(3):1695--1697, 1985.
+
+\bibitem{chen1995area}
+L.J. Chen.
+\newblock Area dependence of the surface tension of a lennard-jones fluid from
+  molecular dynamics simulations.
+\newblock {\em The Journal of chemical physics}, 103:10214, 1995.
+
+\bibitem{orea2005oscillatory}
+P.~Orea, J.~L{\'o}pez-Lemus, and J.~Alejandre.
+\newblock Oscillatory surface tension due to finite-size effects.
+\newblock {\em The Journal of chemical physics}, 123:114702, 2005.
+
+\bibitem{biscay2009calculation}
+F.~Biscay, A.~Ghoufi, F.~Goujon, V.~Lachet, and P.~Malfreyt.
+\newblock Calculation of the surface tension from monte carlo simulations: Does
+  the model impact on the finite-size effects?
+\newblock {\em The Journal of chemical physics}, 130:184710, 2009.
+
+\bibitem{kalweit2006collision}
+M.~Kalweit and D.~Drikakis.
+\newblock Collision dynamics of nanoscale lennard-jones clusters.
+\newblock {\em Physical Review B}, 74(23):235415, 2006.
+
+\end{thebibliography}
