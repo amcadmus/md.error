@@ -77,8 +77,8 @@
 The calculation of the long-range electrostatic interaction is a very
 important topic in the molecular simulations.  Due to the very slow
 decay of the interaction strength with respect to the distance between charges,
-the typical short-range fast algorithms (cut-off + neighbor list
-algorithms) do not work, and the
+the typical short-range fast algorithms (e.g. the cut-off + neighbor list
+algorithm) do not work, and the
 energy of the system is only conditionally convergent.  One of the
 first algorithms handling this problem is the Ewald summation, dating
 back to the 1920's~\cite{ewald1921die}.  It has been shown that
@@ -111,8 +111,8 @@ The aforementioned fast algorithms have achieved great success
 over the past three decades.
 However, the fact that the user should provide six working parameters
 for these methods may be problematic: it is difficult to try out the
-most efficient parameter set in such a high dimensional parameter space.
-The experiential choices may be either less accurate or waste
+most efficient parameter set in such a 6-dimensional parameter space.
+The experiential choices may be either less accurate or wasting
 computational effort.
 This problem can be solved by an
 in-depth study of the error introduced by these algorithms, namely the
@@ -166,9 +166,9 @@ Generally speaking,
 when the error force can be written as a pairwise form, 
 all estimate are derived easily under this framework.
 Following this framework, we
-develop the error estimates for the Ewald summation, the SPME method
-and the staggered method Ewald method.   The estimates
-of the homogeneity and inhomogeneous errors are tested by two
+develop the error estimates for the Ewald summation, the SPME 
+and the staggered method Ewald methods.   The estimates
+of the homogeneity and inhomogeneity errors are tested by two
 randomly distributed inhomogeneous charges systems,
 % (i.e. the charges are not correlated),
 and is proved to
@@ -447,6 +447,12 @@ Here are some remarks concerning Theorem~\ref{thm:tmp1} and Corollary~\ref{thm:t
     \mathcal E^2_{\textrm{inhomo}}(\v r) +
     \mathcal E_{\textrm{correlation}}(\v r).
   \end{align}
+  The first term on the r.h.s. of \eqref{eqn:error-split} is called
+  the ``homogeneity error'', but it does NOT mean this term is
+  homogeneous or originated from a homogeneous density profile.  It is
+  named so because the error estimate only contains this term in the
+  homogeneous and uncorrelated system. It is the term studied by most
+  previous error estimates.
 \item
   % Without the property $\v K(\v r,\v r') = \v K(\v r - \v r')$,
   Theorem~\ref{thm:tmp1} calculates the homogeneity and inhomogeneity
@@ -488,7 +494,7 @@ the computational cost.
 Here the definition of the ``nearest neighbors'' is
 very flexible. Basically it means the nearby neighbors that are
 strongly correlated. It could also be defined by the charges falling in some
-certain neighboring range or charges connected by a chemical bonds.
+certain neighboring range or charges connected by chemical bonds.
 % Here ``first neighbors'' means the neighboring
 % atoms that are connected by the chemical bond.  In most molecular
 % force fields, such bonds are modeled by a rigid connection between two
@@ -585,7 +591,7 @@ TIP3P~\cite{jorgensen1983comparison}: each hydrogen atom carries a
 charge of $q_{\textrm{H}} = +0.417e$ and each oxygen atom carries a
 charge of $q_{\textrm{O}} = -0.834e$. Within one molecule, the H-O
 bond and H-O-H angle are rigid, so the correlation within one molecule
-is important.  Therefore, in this case, we define the nearest neighbor by the
+is considered important.  Therefore, in this case, we define the nearest neighbor by the
 atoms within the same water molecule.  Denoting the index set of the oxygen
 atoms by $\Omega_{\textrm{O}}$, and the index set of the hydrogen
 atoms by $\Omega_{\textrm{H}}$, we have:
@@ -903,8 +909,8 @@ truncated Ewald summation is straightforward.
 
 
 
-\subsection{The smooth particle mesh Ewald method \&
-the staggered mesh Ewald method}
+\subsection{The SPME \&
+staggered mesh Ewald methods}
 
 % The naive calculation of the reciprocal Ewald summation
 % \eqref{eqn:tmp6} will result in a computational cost of $\mathcal
@@ -948,7 +954,7 @@ The SPME method provides two possibilities of calculating the
 reciprocal force. The first one is to differentiate (with respect to
 the particle position) the reciprocal term of the truncated Ewald
 energy and then approximate the derived force \eqref{eqn:tmp8} by the
-B-spline interpolation. This way is called
+B-spline interpolation. This way is called the
 \emph{ik-differentiation}.
 The alternative way notices the high-order
 smoothness of the B-spline interpolation, and derive the force by
@@ -992,7 +998,7 @@ Obviously, the staggered mesh ik-/analytical differentiation
 cost twice as much on the
 reciprocal part as the original version.
 
-\subsection{Error estimate of the ik-differentiation}
+\subsection{Error estimate of the SPME ik-differentiation}
 \label{sec:error-ik}
 
 From the precise calculation of the reciprocal summation to the SPME
@@ -1107,7 +1113,7 @@ corollary~\ref{thm:tmp2} cannot be used here. However, it is still
 possible to develop the error estimate with convolution form under
 some approximations.
 Here we only want to present the key idea and the final  error
-estimates, and leave all details of the derivation 
+estimate, and leave all details of the derivation 
 to the Appendix~\ref{sec:appendix}.  We notice the
 term $e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot\v r}$ with $l\neq 0$
 in Eqn.~\eqref{eqn:error-A} introduces some high-wave-number terms in
@@ -1175,7 +1181,7 @@ Where
   Z_{\alpha,l}(\v m)\,
   e^{2\pi i\v m\cdot\v r}.
 \end{align}
-$G_{\alpha,l}(\v r)$ does not depends on the coordinates of particles,
+$\v G_{\alpha,l}(\v r)$ does not depends on the coordinates of particles,
 so it can be calculated once and stored in a table for future uses.
 The nearest neighbor approximation to the correlation error
 in a water system is:
@@ -1230,7 +1236,7 @@ in a water system is:
 \end{align}
 
 
-\subsection{Error estimate of the analytical differentiation}
+\subsection{Error estimate of the SPME analytical differentiation}
 \label{sec:error-ana}
 
 The error force of the analytical differentiation is 
@@ -1301,9 +1307,9 @@ The error force of the analytical differentiation is
       \vert m_{\alpha}\vert < K_\alpha/2\\
       \v m\neq 0
     \end{subarray}}
-  -2f(\v m)\,\v B(\v m, \v r) 
+  -2f(\v m)\,\v B(\v m, \v r),
 \end{align}
-With $\v B(\v m, \v r)$ defined by
+with $\v B(\v m, \v r)$ defined by
 \begin{align}\nonumber
   \v B(\v m, \v r)
   &=
@@ -1311,14 +1317,14 @@ With $\v B(\v m, \v r)$ defined by
   &=
   \sum_{\alpha=1}^3\sum_{l\neq 0}
   Z_{\alpha,l}(\v m)\,
-  2\pi i l K_\alpha\v a_\alpha^\ast\,e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r} 
+  2\pi i l K_\alpha\v a_\alpha^\ast\,e^{2\pi i l K_\alpha\v a^\ast_\alpha\cdot \v r}.
 \end{align}
 The last term in Eqn.~\eqref{eqn:ana.error.force} is due to the
 self-interaction~\cite{cerutti2009staggered, ballenegger2011removal,
   neelov2010interlaced}, which does not depends on the coordinates of
 particles. Therefore, it can be calculated explicitly, and subtracted
 from the analytical force during the simulation. The computational cost of
-the self-interaction term is very low comparing with the SPME
+the self-interaction term is low comparing with the SPME
 force calculation. It is shown that the self-interaction  error
 dominate when charge density is low~\cite{cerutti2009staggered}.
 Therefore, we always remove the self-interaction term from
@@ -1462,7 +1468,7 @@ The nearest neighbor approximation to the correlation error is
 
 
 
-\subsection{Error estimate of the staggered mesh Ewald methods}
+\subsection{Error estimate of the staggered mesh Ewald method}
 
 The shift of the mesh can be effectively treated as shifting all
 particles on the opposite direction. Since the system is periodic,
@@ -1714,14 +1720,14 @@ estimates.
 The first two are artificially designed to verify the 
 homogeneity and inhomogeneity error estimates. The third is a 
 liquid-vapor equilibrium water system, in order to test the
-quality  of error estimates in inhomogeneous and correlated system.  
+quality  of the nearest neighbor approximation for the correlated system.  
 
 % The first is locally neutral and globally inhomogeneous
 % charge system. In the second system, the positive and negative charges
 % are well seperated, while the number density of the charges is
 % uniform.
 
-\subsection{Example 1: a locally neutral system.}
+\subsection{Example 1: A locally neutral inhomogeneous system}
 \label{sec:example1}
 
 \begin{figure}
@@ -1855,7 +1861,7 @@ differentiation. All the error estimates are consistent very well
 with the real errors.  The parameters are
 chosen to be the same for an easy comparison among the
 reciprocal space methods.  The errors of FFT
-based fast Ewald methods are 8 orders of magnitudes large than that of
+based fast Ewald methods are 8 orders of magnitudes larger than that of
 the truncated Ewald summation.
 This supports the argument addressed in
 Sec.~\ref{sec:error-ik}: the error introduced by truncating the
@@ -1916,7 +1922,7 @@ so the methods using less FFTs may have advantages on these machines.
 %   \label{fig:tmp2}
 % \end{figure}
 
-\subsection{Example 2: separated positive and negative charge}
+\subsection{Example 2: Separated positive and negative charge}
 \label{sec:example2}
 
 \begin{figure}
@@ -2017,7 +2023,7 @@ All the error estimates consist with the real errors.
 Stemming from the inhomogeneity error,
 two peaks of the direct error form at the interfacial
 regions, and are much larger than the error in bulk
-regions~\cite{wang2012}.
+regions.
 The reciprocal RMS errors only contain homogeneity contributions,
 due to the varnished mean error force.
 Similar with Example 1, the truncated Ewald
@@ -2054,7 +2060,7 @@ differentiation by more than 50\%.
 %   \label{fig:tmp4}
 % \end{figure}
 
-\subsection{Example 3: a water system in gas-liquid phase equilibrium}
+\subsection{Example 3: A water system in gas-liquid phase equilibrium}
 \label{sec:example3}
 
 This example studies the gas-liquid phase equilibrium of a water
@@ -2134,7 +2140,7 @@ In this case,
 all estimates without considering the correlation error
 deviate from the real errors.
 The quality of the direct
-part errors estimates is still good (though not perfect):
+part error estimate is still good (though not perfect):
 the error is overestimated by~50\%.
 The RMS errors of the ik-differentiation, analytical differentiation
 and the staggered mesh ik-/analytical differentiation are
@@ -2253,7 +2259,7 @@ Some minor contributions of the present work are:
 \item We explicitly gave the expression of the self-interaction term
   in the analytical differentiation, which was proved to dominant the
   force error in low density systems~\cite{cerutti2009staggered}.  The
-  expression helped removing the self-interaction term at a very low
+  expression helped removing the self-interaction term at a comparatively low
   computational cost.
 \item The error estimate showed that the staggered mesh Ewald
   (both ik- and analytical differentiation) are always more precise than
@@ -2286,7 +2292,7 @@ were impressively improved by including the first neighbor approximation
 to the correlation error.
 This indicated among all possible correlations,
 the rigid bond and angle correlation within one molecule
-was dominant.
+is dominant.
 
 This paper only focuses on the accuracy of the
 mentioned long-range algorithms.
