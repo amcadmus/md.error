@@ -1,0 +1,106 @@
+\documentclass[a4paper]{article}
+
+\begin{document}
+
+
+Reviewer  1 Comments:
+
+At a glance, the paper by Han Wang and colleagues appears to be another error estimator for P3M and related electrostatics methods.  But, after taking in the second paragraph it becomes clear that the authors are much more than mathematically inclined on the subject, and have indeed performed a useful service to the simulations community by incorporating the correlation of molecular charges into their error estimates.  It is probably not of tremendous practical benefit in an application like an Ewald parameter optimizer, as these programs can just repeat an electrostatic calculation on a representative snapshot of a simulation and estimate the error directly from the resulting forces.  However, it is of value to have a formal expression for the effect of charge correlations on these errors, and it may be instrumental in devising a pairwise approximate correction to electrostatic forces obtained from coarse grids.  The paper will require minor modifications so that the authors do not run afoul of various members of the community who hold strong opinions, but otherwise appears to be fit for publication.
+
+In the introduction, the authors should probably take the perspective that SPME is a special case of P3M.  In the opinions of the developers of SPME, the derivation differs from P3M although it leads to similar results, but even TA Darden acknowledges that the reciprocal space component of the non-smooth PME algorithm was inspired by P3M.  It is probably best to phrase SPME as such and not offend anyone.  The interlacing technique was first applied in the 1970s, as the authors have cited.  It was originally a means of reducing the memory requirements of these calculations—electrostatics on the two grids were solved serially.  Finally, the sentence “We prove that the error is decomposed…” should be changed to “We show that the error may be approximately decomposed…” to indicate that the estimator is, in the end, approximate but relevant to real systems.
+
+Cosmetically, the authors should combine the two figures showing the charge distributions of Examples 1 and 2, to ensure they appear side-by-side in the published version.
+
+The authors are reasonable to focus on the error arising from the reciprocal space approximations in the various P3M-related methods; the error arising from the direct space part of the calculation is simpler to assess.  However, because the authors give so much attention to SPME and the Staggered Mesh method which, as published, built on SPME, the authors should include some plot of the effect of grid spacing, Gaussian smoothing function width (Ewald coefficient), and interpolation order—these are the determinants of the accuracy of the reciprocal space calculation in these fast methods.  How does the estimator do in terms of getting the various trends correct?  What is the effect of correlated charge positions on the error and the estimates under changing interpolation order?  This is at the heart of the difference between ik- and analytic differentiation that the authors have otherwise carefully investigated.  It would also be helpful to see a plot of the error estimator’s performance as a function of the “near neighbor” definition.  Define near neighbors strictly by length, and plot the error estimator's accuracy as a continuous function of the near neighbor cutoff.  Extra credit for detailing the computation time as a function of the same parameter!
+
+One other point of discussion that might be relevant to this paper is the significance of the results on force-shifted coulomb interactions (see the simulation methods of Valerie Dagget and colleagues, or the Wolfe Method as reviewed in J. Chem. Phys. 124:234104 and elsewhere).  These methods, based strictly on local “electrostatic” interactions computed by modifying Coulomb’s law, are often trotted out as alternatives to Ewald summation though their application is still limited (which is, in the opinion of this reviewer, as it should be).  A principal assumption of these methods, which is often used circuitously to defend their application, is that real systems are locally neutral or that electrostatic correlations decay on the length scale of a few water layers.  Wang and colleagues may be able to analyze these methods, provide insights into the appearance of their validity, and identify their limitations rigorously.  A formal analysis of these methods is not required for this paper, but a possible direction the authors might explore in the future.
+
+The authors have done an excellent job of manipulating the mathematical foundations of these fast electrostatics methods.  With minor modifications and extensions of the study, which this reviewer does not intend to be onerous, this work should be published without further hindrance.
+
+
+
+
+
+Reviewer  2 Comments:
+
+The article deals with the derivation of an accurate error estimate for the Ewald and SPME mesh Ewald method that can be used for inhomogeneous and correlated charged systems.
+
+Error estimates for long range algorithms are always useful for periodic charged systems, since due to the long range nature, no exact calculation is possible, but one rather has to truncate the interactions at some point, and hence is forced to introduce errors.  Ideally, one would like to know for a specific method before doing an expensive calculation how to choose method parameters such that I reach a certain accuracy. Such error estimates have been developed in the past, but normally only under the assumption that the charges are randomly distributed. Here, the authors extend these error estimates to the very relevant cases of inhomogeneous and/or correlated systems.
+
+I find the article in general very readable and informative, and also suited for this journal. I have just a few comments that the authors might want to take into account in a minor revised version, before this article, in my opinion, is ready for publication:
+
+Page 7, line 23:
+The definition of a discrete set of nearest neighbors $\Omega_j$ might not readily avaible in all cases. For example, for simple liquids it may be more feasible to use the radial distribution function $g(r)$ up to a certain radius $r_c$, where $g(r) \approx 1$ for $r > c_c$. Then the sum has to be replaced by an integral over $r$.  Because of the close relation of $\rho^{(2)}$ and $g(r)$, the equations should be easy to adapt to such a notation.
+
+
+Page 15, line 45:
+I believe I saw that the for interlaced P$^3$M algorithm, which is very similar to the staggered SMPE algorithm,  the approximation to leading order of the error estimate is not justified, at least for higher precisions. This approximation could lead to a visible deviation from the true errors. In this context it might be useful to recalculate the numerical examples at higher precision. Usually, deviations start to be visible from about an RMS of $10^{-4}$.
+
+Page 16, line 34:
+Again, In the very similarly structured interlaced P$^3$M algorithm,  there are differences in accuracy between the $i\mathbf{k}$- and analytical differentiation at higher precisions.At this point it might not be justified  to assume that both can be treated in the same way. Similarly to the approximation of the $i\mathbf{k}$ error formula, it would be useful to do calculations at higher precision than those presented in the paper, and compare them
+
+The manuscript contains a few misprints, and the language could be polished on a few occasions by a native speaker.
+
+
+
+
+
+Reviewer 3 Comments:
+
+The authors have introduced a way to study electrostatic force errors in correlated systems by assuming that the dominant correlations are short-ranged which should usually work--they acknowledge this may not work for systems near phase transitions. I like this paper and would like to see it published after minor complaints are addressed.
+
+Firstly, the main contribution is to introduce a way to rapidly evaluate the force error, including that due to short ranged (bonded) pair interactions. Some readers may be confused by this, since bonded pair electrostatic interactions are considered to be NOT CALCULATED. However, in Ewald like methods the reciprocal contribution cannot be easily excluded for atom pairs and is surprisingly large even for bonded pairs. I think including this point somewhere in the discussion will help many readers. Note that errors for bonded pairs may be at least partly responsible for the disappointing performance of multiple time step methods. (they are high frequency in time)
+
+I am curious about the fact that correlation reduces force errors compared to usual estimates. I wonder if this is somehow due to electrostatic forces on bonded pairs being anti-correlated due to opposing charge signs e.g. on Oxygen and Hydrogens of H2O.
+
+Otherwise I have a number of minor grammatical and typo complaints:
+
+page 3 lines 9,14  The term "research" could be replaced by "papers" on line 9 and "paper" on 14
+another possibility is "manuscript"
+
+page 3 line 27 "which assume the error" $\rightarrow$ "which assumes the error"
+page 3 line 43 "nearest neighbor approximation of correlation error": insert "the" before "correlation"
+page 3 line 54 "we consider the system" $\rightarrow$ "we consider a system"
+page 3 line 55 "is composed by N" $\rightarrow$ "is composed of N"
+page 3 line 56 "the force of a" $\rightarrow$ "the force on a"
+page 4 line 18 "error estimate for the error force" seems like 1st "error' is unnecessary
+              perhaps replace with "following estimate for the error force"---also the term "error force" could be
+              replaced with "force error" here and elsewhere and I think the text would flow better
+page 6 line 16 "Most of the error estimates" $\rightarrow$ "Most previous error estimates"
+page 6 line 32: "Analog to" $\rightarrow$ "Analogous to"
+page 7 line 3 "A non-varnishing" $\rightarrow$ "A non-vanishing"
+page 7 line 10,11: "the locally neutral condition" $\rightarrow$ "the local neutrality condition"
+page 7 line 21: "which is still not applicable" $\rightarrow$ "which is still not tractable" or maybe "computationally feasible"
+page 7 line 46: "Then the second part" $\rightarrow$ "Then the second term". Also on line 54 "part" $\rightarrow$ "term"
+page 7 line 52: "small comparing with" $\rightarrow$ "small compared with" or "small in comparison with". same for pg 8 line 16
+page 8 line 42: "Ensemble averages is taken" $\rightarrow$ "Ensemble averages are taken"
+page 10 line 1: "ia the reciprocal" $\rightarrow$ "are the reciprocal"
+page 11 line 8: "becomes not applicable" as in page 7 line 21 I think "intractable" is better here
+page 11 line 10: "PME ans SPME" ; "ans" $\rightarrow$ "and"
+page 12 line 7: "only little" $\rightarrow$ "only a small"
+page 14 line 33: "It is shown that the self-interaction error dominate" $\rightarrow$ "It has been shown that the sel-interaction
+                   error dominates"
+page 17 line 49: "Twice as larger" $\rightarrow$ "Twice as large"
+page 18 line 43: "cut-offed" $\rightarrow$ "truncated"
+page 18 line 47: "are consistent very well with" $\rightarrow$ "are consistently accurate compared with" or "accurately track"
+page 18 line 60: "reduces by more than" $\rightarrow$ "is reduced by more than"
+page 19 line 34: "FFTs than" $\rightarrow$ "FFTs compared to"
+page 19 line 55: again "cut-offed" $\rightarrow$ "truncated"
+page 20 line 34: "was reported" $\rightarrow$ "were reported"
+page 20 line 35: "varnish" $\rightarrow$ "vanish"
+page 20 line 41: "error estimates consist with" $\rightarrow$ "error estimates are consistent with" or
+                                                  "error estimates accurately track"
+
+page 23 line 57: "composed by three additive" $\rightarrow$ "composed of three additive"
+page 24 line 11: "the error is of good property" Not clear what is meant. Do you mean total error is not
+                 contaminated by this?
+page 24 line 18: "was proved to dominant" $\rightarrow$ "was proved to dominate"
+page 24 line 19: "helped removing" $\rightarrow$ "helped to remove"
+page 24 line 35: "only one half FFTs" $\rightarrow$ "only one half the FFTs"
+page 27, line 15: "Inserting it into Eqn (17), also neglect" $\rightarrow$ "Inserting this into Eqn (17) while neglecting"
+
+
+
+
+
+\end{document}
