@@ -2,14 +2,42 @@
 
 \begin{document}
 
+\noindent
+Reviewer  1 Comments:\\
 
-Reviewer  1 Comments:
+\textit{ At a glance, the paper by Han Wang and colleagues appears to
+  be another error estimator for P3M and related electrostatics
+  methods.  But, after taking in the second paragraph it becomes clear
+  that the authors are much more than mathematically inclined on the
+  subject, and have indeed performed a useful service to the
+  simulations community by incorporating the correlation of molecular
+  charges into their error estimates.  It is probably not of
+  tremendous practical benefit in an application like an Ewald
+  parameter optimizer, as these programs can just repeat an
+  electrostatic calculation on a representative snapshot of a
+  simulation and estimate the error directly from the resulting
+  forces.  However, it is of value to have a formal expression for the
+  effect of charge correlations on these errors, and it may be
+  instrumental in devising a pairwise approximate correction to
+  electrostatic forces obtained from coarse grids.  The paper will
+  require minor modifications so that the authors do not run afoul of
+  various members of the community who hold strong opinions, but
+  otherwise appears to be fit for publication.
+}
 
-At a glance, the paper by Han Wang and colleagues appears to be another error estimator for P3M and related electrostatics methods.  But, after taking in the second paragraph it becomes clear that the authors are much more than mathematically inclined on the subject, and have indeed performed a useful service to the simulations community by incorporating the correlation of molecular charges into their error estimates.  It is probably not of tremendous practical benefit in an application like an Ewald parameter optimizer, as these programs can just repeat an electrostatic calculation on a representative snapshot of a simulation and estimate the error directly from the resulting forces.  However, it is of value to have a formal expression for the effect of charge correlations on these errors, and it may be instrumental in devising a pairwise approximate correction to electrostatic forces obtained from coarse grids.  The paper will require minor modifications so that the authors do not run afoul of various members of the community who hold strong opinions, but otherwise appears to be fit for publication.
+?
 
+\textit{
 In the introduction, the authors should probably take the perspective that SPME is a special case of P3M.  In the opinions of the developers of SPME, the derivation differs from P3M although it leads to similar results, but even TA Darden acknowledges that the reciprocal space component of the non-smooth PME algorithm was inspired by P3M.  It is probably best to phrase SPME as such and not offend anyone.  The interlacing technique was first applied in the 1970s, as the authors have cited.  It was originally a means of reducing the memory requirements of these calculations—electrostatics on the two grids were solved serially.  Finally, the sentence “We prove that the error is decomposed…” should be changed to “We show that the error may be approximately decomposed…” to indicate that the estimator is, in the end, approximate but relevant to real systems.
+}\\
 
+not done\\
+
+\textit{
 Cosmetically, the authors should combine the two figures showing the charge distributions of Examples 1 and 2, to ensure they appear side-by-side in the published version.
+}\\
+
+
 
 The authors are reasonable to focus on the error arising from the reciprocal space approximations in the various P3M-related methods; the error arising from the direct space part of the calculation is simpler to assess.  However, because the authors give so much attention to SPME and the Staggered Mesh method which, as published, built on SPME, the authors should include some plot of the effect of grid spacing, Gaussian smoothing function width (Ewald coefficient), and interpolation order—these are the determinants of the accuracy of the reciprocal space calculation in these fast methods.  How does the estimator do in terms of getting the various trends correct?  What is the effect of correlated charge positions on the error and the estimates under changing interpolation order?  This is at the heart of the difference between ik- and analytic differentiation that the authors have otherwise carefully investigated.  It would also be helpful to see a plot of the error estimator’s performance as a function of the “near neighbor” definition.  Define near neighbors strictly by length, and plot the error estimator's accuracy as a continuous function of the near neighbor cutoff.  Extra credit for detailing the computation time as a function of the same parameter!
 
@@ -57,13 +85,12 @@ Otherwise I have a number of minor grammatical and typo complaints:
 
 page 3 lines 9,14  The term "research" could be replaced by "papers" on line 9 and "paper" on 14
 another possibility is "manuscript"
-
 page 3 line 27 "which assume the error" $\rightarrow$ "which assumes the error"
 page 3 line 43 "nearest neighbor approximation of correlation error": insert "the" before "correlation"
 page 3 line 54 "we consider the system" $\rightarrow$ "we consider a system"
 page 3 line 55 "is composed by N" $\rightarrow$ "is composed of N"
 page 3 line 56 "the force of a" $\rightarrow$ "the force on a"
-page 4 line 18 "error estimate for the error force" seems like 1st "error' is unnecessary
+*page 4 line 18 "error estimate for the error force" seems like 1st "error' is unnecessary
               perhaps replace with "following estimate for the error force"---also the term "error force" could be
               replaced with "force error" here and elsewhere and I think the text would flow better
 page 6 line 16 "Most of the error estimates" $\rightarrow$ "Most previous error estimates"
@@ -92,7 +119,7 @@ page 20 line 41: "error estimates consist with" $\rightarrow$ "error estimates a
                                                   "error estimates accurately track"
 
 page 23 line 57: "composed by three additive" $\rightarrow$ "composed of three additive"
-page 24 line 11: "the error is of good property" Not clear what is meant. Do you mean total error is not
+*page 24 line 11: "the error is of good property" Not clear what is meant. Do you mean total error is not
                  contaminated by this?
 page 24 line 18: "was proved to dominant" $\rightarrow$ "was proved to dominate"
 page 24 line 19: "helped removing" $\rightarrow$ "helped to remove"
