@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nframe_real_error=1
+nframe_real_error=5
 nframe_traj=100
 config_pool=~/study/longRange.hetero/profile.test/config.pool
 water_template=$config_pool/water.one_peak
