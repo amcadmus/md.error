@@ -116,6 +116,55 @@ index1to3 (unsigned& input,
 // }
 
 
+class DirectionProfile_PiecewiseConst
+{
+  std::vector<double > boxsize;
+  unsigned nx, ny, nz, nele;
+  double   hx, hy, hz;
+  std::vector<double > profile, count;
+  int natoms;
+public:
+  inline unsigned index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const;
+  inline void     index1to3 (unsigned& input,
+			     unsigned& ix, unsigned& iy, unsigned& iz) const;
+public:
+  void reinit_xtc (const char * filename,
+		   const char * chargeTable,
+		   const int & nx,
+		   const int & ny,
+		   const int & nz,
+		   const float & start,
+		   const float & end);
+public:
+  const double & getProfile (const unsigned & ix,
+			     const unsigned & iy,
+			     const unsigned & iz) const
+      {return profile[index3to1(ix, iy, iz)];}
+  const unsigned & getNx () const {return nx;}
+  const unsigned & getNy () const {return ny;}
+  const unsigned & getNz () const {return nz;}
+  const std::vector<double > & getBox () const {return boxsize;}
+public:
+  void print_avg_x (const std::string & filename) const;
+};
+
+    
+unsigned DirectionProfile_PiecewiseConst::
+index3to1 (unsigned  ix, unsigned  iy, unsigned  iz) const
+{
+  return iz + nz * (iy + ny * ix);
+}
+
+void DirectionProfile_PiecewiseConst::
+index1to3 (unsigned& input,
+	   unsigned& ix, unsigned& iy, unsigned& iz) const
+{
+  unsigned tmp = input;
+  iz = tmp % (nz);
+  tmp = (tmp - iz) / nz;
+  iy = tmp % (ny);
+  ix =  (tmp - iy) / ny;
+}
 
 
 #endif
