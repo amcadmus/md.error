@@ -1,0 +1,1327 @@
+#include "ElectrostaticInteraction.h"
+#include "Polynominal.h"
+#include "VectorOperation.h"
+#include <numeric>
+#include <math.h>
+#include <time.h>
+
+// void print3D (const std::string & filename, 
+// 	      const int & K0, const int & K1, const int & K2,
+// 	      fftw_complex * v)
+// {
+//   FILE * fp = fopen (filename.c_str(), "w");
+//   for (int i = 0; i < K0; i ++){
+//     for (int j = 0; j < K1; j ++){
+//       for (int k = 0; k < K2; k ++){
+// 	fprintf (fp, "%.6e ", v[k+K2*(j+K1*i)][0]);
+//       }
+//       fprintf (fp, "\n");
+//     }
+//     fprintf (fp, "\n");
+//   }
+//   fclose (fp);
+// }
+
+
+ElectrostaticInteraction::ElectrostaticInteraction (const value_type & rcut, 
+						    const value_type & beta,
+						    const std::vector<std::vector<value_type > > & vecA,
+						    std::vector<PositionParticle * >::const_iterator begin_,
+						    std::vector<PositionParticle * >::const_iterator end_)
+    : dir (rcut, beta), begin(begin_), end(end_)
+{
+  std::vector<unsigned > K (3);
+  K[0] = 80;
+  K[1] = 80;
+  K[2] = 80;
+  rec.init (vecA, K, beta);
+}
+
+
+value_type ElectrostaticInteraction::applyInteractionCalPotential (const double & time, const BoxGeometry & box)
+{
+  double valueRec = 0;
+  double valueDir = 0;
+  double valueCor = 0;
+  clock_t tic = clock();
+  clock_t toc = clock();
+  
+
+  tic = clock();
+  for (std::vector<PositionParticle * >::const_iterator ppart = begin;
+       ppart != end; ){
+    valueDir += dir.applyInteractionCalPotential (time, 
+						  * static_cast<StandardParticle * >(*(ppart++)), 
+						  * static_cast<StandardParticle * >(*(ppart++)),
+						  box);
+  }
+  toc = clock();
+//   std::cout << "time dir potential and force: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+  
+  tic = clock();
+  for (std::vector<StandardParticle * >::const_iterator ppart = rec.getPartPool().begin();
+       ppart != rec.getPartPool().end(); ppart ++){
+    valueCor -= rec.getBeta() / sqrt(M_PI) * (*ppart)->charge() * (*ppart)->charge();
+  }
+
+
+  toc = clock();
+//   std::cout << "time cor potential: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+  tic = clock();
+  valueRec = rec.calPotential (time, box);
+  toc = clock();
+//   std::cout << "time rec potential: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+//   std::cout << "before: force Of part" << std::endl;
+//   std::cout << (rec.partPool[0])->r() [0] << '\t'
+// 	    << (rec.partPool[0])->r() [1] << '\t'
+// 	    << (rec.partPool[0])->r() [2] << '\n';
+//   std::cout << "the force is " << std::endl;
+//   std::cout << (rec.partPool[0])->f() [0] << '\t'
+// 	    << (rec.partPool[0])->f() [1] << '\t'
+// 	    << (rec.partPool[0])->f() [2] << '\n';
+//   std::cout << std::endl;
+  
+  tic = clock();
+  rec.applyInteraction (time, box);
+  toc = clock();
+//   std::cout << "time rec force: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+//   std::cout << "after: force Of part" << std::endl;
+//   std::cout << (rec.partPool[0])->r() [0] << '\t'
+// 	    << (rec.partPool[0])->r() [1] << '\t'
+// 	    << (rec.partPool[0])->r() [2] << '\n';
+//   std::cout << "the force is " << std::endl;
+//   std::cout << (rec.partPool[0])->f() [0] << '\t'
+// 	    << (rec.partPool[0])->f() [1] << '\t'
+// 	    << (rec.partPool[0])->f() [2] << '\n';
+
+//   std::cout << "rec: " << valueRec << '\n'
+// 	    << "dir: " << valueDir << '\n'
+// 	    << "cor: " << valueCor << '\n'
+// 	    << "total: " << valueCor + valueDir + valueRec << std::endl; 
+
+  return valueCor + valueDir + valueRec;
+}
+
+
+value_type ElectrostaticInteraction::calPotential (const double & time, const BoxGeometry & box)
+{
+  double valueRec = 0;
+  double valueDir = 0;
+  double valueCor = 0;
+
+  clock_t tic = clock();
+  valueRec = rec.calPotential (time, box);
+  clock_t toc = clock();
+  std::cout << "time rec: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+  tic = clock();
+  for (std::vector<PositionParticle * >::const_iterator ppart = begin;
+       ppart != end; ){
+    valueDir += dir.calPotential (time, 
+				  * static_cast<StandardParticle * >(*(ppart++)), 
+				  * static_cast<StandardParticle * >(*(ppart++)),
+				  box);
+  }
+  toc = clock();
+  std::cout << "time dir: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+  tic = clock();
+  for (std::vector<StandardParticle * >::const_iterator ppart = rec.getPartPool().begin();
+       ppart != rec.getPartPool().end(); ppart ++){
+    valueCor -= rec.getBeta() / sqrt(M_PI) * (*ppart)->charge() * (*ppart)->charge();
+  }
+  toc = clock();
+  std::cout << "time cor: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+  
+//   std::cout << "rec: " << valueRec << '\n'
+// 	    << "dir: " << valueDir << '\n'
+// 	    << "cor: " << valueCor << '\n'
+// 	    << "total: " << valueCor + valueDir + valueRec << std::endl;
+
+//   valueRec = rec.calPotential_tmp (time, box);
+  
+//   std::cout << "rec: " << valueRec << '\n'
+// 	    << "dir: " << valueDir << '\n'
+// 	    << "cor: " << valueCor << '\n'
+// 	    << "total: " << valueCor + valueDir + valueRec << std::endl; 
+
+  return valueCor + valueDir + valueRec;
+}
+
+
+ElectrostaticInteraction_dir::ElectrostaticInteraction_dir (const value_type & rcut_,
+							    const value_type & beta_)
+    : rcut (rcut_), beta (beta_), rcut2 (rcut*rcut), sqrtPIi (1./sqrt(M_PI))
+{
+}
+  
+
+value_type ElectrostaticInteraction_dir::calPotential (const double & time,
+						       const StandardParticle & p0, 
+						       const StandardParticle & p1,
+						       const BoxGeometry & boxg)
+{
+  std::vector<value_type > diff (NDIM, 0);
+  VectorOperation::add (diff, 1., p0.r(), -1., p1.r());
+  boxg.shortestImage (time, diff);
+  value_type rr = VectorOperation::dot (diff, diff);
+  if (rr > rcut2) return 0;
+  value_type r = sqrt(rr);
+  return 0.5 * p0.charge() * p1.charge() * erfc(beta * r) / r;
+}
+
+void ElectrostaticInteraction_dir::applyInteraction (const double & time,
+						     StandardParticle & p0, 
+						     StandardParticle & p1, 
+						     const BoxGeometry & boxg)
+{
+  std::vector<value_type > diff (NDIM, 0);
+  VectorOperation::add (diff, 1., p0.r(), -1., p1.r());
+  boxg.shortestImage (time, diff);
+  value_type rr = VectorOperation::dot (diff, diff);
+  if (rr > rcut2) return;
+  value_type r = sqrt (rr);
+  value_type ri = 1./r;
+  value_type scale= (erfc(beta*r) * ri + 2*beta*sqrtPIi * exp (-beta*beta*rr)) / rr;
+  scale *= p0.charge() * p1.charge();
+  VectorOperation::add(p0.f(), +scale, diff);
+  VectorOperation::add(p1.f(), -scale, diff);
+}
+
+
+value_type ElectrostaticInteraction_dir::applyInteractionCalPotential (const double & time,
+								       StandardParticle & p0, 
+								       StandardParticle & p1, 
+								       const BoxGeometry & boxg)
+{
+  std::vector<value_type > diff (NDIM, 0);
+  VectorOperation::add (diff, 1., p0.r(), -1., p1.r());
+  boxg.shortestImage (time, diff);
+  value_type rr = VectorOperation::dot (diff, diff);
+  if (rr > rcut2) return 0;
+  value_type r = sqrt (rr);
+  value_type ri = 1./r;
+  value_type erfcBetaR = erfc (beta * r);
+  value_type qiqj = p0.charge() * p1.charge();
+  value_type scale= (erfcBetaR * ri + 2*beta*sqrtPIi*exp(-beta*beta*rr)) / rr * qiqj;
+  VectorOperation::add(p0.f(), +scale, diff);
+  VectorOperation::add(p1.f(), -scale, diff);
+  
+  return 0.5 * qiqj * erfcBetaR * ri;
+}
+
+  
+
+value_type ElectrostaticInteraction_rec::calPotential_tmp (const double & time, 
+							   const BoxGeometry & box)
+{
+  int M = 16;
+  double poten = 0;
+  for (int m0 = -M; m0 <= M; m0 ++){
+    for (int m1 = -M; m1 <= M; m1 ++){
+      for (int m2 = -M; m2 <= M; m2 ++){
+	if (m0 == 0 && m1 == 0 && m2 == 0 ) continue;
+	std::vector<value_type > m (3);
+	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+	double mm = VectorOperation::dot (m, m);
+	double expp = exp (-M_PI * M_PI * mm / beta / beta) / mm;
+	std::vector<value_type > sm (2);
+	sm[0] = 0;
+	sm[1] = 0;
+	for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+	     ppart != partPool.end(); ppart ++){
+	  double tmp = 2 * M_PI * VectorOperation::dot (m, (*ppart)->r());
+	  sm[0] += (*ppart)->charge() * cos(tmp);
+	  sm[1] += (*ppart)->charge() * sin(tmp);
+	}
+	poten += expp * (sm[0] * sm[0] + sm[1] * sm[1]);
+      }
+    }
+  }
+  poten /= 2 * M_PI * V;
+  return poten;
+}
+
+
+void ElectrostaticInteraction_rec::calForce_tmp (const double & time, 
+						 const BoxGeometry & box)
+{
+  int M = 32;
+  std::vector<double > force (3, 0);
+  std::cout << "alalalalallalalalal" << std::endl;
+  
+  for (int m0 = -M; m0 <= M; m0 ++){
+    for (int m1 = -M; m1 <= M; m1 ++){
+      for (int m2 = -M; m2 <= M; m2 ++){
+	if (m0 == 0 && m1 == 0 && m2 == 0 ) continue;
+	std::vector<value_type > m (3);
+	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+	double mm = VectorOperation::dot (m, m);
+	double expp = exp (-M_PI * M_PI * mm / beta / beta) / mm;
+	double sum = 0;
+	for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+	     ppart != partPool.end(); ppart ++){
+	  std::vector<double > diff = (partPool[0])->r();
+	  VectorOperation::add (diff, -1, (*ppart)->r());
+	  double tmp = 2 * M_PI * VectorOperation::dot (m, diff);
+	  sum += (*ppart)->charge() * sin (tmp);
+	}
+	sum *= (partPool[0])->charge();
+	force[0] += expp * sum * 2./ V * m[0];
+	force[1] += expp * sum * 2./ V * m[1];
+	force[2] += expp * sum * 2./ V * m[2];
+      }
+    }
+  }
+  std::cout << "tmp force calculater: force Of part" << std::endl;
+  std::cout << (partPool[0])->r() [0] << '\t'
+	    << (partPool[0])->r() [1] << '\t'
+	    << (partPool[0])->r() [2] << '\n';
+  std::cout << "the force is " << std::endl;
+  std::cout << force [0] << '\t'
+	    << force [1] << '\t'
+	    << force [2] << '\n';
+  std::cout << std::endl;
+  
+}
+
+void ElectrostaticInteraction_rec::applyInteraction (const double & time, 
+						     const BoxGeometry & box)
+{
+//   calForce_tmp (time, box);
+
+  Polynominalp3 W2p;
+  unsigned p = W2p.getP();
+  unsigned size = K[0] * K[1] * K[2];
+  value_type sizei = 1./size;
+
+  clock_t tic, toc;
+  
+  tic = clock();
+  for (unsigned i = 0; i < size; i ++){
+    QFProdPhiF0[i][0] = QF[i][0] * phiF0[i][0] - QF[i][1] * phiF0[i][1];
+    QFProdPhiF0[i][1] = QF[i][0] * phiF0[i][1] + QF[i][1] * phiF0[i][0];
+    QFProdPhiF1[i][0] = QF[i][0] * phiF1[i][0] - QF[i][1] * phiF1[i][1];
+    QFProdPhiF1[i][1] = QF[i][0] * phiF1[i][1] + QF[i][1] * phiF1[i][0];
+    QFProdPhiF2[i][0] = QF[i][0] * phiF2[i][0] - QF[i][1] * phiF2[i][1];
+    QFProdPhiF2[i][1] = QF[i][0] * phiF2[i][1] + QF[i][1] * phiF2[i][0];
+  }
+  fftw_execute (backwardQFProdPhiF0);
+  fftw_execute (backwardQFProdPhiF1);
+  fftw_execute (backwardQFProdPhiF2);
+  
+  for (unsigned i = 0; i < size; i ++){
+    QConvPhi0[i][0] *= sizei;
+    QConvPhi1[i][0] *= sizei;
+    QConvPhi2[i][0] *= sizei;
+  }
+  toc = clock();
+//   std::cout << "time rec force conv part: " << (toc - tic) / double(CLOCKS_PER_SEC) << std::endl;
+
+  tic = clock();
+  double ii0 = 1./ value_type(K[0]);
+  double ii1 = 1./ value_type(K[1]);
+  double ii2 = 1./ value_type(K[2]);
+  bool fast = ((2*p < K[0]) && (2*p < K[1]) && (2*p < K[2]));
+  
+  for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+       ppart != partPool.end(); ppart ++){
+    std::vector<value_type > u(3);
+    u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*ppart)->r());
+    u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*ppart)->r());
+    u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*ppart)->r());
+    int A0 = -int(floor ((u[0]+p) * ii0)) ;
+    int A1 = -int(floor ((u[1]+p) * ii1)) ;
+    int A2 = -int(floor ((u[2]+p) * ii2)) ;
+    value_type posi0 = u[0] + p + A0 * K[0];
+    value_type posi1 = u[1] + p + A1 * K[1];
+    value_type posi2 = u[2] + p + A2 * K[2];
+    value_type tmp0 = 0;
+    value_type tmp1 = 0;
+    value_type tmp2 = 0;
+    std::vector<double > force (3, 0);
+    
+    if (!fast){
+      int count = 0;
+      for (unsigned k0 = 0; k0 < K[0]; k0 ++){
+	for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+	  for (unsigned k2 = 0; k2 < K[2]; k2 ++, count ++){
+	    value_type n0 = floor ((u[0] - k0 + p) * ii0);
+	    if (u[0] - k0 + p - n0 * K[0] < 2*p){
+	      W2p.value (u[0] - k0 - n0 * K[0], tmp0);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n1 = floor ((u[1] - k1 + p) * ii1);
+	    if (u[1] - k1 + p - n1 * K[1] < 2*p){
+	      W2p.value (u[1] - k1 - n1 * K[1], tmp1);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n2 = floor ((u[2] - k2 + p) * ii2);
+	    if (u[2] - k2 + p - n2 * K[2] < 2*p){
+	      W2p.value (u[2] - k2 - n2 * K[2], tmp2);
+	    }
+	    else{
+	      continue;
+	    }
+	    force[0] += QConvPhi0[count][0] * tmp0 * tmp1 * tmp2;
+	    force[1] += QConvPhi1[count][0] * tmp0 * tmp1 * tmp2;
+	    force[2] += QConvPhi2[count][0] * tmp0 * tmp1 * tmp2;
+	  }
+	}
+      }
+    }
+    else {
+      if (posi0 < 2*p){
+	for (unsigned k0 = 0; k0 < unsigned (ceil(posi0)); k0 ++){
+	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);	      	
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+	for (unsigned k0 = unsigned(ceil(posi0+K[0]-2*p)); k0 < K[0]; k0 ++){
+	  W2p.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+      else{
+	for (unsigned k0 = unsigned(ceil(posi0-2*p)); k0 < unsigned(ceil(posi0)); k0 ++){
+	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  unsigned index = k2+K[2]*(k1+K[1]*k0);
+		  force[0] += QConvPhi0[index][0] * tmp0 * tmp1 * tmp2;
+		  force[1] += QConvPhi1[index][0] * tmp0 * tmp1 * tmp2;
+		  force[2] += QConvPhi2[index][0] * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    
+
+
+    (*ppart)->f()[0] += (*ppart)->charge() * force[0];
+    (*ppart)->f()[1] += (*ppart)->charge() * force[1];
+    (*ppart)->f()[2] += (*ppart)->charge() * force[2];
+  }
+  toc = clock();
+//   std::cout << "time rec force loop part: " << (toc - tic) / double(CLOCKS_PER_SEC) << std::endl;
+
+}
+
+
+
+//       if (posi0 < 2*p){
+// 	for (unsigned k0 = 0; k0 < unsigned (ceil(posi0)); k0 ++){
+// 	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	  ...;
+// 	}
+// 	for (unsigned k0 = unsigned(ceil(posi0+K[0]-2*p)); k0 < K[0]; k0 ++){
+// 	  W2p.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+// 	  ...;
+// 	}
+//       }
+//       else{
+// 	for (unsigned k0 = unsigned(ceil(posi0-2*p)); k0 < unsigned(ceil(posi0)); k0 ++){
+// 	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	  ...;
+// 	}
+//       }
+
+
+
+//       if (posi1 < 2*p){
+// 	for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+// 	  W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	  ...;
+// 	}
+// 	for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+// 	  W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+// 	  ...;
+// 	}
+//       }
+//       else{
+// 	for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+// 	  W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	  ...;
+// 	}
+//       }
+
+		
+//       if (posi2 < 2*p){
+// 	for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+// 	  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	  unsigned index = k2+K[2]*(k1+K[1]*k0);
+// 	  force[0] += QConvPhi0[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[1] += QConvPhi1[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[2] += QConvPhi2[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	}
+// 	for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+// 	  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+// 	  unsigned index = k2+K[2]*(k1+K[1]*k0);
+// 	  force[0] += QConvPhi0[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[1] += QConvPhi1[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[2] += QConvPhi2[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	}
+//       }
+//       else{
+// 	for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+// 	  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	  unsigned index = k2+K[2]*(k1+K[1]*k0);
+// 	  force[0] += QConvPhi0[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[1] += QConvPhi1[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	  force[2] += QConvPhi2[index][0] * (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+// 	}
+//       }
+
+
+
+value_type ElectrostaticInteraction_rec::calPotential (const double & time, 
+						       const BoxGeometry & box)
+{
+  clock_t tic = clock();
+  calQ();
+  clock_t toc = clock();
+//   std::cout << "time rec potential Q part: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+  tic = clock();
+  fftw_execute (forwardQ);
+  for (unsigned i = 0; i < K[0]*K[1]*K[2]; i ++){
+    QFProdPsiF[i][0] = QF[i][0] * psiF[i][0] - QF[i][1] * psiF[i][1];
+    QFProdPsiF[i][1] = QF[i][0] * psiF[i][1] + QF[i][1] * psiF[i][0];
+  }
+  fftw_execute (backwardQFProdPsiF);
+  int size = K[0]*K[1]*K[2];
+  value_type sizei = 1./size;
+  value_type value = 0;
+  for (int i = 0; i < size; i ++){
+    value += Q[i][0] * QConvPsi [i][0] * sizei;
+  }
+  value *= 0.5;
+  toc = clock();
+//   std::cout << "time rec potential conv part: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+  return value;
+}
+
+
+
+void ElectrostaticInteraction_rec::calQ ()
+{
+//   std::cerr << "K0  " << K[0] << std::endl;
+  
+  Polynominalp3 W2p;
+  unsigned p = W2p.getP();
+
+  for (unsigned i = 0; i < K[0] * K[1] * K[2]; i ++){
+    Q[i][0] = 0;
+  }
+  double ii0 = 1./ value_type(K[0]);
+  double ii1 = 1./ value_type(K[1]);
+  double ii2 = 1./ value_type(K[2]);
+  bool fast = ((2*p < K[0]) && (2*p < K[1]) && (2*p < K[2]));
+  for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+       ppart != partPool.end(); ppart ++){
+    std::vector<value_type > u(3);
+    u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*ppart)->r());
+    u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*ppart)->r());
+    u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*ppart)->r());
+    int A0 = -int(floor ((u[0]+p) * ii0)) ;
+    int A1 = -int(floor ((u[1]+p) * ii1)) ;
+    int A2 = -int(floor ((u[2]+p) * ii2)) ;
+    value_type posi0 = u[0] + p + A0 * K[0];
+    value_type posi1 = u[1] + p + A1 * K[1];
+    value_type posi2 = u[2] + p + A2 * K[2];
+    value_type tmp0 = 0;
+    value_type tmp1 = 0;
+    value_type tmp2 = 0;
+
+    if (!fast){
+      int count = 0;
+      for (unsigned k0 = 0; k0 < K[0]; k0 ++){
+	for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+	  for (unsigned k2 = 0; k2 < K[2]; k2 ++, count ++){
+	    value_type n0 = floor ((u[0] - k0 + p) * ii0);
+	    if (u[0] - k0 + p - n0 * K[0] < 2*p){
+	      W2p.value (u[0] - k0 - n0 * K[0], tmp0);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n1 = floor ((u[1] - k1 + p) * ii1);
+	    if (u[1] - k1 + p - n1 * K[1] < 2*p){
+	      W2p.value (u[1] - k1 - n1 * K[1], tmp1);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n2 = floor ((u[2] - k2 + p) * ii2);
+	    if (u[2] - k2 + p - n2 * K[2] < 2*p){
+	      W2p.value (u[2] - k2 - n2 * K[2], tmp2);
+	    }
+	    else{
+	      continue;
+	    }
+	    Q[count][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+	  }
+	}
+      }
+    }
+    else {
+      if (posi0 < 2*p){
+	unsigned top0 = unsigned (ceil(posi0));
+	for (unsigned k0 = 0; k0 < top0; k0 ++){
+	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    unsigned top1 = unsigned (ceil(posi1));
+	    for (unsigned k1 = 0; k1 < top1; k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+	for (unsigned k0 = unsigned(ceil(posi0+K[0]-2*p)); k0 < K[0]; k0 ++){
+	  W2p.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    unsigned top1 = unsigned (ceil(posi1));
+	    for (unsigned k1 = 0; k1 < top1; k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+      else{
+	for (unsigned k0 = unsigned(ceil(posi0-2*p)); k0 < unsigned(ceil(posi0)); k0 ++){
+	  W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < 2*p){
+	    unsigned top1 = unsigned (ceil(posi1));
+	    for (unsigned k1 = 0; k1 < top1; k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+	      W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+	      if (posi2 < 2*p){
+		unsigned top2 = unsigned (ceil(posi2));
+		for (unsigned k2 = 0; k2 < top2; k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+		  W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    
+//     if (posi0 < 2*p){
+//       unsigned top0 = unsigned (ceil(posi0));
+//       for (unsigned k0 = 0; k0 < top0; k0 ++){
+// 	W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	...;
+//       }
+//       for (unsigned k0 = unsigned(ceil(posi0+K[0]-2*p)); k0 < K[0]; k0 ++){
+// 	W2p.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+// 	...;
+//       }
+//     }
+//     else{
+//       for (unsigned k0 = unsigned(ceil(posi0-2*p)); k0 < unsigned(ceil(posi0)); k0 ++){
+// 	W2p.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	...;
+//       }
+//     }
+
+
+
+//     if (posi1 < 2*p){
+//       unsigned top1 = unsigned (ceil(posi1));
+//       for (unsigned k1 = 0; k1 < top1; k1 ++){
+// 	W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	...;
+//       }
+//       for (unsigned k1 = unsigned(ceil(posi1+K[1]-2*p)); k1 < K[1]; k1 ++){
+// 	W2p.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+// 	...;
+//       }
+//     }
+//     else{
+//       for (unsigned k1 = unsigned(ceil(posi1-2*p)); k1 < unsigned(ceil(posi1)); k1 ++){
+// 	W2p.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	...;
+//       }
+//     }
+
+		
+//     if (posi2 < 2*p){
+//       unsigned top2 = unsigned (ceil(posi2));
+//       for (unsigned k2 = 0; k2 < top2; k2 ++){
+// 	W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+//       }
+//       for (unsigned k2 = unsigned(ceil(posi2+K[2]-2*p)); k2 < K[2]; k2 ++){
+// 	W2p.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+// 	Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+//       }
+//     }
+//     else{
+//       for (unsigned k2 = unsigned(ceil(posi2-2*p)); k2 < unsigned(ceil(posi2)); k2 ++){
+// 	W2p.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	Q[k2+K[2]*(k1+K[1]*k0)][0] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+//       }
+//     }
+
+  }
+}
+
+void ElectrostaticInteraction_rec::calV()
+{
+  V = vecA[0][0] * (vecA[1][1]*vecA[2][2] - vecA[2][1]*vecA[1][2]) - 
+      vecA[0][1] * (vecA[1][0]*vecA[2][2] - vecA[2][0]*vecA[1][2]) +
+      vecA[0][2] * (vecA[1][0]*vecA[2][1] - vecA[2][0]*vecA[1][1]);
+//   std::cout << "V  " << V << std::endl;
+}
+  
+void ElectrostaticInteraction_rec::calAStar ()
+{
+  vecAStar.resize (3);
+  vecAStar[0].resize (3);
+  vecAStar[1].resize (3);
+  vecAStar[2].resize (3);
+  vecAStar[0][0] =( vecA[1][1]*vecA[2][2] - vecA[2][1]*vecA[1][2]) / V;
+  vecAStar[1][1] =( vecA[0][0]*vecA[2][2] - vecA[2][0]*vecA[0][2]) / V;
+  vecAStar[2][2] =( vecA[0][0]*vecA[1][1] - vecA[1][0]*vecA[0][1]) / V;
+  vecAStar[1][0] =(-vecA[1][0]*vecA[2][2] + vecA[2][0]*vecA[1][2]) / V;
+  vecAStar[2][0] =( vecA[1][0]*vecA[2][1] - vecA[2][0]*vecA[1][1]) / V;
+  vecAStar[0][1] =(-vecA[0][1]*vecA[2][2] + vecA[2][1]*vecA[0][2]) / V;
+  vecAStar[2][1] =(-vecA[0][0]*vecA[2][1] + vecA[2][0]*vecA[0][1]) / V;
+  vecAStar[0][2] =( vecA[0][1]*vecA[1][2] - vecA[1][1]*vecA[0][2]) / V;
+  vecAStar[1][2] =(-vecA[0][0]*vecA[1][2] + vecA[1][0]*vecA[0][2]) / V;
+//   std::cout << vecAStar[0][0] << '\t'
+// 	    << vecAStar[0][1] << '\t'
+// 	    << vecAStar[0][2] << '\n'
+// 	    << vecAStar[1][0] << '\t'
+// 	    << vecAStar[1][1] << '\t'
+// 	    << vecAStar[1][2] << '\n'
+// 	    << vecAStar[2][0] << '\t'
+// 	    << vecAStar[2][1] << '\t'
+// 	    << vecAStar[2][2] << '\n';
+}
+
+void ElectrostaticInteraction_rec::calPsiFPhiF ()
+{
+  fftw_complex * C;
+  fftw_complex * D0;
+  fftw_complex * D1;
+  fftw_complex * D2;
+  fftw_complex * psi;
+  fftw_complex * phi0;
+  fftw_complex * phi1;
+  fftw_complex * phi2;
+  fftw_plan forwardPsi;
+  fftw_plan forwardPhi0;
+  fftw_plan forwardPhi1;
+  fftw_plan forwardPhi2;
+  fftw_plan backwardC;
+  fftw_plan backwardD0;
+  fftw_plan backwardD1;
+  fftw_plan backwardD2;
+  psi =	(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  phi0 =(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  phi1 =(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  phi2 =(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  C =	(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  D0 =	(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  D1 =	(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  D2 =	(fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+  value_type oneOverPiV = 1. / (M_PI * V);
+  value_type scale = M_PI * M_PI / beta / beta;
+  value_type minousTwoOverV = -2./V;
+  
+  C[0][0] = 0;
+  C[0][1] = 0;
+  D0[0][0] = 0;
+  D0[0][1] = 0;
+  D1[0][0] = 0;
+  D1[0][1] = 0;
+  D2[0][0] = 0;
+  D2[0][1] = 0;
+  
+  std::vector<value_type > m (3);
+  for (unsigned i = 0; i < K[0]; i ++){
+    int ip;
+    if (i <= K[0] / 2){
+      ip = i;
+    }
+    else{
+      ip = i - K[0];
+    }
+    for (unsigned j = 0; j < K[1]; j ++){
+      int jp;
+      if (j <= K[1] / 2){
+	jp = j;
+      }
+      else {
+	jp = j - K[1];
+      }
+      for (unsigned k = 0; k < K[2]; k ++){
+	if (k == 0 && j == 0 && i == 0){
+	  continue;
+	}
+	int kp;
+	if (k <= K[2] / 2){
+	  kp = k;
+	}
+	else {
+	  kp = k - K[2];
+	}
+	m[0] = ip * vecAStar[0][0] + jp * vecAStar[1][0] + kp * vecAStar[2][0];
+	m[1] = ip * vecAStar[0][1] + jp * vecAStar[1][1] + kp * vecAStar[2][1];
+	m[2] = ip * vecAStar[0][2] + jp * vecAStar[1][2] + kp * vecAStar[2][2];
+	value_type mm = VectorOperation::dot (m, m);
+	value_type expm = exp (-scale * mm) / mm;
+	C[k + K[2] * (j + K[1] * i)][0] = oneOverPiV * expm;
+	C[k + K[2] * (j + K[1] * i)][1] = 0;
+	D0[k + K[2] * (j + K[1] * i)][0] = 0;
+	D0[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[0];
+	D1[k + K[2] * (j + K[1] * i)][0] = 0;
+	D1[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[1];
+	D2[k + K[2] * (j + K[1] * i)][0] = 0;
+	D2[k + K[2] * (j + K[1] * i)][1] = minousTwoOverV * expm * m[2];
+      }
+    }
+  }
+
+  backwardC = fftw_plan_dft_3d (K[0], K[1], K[2], C, psi, 1, FFTW_MEASURE);
+  backwardD0 = fftw_plan_dft_3d (K[0], K[1], K[2], D0, phi0, 1, FFTW_MEASURE);
+  backwardD1 = fftw_plan_dft_3d (K[0], K[1], K[2], D1, phi1, 1, FFTW_MEASURE);
+  backwardD2 = fftw_plan_dft_3d (K[0], K[1], K[2], D2, phi2, 1, FFTW_MEASURE);
+  forwardPsi = fftw_plan_dft_3d (K[0], K[1], K[2], psi, psiF, -1, FFTW_MEASURE);
+  forwardPhi0 = fftw_plan_dft_3d (K[0], K[1], K[2], phi0, phiF0, -1, FFTW_MEASURE);
+  forwardPhi1 = fftw_plan_dft_3d (K[0], K[1], K[2], phi1, phiF1, -1, FFTW_MEASURE);
+  forwardPhi2 = fftw_plan_dft_3d (K[0], K[1], K[2], phi2, phiF2, -1, FFTW_MEASURE);
+
+  fftw_execute (backwardC);
+  fftw_execute (backwardD0);
+  fftw_execute (backwardD1);
+  fftw_execute (backwardD2);
+  fftw_execute (forwardPsi);
+  fftw_execute (forwardPhi0);
+  fftw_execute (forwardPhi1);
+  fftw_execute (forwardPhi2);
+
+  fftw_destroy_plan (backwardC);
+  fftw_destroy_plan (backwardD0);
+  fftw_destroy_plan (backwardD1);
+  fftw_destroy_plan (backwardD2);
+  fftw_destroy_plan (forwardPsi);
+  fftw_destroy_plan (forwardPhi0);
+  fftw_destroy_plan (forwardPhi1);
+  fftw_destroy_plan (forwardPhi2);
+  
+  fftw_free (C);
+  fftw_free (D0);
+  fftw_free (D1);
+  fftw_free (D2);
+  fftw_free (psi);
+  fftw_free (phi0);
+  fftw_free (phi1);
+  fftw_free (phi2);
+//   std::cout << "beta  " << beta << "  V  " << V << std::endl;
+}
+
+
+void ElectrostaticInteraction_rec::init (const std::vector<std::vector<value_type > > &vecA_, 
+					 const std::vector<unsigned > K_,
+					 const value_type & beta_)
+{
+  K = K_;
+  beta = beta_;
+  vecA = vecA_;
+  calV();
+  calAStar();  
+
+  int size = K[0] * K[1] * K[2];
+  Q	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  psiF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  phiF0	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  phiF1	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  phiF2	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  QF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  QFProdPsiF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  QFProdPhiF0	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  QFProdPhiF1	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  QFProdPhiF2	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  QConvPsi	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  QConvPhi0	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  QConvPhi1	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+  QConvPhi2	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * size);
+
+  forwardQ	= fftw_plan_dft_3d (K[0], K[1], K[2], Q  , QF  , -1, FFTW_MEASURE);
+  backwardQFProdPsiF = fftw_plan_dft_3d (K[0], K[1], K[2], QFProdPsiF, QConvPsi, 1, FFTW_MEASURE);
+  backwardQFProdPhiF0 = fftw_plan_dft_3d (K[0], K[1], K[2], QFProdPhiF0, QConvPhi0, 1, FFTW_MEASURE);
+  backwardQFProdPhiF1 = fftw_plan_dft_3d (K[0], K[1], K[2], QFProdPhiF1, QConvPhi1, 1, FFTW_MEASURE);
+  backwardQFProdPhiF2 = fftw_plan_dft_3d (K[0], K[1], K[2], QFProdPhiF2, QConvPhi2, 1, FFTW_MEASURE);
+
+  calPsiFPhiF();
+
+  for (int i = 0; i < size; i ++){
+    Q[i][1] = 0;
+  }
+}
+
+void ElectrostaticInteraction_rec::clear()
+{
+  fftw_free (Q);
+  fftw_free (QF);
+  fftw_free (phiF0);
+  fftw_free (phiF1);
+  fftw_free (phiF2);
+  fftw_free (QFProdPsiF);
+  fftw_free (QFProdPhiF0);
+  fftw_free (QFProdPhiF1);
+  fftw_free (QFProdPhiF2);
+  fftw_free (QConvPsi);
+  fftw_free (QConvPhi0);
+  fftw_free (QConvPhi1);
+  fftw_free (QConvPhi2);
+  
+  fftw_destroy_plan (forwardQ);
+  fftw_destroy_plan (backwardQFProdPsiF);
+  fftw_destroy_plan (backwardQFProdPhiF0);
+  fftw_destroy_plan (backwardQFProdPhiF1);
+  fftw_destroy_plan (backwardQFProdPhiF2);
+}
+
+void ElectrostaticInteraction_rec::registerParticle (StandardParticle & p)
+{
+  partPool.push_back (&p);
+}

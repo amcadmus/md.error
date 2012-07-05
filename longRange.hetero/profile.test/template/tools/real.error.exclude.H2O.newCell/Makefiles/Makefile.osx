@@ -1,0 +1,93 @@
+#tmp_sources =	mk_mem.cpp main.cpp norm_var.cpp rhs.cpp pub_func.cpp solution.cpp
+#tmp_sources :=	$(wildcard *.cpp)
+#MKL_INCLUDE=	/home/wang/intel/mkl/8.0.1/include
+#MKL_LINK= 	-L/home/wang/intel/mkl/8.0.1/lib/32 -lmkl_lapack -lmkl_ia32 -lguide -lpthread 
+boost-include-path=	/Users/dommert/local/boost/include/boost-1_36
+boost-lib-path=		/Users/dommert/local/boost/lib
+boost-lib-option=	-lboost_program_options-xgcc40-mt-1_36
+
+sources := 	$(wildcard src/*.cpp)
+tmp_sources =  	$(notdir $(sources))
+tmp_depends = 	$(subst .cpp,.d,$(tmp_sources))
+tmp_objects = 	$(subst .cpp,.o,$(tmp_sources))
+
+sources_dir =	src
+depends_dir = 	depends
+objects_dir = 	lib
+application_dir=app
+include_dirs = 	./include $(MKL_INCLUDE) $(boost-include-path)
+vpath %.h 	$(include_dirs)
+#vpath %.cpp 	$(sources_dir)
+#vpath %.d	$(depends_dir)
+#vpath %.o	$(objects_dir)
+
+#sources = 	$(addprefix $(sources_dir)/,$(tmp_sources))
+depends = 	$(addprefix $(depends_dir)/,$(tmp_depends))
+objects = 	$(addprefix $(objects_dir)/,$(tmp_objects))
+
+CXX:=		g++
+CXXFLAGS +=	-g -O3 -Wall -march=i386 -I/Users/dommert/local/fftw3-32bit/include -L/Users/dommert/local/fftw3-32bit/lib 
+CXXFLAGS += 	$(CFLAGS)
+CXXFLAGS += 	$(addprefix -I ,$(include_dirs))
+
+target:		runTest genRefF optimize
+
+runTest:	$(objects) $(application_dir)/runTest.o
+	$(call make-target,$@,$^)
+genRefF:	$(objects) $(application_dir)/genRefF.o
+	$(call make-target,$@,$^)
+optimize:	$(objects) $(application_dir)/optimize.o
+	$(call make-target,$@,$^)
+
+
+.PHONY: clean
+clean:
+	rm -f $(objects) $(depends) $(application_dir)/*.o runTest genRefF optimize
+
+ifneq "$(MAKECMDGOALS)" "clean"
+-include $(depends)
+endif
+
+# $(call make-depend,source-file,object-file,depend-file)
+define make-depend
+  $(CXX)	-MM		\
+		-MF $3		\
+		-MP		\
+		-MT $2		\
+		$(CXXFLAGS)	\
+		$(TARGET_ARCH)	\
+		$1
+endef
+# $(call make-target,target,object-files-or-lib-files)
+define make-target
+  $(CXX) $(CXXFLAGS) -o $1 $2 -lm $(MKL_LINK) -lfftw3 -L$(boost-lib-path) $(boost-lib-option)
+endef
+
+
+$(objects_dir)/%.o:	$(sources_dir)/%.cpp
+	$(call make-depend,$<,$@,$(depends_dir)/$(notdir $(subst .o,.d,$@)))
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<	
+$(application_dir)/%.o:	$(application_dir)/%.cpp
+	$(call make-depend,$<,$@,$(depends_dir)/$(notdir $(subst .o,.d,$@)))
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,796 @@
+#include "ElectrostaticInteraction.h"
+#include "Polynominal.h"
+#include "VectorOperation.h"
+#include <numeric>
+#include <math.h>
+#include <time.h>
+#include "Integral1D.h"
+#include "ToolBox.h"
+
+
+
+
+void ElectrostaticInteraction_rec_FBSpline::calForce_tmp (const double & time, 
+							  const BoxGeometry & box,
+							  std::vector<double > & force)
+{
+  int M = 16;
+  force.clear();
+  force.resize(3, 0);
+  std::cout << "tmp force calculater" << std::endl;
+  
+  for (int m0 = -M; m0 <= M; m0 ++){
+    for (int m1 = -M; m1 <= M; m1 ++){
+      for (int m2 = -M; m2 <= M; m2 ++){
+	if (m0 == 0 && m1 == 0 && m2 == 0 ) continue;
+	std::vector<value_type > m (3);
+	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+	double mm = VectorOperation::dot (m, m);
+	double expp = exp (-M_PI * M_PI * mm / beta / beta) / mm;
+	double sum = 0;
+	for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+	     ppart != partPool.end(); ppart ++){
+	  std::vector<double > diff = (partPool[0])->r();
+	  VectorOperation::add (diff, -1, (*ppart)->r());
+	  double tmp = 2 * M_PI * VectorOperation::dot (m, diff);
+	  sum += (*ppart)->charge() * sin (tmp);
+	}
+	sum *= (partPool[0])->charge();
+	force[0] += expp * sum * 2./ V * m[0];
+	force[1] += expp * sum * 2./ V * m[1];
+	force[2] += expp * sum * 2./ V * m[2];
+      }
+    }
+  }
+//   std::cout << "tmp force calculater: force Of part" << std::endl;
+//   std::cout << (partPool[0])->r() [0] << '\t'
+// 	    << (partPool[0])->r() [1] << '\t'
+// 	    << (partPool[0])->r() [2] << '\n';
+  std::cout << "the force is " << std::endl;
+  std::cout << force [0] << '\t'
+	    << force [1] << '\t'
+	    << force [2] << '\n';
+  std::cout << std::endl;
+  
+}
+
+value_type ElectrostaticInteraction_rec_FBSpline::calPotential_tmp (const double & time, 
+								    const BoxGeometry & box)
+{
+  int M = 32; 
+  std::cout << "cal poten exact with beta " << beta << std::endl;
+  double poten = 0;
+  for (int m0 = -M; m0 <= M; m0 ++){
+    for (int m1 = -M; m1 <= M; m1 ++){
+      for (int m2 = -M; m2 <= M; m2 ++){
+	if (m0 == 0 && m1 == 0 && m2 == 0 ) continue;
+	std::vector<value_type > m (3);
+	m[0] = m0 * vecAStar[0][0] + m1 * vecAStar[1][0] + m2 * vecAStar[2][0];
+	m[1] = m0 * vecAStar[0][1] + m1 * vecAStar[1][1] + m2 * vecAStar[2][1];
+	m[2] = m0 * vecAStar[0][2] + m1 * vecAStar[1][2] + m2 * vecAStar[2][2];
+	double mm = VectorOperation::dot (m, m);
+	double expp = exp (-M_PI * M_PI * mm / beta / beta) / mm;
+	std::vector<value_type > sm (2);
+	sm[0] = 0;
+	sm[1] = 0;
+	for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+	     ppart != partPool.end(); ppart ++){
+	  double tmp = 2 * M_PI * VectorOperation::dot (m, (*ppart)->r());
+	  sm[0] += (*ppart)->charge() * cos(tmp);
+	  sm[1] += (*ppart)->charge() * sin(tmp);
+	}
+	poten += expp * (sm[0] * sm[0] + sm[1] * sm[1]);
+      }
+    }
+  }
+  poten /= 2 * M_PI * V;
+  return poten;
+}
+
+
+
+
+void ElectrostaticInteraction_rec_FBSpline::applyInteraction (const double & time, 
+							     const BoxGeometry & box)
+{
+  //   calForce_tmp (time, box);
+
+  unsigned n = Mn.getN();
+
+  unsigned size = K[0] * K[1] * K[2];
+  double sizei = 1./size;
+
+  clock_t tic, toc;
+  
+  tic = clock();
+  toc = clock();
+  //   std::cout << "time rec force conv part: " << (toc - tic) / double(CLOCKS_PER_SEC) << std::endl;
+
+  tic = clock();
+  double ii0 = 1./ value_type(K[0]);
+  double ii1 = 1./ value_type(K[1]);
+  double ii2 = 1./ value_type(K[2]);
+  bool fast = ((n < K[0]) && (n < K[1]) && (n < K[2]));
+  
+  for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+       ppart != partPool.end(); ppart ++){
+    std::vector<value_type > u(3);
+    u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*ppart)->r());
+    u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*ppart)->r());
+    u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*ppart)->r());
+    int A0 = -int(floor ((u[0]) * ii0)) ;
+    int A1 = -int(floor ((u[1]) * ii1)) ;
+    int A2 = -int(floor ((u[2]) * ii2)) ;
+    value_type posi0 = u[0] + A0 * K[0];
+    value_type posi1 = u[1] + A1 * K[1];
+    value_type posi2 = u[2] + A2 * K[2];
+    value_type tmp0 = 0;
+    value_type tmp1 = 0;
+    value_type tmp2 = 0;
+    value_type dtmp0 = 0;
+    value_type dtmp1 = 0;
+    value_type dtmp2 = 0;
+    std::vector<double > force (3, 0);
+    
+    if (fast){
+      int count = 0;
+      for (unsigned k0 = 0; k0 < K[0]; k0 ++){
+	for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+	  for (unsigned k2 = 0; k2 < K[2]; k2 ++, count ++){
+	    value_type n0 = floor ((u[0] - k0) * ii0);
+	    if (u[0] - k0 - n0 * K[0] < n){
+	      Mn.value (u[0] - k0 - n0 * K[0], tmp0);
+	      Mn.derivative (u[0] - k0 - n0 * K[0], dtmp0);
+// 	      std::cout << tmp0 <<'\t' << dtmp0 << std::endl;
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n1 = floor ((u[1] - k1) * ii1);
+	    if (u[1] - k1 - n1 * K[1] < n){
+	      Mn.value (u[1] - k1 - n1 * K[1], tmp1);
+	      Mn.derivative (u[1] - k1 - n1 * K[1], dtmp1);
+// 	      std::cout << tmp1 <<'\t' << dtmp1 << std::endl;
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n2 = floor ((u[2] - k2) * ii2);
+	    if (u[2] - k2 - n2 * K[2] < n){
+	      Mn.value (u[2] - k2 - n2 * K[2], tmp2);
+	      Mn.derivative (u[2] - k2 - n2 * K[2], dtmp2);
+// 	      std::cout << tmp2 <<'\t' << dtmp2 << std::endl;
+// 	      exit(1);
+	    }
+	    else{
+	      continue;
+	    }
+	    VectorOperation::add (force, -QConvPsi[count] * sizei * (*ppart)->charge() * dtmp0 * tmp1 * tmp2 * K[0], vecAStar[0]);
+	    VectorOperation::add (force, -QConvPsi[count] * sizei * (*ppart)->charge() * tmp0 * dtmp1 * tmp2 * K[1], vecAStar[1]);
+	    VectorOperation::add (force, -QConvPsi[count] * sizei * (*ppart)->charge() * tmp0 * tmp1 * dtmp2 * K[2], vecAStar[2]);
+	  }
+	}
+      }
+    }
+    else{
+
+
+    }
+
+    (*ppart)->f()[0] += 1 * force[0];
+    (*ppart)->f()[1] += 1 * force[1];
+    (*ppart)->f()[2] += 1 * force[2];
+  }
+}
+
+
+
+//       if (posi0 < n){
+// 	for (unsigned k0 = 0; k0 < unsigned (ceil(posi0)); k0 ++){
+// 	  Mn.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	  Mn.derivative (u[0] - k0 + A0 * K[0], dtmp0);
+// 	  ...;
+// 	}
+// 	for (unsigned k0 = unsigned(ceil(posi0+K[0]-n)); k0 < K[0]; k0 ++){
+// 	  Mn.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+// 	  Mn.derivative (u[0] - k0 + (A0+1) * K[0], dtmp0);
+// 	  ...;
+// 	}
+//       }
+//       else{
+// 	for (unsigned k0 = unsigned(ceil(posi0-n)); k0 < unsigned(ceil(posi0)); k0 ++){
+// 	  Mn.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	  Mn.derivative (u[0] - k0 + A0 * K[0], dtmp0);
+// 	  ...;
+// 	}
+//       }
+
+//       if (posi1 < n){
+// 	for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+// 	  Mn.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	  Mn.derivative (u[1] - k1 + A1 * K[1], dtmp1);
+// 	  ...;
+// 	}
+// 	for (unsigned k1 = unsigned(ceil(posi1+K[1]-n)); k1 < K[1]; k1 ++){
+// 	  Mn.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+// 	  Mn.derivative (u[1] - k1 + (A1+1) * K[1], dtmp1);
+// 	  ...;
+// 	}
+//       }
+//       else{
+// 	for (unsigned k1 = unsigned(ceil(posi1-n)); k1 < unsigned(ceil(posi1)); k1 ++){
+// 	  Mn.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	  Mn.derivative (u[1] - k1 + A1 * K[1], dtmp1);
+// 	  ...;
+// 	}
+//       }
+		
+//       if (posi2 < n){
+// 	for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+// 	  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	  Mn.derivative (u[2] - k2 + A2 * K[2], dtmp2);
+// 	  unsigned index = k2+K[2]*(k1+K[1]*k0);
+// 	  force[0] += QConvPsi[index] * dtmp0 * tmp1 * tmp2;
+// 	  force[1] += QConvPsi[index] * tmp0 * dtmp1 * tmp2;
+// 	  force[2] += QConvPsi[index] * tmp0 * tmp1 * dtmp2;
+// 	}
+// 	for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+// 	  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+// 	  Mn.derivative (u[2] - k2 + (A2+1) * K[2], dtmp2);
+// 	  unsigned index = k2+K[2]*(k1+K[1]*k0);
+// 	  force[0] += QConvPsi[index] * dtmp0 * tmp1 * tmp2;
+// 	  force[1] += QConvPsi[index] * tmp0 * dtmp1 * tmp2;
+// 	  force[2] += QConvPsi[index] * tmp0 * tmp1 * dtmp2;
+// 	}
+//       }
+//       else{
+// 	for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+// 	  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	  Mn.derivative (u[2] - k2 + A2 * K[2], dtmp2);
+// 	  unsigned index = k2+K[2]*(k1+K[1]*k0);
+// 	  force[0] += QConvPsi[index] * dtmp0 * tmp1 * tmp2;
+// 	  force[1] += QConvPsi[index] * tmp0 * dtmp1 * tmp2;
+// 	  force[2] += QConvPsi[index] * tmp0 * tmp1 * dtmp2;
+// 	}
+//       }
+
+
+
+
+value_type ElectrostaticInteraction_rec_FBSpline::calPotential (const double & time, 
+							       const BoxGeometry & box)
+{
+  clock_t tic = clock();
+  calQ();
+  clock_t toc = clock();
+  //   std::cout << "time rec potential Q part: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+  tic = clock();
+  fftw_execute (forwardQ);
+  for (unsigned i = 0; i < K[0]*K[1]*(K[2]/2+1); i ++){
+    QFProdPsiF[i][0] = QF[i][0] * psiF[i][0] - QF[i][1] * psiF[i][1];
+    QFProdPsiF[i][1] = QF[i][0] * psiF[i][1] + QF[i][1] * psiF[i][0];
+  }
+  fftw_execute (backwardQFProdPsiF);
+  int size = K[0]*K[1]*K[2];
+  value_type sizei = 1./size;
+  value_type value = 0;
+  for (int i = 0; i < size; i ++){
+    value += Q[i] * QConvPsi [i] * sizei;
+  }
+  value *= 0.5;
+  toc = clock();
+  //   std::cout << "time rec potential conv part: " << double(toc - tic)/CLOCKS_PER_SEC << std::endl;
+
+  return value;
+}
+
+
+void ElectrostaticInteraction_rec_FBSpline::calQ ()
+{
+  //   std::cerr << "K0  " << K[0] << std::endl;
+  
+  unsigned n = Mn.getN();
+
+  for (unsigned i = 0; i < K[0] * K[1] * K[2]; i ++){
+    Q[i] = 0;
+  }
+  double ii0 = 1./ value_type(K[0]);
+  double ii1 = 1./ value_type(K[1]);
+  double ii2 = 1./ value_type(K[2]);
+  bool fast = ((n < K[0]) && (n < K[1]) && (n < K[2]));
+  for (std::vector<StandardParticle * >::iterator ppart = partPool.begin();
+       ppart != partPool.end(); ppart ++){
+    std::vector<value_type > u(3);
+    u[0] = K[0] * VectorOperation::dot (vecAStar[0], (*ppart)->r());
+    u[1] = K[1] * VectorOperation::dot (vecAStar[1], (*ppart)->r());
+    u[2] = K[2] * VectorOperation::dot (vecAStar[2], (*ppart)->r());
+    int A0 = -int(floor ((u[0]) * ii0)) ;
+    int A1 = -int(floor ((u[1]) * ii1)) ;
+    int A2 = -int(floor ((u[2]) * ii2)) ;
+    value_type posi0 = u[0] + A0 * K[0];
+    value_type posi1 = u[1] + A1 * K[1];
+    value_type posi2 = u[2] + A2 * K[2];
+    value_type tmp0 = 0;
+    value_type tmp1 = 0;
+    value_type tmp2 = 0;
+
+    int count = 0;
+    if (!fast){
+      for (unsigned k0 = 0; k0 < K[0]; k0 ++){
+	for (unsigned k1 = 0; k1 < K[1]; k1 ++){
+	  for (unsigned k2 = 0; k2 < K[2]; k2 ++, count ++){
+	    value_type n0 = floor ((u[0] - k0) * ii0);
+	    if (u[0] - k0 - n0 * K[0] < n){
+	      Mn.value (u[0] - k0 - n0 * K[0], tmp0);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n1 = floor ((u[1] - k1) * ii1);
+	    if (u[1] - k1 - n1 * K[1] < n){
+	      Mn.value (u[1] - k1 - n1 * K[1], tmp1);
+	    }
+	    else{
+	      continue;
+	    }
+	    value_type n2 = floor ((u[2] - k2) * ii2);
+	    if (u[2] - k2 - n2 * K[2] < n){
+	      Mn.value (u[2] - k2 - n2 * K[2], tmp2);
+	    }
+	    else{
+	      continue;
+	    }
+	    Q[count] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+	  }
+	}
+      }
+    }
+    else {
+      if (posi0 < n){
+	for (unsigned k0 = 0; k0 < unsigned (ceil(posi0)); k0 ++){
+	  Mn.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < n){
+	    for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+	      Mn.value (u[1] - k1 + A1 * K[1], tmp1);	      
+	      if (posi2 < n){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+		  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-n)); k1 < K[1]; k1 ++){
+	      Mn.value (u[1] - k1 + (A1+1) * K[1], tmp1);	      
+	      if (posi2 < n){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+		  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-n)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      Mn.value (u[1] - k1 + A1 * K[1], tmp1);	      
+	      if (posi2 < n){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+		  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+	for (unsigned k0 = unsigned(ceil(posi0+K[0]-n)); k0 < K[0]; k0 ++){
+	  Mn.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+	  if (posi1 < n){
+	    for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+	      Mn.value (u[1] - k1 + A1 * K[1], tmp1);	      
+	      if (posi2 < n){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+		  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-n)); k1 < K[1]; k1 ++){
+	      Mn.value (u[1] - k1 + (A1+1) * K[1], tmp1);	      
+	      if (posi2 < n){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+		  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-n)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      Mn.value (u[1] - k1 + A1 * K[1], tmp1);	      
+	      if (posi2 < n){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+		  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+      else{
+	for (unsigned k0 = unsigned(ceil(posi0-n)); k0 < unsigned(ceil(posi0)); k0 ++){
+	  Mn.value (u[0] - k0 + A0 * K[0], tmp0);
+	  if (posi1 < n){
+	    for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+	      Mn.value (u[1] - k1 + A1 * K[1], tmp1);	      
+	      if (posi2 < n){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+		  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	    for (unsigned k1 = unsigned(ceil(posi1+K[1]-n)); k1 < K[1]; k1 ++){
+	      Mn.value (u[1] - k1 + (A1+1) * K[1], tmp1);	      
+	      if (posi2 < n){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+		  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	  else{
+	    for (unsigned k1 = unsigned(ceil(posi1-n)); k1 < unsigned(ceil(posi1)); k1 ++){
+	      Mn.value (u[1] - k1 + A1 * K[1], tmp1);	      
+	      if (posi2 < n){
+		for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+		for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+		  Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	      else{
+		for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+		  Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+		  Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  } 
+}
+
+
+
+
+//     if (posi0 < n){
+//       for (unsigned k0 = 0; k0 < unsigned (ceil(posi0)); k0 ++){
+// 	Mn.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	...;
+//       }
+//       for (unsigned k0 = unsigned(ceil(posi0+K[0]-n)); k0 < K[0]; k0 ++){
+// 	Mn.value (u[0] - k0 + (A0+1) * K[0], tmp0);
+// 	...;
+//       }
+//     }
+//     else{
+//       for (unsigned k0 = unsigned(ceil(posi0-n)); k0 < unsigned(ceil(posi0)); k0 ++){
+// 	Mn.value (u[0] - k0 + A0 * K[0], tmp0);
+// 	...;
+//       }
+//     }
+
+//     if (posi1 < n){
+//       for (unsigned k1 = 0; k1 < unsigned (ceil(posi1)); k1 ++){
+// 	Mn.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	...;
+//       }
+//       for (unsigned k1 = unsigned(ceil(posi1+K[1]-n)); k1 < K[1]; k1 ++){
+// 	Mn.value (u[1] - k1 + (A1+1) * K[1], tmp1);
+// 	...;
+//       }
+//     }
+//     else{
+//       for (unsigned k1 = unsigned(ceil(posi1-n)); k1 < unsigned(ceil(posi1)); k1 ++){
+// 	Mn.value (u[1] - k1 + A1 * K[1], tmp1);
+// 	...;
+//       }
+//     }
+		
+//     if (posi2 < n){
+//       for (unsigned k2 = 0; k2 < unsigned (ceil(posi2)); k2 ++){
+// 	Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+//       }
+//       for (unsigned k2 = unsigned(ceil(posi2+K[2]-n)); k2 < K[2]; k2 ++){
+// 	Mn.value (u[2] - k2 + (A2+1) * K[2], tmp2);
+// 	Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+//       }
+//     }
+//     else{
+//       for (unsigned k2 = unsigned(ceil(posi2-n)); k2 < unsigned(ceil(posi2)); k2 ++){
+// 	Mn.value (u[2] - k2 + A2 * K[2], tmp2);
+// 	Q[k2+K[2]*(k1+K[1]*k0)] += (*ppart)->charge() * tmp0 * tmp1 * tmp2;
+//       }
+//     }
+
+
+
+void ElectrostaticInteraction_rec_FBSpline::init (const std::vector<std::vector<value_type > > &vecA_, 
+						 const std::vector<unsigned > K_,
+						 const value_type & beta_)
+{
+  K = K_;
+  beta = beta_;
+  vecA = vecA_;
+  calV();
+  calAStar();
+  calB ();
+
+  int size = K[0] * K[1] * K[2];
+  int sizeHalf = K[0] * K[1] * (K[2] / 2 + 1);
+  Q	= (value_type *) fftw_malloc (sizeof(value_type) * size);
+  psiF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  QF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  QFProdPsiF	= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * sizeHalf);
+  QConvPsi	= (value_type *) fftw_malloc (sizeof(value_type) * size);
+
+  forwardQ	= fftw_plan_dft_r2c_3d (K[0], K[1], K[2], Q  , QF  , FFTW_MEASURE);
+  backwardQFProdPsiF = fftw_plan_dft_c2r_3d (K[0], K[1], K[2], QFProdPsiF, QConvPsi, FFTW_MEASURE);
+
+  calPsiFPhiF();
+}
+
+
+void ElectrostaticInteraction_rec_FBSpline::clear()
+{
+  fftw_free (Q);
+  fftw_free (QF);
+  fftw_free (psiF);
+  fftw_free (QFProdPsiF);
+  fftw_free (QConvPsi);
+  
+  fftw_destroy_plan (forwardQ);
+}
+
+
+void ElectrostaticInteraction_rec_FBSpline::calB ()
+{
+  unsigned n = Mn.getN();
+  b0.resize (K[0]);
+  b1.resize (K[1]);
+  b2.resize (K[2]);
+
+  for (unsigned m = 0; m < K[0]; ++m){
+    std::vector<value_type > fenzi (2);
+    value_type tmp = 2 * M_PI * (n-1) * m / value_type (K[0]);
+    fenzi[0] = cos(tmp);
+    fenzi[1] = sin(tmp);
+    std::vector<value_type > fenmu (2, 0);
+    for (unsigned k = 0; k < n-1; k ++){
+      value_type scale ;
+      Mn.value (k+1, scale);
+      tmp = 2 * M_PI * m * k / value_type (K[0]);
+      fenmu[0] += scale * cos(tmp);
+      fenmu[1] += scale * sin(tmp);
+    }
+    std::vector<value_type > btmp (2);
+    value_type scale = 1./ (fenmu[0]*fenmu[0] + fenmu[1]*fenmu[1]);
+    btmp[0] = scale * (fenzi[0] * fenmu[0] + fenzi[1] * fenmu[1]);
+    btmp[1] = scale * (fenzi[1] * fenmu[0] - fenzi[0] * fenmu[1]);
+    b0[m] = btmp[0]*btmp[0] + btmp[1]*btmp[1];
+  }
+  
+  for (unsigned m = 0; m < K[1]; ++m){
+    std::vector<value_type > fenzi (2);
+    value_type tmp = 2 * M_PI * (n-1) * m / value_type (K[1]);
+    fenzi[0] = cos(tmp);
+    fenzi[1] = sin(tmp);
+    std::vector<value_type > fenmu (2, 0);
+    for (unsigned k = 0; k < n-1; k ++){
+      value_type scale ;
+      Mn.value (k+1, scale);
+      tmp = 2 * M_PI * m * k / value_type (K[1]);
+      fenmu[0] += scale * cos(tmp);
+      fenmu[1] += scale * sin(tmp);
+    }
+    std::vector<value_type > btmp (2);
+    value_type scale = 1./ (fenmu[0]*fenmu[0] + fenmu[1]*fenmu[1]);
+    btmp[0] = scale * (fenzi[0] * fenmu[0] + fenzi[1] * fenmu[1]);
+    btmp[1] = scale * (fenzi[1] * fenmu[0] - fenzi[0] * fenmu[1]);
+    b1[m] = btmp[0]*btmp[0] + btmp[1]*btmp[1];
+  }
+  
+  for (unsigned m = 0; m < K[2]; ++m){
+    std::vector<value_type > fenzi (2);
+    value_type tmp = 2 * M_PI * (n-1) * m / value_type (K[2]);
+    fenzi[0] = cos(tmp);
+    fenzi[1] = sin(tmp);
+    std::vector<value_type > fenmu (2, 0);
+    for (unsigned k = 0; k < n-1; k ++){
+      value_type scale ;
+      Mn.value (k+1, scale);
+      tmp = 2 * M_PI * m * k / value_type (K[2]);
+      fenmu[0] += scale * cos(tmp);
+      fenmu[1] += scale * sin(tmp);
+    }
+    std::vector<value_type > btmp (2); 
+    value_type scale = 1./ (fenmu[0]*fenmu[0] + fenmu[1]*fenmu[1]);
+    btmp[0] = scale * (fenzi[0] * fenmu[0] + fenzi[1] * fenmu[1]);
+    btmp[1] = scale * (fenzi[1] * fenmu[0] - fenzi[0] * fenmu[1]);
+    b2[m] = btmp[0]*btmp[0] + btmp[1]*btmp[1];
+  }
+  
+}
+
+
+
+
+void ElectrostaticInteraction_rec_FBSpline::calPsiFPhiF ()
+{
+  fftw_complex * psiFtmp;
+  
+  psiFtmp= (fftw_complex *) fftw_malloc (sizeof(fftw_complex) * K[0]*K[1]*K[2]);
+
+  value_type oneOverPiV = 1. / (M_PI * V);
+  value_type scale = M_PI * M_PI / beta / beta;
+  unsigned size = K[0]*K[1]*K[2];
+  
+  psiFtmp[0][0] = 0;
+  psiFtmp[0][1] = 0;
+  std::vector<value_type > m (3);
+  for (unsigned i = 0; i < K[0]; i ++){
+    int ip ;    
+    if (i <= K[0] / 2) ip = i;
+    else ip = i - K[0];
+    for (unsigned j = 0; j < K[1]; j ++){
+      int jp;      
+      if (j <= K[1] / 2) jp = j;
+      else jp = j - K[1];
+      for (unsigned k = 0; k < K[2]; k ++){
+	int kp ;        
+	if (k <= K[2] / 2) kp = k;
+	else kp = k - K[2];
+
+	if (kp == 0 && jp == 0 && ip == 0) continue;
+	m[0] = ip * vecAStar[0][0] + jp * vecAStar[1][0] + kp * vecAStar[2][0];
+	m[1] = ip * vecAStar[0][1] + jp * vecAStar[1][1] + kp * vecAStar[2][1];
+	m[2] = ip * vecAStar[0][2] + jp * vecAStar[1][2] + kp * vecAStar[2][2];
+	value_type mm = VectorOperation::dot (m, m);
+	value_type expm = exp (-scale * mm) / mm * b0[i] * b1[j] * b2[k];
+	psiFtmp[k + K[2] * (j + K[1] * i)][0] = oneOverPiV * expm * size;
+	psiFtmp[k + K[2] * (j + K[1] * i)][1] = 0;
+      }
+    }
+  }
+  
+
+  for (unsigned i = 0; i < K[0]; ++ i){
+    for (unsigned j = 0; j < K[1]; ++ j){
+      for (unsigned k = 0; k < K[2]/2+1; ++ k){
+	psiF[k+(K[2]/2+1)*(j+K[1]*i)][0] = psiFtmp[k+K[2]*(j+K[1]*i)][0];
+	psiF[k+(K[2]/2+1)*(j+K[1]*i)][1] = psiFtmp[k+K[2]*(j+K[1]*i)][1];
+      }
+    }
+  }
+
+  fftw_free (psiFtmp);
+}
+
+
+
+
+void ElectrostaticInteraction_rec_FBSpline::calV()
+{
+  V = vecA[0][0] * (vecA[1][1]*vecA[2][2] - vecA[2][1]*vecA[1][2]) - 
+    vecA[0][1] * (vecA[1][0]*vecA[2][2] - vecA[2][0]*vecA[1][2]) +
+    vecA[0][2] * (vecA[1][0]*vecA[2][1] - vecA[2][0]*vecA[1][1]);
+}
+  
+void ElectrostaticInteraction_rec_FBSpline::calAStar ()
+{
+  vecAStar.resize (3);
+  vecAStar[0].resize (3);
+  vecAStar[1].resize (3);
+  vecAStar[2].resize (3);
+  vecAStar[0][0] =( vecA[1][1]*vecA[2][2] - vecA[2][1]*vecA[1][2]) / V;
+  vecAStar[1][1] =( vecA[0][0]*vecA[2][2] - vecA[2][0]*vecA[0][2]) / V;
+  vecAStar[2][2] =( vecA[0][0]*vecA[1][1] - vecA[1][0]*vecA[0][1]) / V;
+  vecAStar[1][0] =(-vecA[1][0]*vecA[2][2] + vecA[2][0]*vecA[1][2]) / V;
+  vecAStar[2][0] =( vecA[1][0]*vecA[2][1] - vecA[2][0]*vecA[1][1]) / V;
+  vecAStar[0][1] =(-vecA[0][1]*vecA[2][2] + vecA[2][1]*vecA[0][2]) / V;
+  vecAStar[2][1] =(-vecA[0][0]*vecA[2][1] + vecA[2][0]*vecA[0][1]) / V;
+  vecAStar[0][2] =( vecA[0][1]*vecA[1][2] - vecA[1][1]*vecA[0][2]) / V;
+  vecAStar[1][2] =(-vecA[0][0]*vecA[1][2] + vecA[1][0]*vecA[0][2]) / V;
+}
+
+
