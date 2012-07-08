@@ -53,6 +53,7 @@ private:
   void calKernel();
   void calTm (const std::vector<double > & grx,
 	      const std::vector<double > & grv,
+	      const double & grup,
 	      fftw_complex * out);
   void calTm (const std::vector<std::vector<double > > & dirs,
 	      const std::vector<double > & charges,
@@ -62,7 +63,8 @@ private:
 		const double & rhoMol,
 		const string & fileOO,
 		const string & fileOH,
-		const string & fileHH);
+		const string & fileHH,
+		const double & grup);
   inline int  index3to1 (const IntVectorType i,
 			 const IntVectorType N) const;
   inline void index1to3 (const unsigned input,
@@ -121,7 +123,8 @@ public:
 	       const double & rhoMol,
 	       const string & fileOO,
 	       const string & fileOH,
-	       const string & fileHH);
+	       const string & fileHH,
+	       const double & grup);
   void calError (const DensityProfile_PiecewiseConst & dp,
 		 const double charge = 1.);
   void print_error (const std::string & file) const;

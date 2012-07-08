@@ -112,7 +112,8 @@ reinit (const double & beta_,
 	const double & rhoMol,
 	const string & fileOO,
 	const string & fileOH,
-	const string & fileHH)
+	const string & fileHH,
+	const double & grup)
 {
   freeAll();
   
@@ -188,7 +189,7 @@ reinit (const double & beta_,
 
   printf ("# reinit: start build TO and TH ...");
   fflush (stdout);
-  calTOTH (moles, charges, rhoMol, fileOO, fileOH, fileHH);
+  calTOTH (moles, charges, rhoMol, fileOO, fileOH, fileHH, grup);
   printf (" done\n");  
   fflush (stdout);
 
@@ -417,6 +418,7 @@ calKernel()
 void ErrorEstimate_SPME_St_H2O_gr::
 calTm (const std::vector<double > & grx,
        const std::vector<double > & grv,
+       const double & grup,
        fftw_complex * out)
 {
   int nele = K.x * K.y * K.z;
@@ -434,7 +436,9 @@ calTm (const std::vector<double > & grx,
   Interpolation::piecewiseLinear (grx, grv, ps);
   ErrorEstimate_SPME_St_H2O_Function_gr fgr(ps, 1.);
   Integral1D<ErrorEstimate_SPME_St_H2O_Function_gr, double> inte;
-
+  double myUp = grup;
+  if (grx.back() < myUp) myUp = grx.back();
+  
   for (idx.x = 0; idx.x < K.x; ++idx.x){
     if (idx.x > (K.x >> 1)) posi.x = idx.x - K.x;
     else posi.x = idx.x;
@@ -455,7 +459,7 @@ calTm (const std::vector<double > & grx,
 	fgr.setm (mvalue);
 	out[index][0] = inte.cal_int (Integral1DInfo::Gauss3,
 				      fgr,
-				      grx.front(), grx.back(),
+				      grx.front(), myUp,
 				      global_inte_gr_prec,
 				      int(4.* mvalue * (grx.back() - grx.front())));
 	if ((idx.x == (K.x >> 1) && cleanX) ||
@@ -583,7 +587,8 @@ calTOTH (const std::vector<std::vector<double > > & atoms,
 	 const double & rhoMol,
 	 const string & fileOO,
 	 const string & fileOH,
-	 const string & fileHH)
+	 const string & fileHH,
+	 const double & grup)
 {
   int natom = atoms.size();
   if ((charges.size()) < unsigned(natom)){
@@ -637,20 +642,20 @@ calTOTH (const std::vector<std::vector<double > > & atoms,
   std::vector<double > grx;
   std::vector<double > grv;
   loadRDFFile (fileOO, grx, grv);
-  calTm (grx, grv, buff);
+  calTm (grx, grv, grup, buff);
   for (int ii = 0; ii < nele; ++ii){
     TO[ii][0] += myRhoO * myChargeO * buff[ii][0];
   }
 
   loadRDFFile (fileOH, grx, grv);
-  calTm (grx, grv, buff);
+  calTm (grx, grv, grup, buff);
   for (int ii = 0; ii < nele; ++ii){
     TO[ii][0] += myRhoH * myChargeH * buff[ii][0];
     TH[ii][0] += myRhoO * myChargeO * buff[ii][0];
   }
 
   loadRDFFile (fileHH, grx, grv);
-  calTm (grx, grv, buff);
+  calTm (grx, grv, grup, buff);
   for (int ii = 0; ii < nele; ++ii){
     TH[ii][0] += myRhoH * myChargeH * buff[ii][0];
   }

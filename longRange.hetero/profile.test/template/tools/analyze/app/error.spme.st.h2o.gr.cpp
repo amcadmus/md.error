@@ -28,7 +28,7 @@ int main(int argc, char * argv[])
   int kValue;
   float start, end;
   std::string fileOO, fileOH, fileHH;
-  double rhoMol;
+  double rhoMol, grup;
   
   po::options_description desc ("Allow options");
   desc.add_options()
@@ -46,6 +46,7 @@ int main(int argc, char * argv[])
       ("orientation",po::value<std::string > (&ofile)->default_value("conf.gro"), "sample of water orientation")
       ("grid,k",po::value<int > (&kValue), "Number of grid points, should be odd, this will overwrite kx, ky and kz")
       ("rhoMol,r", po::value<double > (&rhoMol)->default_value(32.784), "liquid density")
+      ("gr-up", po::value<double > (&rhoMol)->default_value(1.0), "upper cut of g(r)")
       ("rdf-OO",  po::value<std::string > (&fileOO)->default_value ("rdf.oo.1e-2.xvg"), "rdf file of OO")
       ("rdf-OH",  po::value<std::string > (&fileOH)->default_value ("rdf.oh.1e-2.xvg"), "rdf file of OH")
       ("rdf-HH",  po::value<std::string > (&fileHH)->default_value ("rdf.hh.1e-2.xvg"), "rdf file of HH")
@@ -114,7 +115,7 @@ int main(int argc, char * argv[])
   dp.print_avg_x (rfile.c_str());
 
   ErrorEstimate_SPME_St_H2O_gr eesi;
-  eesi.reinit (beta, order, dp, posi, charges, rhoMol, fileOO, fileOH, fileHH);
+  eesi.reinit (beta, order, dp, posi, charges, rhoMol, fileOO, fileOH, fileHH, grup);
   eesi.calError (dp, pcharge);
   eesi.print_error (efile.c_str());
   eesi.print_meanf ("meanf.out", dp);
