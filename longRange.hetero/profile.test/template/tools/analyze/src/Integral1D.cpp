@@ -280,3 +280,6 @@ cal_int (const Integral1DInfo::Method & method,
 template class Integral1D<Fs1k,  double >;
 template class Integral1D<Fs1k1, double >;
 template class Integral1D<Fs2k,  double >;
+
+#include "ErrorEstimate_SPME_St_H2O_gr.h"
+template class Integral1D<ErrorEstimate_SPME_St_H2O_Function_gr,  double >;
