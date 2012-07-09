@@ -61,6 +61,7 @@ cal_Ky=61
 cal_Kz=61
 cal_order=6
 real_h=0.5
+gr_up=0.6
 
 # regulate parameters. DO NOT MOVE
 cal_rcut=`printf "%.2f" $cal_rcut`
