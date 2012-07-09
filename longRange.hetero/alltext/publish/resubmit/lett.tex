@@ -1,5 +1,8 @@
 \documentclass[a4paper]{article}
 
+\usepackage[dvips]{graphicx}
+
+
 \begin{document}
 
 \noindent
@@ -33,29 +36,96 @@ In the introduction, the authors should probably take the perspective that SPME 
 
 not done\\
 
+\textit{ Cosmetically, the authors should combine the two figures
+  showing the charge distributions of Examples 1 and 2, to ensure they
+  appear side-by-side in the published version.
+}
+
+We delete Fig.3 and plot the charge distribution of Example 2 together
+with Example 1 in the new Fig.1. Changes to the caption and
+descriptions are maded correspondingly.\\
+
 \textit{
-Cosmetically, the authors should combine the two figures showing the charge distributions of Examples 1 and 2, to ensure they appear side-by-side in the published version.
+The authors are reasonable to focus on the error arising from the
+reciprocal space approximations in the various P3M-related methods;
+the error arising from the direct space part of the calculation is
+simpler to assess.  However, because the authors give so much
+attention to SPME and the Staggered Mesh method which, as published,
+built on SPME, the authors should include some plot of the effect of
+grid spacing, Gaussian smoothing function width (Ewald coefficient),
+and interpolation order -- these are the determinants of the accuracy of
+the reciprocal space calculation in these fast methods.  How does the
+estimator do in terms of getting the various trends correct?  What is
+the effect of correlated charge positions on the error and the
+estimates under changing interpolation order?  This is at the heart of
+the difference between ik- and analytic differentiation that the
+authors have otherwise carefully investigated.  It would also be
+helpful to see a plot of the error estimator’s performance as a
+function of the “near neighbor” definition.  Define near neighbors
+strictly by length, and plot the error estimator's accuracy as a
+continuous function of the near neighbor cutoff.  Extra credit for
+detailing the computation time as a function of the same parameter!
+}\\
+
+\textit{
+One other point of discussion that might be relevant to this paper is
+the significance of the results on force-shifted coulomb interactions
+(see the simulation methods of Valerie Dagget and colleagues, or the
+Wolfe Method as reviewed in J. Chem. Phys. 124:234104 and elsewhere).
+These methods, based strictly on local “electrostatic” interactions
+computed by modifying Coulomb’s law, are often trotted out as
+alternatives to Ewald summation though their application is still
+limited (which is, in the opinion of this reviewer, as it should be).
+A principal assumption of these methods, which is often used
+circuitously to defend their application, is that real systems are
+locally neutral or that electrostatic correlations decay on the length
+scale of a few water layers.  Wang and colleagues may be able to
+analyze these methods, provide insights into the appearance of their
+validity, and identify their limitations rigorously.  A formal
+analysis of these methods is not required for this paper, but a
+possible direction the authors might explore in the future.
+}
+
+We gratefully thank the reviewer for the suggestion of an interesting
+extension of the present work.\\
+
+\textit{
+The authors have done an excellent job of manipulating the
+mathematical foundations of these fast electrostatics methods.  With
+minor modifications and extensions of the study, which this reviewer
+does not intend to be onerous, this work should be published without
+further hindrance.
 }\\
 
 
 
-The authors are reasonable to focus on the error arising from the reciprocal space approximations in the various P3M-related methods; the error arising from the direct space part of the calculation is simpler to assess.  However, because the authors give so much attention to SPME and the Staggered Mesh method which, as published, built on SPME, the authors should include some plot of the effect of grid spacing, Gaussian smoothing function width (Ewald coefficient), and interpolation order—these are the determinants of the accuracy of the reciprocal space calculation in these fast methods.  How does the estimator do in terms of getting the various trends correct?  What is the effect of correlated charge positions on the error and the estimates under changing interpolation order?  This is at the heart of the difference between ik- and analytic differentiation that the authors have otherwise carefully investigated.  It would also be helpful to see a plot of the error estimator’s performance as a function of the “near neighbor” definition.  Define near neighbors strictly by length, and plot the error estimator's accuracy as a continuous function of the near neighbor cutoff.  Extra credit for detailing the computation time as a function of the same parameter!
+\noindent
+Reviewer  2 Comments:\\
 
-One other point of discussion that might be relevant to this paper is the significance of the results on force-shifted coulomb interactions (see the simulation methods of Valerie Dagget and colleagues, or the Wolfe Method as reviewed in J. Chem. Phys. 124:234104 and elsewhere).  These methods, based strictly on local “electrostatic” interactions computed by modifying Coulomb’s law, are often trotted out as alternatives to Ewald summation though their application is still limited (which is, in the opinion of this reviewer, as it should be).  A principal assumption of these methods, which is often used circuitously to defend their application, is that real systems are locally neutral or that electrostatic correlations decay on the length scale of a few water layers.  Wang and colleagues may be able to analyze these methods, provide insights into the appearance of their validity, and identify their limitations rigorously.  A formal analysis of these methods is not required for this paper, but a possible direction the authors might explore in the future.
+\textit{ The article deals with the derivation of an accurate error
+  estimate for the Ewald and SPME mesh Ewald method that can be used
+  for inhomogeneous and correlated charged systems.
+}
 
-The authors have done an excellent job of manipulating the mathematical foundations of these fast electrostatics methods.  With minor modifications and extensions of the study, which this reviewer does not intend to be onerous, this work should be published without further hindrance.
+\textit{
+Error estimates for long range algorithms are always useful for
+periodic charged systems, since due to the long range nature, no exact
+calculation is possible, but one rather has to truncate the
+interactions at some point, and hence is forced to introduce errors.
+Ideally, one would like to know for a specific method before doing an
+expensive calculation how to choose method parameters such that I
+reach a certain accuracy. Such error estimates have been developed in
+the past, but normally only under the assumption that the charges are
+randomly distributed. Here, the authors extend these error estimates
+to the very relevant cases of inhomogeneous and/or correlated systems.
+}
 
-
-
-
-
-Reviewer  2 Comments:
-
-The article deals with the derivation of an accurate error estimate for the Ewald and SPME mesh Ewald method that can be used for inhomogeneous and correlated charged systems.
-
-Error estimates for long range algorithms are always useful for periodic charged systems, since due to the long range nature, no exact calculation is possible, but one rather has to truncate the interactions at some point, and hence is forced to introduce errors.  Ideally, one would like to know for a specific method before doing an expensive calculation how to choose method parameters such that I reach a certain accuracy. Such error estimates have been developed in the past, but normally only under the assumption that the charges are randomly distributed. Here, the authors extend these error estimates to the very relevant cases of inhomogeneous and/or correlated systems.
-
-I find the article in general very readable and informative, and also suited for this journal. I have just a few comments that the authors might want to take into account in a minor revised version, before this article, in my opinion, is ready for publication:
+\textit{
+  I find the article in general very readable and informative, and
+  also suited for this journal. I have just a few comments that the
+  authors might want to take into account in a minor revised version,
+  before this article, in my opinion, is ready for publication:
+}\\
 
 Page 7, line 23:
 The definition of a discrete set of nearest neighbors $\Omega_j$ might not readily avaible in all cases. For example, for simple liquids it may be more feasible to use the radial distribution function $g(r)$ up to a certain radius $r_c$, where $g(r) \approx 1$ for $r > c_c$. Then the sum has to be replaced by an integral over $r$.  Because of the close relation of $\rho^{(2)}$ and $g(r)$, the equations should be easy to adapt to such a notation.
@@ -71,61 +141,139 @@ The manuscript contains a few misprints, and the language could be polished on a
 
 
 
+\vskip 1cm
+\noindent
+Reviewer 3 Comments:\\
+
+\textit{
+The authors have introduced a way to study electrostatic force errors
+in correlated systems by assuming that the dominant correlations are
+short-ranged which should usually work--they acknowledge this may not
+work for systems near phase transitions. I like this paper and would
+like to see it published after minor complaints are addressed.
+}
+
+\textit{
+Firstly, the main contribution is to introduce a way to rapidly
+evaluate the force error, including that due to short ranged (bonded)
+pair interactions. Some readers may be confused by this, since bonded
+pair electrostatic interactions are considered to be NOT
+CALCULATED. However, in Ewald like methods the reciprocal contribution
+cannot be easily excluded for atom pairs and is surprisingly large
+even for bonded pairs. I think including this point somewhere in the
+discussion will help many readers. Note that errors for bonded pairs
+may be at least partly responsible for the disappointing performance
+of multiple time step methods. (they are high frequency in time)
+}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{correlation.eps}
+  \caption{The schematic plot of two interacting water molecules.
+    When we calculate the force error of the left oxygen atom, the
+    correlation with its bonded hydrogens are not considered, but
+    the correlations within any neighboring molecule are considered,
+    as indicated by the solid lines with two arrows.}
+  \label{fig:1}
+\end{figure}
+
+We define the force error by inserting a testing charge into the
+considered system, and comparing the calculated and exact force on
+it. In the considered water system (Example 3), the subtle difference
+between this setting to the realistic case is that the testing charge
+has no correlation with the charges in the system, while any real
+charge is bonded to two neighboring charges (via H-O bond and H-O-H
+angle).  Therefore, the error estimate does not consider the
+correlation between a charge and the its bonded neighbors, but it does
+consider all bonding correlations within any neighboring molecule (see
+Fig.~\ref{fig:1} of this letter). This is consistent with the usually
+setting of bonded pair atoms, as mentioned by the reviewer, the
+electrostatic interaction between them should not be calculated.
+
+We therefore added the following sentence to make this point clearer:
+\textbf{
+  We define the force error by inserting a
+testing charge into the water system, and comparing the
+calculated and exact force on it. This definition implicitly assumes
+the independency between the testing particle and the
+system. Therefore, it sould be noted that the correlation error
+estimate (20)
+neglects the possible bonding
+of the testing particle to any hydrogen/oxygen atom, and
+calculates all bonded correlations
+within its {neighboring} molecules. This is consistent
+with the usual setting of the bonded atoms: the electrostatic interaction
+between them is considered to be \emph{not} calculated.}
+
+The inclusion of the correlation between the testing
+charge and the system is also possible, but this is beyond the scope
+of the present paper, and will be addressed in the following studies.\\
+
+% Therefore, in all the estimates, the error due to the
+% bonded pair interactions is automatically eliminated by the
+% definition. 
+
+% The inclusion of the correlation between the testing
+% charge and the system is also possible, but this is beyond the scope
+% of the present paper, and will be addressed in the following studies.
+% To make this point clearer, we add the following sentence:
+% \textbf{Here we implicitly assumes that the testing particle is independent
+% with the system, but it is not the case in real systems. For example,
+% in the water system considered in Sec.III, each atom is bonded
+% to two neighboring atoms (via the rigid H-O bond and H-O-H angle).
+% Fortunately, this may not be a big problem, firstly because the bonded pair
+% electrostatic interacions are considert to be \emph{not} calculated;
+% secondly because the non-bonded pair correlation contributes only
+% minority part to the total error (see also Sec.III).}
+
+% As a matter of fact, in Example 3, the electrostatic interactions
+% within one water molecule is \emph{not} calculated. This may not be
+% computationally economic in practice, however, it is important to
+% remove it in our theoretical study, becuase, as mensioned by the
+% reviewer, the bonded pair electrostatic interaction is considered to
+% be not calculated.
 
 
-Reviewer 3 Comments:
+\textit{
+I am curious about the fact that correlation reduces force errors
+compared to usual estimates. I wonder if this is somehow due to
+electrostatic forces on bonded pairs being anti-correlated due to
+opposing charge signs e.g. on Oxygen and Hydrogens of $H_2O$.
+}
 
-The authors have introduced a way to study electrostatic force errors in correlated systems by assuming that the dominant correlations are short-ranged which should usually work--they acknowledge this may not work for systems near phase transitions. I like this paper and would like to see it published after minor complaints are addressed.
+As far as we concerned, it is not possible to test this point
+directly, but we think it is a likely explanation to the observed
+phenomenon.  Consider the extreme case: wihin one molecule, the
+hydorgen and oxygen atoms locate at the same point (strongest
+correlation), then the positive and negative charge cancels, so the
+error vanishes. In case of TIP3P water model, the H-O distence is 0.1~nm and
+the H-H distance is 0.16~nm, which are much smaller than the typical
+center-of-mass distance between two neighboring molecules (0.31~nm).
+We added this point to the paper.
+\\
 
-Firstly, the main contribution is to introduce a way to rapidly evaluate the force error, including that due to short ranged (bonded) pair interactions. Some readers may be confused by this, since bonded pair electrostatic interactions are considered to be NOT CALCULATED. However, in Ewald like methods the reciprocal contribution cannot be easily excluded for atom pairs and is surprisingly large even for bonded pairs. I think including this point somewhere in the discussion will help many readers. Note that errors for bonded pairs may be at least partly responsible for the disappointing performance of multiple time step methods. (they are high frequency in time)
-
-I am curious about the fact that correlation reduces force errors compared to usual estimates. I wonder if this is somehow due to electrostatic forces on bonded pairs being anti-correlated due to opposing charge signs e.g. on Oxygen and Hydrogens of H2O.
-
+\textit{
 Otherwise I have a number of minor grammatical and typo complaints:
+}
 
-page 3 lines 9,14  The term "research" could be replaced by "papers" on line 9 and "paper" on 14
-another possibility is "manuscript"
-page 3 line 27 "which assume the error" $\rightarrow$ "which assumes the error"
-page 3 line 43 "nearest neighbor approximation of correlation error": insert "the" before "correlation"
-page 3 line 54 "we consider the system" $\rightarrow$ "we consider a system"
-page 3 line 55 "is composed by N" $\rightarrow$ "is composed of N"
-page 3 line 56 "the force of a" $\rightarrow$ "the force on a"
-*page 4 line 18 "error estimate for the error force" seems like 1st "error' is unnecessary
-              perhaps replace with "following estimate for the error force"---also the term "error force" could be
-              replaced with "force error" here and elsewhere and I think the text would flow better
-page 6 line 16 "Most of the error estimates" $\rightarrow$ "Most previous error estimates"
-page 6 line 32: "Analog to" $\rightarrow$ "Analogous to"
-page 7 line 3 "A non-varnishing" $\rightarrow$ "A non-vanishing"
-page 7 line 10,11: "the locally neutral condition" $\rightarrow$ "the local neutrality condition"
-page 7 line 21: "which is still not applicable" $\rightarrow$ "which is still not tractable" or maybe "computationally feasible"
-page 7 line 46: "Then the second part" $\rightarrow$ "Then the second term". Also on line 54 "part" $\rightarrow$ "term"
-page 7 line 52: "small comparing with" $\rightarrow$ "small compared with" or "small in comparison with". same for pg 8 line 16
-page 8 line 42: "Ensemble averages is taken" $\rightarrow$ "Ensemble averages are taken"
-page 10 line 1: "ia the reciprocal" $\rightarrow$ "are the reciprocal"
-page 11 line 8: "becomes not applicable" as in page 7 line 21 I think "intractable" is better here
-page 11 line 10: "PME ans SPME" ; "ans" $\rightarrow$ "and"
-page 12 line 7: "only little" $\rightarrow$ "only a small"
-page 14 line 33: "It is shown that the self-interaction error dominate" $\rightarrow$ "It has been shown that the sel-interaction
-                   error dominates"
-page 17 line 49: "Twice as larger" $\rightarrow$ "Twice as large"
-page 18 line 43: "cut-offed" $\rightarrow$ "truncated"
-page 18 line 47: "are consistent very well with" $\rightarrow$ "are consistently accurate compared with" or "accurately track"
-page 18 line 60: "reduces by more than" $\rightarrow$ "is reduced by more than"
-page 19 line 34: "FFTs than" $\rightarrow$ "FFTs compared to"
-page 19 line 55: again "cut-offed" $\rightarrow$ "truncated"
-page 20 line 34: "was reported" $\rightarrow$ "were reported"
-page 20 line 35: "varnish" $\rightarrow$ "vanish"
-page 20 line 41: "error estimates consist with" $\rightarrow$ "error estimates are consistent with" or
-                                                  "error estimates accurately track"
+The grammatical mistakes and typos have been corrected according to the reviewer.
+% We want to explain two points:\\
 
-page 23 line 57: "composed by three additive" $\rightarrow$ "composed of three additive"
-*page 24 line 11: "the error is of good property" Not clear what is meant. Do you mean total error is not
-                 contaminated by this?
-page 24 line 18: "was proved to dominant" $\rightarrow$ "was proved to dominate"
-page 24 line 19: "helped removing" $\rightarrow$ "helped to remove"
-page 24 line 35: "only one half FFTs" $\rightarrow$ "only one half the FFTs"
-page 27, line 15: "Inserting it into Eqn (17), also neglect" $\rightarrow$ "Inserting this into Eqn (17) while neglecting"
+% \textit{
+% page 4 line 18 ``error estimate for the error force'' seems like 1st ``error'' is unnecessary
+%               perhaps replace with ``following estimate for the error force''---also the term ``error force'' could be
+%               replaced with ``force error'' here and elsewhere and I think the text would flow better
+%             }
+            
+% We use ``error force'' because we want to stress it is a force, not a error, which may be a scalor, and be confused with the ``RMS force error''.\\
 
+% \textit{
+% page 24 line 11: ``the error is of good property'' Not clear what is meant. Do you mean total error is not
+%                  contaminated by this?
+%                }
+               
+%                Yes, the we removed ``the error is of good property'',
+%                the logic of the sentence is
 
 
 
