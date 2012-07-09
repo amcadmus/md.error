@@ -24,6 +24,8 @@ if echo $project_name | grep -v rand | grep water &> /dev/null; then
     ./tools/scripts/spme.ana.h2o.esti.sh
     echo "# esti spme st h2o"
     ./tools/scripts/spme.st.h2o.esti.sh
+    echo "# esti spme st h2o"
+    ./tools/scripts/spme.st.h2o.gr.esti.sh
 fi
 
 gp_file_names="pl.water.ana.error.gp pl.water.ik.error.gp pl.ana.error.gp  pl.ana.meanf.gp  pl.ik.error.gp  pl.ik.meanf.gp"
