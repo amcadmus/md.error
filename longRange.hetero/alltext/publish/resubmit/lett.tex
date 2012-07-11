@@ -4,6 +4,16 @@
 
 
 \begin{document}
+\noindent
+Dear Prof. Rothlisberger,\\
+
+Thank you very much for the reports. We would like to thank also the
+reviewers for the positive reports and for the suggestions, which help
+us improving the quality of the manuscript. The revisions are
+reported below in detail.\\
+
+In the revised manuscript, all the additions are marked in red, to help the
+reviewers to located them immediately in the text.\\
 
 \noindent
 Reviewer  1 Comments:\\
@@ -28,22 +38,56 @@ Reviewer  1 Comments:\\
   otherwise appears to be fit for publication.
 }
 
-?
-
-\textit{
-In the introduction, the authors should probably take the perspective that SPME is a special case of P3M.  In the opinions of the developers of SPME, the derivation differs from P3M although it leads to similar results, but even TA Darden acknowledges that the reciprocal space component of the non-smooth PME algorithm was inspired by P3M.  It is probably best to phrase SPME as such and not offend anyone.  The interlacing technique was first applied in the 1970s, as the authors have cited.  It was originally a means of reducing the memory requirements of these calculations—electrostatics on the two grids were solved serially.  Finally, the sentence “We prove that the error is decomposed…” should be changed to “We show that the error may be approximately decomposed…” to indicate that the estimator is, in the end, approximate but relevant to real systems.
+We have modified the introduction according to this point.
+Please see the 4-th line of the second paragraph of the introduction:
+\textbf{
+  This problem can be solved by repeating and comparing
+  the force calculation by
+  using different parameter sets
+  on a representative snapshot of the system,
+  see eg. Ref.[16].
+An other approach is the 
+  in-depth theoretical study
+of the error introduced by the algorithms, namely the
+error estimate,
+by which the error is described by a function of the working
+parameters...
 }\\
 
-not done\\
+\textit{ In the introduction, the authors should probably take the
+  perspective that SPME is a special case of P3M.  In the opinions of
+  the developers of SPME, the derivation differs from P3M although it
+  leads to similar results, but even TA Darden acknowledges that the
+  reciprocal space component of the non-smooth PME algorithm was
+  inspired by P3M.  It is probably best to phrase SPME as such and not
+  offend anyone.  The interlacing technique was first applied in the
+  1970s, as the authors have cited.  It was originally a means of
+  reducing the memory requirements of these
+  calculations—electrostatics on the two grids were solved serially.
+  Finally, the sentence ``We prove that the error is decomposed...''
+  should be changed to ``We show that the error may be approximately
+  decomposed...'' to indicate that the estimator is, in the end,
+  approximate but relevant to real systems.
+}
+
+We have added the comment (see the 12-th line of the 1st paragraph
+of the introduction:
+\textbf{It has been demonstrated that the SPME is actually
+  a special case of the P3M method [6,7].}
+The sentence ``We prove that the error is decomposed...'' has been
+changed to \textbf{We show that the error may be approximately
+  decomposed...}
+\\
 
 \textit{ Cosmetically, the authors should combine the two figures
   showing the charge distributions of Examples 1 and 2, to ensure they
   appear side-by-side in the published version.
 }
 
-We delete Fig.3 and plot the charge distribution of Example 2 together
-with Example 1 in the new Fig.1. Changes to the caption and
-descriptions are maded correspondingly.\\
+We delete the old Fig.3,
+and plot the charge distribution of Example 2 together
+with Example 1 in the new Fig.2. Changes to the caption and
+descriptions have been made correspondingly.\\
 
 \textit{
 The authors are reasonable to focus on the error arising from the
@@ -65,7 +109,49 @@ function of the “near neighbor” definition.  Define near neighbors
 strictly by length, and plot the error estimator's accuracy as a
 continuous function of the near neighbor cutoff.  Extra credit for
 detailing the computation time as a function of the same parameter!
-}\\
+}
+
+We add new Fig. 9-12 to show how the error estimates
+with bonded nearest neighbor approximations are able to catch the
+trends of the real errors with various Ewald coefficient $\beta$, direct space
+cut-off radius $r_c$, reciprocal space grid spacing $h$ and B-spline
+interpolation order $n$.
+% These figures show the error estimate
+% with the bonded nearest neighbor approximation correctly catches the
+% trend of changing working parameters.
+
+In the revised manuscript,
+we consider two types of the correlations:
+(1) the bonded correlation
+that originates from the rigid H-O
+bond and H-O-H angle within one molecule,
+and (2) the
+non-bonded correlation or the
+intermolecular correlation that originates from
+a complex coupling of various intermolecular interaction.
+Estimates for the bonded correlation
+have already been developed by the old manuscript,
+while the non-bonded estimate
+is newly developed according to the reviewers' suggestion.
+Please note that
+both the bonded and non-bonded nearest neighbor approximations
+require some uniformity of the correlation in the system:
+the bonded estimate requires the uniformity of the water
+direction preference, while the non-bonded estimate requires the uniformity
+of the density distribution and the isotropicity of the system.
+Otherwise the cost of the error estimate would be $\mathcal O(N^2\log N)$.
+For the non-bonded correlation,  the nearest neighbor approximation 
+is expressed in terms of the radial distribution
+functions (RDFs). In example 3, a global RDF is not well defined,
+so we calculated the RDF and nearest neighbor approximation
+only for the liquid phase, see the dotted line in Fig.7. By adding
+the non-bonded correlation, the quality of the error estimate
+is further improved.
+Also the convergence with respect to
+the neighboring range $R_g$ is investigated (Fig.8). 
+\\
+
+
 
 \textit{
 One other point of discussion that might be relevant to this paper is
@@ -127,18 +213,109 @@ to the very relevant cases of inhomogeneous and/or correlated systems.
   before this article, in my opinion, is ready for publication:
 }\\
 
-Page 7, line 23:
-The definition of a discrete set of nearest neighbors $\Omega_j$ might not readily avaible in all cases. For example, for simple liquids it may be more feasible to use the radial distribution function $g(r)$ up to a certain radius $r_c$, where $g(r) \approx 1$ for $r > c_c$. Then the sum has to be replaced by an integral over $r$.  Because of the close relation of $\rho^{(2)}$ and $g(r)$, the equations should be easy to adapt to such a notation.
+\textit{ Page 7, line 23: The definition of a discrete set of nearest
+  neighbors $\Omega_j$ might not readily avaible in all cases. For
+  example, for simple liquids it may be more feasible to use the
+  radial distribution function $g(r)$ up to a certain radius $r_c$,
+  where $g(r) \approx 1$ for $r > r_c$. Then the sum has to be
+  replaced by an integral over $r$.  Because of the close relation of
+  $\rho^{(2)}$ and $g(r)$, the equations should be easy to adapt to
+  such a notation.  }
+
+In the revised manuscript, the correlation error are considered
+in two types: 
+(1) the bonded correlation
+that originates from the rigid H-O
+bond and H-O-H angle within one molecule,
+and (2) the
+non-bonded correlation or the
+intermolecular correlation that originates from
+a complex coupling of various intermolecular interaction.
+Estimates for the bonded correlation
+have already been developed by the old manuscript,
+while the non-bonded estimate
+is newly developed according to the reviewers' suggestion.
+Please note that
+both the bonded and non-bonded nearest neighbor approximations
+require some uniformity of the correlation in the system:
+the bonded estimate requires the uniformity of the water
+direction preference, while the non-bonded estimate requires the uniformity
+of the density distribution and the isotropicity of the system, which
+are also the prerequisites for reducing $\rho^{(2)}$ to $g(r)$.
+%Otherwise the cost of the error estimate would be $\mathcal O(N^2\log N)$.
+For the non-bonded correlation,  the nearest neighbor approximation 
+is expressed in terms of the radial distribution
+functions (RDFs) in the new Eqn. (21) and (22).
+In example 3, a global RDF is not well defined
+(because the system is inhomogeneous),
+so we calculated the RDF and nearest neighbor approximation
+only for the liquid phase, see the dotted line in Fig.7. By adding the
+non-bonded correlation, the quality of the error estimate
+is further improved.
+Also the convergence with respect to
+the neighboring range $R_g$ (the $r_c$ in the reviewer's comment)
+is investigated (Fig.8). 
+\\
+
+\textit{ Page 15, line 45: I believe I saw that the for interlaced
+  P$^3$M algorithm, which is very similar to the staggered SMPE
+  algorithm, the approximation to leading order of the error estimate
+  is not justified, at least for higher precisions. This approximation
+  could lead to a visible deviation from the true errors. In this
+  context it might be useful to recalculate the numerical examples at
+  higher precision. Usually, deviations start to be visible from about
+  an RMS of $10^{-4}$.  }
+
+\textit{ Page 16, line 34: Again, In the very similarly structured
+  interlaced P$^3$M algorithm, there are differences in accuracy
+  between the $i\mathbf{k}$- and analytical differentiation at higher
+  precisions. At this point it might not be justified to assume that
+  both can be treated in the same way. Similarly to the approximation
+  of the $i\mathbf{k}$ error formula, it would be useful to do
+  calculations at higher precision than those presented in the paper,
+  and compare them. }
+
+As far as we concerned,
+direct error estimates with the higher order terms are not easy.
+Therefore, we investigate this issue in another way:
+we compare the estimate (with non-bonded nearest neighbor
+approximation) with the real error of the randomized COM test
+(see the description of this test in page 25).
+Since the only approximation made in the estimate is the leading order
+approximation, the difference between the estimate and the real error
+of randomized COM test is actually the contribution from the higher
+order terms discarded by (48) and (53).
+In Fig. 9-12,
+we check this difference in a wide parameter range, and see in most
+cases the estimate overlaps with the real error, which means
+the leading order is a good approximation. 
+However,
+we do observe exceptions
+at large $\beta$ when the grid spacing is $h=0.248\:\textsf{nm}$,
+see Fig.11, and
+at small $\beta$ when the interpolation order is $n=4$,
+see Fig.12.
+That means the higher order terms may play a role in the staggered
+mesh interpolation errors. It also explains the unexpected discrepancy
+between the staggered mesh ik- and analytical differentiation
+at small $\beta$, $n=4$.
+\\
 
 
-Page 15, line 45:
-I believe I saw that the for interlaced P$^3$M algorithm, which is very similar to the staggered SMPE algorithm,  the approximation to leading order of the error estimate is not justified, at least for higher precisions. This approximation could lead to a visible deviation from the true errors. In this context it might be useful to recalculate the numerical examples at higher precision. Usually, deviations start to be visible from about an RMS of $10^{-4}$.
+% if the lead order
+% is a good approximation, then two consequences are implied: (1) the
+% equivalency of the staggered mesh ik- and analytical differentiation;
+% (2) the overlapping of the estimate (with non-bonded nearest neighbor
+% approximation) with the real error of the randomized COM testing case
+% (see the description of this testing case in page 25).  In Fig. 9-12
+% we check these two points for a wide parameter range, and see in most
+% cases they are correct. This provide a strong evidence for the
+% justification of the leading order approximation.
 
-Page 16, line 34:
-Again, In the very similarly structured interlaced P$^3$M algorithm,  there are differences in accuracy between the $i\mathbf{k}$- and analytical differentiation at higher precisions.At this point it might not be justified  to assume that both can be treated in the same way. Similarly to the approximation of the $i\mathbf{k}$ error formula, it would be useful to do calculations at higher precision than those presented in the paper, and compare them
 
-The manuscript contains a few misprints, and the language could be polished on a few occasions by a native speaker.
 
+\textit{ The manuscript contains a few misprints, and the language
+  could be polished on a few occasions by a native speaker.  }
 
 
 \vskip 1cm
@@ -166,16 +343,16 @@ may be at least partly responsible for the disappointing performance
 of multiple time step methods. (they are high frequency in time)
 }
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.7\textwidth]{correlation.eps}
-  \caption{The schematic plot of two interacting water molecules.
-    When we calculate the force error of the left oxygen atom, the
-    correlation with its bonded hydrogens are not considered, but
-    the correlations within any neighboring molecule are considered,
-    as indicated by the solid lines with two arrows.}
-  \label{fig:1}
-\end{figure}
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=0.7\textwidth]{correlation.eps}
+%   \caption{The schematic plot of two interacting water molecules.
+%     When we calculate the force error of the left oxygen atom, the
+%     correlation with its bonded hydrogens are not considered, but
+%     the correlations within any neighboring molecule are considered,
+%     as indicated by the solid lines with two arrows.}
+%   \label{fig:1}
+% \end{figure}
 
 We define the force error by inserting a testing charge into the
 considered system, and comparing the calculated and exact force on
@@ -183,27 +360,31 @@ it. In the considered water system (Example 3), the subtle difference
 between this setting to the realistic case is that the testing charge
 has no correlation with the charges in the system, while any real
 charge is bonded to two neighboring charges (via H-O bond and H-O-H
-angle).  Therefore, the error estimate does not consider the
-correlation between a charge and the its bonded neighbors, but it does
-consider all bonding correlations within any neighboring molecule (see
-Fig.~\ref{fig:1} of this letter). This is consistent with the usually
+angle), as is illustrated by the new Fig.1.
+% Therefore, the error estimate does not consider the
+% correlation between a charge and the its bonded neighbors, but it does
+% consider all bonding correlations within any neighboring molecule (see
+% new Fig.1 of the paper).
+This definition is actually consistent with the usually
 setting of bonded pair atoms, as mentioned by the reviewer, the
-electrostatic interaction between them should not be calculated.
+electrostatic interaction between them is not calculated.
+Throughout this paper, we remove this  interaction from the
+standard long-range algorithms.
 
-We therefore added the following sentence to make this point clearer:
-\textbf{
-  We define the force error by inserting a
-testing charge into the water system, and comparing the
-calculated and exact force on it. This definition implicitly assumes
-the independency between the testing particle and the
-system. Therefore, it sould be noted that the correlation error
-estimate (20)
-neglects the possible bonding
-of the testing particle to any hydrogen/oxygen atom, and
-calculates all bonded correlations
-within its {neighboring} molecules. This is consistent
-with the usual setting of the bonded atoms: the electrostatic interaction
-between them is considered to be \emph{not} calculated.}
+% We therefore added the following sentence to make this point clearer:
+% \textbf{
+%   We define the force error by inserting a
+% testing charge into the water system, and comparing the
+% calculated and exact force on it. This definition implicitly assumes
+% the independency between the testing particle and the
+% system. Therefore, it sould be noted that the correlation error
+% estimate (20)
+% neglects the possible bonding
+% of the testing particle to any hydrogen/oxygen atom, and
+% calculates all bonded correlations
+% within its {neighboring} molecules. This is consistent
+% with the usual setting of the bonded atoms: the electrostatic interaction
+% between them is considered to be \emph{not} calculated.}
 
 The inclusion of the correlation between the testing
 charge and the system is also possible, but this is beyond the scope
@@ -243,13 +424,15 @@ opposing charge signs e.g. on Oxygen and Hydrogens of $H_2O$.
 
 As far as we concerned, it is not possible to test this point
 directly, but we think it is a likely explanation to the observed
-phenomenon.  Consider the extreme case: wihin one molecule, the
-hydorgen and oxygen atoms locate at the same point (strongest
-correlation), then the positive and negative charge cancels, so the
-error vanishes. In case of TIP3P water model, the H-O distence is 0.1~nm and
-the H-H distance is 0.16~nm, which are much smaller than the typical
-center-of-mass distance between two neighboring molecules (0.31~nm).
-We added this point to the paper.
+phenomenon.  Consider the extreme case: within one molecule, the
+hydrogen and oxygen atoms locate at the same point (strongest
+correlation), then the positive and negative charges cancel, so the
+error vanishes. In the case of TIP3P water model, the H-O distance is 0.1~nm,
+which is much smaller than the typical
+center-of-mass distance between two neighboring molecules (0.31~nm),
+therefore, the bonded correlation tends to neutralize the molecule
+and reduce the force error.
+We have added this point to the paper.
 \\
 
 \textit{

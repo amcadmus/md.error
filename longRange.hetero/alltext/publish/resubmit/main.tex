@@ -94,6 +94,9 @@ the particle mesh Ewald (PME)
 method~\cite{darden1993pme}, the smooth particle mesh Ewald (SPME)
 method~\cite{essmann1995spm} and the particle-particle-particle-mesh
 (P3M) method~\cite{hockney1988computer, deserno1998mue1}.
+\recheck{
+It has been demonstrated that the SPME is actually
+a special case of the P3M method~\cite{deserno1998mue1, ballenegger2012convert}.}
 More recently, the staggered mesh or
 ``interlacing'' technique~\cite{chen1974reduction,eastwood1976optimal}
 was applied to SPME
@@ -111,12 +114,20 @@ AMBER~\cite{case2005amber}, GROMACS~\cite{van2005gromacs,
 The aforementioned fast algorithms have achieved great success
 over the past three decades.
 However, the fact that the user should provide six working parameters
-for these methods may be problematic: it is difficult to try out the
+for these methods may be problematic: it is difficult to find the
 most efficient parameter set in such a 6-dimensional parameter space.
-The experiential choices may be either less accurate or wasting
-computational effort.
-This problem can be solved by an
-in-depth study of the error introduced by these algorithms, namely the
+% The experiential choices may be either less accurate or wasting
+% computational effort.
+% This problem can be solved by an
+\recheck{
+  This problem can be solved by repeating and comparing
+  the force calculation by
+  using different parameter sets
+  on a representative snapshot of the system,
+  see e.g. Ref.~\cite{abraham2011optimization}.}
+\recheck{An other approach is the 
+  in-depth theoretical study}
+of the error introduced by the algorithms, namely the
 error estimate~\cite{kolafa1992cutoff, hummer1995numerical,
   petersen1995accuracy, deserno1998mue2, stern2008mesh,
   wang2010optimizing, neelov2010interlaced, ballenegger2012convert},
@@ -143,9 +154,11 @@ The purpose of this manuscript is to develop a reliable  error
 estimate in inhomogeneous and correlated molecular systems.
 We estimate the force error because the application is the molecular
 dynamics (MD) simulation.  Firstly, a general error estimate
-framework for the pairwise interaction is set up. We prove that the
-error is decomposed into three additive parts: the homogeneity error,
-the inhomogeneity error and the correlation error~\cite{wang2012}.
+framework for the pairwise interaction is set up.
+\recheck{We show that the
+  error may be approximately
+  decomposed into three additive parts: the homogeneity error,
+the inhomogeneity error and the correlation error~\cite{wang2012}.}
 % These error estimates are only of theoretical interest, and
 % not applicable, because the computational costs of the error estimates
 % are $\mathcal O(N^2)$ (homogeneity and inhomogeneity error)
@@ -496,16 +509,17 @@ Here are some remarks concerning Theorem~\ref{thm:tmp1} and Corollary~\ref{thm:t
   % charged systems.
 \end{itemize}
 
-\subsection{Nearest-neighbor approximation of the correlation
+\subsection{Nearest neighbor approximation of the correlation
 error}
 The full computation of the correlation error costs at least $\mathcal
 O(N^2\log N)$, which is still not \redc{tractable}.
-So we consider the nearest-neighbor approximation to reduce
+So we consider the nearest neighbor approximation to reduce
 the computational cost.
 Here the definition of the ``nearest neighbors'' is
 very flexible. Basically it means the nearby neighbors that are
-strongly correlated. It could also be defined by the charges falling in some
-certain neighboring range or charges connected by chemical bonds.
+strongly correlated. It could be defined \recheck{either}
+by the charges falling in some
+certain neighboring range, or \recheck{by} charges connected by chemical bonds.
 % Here ``first neighbors'' means the neighboring
 % atoms that are connected by the chemical bond.  In most molecular
 % force fields, such bonds are modeled by a rigid connection between two
@@ -601,16 +615,20 @@ As an example, we consider a typical three point charge water model
 TIP3P~\cite{jorgensen1983comparison}: each hydrogen atom carries a
 charge of $q_{\textrm{H}} = +0.417e$ and each oxygen atom carries a
 charge of $q_{\textrm{O}} = -0.834e$.  \recheck{ There are two types
-  of correlation in the system: the bonded correlation and the
-  non-bonded correlation. The former originates from the rigid H-O
-  bond and H-O-H angle within one molecule. The latter originates from
-  the intermolecular non-bonded interaction: the van der Waals and
-  the electrostatic interaction.
-}
+  of correlation in this system: (1) the bonded correlation
+  that originates from the rigid H-O
+  bond and H-O-H angle within one molecule,
+  and (2) the
+  non-bonded correlation or the
+  intermolecular correlation that originates from
+  a complex coupling of various intermolecular interaction, such as
+  the van der Waals interaction,
+  the hydrogen bonding and etc..
 % Within one molecule, the H-O bond and
 % H-O-H angle are rigid, so the correlation within one molecule is
 % considered important.
 % Therefore, in this case,
+}
 
 We firstly consider the bonded correlation, and define the nearest
 neighbor by the atoms within the same water molecule.  Denoting the
@@ -724,54 +742,59 @@ the Eqn.~\eqref{eqn:c-error-1} becomes:
 where ``$\vee$'' denotes the backward Fourier transform.
 In the Fourier space, the error force kernel $\v K(\v r)$ is
 influenced by the prefactors $T_{\textrm{O}}$ and $T_{\textrm{H}}$,
-which are accounting for the atomic correlation within one water
+which are accounting for the bonded correlation within one water
 molecule. 
 \recheck{
-It sould be noted that we define the force error by inserting a
+It should be noted that we define the force error by inserting a
 testing charge into the water system, and comparing the
 calculated and exact force on it. This definition implicitly assumes
 the independency between the testing particle and the
-system. Therefore, the correlation error
-estimate~\eqref{eqn:c-error-water}
-actually neglects the correlation
-of the testing particle to the system, and
-calculates the error from all bonded correlations
-within its {neighboring} molecules, as illustrated by Fig.~\ref{fig:tmp-add0}.
-This is consistent
-with the usual setting of the bonded atoms: the electrostatic interaction
+system, as illustrated by Fig.~\ref{fig:tmp-add0}.
+% Therefore, the correlation error
+% estimate~\eqref{eqn:c-error-water}
+% actually neglects the correlation
+% of the testing particle to the system, and
+% calculates the error from all bonded correlations
+% within its {neighboring} molecules, as illustrated by Fig.~\ref{fig:tmp-add0}.
+It is consistent
+with the usual setting of the bonded pair atoms: the electrostatic interaction
 between them is considered to be \emph{not} calculated.
-Throughout this paper, we also do not calculated this interaction.
-% the intramolecular non-bonded
-% interaction is not calculated.
-}
+Throughout this paper, we remove this  interaction from the
+standard long-range algorithms.}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{correlation.1.eps}
   \caption{The schematic plot of two interacting water molecules.
-    When we calculate the force error of the left oxygen atom, the
+    When we calculate the force error of the left oxygen atom (it is now
+    a testing charge), the
     correlation with its bonded hydrogens are not considered, but
-    the correlations within any neighboring molecule are considered,
+    the correlations within any neighboring molecule are considered
+    by the bonded nearest neighbor approximation,
     as indicated by the solid lines with two arrows.}
   \label{fig:tmp-add0}
 \end{figure}
 
-\recheck{ If the system is homogeneous and isotropic, the pair
+\recheck{
+  For the non-bonded correlation,
+  we define the nearest neighbor
+  by non-bonded atoms closer than a certain radius $R_g$ (neighboring range).
+  If the system is homogeneous and isotropic, the pair
   correlation function $\rho^{(2)}(\v r', \v r'')$ in
   Eqn.~\eqref{eqn:start-corr} can be represented by the radial
   distribution functions (RDFs).
-  Following the same discussion as the bonded correlation,
-  the non-bonded correlation error can also be estimated.
-  The functions $T_{\textrm{O}}$ and $T_{\textrm{H}}$
+  Following the same way as the bonded correlation,
+  the non-bonded correlation error can be estimated:
+  the functions $T_{\textrm{O}}$ and $T_{\textrm{H}}$
   are given by
   \begin{align}\label{eqn:nb-nna-1}
     \hat T_{\textrm{O}} (\v m)
-    &= \int_0^{\infty}
+    &= \int_0^{R_g}
     [q_{_{\textrm{H}}} \rho_{_{\textrm{H}}} \tilde g_{_{\textrm{OH}}}(r)
     +q_{_{\textrm{O}}} \rho_{_{\textrm{O}}} \tilde g_{_{\textrm{OO}}}(r)]
     \,\frac{\sin(2\pi m r)}{2\pi mr}\,4\pi r^2 \d dr,\\\label{eqn:nb-nna-2}
     \hat T_{\textrm{H}} (\v m)
-    &= \int_0^{\infty}
+    &= \int_0^{R_g}
     [q_{_{\textrm{H}}} \rho_{_{\textrm{H}}} \tilde g_{_{\textrm{HH}}}(r)
     +q_{_{\textrm{O}}} \rho_{_{\textrm{O}}} \tilde g_{_{\textrm{OH}}}(r)]
     \,\frac{\sin(2\pi m r)}{2\pi mr}\,4\pi r^2 \d dr,
@@ -781,25 +804,25 @@ Throughout this paper, we also do not calculated this interaction.
   $\tilde g_{_{\textrm{OH}}}(r) = g_{_{\textrm{OH}}}(r) - 1$ and
   $\tilde g_{_{\textrm{HH}}}(r) = g_{_{\textrm{HH}}}(r) - 1$.
   $g_{_{\textrm{OO}}}(r)$, $g_{_{\textrm{OH}}}(r)$ and $g_{_{\textrm{HH}}}(r)$
-  are the RDFs of oxygen-oxygen, oxgygen-hydrogen and hydrogen-hydrogen,
+  are the RDFs of oxygen-oxygen, oxygen-hydrogen and hydrogen-hydrogen,
   respectively. $\rho_{_{\textrm{H}}}$ and $\rho_{_{\textrm{O}}}$ are
   the homogeneous number densities
-  of the hydrogen and oxgygen atoms, respectively.
+  of the hydrogen and oxygen atoms, respectively.
   For a short-range correlated system, the RDFs converges to 1
   as $r$ goes to infinity, so the integrals in Eqn.~\eqref{eqn:nb-nna-1}
-  and \eqref{eqn:nb-nna-2} are converging. Practically, we integrate
-  them to a upper bond denoted by $R_g$.
+  and \eqref{eqn:nb-nna-2} are convergent with respect to
+  increasing $R_g$. 
 
-  It can be seen that both the bonded and non-bonded correlation error
-  estimates require some uniformity of the correlation in the system:
+  Both the bonded and non-bonded nearest neighbor approximations
+  require some uniformity of the correlation in the system:
   the bonded estimate requires the uniformity of the water
-  direction, while the non-bonded estimate requires the uniformity
+  direction preference, while the non-bonded estimate requires the uniformity
   of the density distribution and the isotropicity of the system.
-  These restrictions should be carefully investigated before using
+  These requirements should be carefully checked before using
   these error estimates.
-  If the restrictions are seriously perturbed,
-  one can either uses these estimates for 
-  some regions (or sub-system of the whole system) that
+  If the they are seriously violated,
+  one can either use these estimates for 
+  some regions (or sub-systems of the whole system) that
   still preserve the uniformity,
   or estimate the correlation error at the cost of
   $\mathcal O(N^2\log N)$, if the correlation in the system is highly
@@ -1599,6 +1622,9 @@ order:
   -\sum_{\alpha=1}^3\sum_{l\neq 0}
   Z_{\alpha,l}(\v m).
 \end{align}
+\recheck{The validity of this approximation and a similar approximation
+  \eqref{eqn:leading-order-2}
+  will be numerically checked in Sec.~\ref{sec:example3}.}
 Then from Eqn.~\eqref{eqn:ik.error.force}, we have the error force of
 the staggered ik-differentiation:
 \begin{align}\label{eqn:ik-st-error-force}
@@ -1843,9 +1869,9 @@ quality  of the nearest neighbor approximation for the correlated system.
   \includegraphics[]{fig.rho.eps}
   \caption{
     The charge number density  of Example 1 and 2.
-    The red solid line: positive charge of Example 1.
-    The red dashed line: positive charge of Example 2.
-    The blue line: negative charge.
+    The red solid line: the positive charge of Example 1.
+    The red dashed line: the positive charge of Example 2.
+    The blue line: the negative charge.
     Since the charges are uniformly distributed
     on $y$ and $z$ direction, the densities are averaged on $y$ and $z$,
     and plotted as a
@@ -2223,7 +2249,7 @@ for the error estimates.
     analytical differentiation.
     \recheck{
     Blue ``$\boxdot$'': the real error of the
-    randomized COM testing case, calculated by
+    randomized COM test, calculated by
     the staggered mesh analytical differentiation.}
     Green ``$+$'': the real error of the staggered mesh
     ik-differentiation, it is overlapping with the analytical differentiation.
@@ -2239,13 +2265,22 @@ for the error estimates.
     The working parameters are the same as Example 1.
     The black arrow indicates the improvement
     of error estimate by including \recheck{bonded} nearest neighbor
-    approximation of correlation error.
+    approximation.
     \recheck{
     The black dotted arrow indicates the improvement of
     further including non-bonded nearest neighbor approximation.}
   }   
   \label{fig:water-error}
 \end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[]{fig.gr.eps}
+  \caption{The convergence of the non-bonded nearest neighbor approximation with respect to the neighboring range $R_g$.}
+  \label{fig:gr-conv}
+\end{figure}
+
+
 
 The real and estimated errors of the original SPME
 (both ik- and analytical differentiation)
@@ -2279,16 +2314,16 @@ actually  reduces the error in the force computation.
 \recheck{ Thanks to the reviewer of this paper, one likely
   explanation is that the electrostatic forces
   exerted by bonded pairs
-  being anti-correlated due to opposing charge signs.
+  are anti-correlated due to opposing charge signs.
   The extreme case is the overlapping of one oxygen atom with two
-  hydrogen atoms, the charges cancels, so the error vanishes.
-  In case of the TIP3P water model, the H-O distence is 0.1~\textsf{nm},
+  hydrogen atoms: the charges cancels, so the error vanishes.
+  In case of the TIP3P water model, the H-O bond is 0.1~\textsf{nm},
   which is much smaller than the typical
-  center-of-mass distance between two neighboring water
+  center-of-mass (COM) distance between two neighboring water
   molecules (0.31~\textsf{nm}),
-  therefore, the bonding correlation tends to neutralize the molecule
-  and reduce the force error.
-}
+  therefore, the bonded correlation tends to neutralize the molecule
+  and reduce the force error.}
+
 By including the \recheck{bonded} nearest neighbor approximation of the 
 correlation error, the quality of all error estimates is improved greatly,
 as indicated by the solid arrows in Fig.~\ref{fig:water-error0} and \ref{fig:water-error}.
@@ -2304,48 +2339,76 @@ so the error estimate for  all methods are now good enough
 for the parameter tuning application.
 \recheck{
   Since we
-  mainly worry about the validity of the leading order
-  approximation made in
+  worry about the validity of the leading order
+  approximation in
   Eqn.~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2},
-  we further varify the error estimate
-  of the staggered mesh Ewald method 
-  by calculating
-  the real error of the following testing case
-  (we call it the randomized COM testing case):
+  we consider 
+  the staggered mesh Ewald method in the following testing case
+  (we call it the randomized COM test):
   randomly redistribute the water molecules according to the same
-  center-of-mass (COM) distribution, while keeping
+  COM distribution, while keeping
   the bonds and direction of the molecules unchanged.
-  Since the non-bonded correlation is removed from this case,
-  a good consistency (see Fig.~\ref{fig:water-error}, and later
-  Fig.~\ref{fig:tmp-add3} and \ref{fig:tmp-add4}) of its
-  actual error with the estimate validates the correctness of 
-  the error estimate and 
-  the leading order
-  approximation~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2}.
+  A perfect error estimate including the bonded nearest neighbor
+  approximation
+  should overlap with the real error of the randomized COM test,
+  because there is NO non-bonded correlation in the randomized COM system.
+  Since the only approximation made in the error estimate
+  is the leading order approximation, the difference between
+  the estimate and the real error of the randomized COM test
+  comes from the higher order contributions discarded by
+  Eqn.~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2}.
+  In Fig.~\ref{fig:water-error}, the overlapping of the estimate
+  with the real error justifies the effectiveness of the
+  leading order approximation. We will investigate this issue
+  in a wider parameter range later.
+  % Since the non-bonded correlation is removed from this case,
+  % a good consistency (see Fig.~\ref{fig:water-error}, and later
+  % Fig.~\ref{fig:tmp-add3} and \ref{fig:tmp-add4}) of the 
+  % actual error with the estimate validates the correctness of 
+  % the bonded nearest neighbor approximation, and
+  % implies the reliablility of 
+  % the leading order
+  % approximation~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2}.  
+  The prerequisite of the bonded nearest neighbor approximation
+  is basically fulfilled:
+  the water direction preference in the bulk liquid and
+  vapor regions is uniform (actually it is isotropic).
+  Although
+  we observe a preference of the dipole moment along the $x$ direction
+  at the liquid-vapor interface, it is relatively weak and has  no
+  obvious side-effect on the error estimate.
 
-  In this example, the non-bonded nearest
-  neighbor approximation cannot be used directly in this example, 
-  because the system is inhomogeneous, and the RDFs are ill-defined.
+  The non-bonded nearest
+  neighbor approximation \eqref{eqn:nb-nna-1} and \eqref{eqn:nb-nna-2}
+  cannot be directly used  in this example, 
+  because the system is inhomogeneous, and the RDFs are not well-defined.
   However, the system contains a comparatively homogeneous liquid region,
-  where we can define the RDFs and calculate the non-bonded
+  where we can compute the RDFs and the non-bonded
   nearest neighbor
-  approximation. The result error estimate is presented by the
-  dashed blue line in Fig.~\ref{fig:water-error}.
-  The upper bond $R_g$ for integrating Eqn.~\eqref{eqn:nb-nna-1} and
-  \eqref{eqn:nb-nna-2} is chosen to be $1.2$~\textsf{nm}. A good
-  converging with respect to the integrating rand
-  is observed (for clarity, not shown in the figure),
-  when $R_g$ is larger than $0.6$~\textsf{nm}.
-  As indicated by the figure, the error estimate is further improved.
-  However, there is still a discrepancy between the real and estimate
-  error. Currently we cannot explain. It may originate from 
+  approximation. The resulting error estimate is presented by the
+  dotted blue line in Fig.~\ref{fig:water-error}.
+  (We do not consider the estimate in the vapor region because
+  the error is much smaller than the liquid region.)
+  The $R_g$ is chosen to be $1.2$~\textsf{nm}. A good
+  convergence with respect to the neighboring range is observed,
+  when it is larger than $0.6$~\textsf{nm},
+  and includes all major structures in the RDFs,
+  see Fig.~\ref{fig:gr-conv}.
+  As indicated by the Fig.~\ref{fig:water-error},
+  the RMS error estimate is further improved by the non-bonded
+  nearest neighbor approximation.
+  However, there is still a discrepancy between the real and estimated
+  error, which we cannot explain. It may originate from 
   assuming the testing particle is independent with the system, but
-  we cannot check this point, because the correlation of the testing
+  we cannot check this point, because investigating the
+  correlation of the testing
   particle with the system is beyond the theoretical framework of the
   present paper.
-  From Fig.~\ref{fig:water-error}, we conclude that
-  the bonded correlation dominate the correlation error, compared to
-  the non-bonded correlation. Therefore, if not state otherwise,
+  In Fig.~\ref{fig:water-error}, the improvement marked by the solid
+  arrow is much larger than that marked by the dotted arrow,
+  so the bonded correlation dominates the correlation error, compared to
+  the non-bonded correlation.
+  If not stated otherwise,
   we only consider the bonded nearest neighbor approximation.}
 
 % The great improvement by the bonded nearest neighbor approximation 
@@ -2398,13 +2461,13 @@ for the parameter tuning application.
     Red: the direct part. Green: the original ik-differentiation.
     Blue: the original analytical differentiation. ``$\times$'' and
     ``+'' denote the actual error.  The solid and dashed lines denote
-    the error estimates with and without nearest neighbor
+    the error estimates with and without bonded nearest neighbor
     approximation, respectively. The plotted direct space cut-off radii are
     $r_c = 0.9$, $1.1$, $1.3$ and  $1.7\:\textsf{nm}$. The
     reciprocal space grid spacings $h$  are approximately
     $0.248$, $0.124$ and $0.062\:\textsf{nm}$, corresponding to
     grids $60\times 30\times 30$, $120\times 60\times 60$ and
-    $240\times 120\times 120$, respectively. The order of B-spline
+    $240\times 120\times 120$, respectively. The order of the B-spline
     interpolation is 6.
   }
   \label{fig:tmp-add1}
@@ -2418,13 +2481,60 @@ for the parameter tuning application.
     phase as a function of the Ewald splitting parameter $\beta$,
     with various cut-off radii and interpolation orders.
     The symbols are the same as Fig.~\ref{fig:tmp-add1}.
-    The plotted orders of B-spline interpolation are $n=4$, 6 and 8.
-    The reciprocal space grid spacings $h$ is approximately
+    The plotted orders of the B-spline interpolation are $n=4$, 6 and 8.
+    The reciprocal space grid spacing $h$ is approximately
     $0.124\:\textsf{nm}$, corresponding to
     a $120\times 60\times 60$ grid.
   }
   \label{fig:tmp-add2}
 \end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[]{fig.mesh.st.eps}
+  % \includegraphics[]{fig.mesh.st.eps}
+  \caption{Example 3: the actual and estimated RMS error of the liquid
+    phase as a function of the Ewald splitting parameter $\beta$,
+    with various cut-off radii and grid spacings.
+    Red: the direct part. Green: the staggered mesh ik-differentiation.
+    Blue: the staggered mesh analytical differentiation. ``$\times$'' and
+    ``+'' denote the actual error.  The solid and dashed lines denote
+    the error estimates with and without bonded nearest neighbor
+    approximation, respectively.
+    The error estimates for the staggered mesh ik- and analytical
+    differentiations are identical, so only the blue lines are presented.
+    The blue ``$\boxdot$'' indicates the real error of the randomized COM test,
+    calculated by the
+    staggered mesh analytical differentiation. The same results
+    of the ik-differentiation are not shown.
+    The plotted direct space cut-off radii are
+    $r_c = 0.9$, $1.1$, $1.3$ and  $1.7\:\textsf{nm}$. The
+    reciprocal space grid spacings $h$  are approximately
+    $0.248$, $0.124$ and $0.062\:\textsf{nm}$, corresponding to
+    grids $60\times 30\times 30$, $120\times 60\times 60$ and
+    $240\times 120\times 120$, respectively. The order of the B-spline
+    interpolation is 6.
+  }
+  \label{fig:tmp-add3}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[]{fig.order.st.eps}
+  % \includegraphics[]{fig.mesh.st.eps}
+  \caption{Example 3: the actual and estimated RMS error of the liquid
+    phase as a function of the Ewald splitting parameter $\beta$,
+    with various cut-off radii and interpolation orders.
+    The symbols are the same as Fig.~\ref{fig:tmp-add3}.
+    The plotted orders of the B-spline interpolation are $n=4$, 6 and 8.
+    The reciprocal space grid spacing $h$ is approximately
+    $0.124\:\textsf{nm}$, corresponding to
+    a $120\times 60\times 60$ grid.
+  }
+  \label{fig:tmp-add4}
+\end{figure}
+
 
 \recheck{
 In Fig.~\ref{fig:tmp-add1} -- \ref{fig:tmp-add4}, we present the 
@@ -2451,99 +2561,110 @@ when $\beta$ is small the direct error dominates, when  $\beta$ is
 large the reciprocal error dominates.
 Therefore, given a set of parameters ($r_c$, $n$ and $h$),
 the $\beta$ at the crossover of the direct and reciprocal errors
-achieves the nearly best accuracy and should be used in simulations.
+achieves the nearly optimal accuracy and should be used in simulations.
 For all cut-off radii,
 the quality of the direct error estimate is satisfactory when the
-error is small than $10^{-1}\:\textsf{kJ/(mol nm)}$.
+direct error is small than $10^{-1}\:\textsf{kJ/(mol nm)}$.
 It is also observed that the quality of the error estimate is better
 for larger $\beta$ than for smaller $\beta$.
-As expected, the figures show that
-the smaller grid spacing and larger interpolation order
+As expected, the Figures \ref{fig:tmp-add1} -- \ref{fig:tmp-add4} show that
+the smaller grid spacings and larger interpolation orders
 enable more accuracy force computation. 
-Unlike the uncorrelated testing examples 1 and 2, the actual precision of the 
-original ik- and analytical differentiation are nearly the same.
+Unlike the uncorrelated testing examples 1 and 2, the actual precisions of the 
+original ik- and analytical differentiation are nearly the same,
+see Fig.~\ref{fig:tmp-add1} and \ref{fig:tmp-add2}.
 This implies that the latter may be more preferable than
-the former for the water simulation,
-because it needs only one half FFTs as the former, which could be
-highly advantageous for massive parallel simulations.
-In most testing cases the staggered mesh ik- differentiation is
-equivalent to the staggered mesh analytical differentiation. However,
-we obsever exceptions at small $\beta$ when the interpolation order is $n=4$,
-see Fig.~\ref{fig:tmp-add4}.
-This indicates the leading order approximations to the staggered
-mesh interpolation errors,
-i.e. Eqn.~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2},
-are not satisfactory.
-Fortunately,
-this may not be a big problem, because the very small $\beta$ is seldomly
-used in practice,
-and a extremely large cut-off radius is needed to achieve the best
-efficiency for such a $\beta$. In Fig.~\ref{fig:tmp-add4} at $n=4$, the largest
-$r_c = 1.7\:\textsf{nm}$ is corresponding to a choice of $\beta$ at
-$1.9\:\textsf{nm}^{-1}$, where the ik- and analytical differentiations
-are still close.
-With the nearest neighbor approximation, the quality of the
-reciprocal error estimates is impressively improved, especially
-for the original analytical differentiation and the staggered mesh
-Ewald method.
-The same as discussed before, we also compare the error of the
-randomized COM testing case with the error esitmates. 
-In most cases, they are perfectly consistent, which strongly supports
-the bonded nearest neighbor approximation proposed by this paper.
-However, as expected, when the
-leading order approximations to the staggered
-mesh interpolation errors
-Eqn.~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2} are
-not good (see $n=4$ and small $\beta$),
-the randomized COM error deviates from the error estimate.
+the former for the massive parallel water simulations,
+because it needs only one half FFTs of the former.
+% Fortunately,
+% this may not be a big problem, because the very small $\beta$ is seldomly
+% used in practice,
+% and a extremely large cut-off radius is needed to achieve the best
+% efficiency for such a $\beta$. In Fig.~\ref{fig:tmp-add4} at $n=4$, the largest
+% $r_c = 1.7\:\textsf{nm}$ is corresponding to a choice of $\beta$ at
+% $1.9\:\textsf{nm}^{-1}$, where the ik- and analytical differentiations
+% are still close.
+With the bonded nearest neighbor approximation, the
+reciprocal error estimates are impressively improved compared
+to those without considering the charge correlation,
+and are able to correctly
+catch the trends of real errors with various working parameters,
+see Fig.~\ref{fig:tmp-add1} -- \ref{fig:tmp-add4}.
+The improvement of
+the original analytical differentiation and the staggered mesh
+Ewald method is larger than that of the original ik-differentiation.
+% The same as discussed before, we also compare the error of the
+% randomized COM testing case with the error esitmates. 
+As discussed before, we compare the error estimate (including
+bonded nearest neighbor approximation)
+with the real error of the randomized COM test.
+In most cases in Fig.~\ref{fig:tmp-add3} and \ref{fig:tmp-add4},
+a perfect overlapping is observed, which justifies the
+leading order approximation proposed in
+Eqn.~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2}.
+However,
+we do observe exceptions
+at large $\beta$ when the grid spacing is $h=0.248\:\textsf{nm}$
+(see Fig.~\ref{fig:tmp-add3}), and
+at small $\beta$ when the interpolation order is $n=4$
+(see Fig.~\ref{fig:tmp-add4}).
+The deviations indicate that the 
+higher order terms discarded by
+Eqn.~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2}
+may play a role in the staggered
+mesh interpolation errors in these situations.
+This interpretation also
+explains the unexpected deviation of the  staggered mesh
+ik-differentiation from the analytical differentiation
+at  small $\beta$, $n=4$.
+
+% is why the staggered mesh
+% ik- differentiation starts deviating from the analytical
+% differentiation 
+
+% As discussed before, a good leading order approximation
+% (i.e. Eqn.~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2})
+% implies:
+% (1) the equivalency of staggered mesh ik- and analytical differentiation;
+% (2) the consistency of the estimate
+% with the real error of the randomized COM testing case.
+% In most cases in Fig.~\ref{fig:tmp-add3} and \ref{fig:tmp-add4},
+% these two points are verified. 
+% However,
+% we do obsever exceptions at small $\beta$ when the interpolation order is $n=4$
+% (see Fig.~\ref{fig:tmp-add4}),
+% where higher order terms may play a role in the  staggered
+% mesh interpolation errors
+% \eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2}.
+
+
+% In most cases, the staggered mesh error estimate is perfectly consistent
+% with the real error of the randomized COM testing case (see
+% Fig.~\ref{fig:tmp-add3} and \ref{fig:tmp-add4})
+% which demonstrates the reliability of the
+% leading order approximation
+% \eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2}.
+% However, at $n=4$ and small $\beta$,
+% a small gap between the estimate and the real error is observed, which
+% implies that the higher order terms may play a role in the error.
+
+% In most testing cases the staggered mesh ik-differentiation is
+% equivalent to the staggered mesh analytical differentiation,
+% see Fig.~\ref{fig:tmp-add3} and \ref{fig:tmp-add4}. However,
+% we obsever exceptions at small $\beta$ when the interpolation order is $n=4$,
+% see Fig.~\ref{fig:tmp-add4}.
+% This indicates the leading order approximations to the staggered
+% mesh interpolation errors,
+% i.e. Eqn.~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2},
+% may be not satisfactory.
+
+% However, as expected, when the
+% leading order approximations to the staggered
+% mesh interpolation errors
+% (i.e. Eqn.~\eqref{eqn:leading-order-1} and \eqref{eqn:leading-order-2}) are
+% not good ($n=4$ and small $\beta$),
+% the randomized COM error deviates from the error estimate.
 }
-
-\begin{figure}
-  \centering
-  \includegraphics[]{fig.mesh.st.eps}
-  % \includegraphics[]{fig.mesh.st.eps}
-  \caption{Example 3: the actual and estimated RMS error of the liquid
-    phase as a function of the Ewald splitting parameter $\beta$,
-    with various cut-off radii and grid spacings.
-    Red: the direct part. Green: the staggered mesh ik-differentiation.
-    Blue: the staggered mesh analytical differentiation. ``$\times$'' and
-    ``+'' denote the actual error.  The solid and dashed lines denote
-    the error estimates with and without nearest neighbor
-    approximation, respectively.
-    The error estimates for the staggered mesh ik- and analytical
-    differentiations are identical, so only the blue lines are presented.
-    The blue ``$\boxdot$'' indicates the radomized COM testing case,
-    calculated by the
-    staggered mesh analytical differentiation. The same results
-    of the ik-differentiation are not shown because they are overalpping
-    with the analytical differentiation.
-    The plotted direct space cut-off radii are
-    $r_c = 0.9$, $1.1$, $1.3$ and  $1.7\:\textsf{nm}$. The
-    reciprocal space grid spacings $h$  are approximately
-    $0.248$, $0.124$ and $0.062\:\textsf{nm}$, corresponding to
-    grids $60\times 30\times 30$, $120\times 60\times 60$ and
-    $240\times 120\times 120$, respectively. The order of B-spline
-    interpolation is 6.
-  }
-  \label{fig:tmp-add3}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-  \includegraphics[]{fig.order.st.eps}
-  % \includegraphics[]{fig.mesh.st.eps}
-  \caption{Example 3: the actual and estimated RMS error of the liquid
-    phase as a function of the Ewald splitting parameter $\beta$,
-    with various cut-off radii and interpolation orders.
-    The symbols are the same as Fig.~\ref{fig:tmp-add3}.
-    The plotted orders of B-spline interpolation are $n=4$, 6 and 8.
-    The reciprocal space grid spacings $h$ is approximately
-    $0.124\:\textsf{nm}$, corresponding to
-    a $120\times 60\times 60$ grid.
-  }
-  \label{fig:tmp-add4}
-\end{figure}
 
 
 
@@ -2626,7 +2747,8 @@ was acceptable.
 % However, the error estimate neglecting the charge correlation
 % is not applicable  for the staggered mesh Ewald method.
 The error estimates for the reciprocal space fast algorithms
-were impressively improved by including the first neighbor approximation
+were impressively improved by including the \recheck{bonded}
+first neighbor approximation
 to the correlation error.
 This indicated among all possible correlations,
 the rigid bond and angle correlation within one molecule
