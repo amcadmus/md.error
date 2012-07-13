@@ -12,7 +12,7 @@ reviewers for the positive reports and for the suggestions, which help
 us improving the quality of the manuscript. The revisions are
 reported below in detail.\\
 
-In the revised manuscript, all the additions are marked in red, to help the
+In the revised manuscript, all the major additions are marked in red, to help the
 reviewers to located them immediately in the text.\\
 
 \noindent
@@ -131,11 +131,16 @@ bond and H-O-H angle within one molecule,
 and (2) the
 non-bonded correlation or the
 intermolecular correlation that originates from
-a complex coupling of various intermolecular interaction.
+a complex coupling of various intermolecular interactions.
 Estimates for the bonded correlation
 have already been developed by the old manuscript,
 while the non-bonded estimate
 is newly added according to the reviewers' suggestion.
+The nearest neighbors are defined by neighbors closer than
+a neighboring range $R_g$.
+The non-bonded nearest neighbor approximation 
+is expressed in terms of the radial distribution
+functions (RDFs), see the new Eq. (21) and (22).
 Please note that
 both the bonded and non-bonded nearest neighbor approximations
 require some uniformity of the correlation in the system:
@@ -144,9 +149,7 @@ direction preference (as has been discussed in the old manuscript),
 while the non-bonded estimate requires the uniformity
 of the density distribution and the isotropicity of the system.
 Otherwise the cost of the error estimate would be $\mathcal O(N^2\log N)$.
-For the non-bonded correlation,  the nearest neighbor approximation 
-is expressed in terms of the radial distribution
-functions (RDFs), see the new Eq. (21) and (22). In example 3, a global RDF is not well defined,
+In example 3, a global RDF is not well defined,
 so we calculated the RDF and nearest neighbor approximation
 only for the liquid phase, see the dotted line in Fig.7. By adding
 the non-bonded correlation, the quality of the error estimate
@@ -230,19 +233,24 @@ to the very relevant cases of inhomogeneous and/or correlated systems.
   $\rho^{(2)}$ and $g(r)$, the equations should be easy to adapt to
   such a notation.  }
 
-In the revised manuscript, the correlation error are considered
-in two types: 
+In the revised manuscript,
+we consider both of the two types of the correlations:
 (1) the bonded correlation
 that originates from the rigid H-O
 bond and H-O-H angle within one molecule,
 and (2) the
 non-bonded correlation or the
 intermolecular correlation that originates from
-a complex coupling of various intermolecular interaction.
+a complex coupling of various intermolecular interactions.
 Estimates for the bonded correlation
 have already been developed by the old manuscript,
 while the non-bonded estimate
-is newly developed according to the reviewers' suggestion.
+is newly added according to the reviewers' suggestion.
+The nearest neighbors are defined by neighbors closer than
+a neighboring range $R_g$ (i.e. the $r_c$ in the reviewer's comment).
+The non-bonded nearest neighbor approximation 
+is expressed in terms of the radial distribution
+functions (RDFs), see the new Eq. (21) and (22).
 Please note that
 both the bonded and non-bonded nearest neighbor approximations
 require some uniformity of the correlation in the system:
@@ -252,23 +260,19 @@ while the non-bonded estimate requires the uniformity
 of the density distribution and the isotropicity of the system, which
 are also the prerequisites for reducing $\rho^{(2)}$ to $g(r)$.
 Otherwise the cost of the error estimate would be $\mathcal O(N^2\log N)$.
-For the non-bonded correlation,  the nearest neighbor approximation 
-is expressed in terms of the radial distribution
-functions (RDFs) in the new Eqn. (21) and (22).
-In example 3, a global RDF is not well defined
-(because the system is inhomogeneous),
+In example 3, a global RDF is not well defined (because the system is inhomogeneous),
 so we calculated the RDF and nearest neighbor approximation
-only for the liquid phase, see the dotted line in Fig.7. By adding the
-non-bonded correlation, the quality of the error estimate
+only for the liquid phase, see the dotted line in Fig.7. By adding
+the non-bonded correlation, the quality of the error estimate
 is further improved.
 Also the convergence with respect to
-the neighboring range $R_g$ (the $r_c$ in the reviewer's comment)
-is investigated (Fig.8). 
+the neighboring range $R_g$ is investigated, see Fig.8.
 Relevant changes to the manuscript
 have been made on page 9,
 11 (4-th line from the bottom), 12, 29 (12-th line). All changes are marked 
 in red for convenience.
 \\
+
 
 \textit{ Page 15, line 45: I believe I saw that the for interlaced
   P$^3$M algorithm, which is very similar to the staggered SMPE
