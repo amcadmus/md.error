@@ -19,7 +19,7 @@ set mytics 5
 set format y "%.2f"
 set key bottom right
 set clip two
-set style fill pattern 8
+#set style fill pattern 8
 
 set out 'tension.t1.20.eps'
 unset title
@@ -28,7 +28,7 @@ unset label
 set label 'T*=1.20' at 6.0, 0.18
 set yrange [0.00:0.20]
 pl \
-   't1.20.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+   't1.20.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc rgb "#CCCCCC" not,\
    't1.20.tension.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
    't1.20.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't1.20.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
@@ -43,7 +43,7 @@ unset label
 set label 'T*=1.10' at 6.0, 0.37
 set yrange [0.10:0.40]
 pl \
-   't1.10.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+   't1.10.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc rgb "#CCCCCC" not,\
    't1.10.tension.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
    't1.10.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't1.10.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
@@ -58,7 +58,7 @@ unset label
 set label 'T*=0.85' at 6.0, 0.95
 set yrange [0.50:1.00]
 pl \
-   't0.85.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+   't0.85.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc rgb "#CCCCCC" not,\
    't0.85.tension.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
    't0.85.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't0.85.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\
@@ -73,7 +73,7 @@ unset label
 set label 'T*=0.70' at 6.0, 1.255
 set yrange [0.80:1.30]
 pl \
-   't0.70.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+   't0.70.tension.ref.out' u 1:($2+$3):($2-$3) w filledcu lc rgb "#CCCCCC" not,\
    't0.70.tension.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
    't0.70.tension.uni.out'   u 1:($2-$4):3 w e ls 11 not, '' u 1:($2-$4) w l ls 12 t 'URC',\
    't0.70.tension.adapt.out' u 1:($2-$4):3 w e ls 21 not, '' u 1:($2-$4) w l ls 22 t 'ARC',\

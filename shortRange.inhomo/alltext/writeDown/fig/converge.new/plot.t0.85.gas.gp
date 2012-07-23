@@ -27,10 +27,10 @@ unset title
 unset label
 set label 'T*=0.85, gas' at 5.5, 0.0143
 set clip two
-set style fill pattern 8
+#set style fill pattern 8
 
 pl \
-'t0.85.gas.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+'t0.85.gas.ref.out' u 1:($2+$3):($2-$3) w filledcu lc rgb "#CCCCCC" not,\
 't0.85.gas.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
 't0.85.gas.uni.out'   u 1:($2):3 w e ls 11 not, '' u 1:($2) w l ls 11 t'URC',\
 't0.85.gas.adapt.out' u 1:($2):3 w e ls 21 not, '' u 1:($2) w l ls 21 t'ARC',\

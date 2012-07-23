@@ -28,6 +28,7 @@ set mytics 2
 set pm3d implicit at b
 #set palette defined (2.5 "blue", 3.75 "white", 5 "red")
 set palette rgbformulae 22,13,-31
+set palette model CMY rgbformulae 7,5,15
 #set size ratio 0.88
 #set size ratio 0.90
 
