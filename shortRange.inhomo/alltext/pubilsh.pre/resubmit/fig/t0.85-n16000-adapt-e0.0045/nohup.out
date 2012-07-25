@@ -1,0 +1,1 @@
+command is: /home/wanghan/study/shortRange.inhomo/result/t0.85-n16000-adapt-e0.0045/tools/simulation.hetero.cutoff/lj.nhc-xtc conf.gro 3000000 0 > gpu-md.out 2> gpu-md.perf
