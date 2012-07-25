@@ -14,7 +14,7 @@
 \newcommand{\recheck}[1]{{\color{red} #1}}
 \newcommand{\redc}[1]{{\color{red} #1}}
 \renewcommand{\v}[1]{\textbf{\textit{#1}}}
-\renewcommand{\d}[1]{\textsf{#1}}
+\renewcommand{\d}[1]{\textit{#1}}
 
 
 \begin{document}
@@ -71,14 +71,13 @@
 Non-bonded short-range interactions are encountered in nearly every
 molecular simulation.  A naive idea to calculate short-range
 interactions is to explicitly calculate all pairwise
-interactions. This results in a computational cost scaling $\mathcal
-O(N^2)$ per time step, which becomes rapidly inefficient as the number
+interactions. This results in a computational cost scaling $\mathit{O}(N^2)$ per time step, which becomes rapidly inefficient as the number
 of particles $N$ grows. A better way is to introduce a cut-off
 radius, outside of which all pairwise interactions are simply
 neglected. In combination with the cell list and the neighbor list
 algorithms \cite{frenkel02b}, the total computational cost of the
 short-range interactions can be reduced to an acceptable level of
-$\mathcal O(N)$.  The cut-off radius neglects all pairwise interactions
+$\mathit{O}(N)$.  The cut-off radius neglects all pairwise interactions
 outside the cut-off radius, so it introduces an error in the interaction
 calculation. Since the cut-offed system can be viewed as an approximation of
 the original system, it is very important to test the
@@ -106,7 +105,7 @@ by the cut-off method will encounter non-trivial
 difficulties.
 The simulation results are found to converge only at a very large
 cut-off radius value~\cite{duque2004some, ismail2007application}, also
-depend on the energy/force continuity at the cut-off and the way of
+depend on the energy (force) continuity at the cut-off and the way of
 applying the long-range corrections~\cite{trokhymchuk1999computer,
   guo1997long, mecke1997molecular, janecek2006long, goujon2004monte,
   shen2007comparative}.  Therefore, it is necessary to systematically
@@ -337,9 +336,9 @@ the correlation error should be taken into account.
 \subsection{Fast calculation of the error estimate}\label{sec:tmp1.3}
 
 The naive calculation of the convolutions in the error estimate \eqref{eqn:tmp5} requires
-a computational cost of $\mathcal O(N^2)$. To estimate the force error
+a computational cost of $\mathit{O}(N^2)$. To estimate the force error
 on the fly, the computational cost of the estimate should be reduced to
-at least $\mathcal O(N\log N)$.  This is achieved by  using the fast Fourier transform. We
+at least $\mathit{O}(N\log N)$.  This is achieved by  using the fast Fourier transform. We
 assume the simulation box is uniformly divided in to small bins.  The
 positions of these bins are
 \begin{align}
@@ -480,9 +479,9 @@ that the force error is uniformly distributed across the simulation
 region.
  In order to determine the cut-off radius, we should estimate the RMS
 force error at least once for each particle, and the computational
-cost of each force error estimate is $\mathcal O(N \log N)$,
+cost of each force error estimate is $\mathit{O}(N \log N)$,
 so the total computational expense of 
-this method is at least $\mathcal O(N^2\log N)$, which is
+this method is at least $\mathit{O}(N^2\log N)$, which is
 prohibitive to the on-the-fly application.
 
 
@@ -519,8 +518,7 @@ defined on the bins.  For a predetermined error control level
 $\mathcal E_{\textrm{C}}$, a satisfactory cut-off radius for a bin is
 chosen such that it is the smallest one satisfying the precision
 constraint $\mathcal E(\v r_{i_1,i_2,i_3}) \leq \mathcal
-E_{\textrm{C}}$. The computational cost of this algorithm is $\mathcal
-O(MN\log N)$.
+E_{\textrm{C}}$. The computational cost of this algorithm is $\mathit{O}(MN\log N)$.
 The idea of this algorithm is based on the observation
 that the cut-off radius may not be calculated at a very high
 precision.
@@ -618,7 +616,7 @@ profile is assumed to be inhomogeneous along one direction, and uniform
 on the other two directions.
 The
 system is subdivided into slabs perpendicular to the inhomogeneous direction to
-calculate the energy/force correction. The advantage of our force
+calculate the energy or force correction. The advantage of our force
 correction is that it has \emph{no} uniformity restriction on the density
 profile of the system, so can be used in a wider range of
 inhomogeneous simulations.
@@ -742,8 +740,8 @@ kind.
 
 The direct simulation of the liquid-vapor equilibrium is a very
 typical inhomogeneous system, which is widely used to study the phase
-coexistence properties, for example, the equilibrium liquid/vapor
-density, and the surface tension. The system studied in the present
+coexistence properties, for example, the equilibrium liquid-vapor
+densities, and the surface tension. The system studied in the present
 paper contains 16,000 identical standard Lennard-Jones particles that are
 separated into liquid phase in the center of the periodic box and vapor phase
 surrounded (see Fig.~\ref{fig:tmp1}).  The conventional Lennard-Jones
@@ -810,7 +808,7 @@ dotted blue line overlaps with the solid one.
 
 \begin{figure}
   \centering
-  \includegraphics[]{error.uniform.eps}
+  \includegraphics[]{pre.error.uniform.eps}
   \caption{(Color online)
     The RMS force error distribution of the 16000 Lennard-Jones
     particle system at $T^\ast=0.85$ with a uniform cut-off radius of
@@ -871,7 +869,7 @@ inhomogeneity error dominates in the interfacial region.
 
 \begin{figure}
   \centering
-  \includegraphics[]{rcut.and.error.eps}
+  \includegraphics[]{pre.rcut.and.error.eps}
   \caption{ (Color online)
     The RMS force error distribution of the 16000
     Lennard-Jones particle system at $T^\ast=0.85$ with adaptive
@@ -908,7 +906,7 @@ cut-off simulations.
 
 \begin{figure}
   \centering
-  \includegraphics[]{fcorr.and.error.eps}
+  \includegraphics[]{pre.fcorr.and.error.eps}
   \caption{ (Color online)
     The RMS force error distribution of the 16000
     Lennard-Jones particle system at $T^\ast=0.85$ with long-range
@@ -1024,7 +1022,7 @@ to the cut-off radius is considered.
 
 
 In the Fig. \ref{fig:tmp5} and Fig. \ref{fig:tmp6}, the convergence of
-the equilibrium liquid/vapor densities and surface tension are
+the equilibrium liquid-vapor densities and surface tension are
 investigated with respect to the increasing cut-off radius. The red,
 green and blue points with error bars denote the results of uniform,
 adaptive cut-off methods and the long-range force correction,
@@ -1050,7 +1048,7 @@ methods are almost identical at the same cut-off radius, see
 Fig. \ref{fig:tmp5}. This observation is also true for the surface
 tension, see Fig. \ref{fig:tmp6}. This indicates that controlling the
 maximum of force error (see Tab. \ref{tab:tmp1}) and introducing
-larger homogeneous force error in the bulk liquid/gas regions will not
+larger homogeneous force error in the bulk liquid or gas regions will not
 disturb the accuracy of the equilibrium densities and surface tension.
 The adaptive cut-off method roughly saves 1/3 -- 1/2 of the
 computational cost (see Tab. \ref{tab:tmp1}). The efficiency benefit
@@ -1076,7 +1074,7 @@ cut-off methods without pressure correction (see Fig. \ref{fig:tmp6}).
 With the long-range pressure correction, the convergence of the
 surface tension of all methods are largely improved.  The force
 correction method converges at $r_c^\ast = 3.5$, and the
-uniform/adaptive cut-off methods converge at $r_c^\ast = 5.0\sim 6.0$.  The
+uniform (adaptive) cut-off methods converge at $r_c^\ast = 5.0\sim 6.0$.  The
 discrepancy between the corrected and uncorrected tension is the
 amount of the correction, which decreases with the increasing cut-off
 radius. {
@@ -1170,10 +1168,10 @@ collision mode.
 
 \begin{figure}
   \centering
-  \includegraphics[]{trajs.eps}
+  \includegraphics[]{pre.trajs.eps}
   \caption{(Color online)
     The center of mass trajectory of cluster A. Uniform cut-off
-    (URC) $r_c^\ast = 2.5,\ 5.0,\ 7.5$, adaptive cut-off (ARC) $r_c =
+    (URC) $r_c^\ast = 2.5,\ 5.0,\ 7.5$, adaptive cut-off (ARC) $r_c^\ast =
     5.0$ and long-range force correction (LFC) $r^\ast_c = 2.5$ are
     investigated.  The time interval between two neighboring squares
     on the trajectory is 4.  }
@@ -1186,7 +1184,7 @@ collision mode.
   \caption{(Color online)
     The COM distance between cluster $A$ and cluster $B$ versus
     time. Uniform cut-off (URC) $r_c^\ast = 2.5,\ 5.0,\ 7.5$, adaptive
-    cut-off (ARC) $r_c = 5.0$ and long-range force correction (LFC)
+    cut-off (ARC) $r_c^\ast = 5.0$ and long-range force correction (LFC)
     $r^\ast_c = 2.5$ are investigated.  }
   \label{fig:tmp9}
 \end{figure}
@@ -1253,18 +1251,18 @@ total computational cost.
 
 \begin{figure}
   \centering
-  \includegraphics[]{wy.eps}
+  \includegraphics[]{pre.wy.eps}
   \caption{(Color online)
     The angular velocity of cluster $A$ versus time. Uniform
     cut-off (URC) $r_c^\ast = 2.5,\ 5.0,\ 7.5$, adaptive cut-off (ARC)
-    $r_c = 5.0$ and long-range force correction (LFC) $r^\ast_c = 2.5$
+    $r_c^\ast = 5.0$ and long-range force correction (LFC) $r^\ast_c = 2.5$
     are investigated.}
   \label{fig:tmp11}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[]{ly.eps}
+  \includegraphics[]{pre.ly.eps}
   \caption{(Color online)
     The angular moment of cluster $A$ versus time. Uniform
     cut-off (URC) $r_c^\ast = 2.5,\ 5.0,\ 7.5$, adaptive cut-off (ARC)
@@ -1291,12 +1289,15 @@ deviates away from the correct value by 1 \% at $t^\ast = 130$.
 
 \begin{figure}
   \centering
-  \includegraphics[]{cost.eps}
+  \includegraphics[]{pre.cost.eps}
   \caption{(Color online)
     The computational cost versus time. Uniform
     cut-off (URC) $r_c^\ast = 2.5,\ 5.0,\ 7.5$, adaptive cut-off (ARC)
-    $r_c = 5.0$ and long-range force correction (LFC) $r^\ast_c = 2.5$
-    are investigated.}
+    $r_c^\ast = 5.0$ and long-range force correction (LFC) $r^\ast_c = 2.5$
+    are investigated.
+    The computational cost is counted by
+    the number of calculated pairwise interactions.
+  }
   \label{fig:tmp13}
 \end{figure}
 
@@ -1383,15 +1384,15 @@ observed.
   load of the error estimate is small compared to that of the
   short-range interaction.
   However, it should be noticed that
-  the cost of the error estimate scales as $\mathcal O(N\log N)$.
+  the cost of the error estimate scales as $\mathit{O}(N\log N)$.
   If the system only has short-range interaction that
-  scales as $\mathcal O(N)$, the load of the error estimate
+  scales as $\mathit{O}(N)$, the load of the error estimate
   may become comparatively expensive when the system is large,
   and eventually
   overwhelms the total computational cost as the
   system size grows to infinity.
   If the system also needs long-range electrostatic calculation
-  that is usually treated by the $\mathcal O(N\log N)$ scaling
+  that is usually treated by the $\mathit{O}(N\log N)$ scaling
   Ewald type algorithms~\cite{darden1993pme, essmann1995spm, deserno1998mue1},
   the extra load of the error estimate is likely to be acceptable.
   We want to stress again the main research interest of the present paper is the

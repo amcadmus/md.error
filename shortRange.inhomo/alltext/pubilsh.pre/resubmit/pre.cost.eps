@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0 EPSF-2.0
-%%Title: cost.eps
-%%Creator: gnuplot 4.4 patchlevel 3
-%%CreationDate: Wed Sep 28 20:08:46 2011
+%%Title: pre.cost.eps
+%%Creator: gnuplot 4.6 patchlevel 0
+%%CreationDate: Wed Jul 25 20:17:33 2012
 %%DocumentFonts: (atend)
 %%BoundingBox: 50 50 290 220
 %%EndComments
@@ -20,10 +20,12 @@ gnudict begin
 /Level1 false def
 /Rounded false def
 /ClipToBoundingBox false def
+/SuppressPDFMark false def
 /TransparentPatterns false def
 /gnulinewidth 5.000 def
 /userlinewidth gnulinewidth def
 /Gamma 1.0 def
+/BackgroundColor {-1.000 -1.000 -1.000} def
 %
 /vshift -53 def
 /dl1 {
@@ -38,22 +40,6 @@ gnudict begin
 /vpt_ 31.5 def
 /hpt hpt_ def
 /vpt vpt_ def
-Level1 {} {
-/SDict 10 dict def
-systemdict /pdfmark known not {
-  userdict /pdfmark systemdict /cleartomark get put
-} if
-SDict begin [
-  /Title (cost.eps)
-  /Subject (gnuplot plot)
-  /Creator (gnuplot 4.4 patchlevel 3)
-  /Author (wanghan)
-%  /Producer (gnuplot)
-%  /Keywords ()
-  /CreationDate (Wed Sep 28 20:08:46 2011)
-  /DOCINFO pdfmark
-end
-} ifelse
 /doclip {
   ClipToBoundingBox {
     newpath 50 50 moveto 290 50 lineto 290 220 lineto 50 220 lineto closepath
@@ -461,8 +447,26 @@ currentdict end definefont pop
   Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
 /XYsave    { [( ) 1 2 true false 3 ()] } bind def
 /XYrestore { [( ) 1 2 true false 4 ()] } bind def
+Level1 SuppressPDFMark or 
+{} {
+/SDict 10 dict def
+systemdict /pdfmark known not {
+  userdict /pdfmark systemdict /cleartomark get put
+} if
+SDict begin [
+  /Title (pre.cost.eps)
+  /Subject (gnuplot plot)
+  /Creator (gnuplot 4.6 patchlevel 0)
+  /Author (wanghan)
+%  /Producer (gnuplot)
+%  /Keywords ()
+  /CreationDate (Wed Jul 25 20:17:33 2012)
+  /DOCINFO pdfmark
+end
+} ifelse
 end
 %%EndProlog
+%%Page: 1 1
 gnudict begin
 gsave
 doclip
@@ -471,6 +475,7 @@ doclip
 0 setgray
 newpath
 (Helvetica) findfont 160 scalefont setfont
+BackgroundColor 0 lt 3 1 roll 0 lt exch 0 lt or or not {BackgroundColor C 1.000 0 0 4818.00 3400.00 BoxColFill} if
 1.000 UL
 LTb
 688 512 M
@@ -772,9 +777,9 @@ Z stroke
 LCb setrgbcolor
 128 1859 M
 currentpoint gsave translate -270 rotate 0 0 moveto
-[ [(Helvetica) 160.0 0.0 true true 0 (Computational cost \(x 10)]
+[ [(Helvetica) 160.0 0.0 true true 0 (10)]
 [(Helvetica) 128.0 80.0 true true 0 (-6)]
-[(Helvetica) 160.0 0.0 true true 0 (\))]
+[(Helvetica) 160.0 0.0 true true 0 ( computational cost)]
 ] -69.3 MCshow
 grestore
 LTb
