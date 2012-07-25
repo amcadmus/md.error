@@ -11,7 +11,7 @@ Hereby we would like to resubmit our article
 \textbf{The Error Estimate of Short-Range Force Calculation in the Inhomogeneous Molecular Systems
 },\\
 
-by H. Wang, C. Sch\"uette and P. Zhang to:\\
+by H. Wang, C. Sch\"utte and P. Zhang to:\\
 
 \textbf{Physical Review E}, as a regular article.\\
 
@@ -30,14 +30,15 @@ distance?}
 
 Throughout the paper, when we mention
 that ``the cut-off of
-the adaptive cut-off method is $r_c^\ast$'', we mean that its
-control error is the maximum error of a uniform cut-off simulation
-using that cut-off $r_c^\ast$.
+the adaptive cut-off method is $r_c^\ast$'', we mean that the
+control error  $\mathcal E^\ast_{\textrm{\tiny{C}}}$
+is the same as the maximum error of a uniform cut-off simulation
+using $r_c^\ast$.
 Under this setting,  the maximum 
 cut-off radius of the adaptive cut-off method is the same as,
 or sometimes marginally larger  than
 $r_c^\ast$ (no more than $r_c^{\textrm{\tiny{step}}}$).
-We have made this point clear in the captions of Figures 5 and 6.
+We have changed the captions of Figures 5 and 6 to make it clear.
 \\
 
 \textit{
@@ -54,15 +55,32 @@ solvated biomolecules). In that case, I believe the Kspace formulation
 depends on their being a single cutoff on the short-range portion.
 }
 
-We have submitted a paper, titled ``The Numerical Accuracy of Computing
+We  have recently submitted a paper,
+titled ``The Numerical Accuracy of Computing
 Electrostatic Interaction in the Inhomogeneous and Correlated
 Molecular Systems: for the Ewald Summation, SPME and Staggered Mesh
-Ewald Methods'', dealing with the Ewald type long-range
-algorithms. In that paper, we concluded that the locally neutral systems
-do not have the error anomaly at the interfacial regions. Since
-most practical charged systems are locally neutral, we are safe and
-do not need ARC (adaptive cut-off) or LFC (long-range force correction)
-for the electrostatic calculation.
+Ewald Methods''.
+In that paper, the error estimates for both the
+direct space short-range part and the reciprocal space long-range
+part are developed.
+We prove that the inhomogeneity error vanishes in the
+locally neutral systems, so
+there is no error anomaly at the interfacial regions. Since
+most practical charged systems are locally neutral,
+we are basically safe and
+do not need neither ARC (adaptive cut-off)
+nor LFC (long-range force correction)
+for the electrostatic calculation. We 
+have also tested an artificial system that is NOT locally neutral. We find
+the direct space error presents similar error anomaly at the interface,
+while the reciprocal error (Kspace error) does not
+have any anomaly.
+Therefore, the reciprocal force calculation
+needs no adjustment, so the reciprocal space working parameters
+(interpolation order and grid spacing) and the splitting
+parameter can be fixed. When these parameters are fixed, the direct
+space force calculation is decoupled from the reciprocal space,
+so the ARC can be applied.
 \\
 
 \textit{
@@ -73,9 +91,9 @@ methods be used for either periodic or non-periodic systems?
 As far as we concerned, the error estimate technique and proposed
 corrections can only be used to periodic systems.
 We have added the following sentence to stress this point
-(line 5, page 26):
-\textbf{It should be noticed that the porposed error estimate and correction
-methods can only be used to periodic systems.}
+(line 8, page 26):
+\textbf{It should be noticed that the proposed error estimate and correction
+methods can only be used for periodic systems.}
 \\
 
 
@@ -87,22 +105,24 @@ these examples were all fairly small systems. If large simulations are
 performed (e.g. multi-million atoms), is the extra cost still small?}
 
 This is a very important comment, because
-the cost of FFTs $O(N\log N)$ will overcome the cost of short-range
-interaction $O(N)$ at some point when the system is very
-big. Eventually the computationaly cost will be overwhelmed by the
+the cost of FFTs ($O(N\log N)$) will overcome the cost of short-range
+interaction ($O(N)$) at some point when the system is very
+large. Eventually the computationally cost will be overwhelmed by the
 FFTs as the size of the system grows to infinity.
 This point should be noticed.  Fortunately, for the systems
 also calculate long-range interactions, the short-range error estimate
 scales the same as the Ewald type long-range algorithms.
-We have added the following remarks to the paper:
-(line 5 from the bottom, page 26):
+We have added the following remarks to the paper
+(2nd line from the bottom, page 26):
 \textbf{In the systems tested by the present paper, the computational
   load of the error estimate is small compared to that of the
   short-range interaction.
   However, it should be noticed that
-  the cost of the error estimate scales as $\mathcal O(N\log N)$,
-  which may become intractable when the $\mathcal O(N)$ scaling
-  short-range system is extremely large, and eventually
+  the cost of the error estimate scales as $\mathcal O(N\log N)$.
+  If the system only has short-range interaction that
+  scales as $\mathcal O(N)$, the load of the error estimate
+  may become comparatively expensive when the system is large,
+  and eventually
   overwhelms the total computational cost as the
   system size grows to infinity.
   If the system also needs long-range electrostatic calculation

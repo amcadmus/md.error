@@ -128,31 +128,7 @@ the inhomogeneous systems.
   reality, the unshifted interaction is
   preferred and investigated by most studies
   (see e.g. Ref.~\cite{potoff1998critical, perez2006critical}).
-  % Shifting the direct part of the Ewald summation actually
-  % violates the Coulomb's law in the way that depends on the
-  % splitting parameter, so it should be treated carefully.
-  % Here we would like to suggest treating the shifting approach
-  % as a special case 
 }
-% In this paper, we focus on the systems in which
-% atoms/particles are interacting via short-range interactions, because
-% it is a good starting point of the study of more complex systems, for
-% example, the systems with long-range electrostatic interactions.  The
-% simulation results in the inhomogeneous systems are found to depend on
-% a number of factors of treating the short-range interaction in the
-% simulation. For example, the way of calculating the short-range
-% interaction (simple cut-off method or Ewald
-% summation)~\cite{karasawa1989acceleration, lopez2002thermodynamic,
-%   lopez2006liquid, shi2006molecular, ismail2007application}, the
-% cut-off radius~\cite{trokhymchuk1999computer, duque2004some,
-%   shen2007comparative}, the way of long-range
-% correction~\cite{guo1997long, mecke1997molecular, janecek2006long,
-%   goujon2004monte} and the size and shape of the simulation
-% box~\cite{chen1995area, orea2005oscillatory, biscay2009calculation}.
-% It should be noticed that the physical properties are the nature of
-% the system, and should NOT depend on the details of the interaction
-% calculation.
-
 
 A promising way to quantitatively analyze the undesirable cut-off
 effects is to express these artifacts in terms of the difference
@@ -219,16 +195,6 @@ properties.{
   The space of the present paper is not enough for
   these algorithms, so they will be delivered in the future work.
 }
-% Finally, conclusions are given in section
-% \ref{sec:conclusion}.
-
-% The error estimate of long-range algorithms, for example the Ewald
-% family method~\cite{ewald1921die, hockney1988computer,
-%   deserno1998mue1, darden1993pme, essmann1995spm} and the fast
-% multipole method~\cite{greengard1987fast}, has been well developped in
-% the past 20 years ~\cite{hummer1995numerical, kolafa1992cutoff,
-%   petersen1995accuracy, deserno1998mue2, wang2010optimizing,
-%   dachsel2009error}. 
 
 
 
@@ -237,17 +203,11 @@ properties.{
 
 In this paper, for simplicity,
 we will consider one-component systems, but
-% we only consider the single-component system. Because
-% this assumption simplifies the discussion, and
 the error estimate for
 the one-component system can be straightforwardly extended to the
 multi-component systems.  We consider
 the force error in the present paper, because the
 applications are based on molecular dynamics simulations.
-% Since the error estimate developed for the one-component system can be
-% directly extended to multi-component system without substantial
-% difficulty, the discussion in this paper will focus on one-component
-% system for symplicity. 
 Suppose the system is composed by $N$ identical particles located at
 $\v r_1, \v r_2, \cdots, \v r_N$ with periodic boundary condition.
 These particles are interacting via a short-range pairwise interaction
@@ -263,10 +223,6 @@ it is calculated by the cut-off method.
 Therefore, our approach works for a large group of widely used interactions, 
 for example, the Lennard-Jones interaction, the Buckingham interaction,
 the direct part of Ewald family algorithms, and so forth.
-% An infinite cut-off radius will lead to
-% a precise calculation of interaction, but it is impractical.
-% The error of computing interaction is mainly introduced by a finit
-% value of the cut-off radius.
 
 The force error stems from the neglected interaction outside
 the cut-off radius, so it is convenient to consider the complementary
@@ -498,23 +454,6 @@ where $u(r)$ is the isotropic pairwise potential.
 
 \subsection{Adaptive cut-off radius method}
 
-% In Fig. \ref{fig:tmp1}, the testing system containing $N=16000$
-% standard Lennard-Jones particles is set up in a tube with periodic
-% boundary condition. The liquid droplet (in the middle of the tube) is
-% in equilibrium with the surrounding vapor environment. The red line in
-% the Fig. \ref{fig:tmp2} denotes the density profile (on direction $x$)
-% of this inhomogeneous system. The green square denotes the real RMS
-% force error distribution. It is clear that the error form two peaks in
-% the interfacial region, which is much higher than the relative
-% constant error of the bulk liquid and the bulk vapor. The dashed and
-% the dotted blue line are the estimated homogeneity and inhomogeneity
-% errors, and the solid blue line is the sum. In the bulk region, the
-% homogeneity error dominates while in the interfacial region, the
-% inhomogeneity error dominates. The esitmated error matches perfactly
-% with the real error at the interfacial region, but presents
-% overestimation in the bulk regions. The overestimation probably stems
-% from the neglection of the correlation error in \eqref{eqn:tmp5}.
-
 A basic observation in an inhomogeneous system is that the RMS force
 error is not uniformly distributed. The difference between the maximum
 and minimum error can be more than one order of
@@ -546,14 +485,6 @@ so the total computational expense of
 this method is at least $\mathcal O(N^2\log N)$, which is
 prohibitive to the on-the-fly application.
 
-% Since inhomogeneity error dominate the
-% force error of the system, such a big cutoff radius is a waste in the
-% bulk liquid and vapor regions. One possible way is to use adapt
-% cut-off radius according to the error distribution, so that larger
-% cut-off radii are used in the interfacial region while smaller cut-off
-% radii are used in the bulk regions.  More precisely, the aim of the
-% adaptive cut-off method is to equivalently distributed the force error
-% over the simulation region.
 
 To make the adaptive cut-off method feasible, we assume:
 \begin{enumerate}
@@ -623,13 +554,6 @@ the cut-off distribution is calculated every 20,000 time steps,
 so the extra load of adapting the cut-off is only marginal
 in the simulation, i.e. proportional to $ \frac{M}{20,000}N\log N$.
 
-% This
-% means the force error is a combination of a homogeneous contribution,
-% an inhomogeneous contribution and a correlational contribution. The
-% inhomogeneous force can be applied as a correction to the error:
-% \begin{align}\label{eqn:tmp7}
-%   \v F_{\textrm{inhomo}} = \int_{\mathbb R^3}\v F^c(\v r - \v r')\rho(\v r')\,\d d\v r'
-% \end{align}
 
 \subsection{Long-range force correction}
 
@@ -699,24 +623,10 @@ correction is that it has \emph{no} uniformity restriction on the density
 profile of the system, so can be used in a wider range of
 inhomogeneous simulations.
 
-% \textrm{Var}[\Delta\v F_{\textrm{corr}}(\v r)] = 
-
-% This means if we correct the computed force by the mean of the error
-% force, namely applying to each particle $\tilde{\v F}^c(\v r) =
-% \tilde{\v F}(\v r) - \langle\Delta\v F(\v r)\rangle$ instead of
-% $\tilde{\v F}(\v r)$. 
 
 
 
 \subsection{Long-range pressure correction}
-% By the cut-off method, the system lost the pressure contribution from
-% the particles outside the cut-off radius.  In the homogeneous systems,
-% the distribution of particles is assumed to be uniform outside the
-% cut-off radius, and the pressure correction is calculated by
-% integrating the virial from the cut-off to infinity.
-
-% In the inhomogeneous systems, the previous idea does not
-% work. Instead, the pressure correction of the system are:
 
 The pressure contribution outside the cut-off radius can be expressed
 by:
@@ -725,12 +635,6 @@ by:
 \end{align}
 For simplicity, we denote $\frac{1}{2V}\v r\otimes\v f^c$ by $\v
 K_{\textrm{P}}$, therefore,
-% For simplicity, let us consider the general form the the corrections:
-% \begin{align}
-%   Q = \bigg\langle \sum_{i\neq j} K(\v r_i - \v r_j) \bigg\rangle
-% \end{align}
-% For the pressure correction, $K$ is replaced by $\frac{1}{2V}\v
-% r\otimes\v f^c$.  By using \eqref{eqn:tmp7}, we have
 \begin{align}\nonumber
   \v P^c
   &= \bigg\langle \sum_{i\neq j} \v K_{\textrm{P}}(\v r_i - \v r_j) \bigg\rangle\\\nonumber
@@ -925,10 +829,6 @@ dotted blue line overlaps with the solid one.
 \end{figure}
 
 
-% The Fig. \ref{fig:tmp2} inspires us to develop the adaptive cut-off
-% method: in the bulk regions, the error is much smaller, therefore, it
-% is a waste to use the same cut-off radius as the interfacial
-% regions.
 As mentioned before, the key idea of the adaptive cut-off simulation
 is to use smaller cut-off
 radius in the bulk regions, so that the RMS force error is uniformly
@@ -1005,12 +905,6 @@ negligible. In the bulk liquid region, the homogeneity error is
 slightly overestimated, which is the same as the uniform and adaptive
 cut-off simulations.
 
-% Clearly the contribution of the inhomogeneity
-% error is successfully removed, because the estimate of homogeneity
-% error follows the real error perfectly in the interfacial regions.  In
-% the bulk liquid region, the homogeneity error is slightly
-% overestimated, which is the same as the uniform and adaptive cut-off
-% simulations.
 
 \begin{figure}
   \centering
@@ -1029,28 +923,6 @@ cut-off simulations.
 \end{figure}
 
 
-% As mentioned before, form Fig. \ref{fig:tmp2}, the error dominates at
-% the interfacial regions. The error estimate is sharp in these
-% regions. While in the bulk regions, the error estimate is not sharp,
-% but still acceptable. By the adapt cut-off radius MD, the resulting
-% distribution (averaged on $y$ and $z$ directions) of cut-off radius is
-% given in Fig. \ref{fig:tmp3}. In the interfacial regions, the cut-off
-% radius is adapted to $r_c^\ast = 7.5$. In the bulk liquid and vapor
-% regions, the cut-off radii are approximatly $5.0$ and $3.5$.  The
-% resulting error distribution is ploted in FIg. \ref{fig:tmp4}. It is
-% clear that the error is comparatively uniformly distributed in the
-% space. The estimate inhomogeneity error is also dominant at the
-% interfacial region, while the homogeneous error dominants in the bulk
-% regions.  Since the computational cost is proportional to $r_c^3$,
-% comparing with a simulation using uniform cut-off radius $7.5$, the
-% adaptive cut-off simulation saves 3.4 times and 9.8 times
-% computational cost, respectively. In total, the adaptive cut-off
-% radius method save 50\% of the computational cost.
-
-% We test the uniform and adaptive cut-off methods as well as the
-% correction force method in the mentioned liquid vapor equilibrium
-% system.
-
 To test the effectiveness of the proposed adaptive cut-off and
 long-range force correction methods, we measure the liquid-vapor
 equilibrium density and the surface tension defined by
@@ -1064,9 +936,6 @@ equilibrium density and the surface tension defined by
 Where $p_x$, $p_y$ and $p_z$ are $x$, $y$ and $z$ component of the
 pressure. The convergence of the properties of interest with respect
 to the cut-off radius is considered.
-% For the adaptive cut-off
-% simulation, the ``cut-off radius'' means the largest cut-off radius
-% used in the simulation region. 
 
 \begin{figure}
   \centering
@@ -1083,10 +952,11 @@ to the cut-off radius is considered.
     namely the uniform cut-off (URC) in red (middle gray), the
     adaptive cut-off (ARC) in green (light gray)
     and the force correction (LFC) method in blue (dark gray).
-    The cut-off of
-    the adaptive cut-off method is $r_c^\ast$ means its
-    control error is the maximum error of a uniform cut-off simulation
-    using that cut-off $r_c^\ast$.
+    ``The cut-off of
+    the adaptive cut-off method is $r_c^\ast$'' means that the
+    control error  $\mathcal E^\ast_{\textrm{C}}$
+    is the same as the maximum error of a uniform cut-off simulation
+    using $r_c^\ast$.
     Under this setting,  the maximum 
     cut-off radius of the adaptive cut-off method is the same as,
     or sometimes marginally larger  than
@@ -1109,10 +979,11 @@ to the cut-off radius is considered.
     correction (LPC) are shown together for comparison. The reference
     surface tension, shown by the solid black line, is measured by the
     uniform cut-off method with $r_c^\ast=13$ using LPC.
-    The cut-off of
-    the adaptive cut-off method is $r_c^\ast$ means its
-    control error is the maximum error of a uniform cut-off simulation
-    using that cut-off $r_c^\ast$.
+    ``The cut-off of
+    the adaptive cut-off method is $r_c^\ast$'' means that the
+    control error  $\mathcal E^\ast_{\textrm{C}}$
+    is the same as the maximum error of a uniform cut-off simulation
+    using $r_c^\ast$.
     Under this setting,  the maximum 
     cut-off radius of the adaptive cut-off method is the same as,
     or sometimes marginally larger  than
@@ -1152,66 +1023,6 @@ to the cut-off radius is considered.
 \end{table}
 
 
-% \begin{table}
-%   \centering
-%   \caption{
-%     The maximum RMS force error and computational cost of 
-%     three methods, namely the uniform cut-off
-%     (URC), the adaptive cut-off (ARC) and the long-range
-%     force correction (LFC) method.
-%     The computational cost is the number of pairwise interaction 
-%     measurements, which should be mashine-independent.
-%   }\label{tab:tmp1}
-%   \begin{tabular*}{0.50\textwidth}{c|c|@{\extracolsep{\fill}}ccc}\hline\hline
-%     $T^\ast$ &$r^\ast_{c}$ & \textrm{method} & $\max\mathcal E^\ast$ & Cost($\times 10^{-6}$) \\ \hline
-% %     & 3.5 &\textrm{LFC} & $1.4\times 10^{-2}$ & 3.4 \\\cline{2-5}
-% %     &     &\textrm{URC} & $2.5\times 10^{-2}$ & 7.9 \\
-% %     & 5.0 &\textrm{ARC} & $2.4\times 10^{-2}$ & 4.6 \\
-% %     &     &\textrm{LFC} & $2.0\times 10^{-3}$ & 8.8 \\\cline{2-5}
-% %     &     &\textrm{URC} & $4.9\times 10^{-3}$ & 27 \\
-% % 0.70& 7.5 &\textrm{ARC} & $4.9\times 10^{-3}$ & 13 \\
-% %     &     &\textrm{LFC} & $2.5\times 10^{-4}$ & 27 \\\cline{2-5}
-% %     &     &\textrm{URC} & $1.6\times 10^{-3}$ & 59 \\
-% %     &10.0 &\textrm{ARC} & $1.6\times 10^{-3}$ & 29 \\
-% %     &     &\textrm{LFC} & $5.8\times 10^{-5}$ & 59 \\ \hline\hline
-%     &     &\textrm{URC} & $8.6\times 10^{-2}$ & 2.9 \\
-%     & 3.5 &\textrm{ARC} & $6.7\times 10^{-2}$ & 2.1 \\
-%     &     &\textrm{LFC} & $1.4\times 10^{-2}$ & 3.1 \\\cline{2-5}
-%     &     &\textrm{URC} & $2.2\times 10^{-2}$ & 7.8 \\
-%     & 5.0 &\textrm{ARC} & $1.9\times 10^{-2}$ & 4.6 \\
-%     &     &\textrm{LFC} & $1.9\times 10^{-3}$ & 7.9 \\\cline{2-5}
-%     &     &\textrm{URC} & $4.5\times 10^{-3}$ & 24 \\
-% 0.85& 7.5 &\textrm{ARC} & $4.3\times 10^{-3}$ & 12 \\
-%     &     &\textrm{LFC} & $2.3\times 10^{-4}$ & 24 \\\cline{2-5}
-%     &     &\textrm{URC} & $1.4\times 10^{-3}$ & 53 \\
-%     &10.0 &\textrm{ARC} & $1.4\times 10^{-3}$ & 26 \\
-%     &     &\textrm{LFC} & $5.3\times 10^{-5}$ & 53 \\ \hline\hline
-%   \end{tabular*}
-% %   \begin{tabular*}{0.49\textwidth}{c|c|@{\extracolsep{\fill}}ccc}\hline\hline
-% %     $T^\ast$ &$r^\ast_{c}$ & \textrm{method} & $\max\mathcal E^\ast$ & Cost($\times 10^{-6}$) \\ \hline
-% %     & 3.5 &\textrm{LFC} & $1.3\times 10^{-2}$ & 3.8 \\\cline{2-5}
-% %     &     &\textrm{URC} & $1.5\times 10^{-2}$ & 5.6 \\
-% %     & 5.0 &\textrm{ARC} & $1.5\times 10^{-2}$ & 3.2 \\
-% %     &     &\textrm{LFC} & $1.7\times 10^{-3}$ & 9.9 \\\cline{2-5}
-% %     &     &\textrm{URC} & $3.3\times 10^{-3}$ & 17 \\
-% % 1.10& 7.5 &\textrm{ARC} & $3.5\times 10^{-3}$ & 8.8 \\
-% %     &     &\textrm{LFC} & $1.8\times 10^{-4}$ & 18 \\\cline{2-5}
-% %     &     &\textrm{URC} & $1.1\times 10^{-3}$ & 39 \\
-% %     &10.0 &\textrm{ARC} & $1.0\times 10^{-3}$ & 19 \\
-% %     &     &\textrm{LFC} & $4.2\times 10^{-5}$ & 39 \\ \hline\hline
-% % %     & 3.5 &\textrm{LFC} & $1.2\times 10^{-2}$ & 1.8 \\\cline{2-5}
-% % %     &     &\textrm{URC} & $1.1\times 10^{-2}$ & 4.2 \\
-% % %     & 5.0 &\textrm{ARC} & $1.0\times 10^{-2}$ & 2.8 \\
-% % %     &     &\textrm{LFC} & $1.5\times 10^{-3}$ & 4.6 \\\cline{2-5}
-% % %     &     &\textrm{URC} & $2.5\times 10^{-3}$ & 14 \\
-% % % 1.20& 7.5 &\textrm{ARC} & $2.4\times 10^{-3}$ & 7.7 \\
-% % %     &     &\textrm{LFC} & $1.5\times 10^{-4}$ & 14 \\\cline{2-5}
-% % %     &     &\textrm{URC} & $8.2\times 10^{-4}$ & 30 \\
-% % %     &10.0 &\textrm{ARC} & $8.3\times 10^{-4}$ & 17 \\
-% % %     &     &\textrm{LFC} & $3.3\times 10^{-5}$ & 31 \\\hline\hline
-% %   \end{tabular*}
-% \end{table}
-
 In the Fig. \ref{fig:tmp5} and Fig. \ref{fig:tmp6}, the convergence of
 the equilibrium liquid/vapor densities and surface tension are
 investigated with respect to the increasing cut-off radius. The red,
@@ -1233,14 +1044,6 @@ is given by the average numbers of pairwise interactions per time step
 calculated  by
 the program, which is platform independent and serves as a good benchmark.
 
-% In the higher
-% temperature cases, the thermodynamic flucuation of the system is
-% stronger. Therefore, the meansurement of densities and surface tension
-% are less accurate.
-% At $T^\ast = 0.70$, the gas
-% density converges much faster than the liquid density, while at
-% $T^\ast = 1.20$, the gas and liquid densities almost converges at the
-% same speed, see Fig. \ref{fig:tmp5}.
 
 The liquid and gas densities of the uniform and the adaptive cut-off
 methods are almost identical at the same cut-off radius, see
@@ -1267,19 +1070,6 @@ methods (see Tab. \ref{tab:tmp1}). The computationally cost of the
 force correction method is the same as the uniform cut-off methods at
 the same cut-off radius. 
 
-% With the
-% same cut-off radius, the computational cost of the force correction is
-% nearly the same as the uniform cut-off methods, see
-% Tab. \ref{tab:tmp1}, and at the same time, the force accuracy is more
-% than one order of maganitude better.
-
-% However, the maximum
-% force error of the force correction method is reduced by about one
-% order of maganitude.
-% We also observe that the liquid densities are systemetically higher
-% than the reference results. This fact will be discussed latter by
-% comparing with literature results.
-
 The surface tension result of the force correction without pressure
 correction is only slightly better than the uniform and adaptive
 cut-off methods without pressure correction (see Fig. \ref{fig:tmp6}).
@@ -1293,12 +1083,7 @@ radius. {
   However, even at a rather large cut-off of $r_c^\ast=10$,
   the amount of the correction is still not negligible, which tells the users
   that the uncorrected tension calculation is far from convergence.
-  % the extend of which is shown by the
-  % the amount of the correction calculated by the pressure correction method.
 }  
-% However, even at $r_c^\ast=10$, this correction is not
-% negligible, so it is very important for the precise surface tension
-% calculation.
 
 Comparing the results of the force correction method at $r_c^\ast =
 3.5$ and uniform cut-off radius method at $r_c^\ast = 6.0$, the force
@@ -1306,10 +1091,6 @@ accuracy of the former method is a little worse than the latter (see
 Tab. \ref{tab:tmp1}), but the equilibrium density accuracy is better than,
 and surface tension is equally good (see
 Fig. \ref{fig:tmp5} and \ref{fig:tmp6}).
-% In the force correction simulation, the
-% inhomogeneity error is screened out and the force error term is
-% dominated by the homogeneity error. And in the uniform cut-off
-% simulation the force error is dominated by the inhomogeneity error.
 Since the homogeneity error dominates in the former simulation and the
 inhomogeneity error dominates in the latter, the above observation
 indicates different natures of error play different roles in the
@@ -1333,185 +1114,18 @@ self-canceled.
   force. It may happen when the simulation starts very far from the
   equilibrium, or when the fluctuation in the system is so large that
   an accurate calculation of the density profile is impossible.
-  % In
-  % the latter case, the MD simulation are not trivial anyway, for
-  % example, the simulation of critical point.
-  % For these two cases, the traditional MD simulation is also not easy
-  % to handel.
   In our
   simulations, we do not observe any failure of convergence. Firstly,
   the system is far from the critical point, and we always let the
   simulation starts form a good enough configuration, for example, a
   snapshot of a simulation with the uniform small cut-off and lower
   temperature, or a snapshot from another force correction simulation.
-  % or the state of the system changes too fast
-  % comparing with the correction force updating fequency
   We also observe that the equilibration of the force-corrected
   system is always as fast as the system simulated by uniform and
   adaptive cut-off methods. That means, at least in our simulation
   cases, the force correction does not lead to more effort of 
   equilibrating the system.
 }
-  
-
-% To verify our simulations, we compare our results in
-% Tab. \ref{tab:comparison} with a wide range of results reported by
-% literature~\cite{janecek2006long, lotfi1992vapour,
-%   errington2003evaluating, ismail2007application}
-
-% We list in Tab. \ref{tab:comparison} a wide range of results reported
-% by literature~\cite{janecek2006long, lotfi1992vapour,
-%   errington2003evaluating, ismail2007application}, as well as our
-% uniform ($r_c^\ast = 13$) and force correction ($r_c^\ast = 5.0$)
-% results for comparison. The abbreviations in the table are explained
-% in the caption. The MC/LEC, MD/Ewald and our methods are direct
-% simulation of the inhomogeneous system. The MD/Npt+test particle and
-% MC/GC-TMMC methods are simulation of homogeneous systems that do not
-% have the difficulties of inhomogeneity, and are believed to be more
-% precise than direct simulations~\cite{shen2007comparative}.
-
-% \begin{table}
-%   \centering
-%   \caption{Equilibrium densities and surface tension comparision 
-%     with various literature results: Monte Carlo with long-range
-%     energy correction (MC/LEC)~\cite{janecek2006long}, Npt+test
-%     particle molecular dynamics (MD/Npt+test particle)~\cite{lotfi1992vapour},
-%     grand-canonical transition-matrix Monte Carlo (MC/GC-TMMC)~\cite{errington2003evaluating},
-%     molecular dynamics with dispersion term calculated by the Ewald
-%     summation (MD/Ewald)~\cite{ismail2007application}
-%     and uniform cut-off (URC) and long-range force correction (LFC) molecular dynamics
-%     proposed by this work. The surface tensions of this work are
-%     corrected by the long-range pressure correction.
-%     The cut-off radius of the Ewald summation is for the real space.
-%   }
-%   \label{tab:comparison}
-%   \begin{tabular*}{0.99\textwidth}{@{\extracolsep{\fill}}clllllc}\hline\hline
-%   % \begin{tabular}{cccc|cccc}\hline\hline
-%     $T^\ast$ & Method & $r_c^\ast$ & $\rho^\ast_{\textrm{liq}}$ & $\rho^\ast_{\textrm{vap}}$ & $\gamma^\ast$ & Source \\\hline
-%     0.70 & MC/LEC               & 2.5      & 0.842(1)    & 0.0021(2)   & 1.21(2)   & \cite{janecek2006long}\\
-%     0.70 & MD/Npt+test particle & 5.0      & 0.84266(18) & 0.00193(10) & -         & \cite{lotfi1992vapour}\\
-%     0.70 & MC/GC-TMMC           & 1/2 box  & 0.8424(13)  & 0.001992(2) & 1.182(10) & \cite{errington2003evaluating}\\
-%     % 0.70 & MD/Ewald             & 5.0(real)& 0.8414(1)   & 0.0020(0)   & 1.141(11) & \cite{ismail2007application}\\
-%     0.70 & MD/URC               & 13.0     & 0.8423(2)   & 0.0020(0)   & 1.128(10) & this work \\
-%     % 0.70 & MD/LFC               & 5.0      & 0.8424(2)   & 0.0021(1)   & 1.145(11) & this work \\\hline
-%     0.70 & MD/LFC               & 3.5      & 0.8430(4)   & 0.00209(9)  & 1.139(16) & this work \\\hline
-%     0.85 & MD/Npt+test particle & 5.0      & 0.77623(25) & 0.00970(22) & -         & \cite{lotfi1992vapour}\\
-%     0.85 & MC/GC-TMMC           & 1/2 box  & 0.7760(10)  & 0.009611(9) & 0.837(2)  & \cite{errington2003evaluating}\\
-%     % 0.85 & MD/Ewald             & 5.0(real)& 0.7750(1)   & 0.0098(0)   & 0.818(15) & \cite{ismail2007application}\\
-%     0.85 & MD/URC               & 13.0     & 0.7758(3)   & 0.0098(1)   & 0.794(09) & this work \\
-%     % 0.85 & MD/LFC               & 5.0      & 0.7760(4)   & 0.0098(1)   & 0.823(21) & this work\\\hline
-%     0.85 & MD/LFC               & 3.5      & 0.7761(3)   & 0.00986(16) & 0.794(15) & this work\\\hline
-%     1.10 & MC/LEC               & 2.5      & 0.642(1)    & 0.054(1)    & 0.33(2)   & \cite{janecek2006long}\\
-%     1.10 & MD/Npt+test particle & 5.0      & 0.6401(12)  & 0.0533(14)  & -         & \cite{lotfi1992vapour}\\
-%     1.10 & MC/GC-TMMC           & 1/2 box  & 0.6410(7)   & 0.05485(5)  & 0.343(2)  & \cite{errington2003evaluating}\\
-%     % 1.10 & MD/Ewald             & 5.0(real)& 0.6383(1)   & 0.0553(0)   & 0.302(11) & \cite{ismail2007application}\\
-%     1.10 & MD/URC               & 13.0     & 0.6399(9)   & 0.0560(8)   & 0.300(07) & this work\\
-%     % 1.10 & MD/LFC               & 5.0      & 0.6405(9)   & 0.0553(6)   & 0.293(9)  & this work\\ \hline
-%     1.10 & MD/LFC               & 3.5      & 0.6411(10)   & 0.0559(6)   & 0.302(11)  & this work\\ \hline
-%     1.20 & MC/LEC               & 2.5      & 0.566(1)    & 0.109(2)    & 0.16(2)   & \cite{janecek2006long}\\
-%     1.20 & MD/Npt+test particle & 5.0      & 0.5661(22)  & 0.0987(16)  & -         & \cite{lotfi1992vapour}\\
-%     % 1.20 & MD/Ewald             & 5.0(real)& 0.5627(2)   & 0.0942(0)   & 0.156(14) & \cite{ismail2007application}\\
-%     1.20 & MD/URC               & 13.0     & 0.5624(11)  & 0.1002(5)   & 0.131(6) & this work\\
-%     % 1.20 & MD/LFC               & 5.0      & 0.5651(22)  & 0.0987(11)  & 0.136(17) & this work\\
-%     1.20 & MD/LFC               & 3.5      & 0.5632(14)  & 0.1002(19)  & 0.130(8) & this work\\
-%     \hline\hline
-%   % \end{tabular}
-%   \end{tabular*}
-% \end{table}
-
-
-% The reason is the corrected error force has a varnished mean
-% value (, so it may point to any
-% direction with the same possibility.  With the same cut-off radius,
-% the computational cost of the force correction and uniform cut-off
-% methods are nearly the same, see Tab. \ref{tab:tmp1}. However, the
-% maximum force error of the force correction method is about one order
-% of maganitude more precise, comparing with the uniform cut-off
-% simulations.
-
-
-% The convergence of the surface tension with respect to the cut-off
-% radius is shown in the Fig. \ref{fig:tmp6}. The color notation is the
-% same as Fig. \ref{fig:tmp5}.  Surface tensions measured with and
-% without inhomogeneous pressure correction are connected by solid and
-% dashed lines, respectively.  The reference surface tension is
-% presented by the black solid lines. The inhomogeneous pressure
-% correction improve the surface tention measurement greatly. The
-% discrepancy between the corrected and uncorrected pressure is the
-% value of the correction, which decreases with increasing cut-off
-% radius. However, even at $r_c^\ast=10$, the correction is not
-% negligible for $T^\ast = 0.70$ and $T^\ast = 0.85$. At higher
-% temperature, the statistical uncertainty gets larger, and better
-% convergence is achieved at small cut-off radius.
-
-% Although the force correction is a
-% little better, no substential difference between the different
-% simulation methods is observed. However, the With the
-% pressure correction, the result is acceptable at cut-off 5.0 and
-% satisfactorily converged at cut-off 7.5.
-
-
-
-
-
-
-
-% The equilibrium liquid and vapor densities with respect to
-% the cut-off radius are presented in Fig. \ref{fig:tmp5}. For the
-% adaptive cut-off simulation, the data points represent the largest
-% cut-off radius used in the simulations. All the results are
-% substracted by the reference results, which are calculated at uniform
-% cut-off radius of 13, for a clear comparison. Solid and dashed lines
-% are added to the data points of vapor and liquid densities
-% respectively. For the uniform and adaptive cut-off simulations, the
-% cut-off radii 5, 7.5 and 10 are considered. For the force correction,
-% the cut-off 3.5 is investigated in addition. We perform simulations at
-% different temperature: that are denoted in the plots.
-
-
-
-
-
-% \begin{figure}
-%   \centering
-%   \includegraphics[]{fig/t0.85-n16000-adapt-e0.0045-extend/rcut.adapt.eps}
-%   \caption{The adapted cut-off radius of the 16000 Lennard-Jones
-%     particle system at $T^\ast=0.85$.}
-%   \label{fig:tmp3}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-%   \includegraphics[]{fig/t0.85-n16000-adapt-e0.0045-extend/error.adapt.eps}
-%   \caption{The error distribution of the adaptive-cut-off 16000
-%     Lennard-Jones particle system at $T^\ast=0.85$.}
-%   \label{fig:tmp4}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-%   \includegraphics[]{fig/t0.85-n16000-fcorr-rc07.5-feq0200/fcorr.eps}
-%   \caption{The correction force simulation of the 16000 Lennard-Jones
-%     particle system at $T^\ast=0.85$.}
-%   \label{fig:tmp3}
-% \end{figure}
-
-
-% \begin{figure}
-%   \centering
-%   \includegraphics[]{fig/t0.85-n16000-fcorr-rc07.5-feq0200/error.fcorr.eps}
-%   \caption{The correction force simulation of the adaptive-cut-off 16000
-%     Lennard-Jones particle system at $T^\ast=0.85$.}
-%   \label{fig:tmp4}
-% \end{figure}
-
-
-
-
-
-
 
 
 \subsection{Collision of nanoscale Lennard-Jones clusters}
@@ -1723,8 +1337,8 @@ high-error interfacial regions, so that the RMS force error is
 uniformly distributed over the simulation region. The long-range force
 correction method corrects the force computation by the mean error
 force, so that the inhomogeneity error is removed from the system.
-It should be noticed that the porposed error estimate and correction
-methods can only be used to periodic systems.
+It should be noticed that the proposed error estimate and correction
+methods can only be used for periodic systems.
 
 We studied the liquid-vapor equilibrium and the collision of nanoscale
 Lennard-Jones cluster to demonstrate the validity of the proposed
@@ -1738,8 +1352,6 @@ the adaptive cut-off simulation saved 34\% -- 50\% computational cost
 in liquid-vapor simulation and 18\% in the cluster collision simulation.
 The advantage of the adaptive cut-off method depends on the
 system:{
-% if the large bulk regions are connected by high density
-% gradient interfaces,
   if the computational costs of the bulk regions rather than the
   interfacial region dominate the system,}
 the adaptive cut-off method will save a notably large amount of the
@@ -1752,11 +1364,6 @@ properties converged at cut-off $r_c^\ast = 3.5$, whereas the uniform
 cut-off method converged at much larger cut-off radii ($r_c^\ast = 6.0$
 for surface tension and $r_c^\ast = 10.0$ for equilibrium
 densities). {
-% With nearly the same RMS force error, precision of
-% equilibrium densities of the force correction simulation were much
-% better than the uniform cut-off simulation.  Since the homogeneity
-% error dominated the force correction and the inhomogeneity error
-% dominated the simulation with uniform cut-off,
 We also concluded that the homogeneity
 error and the inhomogeneity error play different roles on the precision
 of equilibrium liquid-vapor densities: the inhomogeneity error
@@ -1776,9 +1383,11 @@ observed.
   load of the error estimate is small compared to that of the
   short-range interaction.
   However, it should be noticed that
-  the cost of the error estimate scales as $\mathcal O(N\log N)$,
-  which may become intractable when the $\mathcal O(N)$ scaling
-  short-range system is extremely large, and eventually
+  the cost of the error estimate scales as $\mathcal O(N\log N)$.
+  If the system only has short-range interaction that
+  scales as $\mathcal O(N)$, the load of the error estimate
+  may become comparatively expensive when the system is large,
+  and eventually
   overwhelms the total computational cost as the
   system size grows to infinity.
   If the system also needs long-range electrostatic calculation
