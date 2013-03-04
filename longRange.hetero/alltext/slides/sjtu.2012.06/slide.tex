@@ -61,8 +61,7 @@
 %\title{Comparative atomistic and coarse-grained study of water: Simulation details vs. Simulation feasibility}
 %\title[Optimizing SPME]{Optimizing Working Parameters of the Smooth Particle Mesh Ewald Algorithm}
 \title[]{
-  Estimating the force computation error in inhomogeneous and correlated
-  molecular systems
+  The numerical accuracy of force computation in inhomogeneous and correlated molecular systems.
 }
 %
 \author{Han Wang}
@@ -95,18 +94,76 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
 %   \end{itemize}
 % \end{frame}
 
+\begin{frame}{Molecular dynamics simulation}
+  \begin{itemize}\itemsep -10pt
+  \item<1-> Molecular dynamics simulation:
+    \bluec{
+      \begin{align*}
+        m_i \frac{\d d^2\v r_i}{\d dt^2} = \v F_i, \quad i = 1, 2, \cdots, N
+      \end{align*}
+    }
+  \item<2-> Pairwise interaction:
+    \bluec{
+      \begin{align*}
+        \v F_i = \sum_{j}\, \v f(\v r_i - \v r_j)
+      \end{align*}}
+  \item<3-> Periodic boundary condition:
+    \bluec{
+      \begin{align*}
+        \v F_i = \sum_{\v n}^\ast\sum_{j}\, \v f(\v r_i - \v r_j + \v n)
+      \end{align*}}
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Why?}
   Why force computation?
   \begin{itemize}\itemsep 3pt
-  \item <2->Molecular dynamics simulation.
-  \item <3->Computationally intensive: \redc{$ \sim 90 \%$}
-  \item <4->One of the main sources of the \redc{``error''}.
-  \item <5->May introduce \redc{unphysical artifacts}.
+  \item <2->Computationally intensive: \redc{$ \sim 90 \%$}
+  \item <3->One of the main sources of the \redc{``error''}.
+  \item <4->May introduce \redc{unphysical artifacts}.
   \end{itemize}
   \vfill
 \end{frame}
 
-\begin{frame}{Unphysical artifacts due to the force error}
+
+\begin{frame}{Fast algorithms}
+  \begin{itemize}
+  \item<1-> Naive computation of pairwise interaction costs \redc{$\mathcal O(N^2)$}
+  \item<2-> Fast algorithm:
+    \begin{figure}
+      \centering 
+      \includegraphics[width=0.5\textwidth]{figs/long-range/decay.pdf}
+    \end{figure}
+    \begin{itemize}
+    \item<3-> \redc{Short}-range interaction: \bluec{$1/r^6$}\quad Cut-off method \redc{$\mathcal O(N)$}
+    \item<4-> \redc{Long}-range interaction: \bluec{$1/r$}\quad \ \ SPME method \redc{$\mathcal O(N \log N)$}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{The Lennard-Jones interaction calculated by cut-off}
+  \begin{figure}
+    \centering
+    \begin{minipage}[c]{.48\textwidth}
+      \centering
+      \includegraphics[width=0.7\textwidth]{figs/short-range//simple-cutoff.pdf}      
+    \end{minipage}
+    \begin{minipage}[c]{.50\textwidth}
+      \centering
+      \vskip .5cm
+      \includegraphics[width=1.0\textwidth]{figs/simple-cut-conv/natom-rcut-c.pdf}
+    \end{minipage}
+    \end{figure}
+  \begin{itemize}
+  \item<1-> However, there is \redc{NO} free lunch... Error of force.
+  \item<2-> Mostly used $r_c$: 2.5 -- 4.0 $\sigma$. \redc{Convergence check} required.
+  \item<3-> Cost \redc{$\mathcal O(r_c^3)$}.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Unphysical artifacts due to the cut-off}
   \begin{itemize}\itemsep 10pt
   \item Example system:
     \begin{figure}
@@ -122,30 +179,53 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Definition of force error}
+  \begin{itemize}
+  \item<1->   The difference between exact force and computed force by fast algorithms:
+  \bluec{
+    \begin{align*}
+      \Delta \v F(\v r)
+      &=
+      \v F_{\textrm{exact}}(\v r) - \v F_{\textrm{calculate}}(\v r) 
+    \end{align*}
+  }
+  which is called \redc{error force}.
+  \vskip .5cm
+  \item<2-> error \bluec{$\mathcal E$}: the root mean square (RMS) of the error force:
+  \bluec{
+    \begin{align*}
+      \mathcal E =\sqrt{ \langle\vert\Delta\v F(\v r)\vert^2\rangle}
+    \end{align*}
+    }
+  \end{itemize}
+\end{frame}
+
+
+
 \begin{frame}{Why?}
-  Why error estimate?
+  What can we do with the error estimate?
   \begin{itemize}\itemsep 3pt
-  \item <2->Understanding \& correcting
+  \item <1->Understanding
     the unphysical artifacts, quantitatively.
-  \item <3->Correction to \redc{force, energy, pressure, etc.}
-  \item <4->Boost the accuracy \& efficiency of simulation automatically.
+  \item <2->Correction to \redc{force, energy, pressure, etc.}
+  \item <3->Boost the accuracy \& efficiency of simulation automatically.
   \end{itemize}  
   \vfill
 \end{frame}
 
-\begin{frame}{The working parameters of SPME} {A 6 dimensional parameter space!}
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.9\textwidth]{figs/long-range/error-uniform.eps}
-  \end{figure}  
-\end{frame}
+% \begin{frame}{The working parameters of SPME} {A 6 dimensional parameter space!}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=0.9\textwidth]{figs/long-range/error-uniform.eps}
+%   \end{figure}  
+% \end{frame}
 
 \begin{frame}{Overview of the error estimates}
   \begin{itemize}
   \vfill
   \item<1->   Conditions for the error estimate:
   \begin{enumerate}\itemsep 3pt
-  \item \redc{Homogeneity}.
+  \item \redc{Homogeneous}.
   \item Particles are \redc{uncorrelated}.
   \end{enumerate}
   \vfill
@@ -164,17 +244,67 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Short-range, homogeneous, uncorrelated}
+  \begin{enumerate}\itemsep 3pt
+  \item {Homogeneous}.
+  \item Particles are {uncorrelated}.
+  \end{enumerate}
+    \begin{table}
+    \centering
+    \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
+      Conditions & Short-range & Long-range \\\hline
+      1+2 & \bluec{\tickYes\quad$\mathcal O(1)$}  & \shadowc{\tickYes\quad$\mathcal O(1)$} \\
+      2   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      none& \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} & \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} \\
+          &  & \shadowc{N.N.A. $\mathcal O(N\log N)$} \\\hline\hline
+    \end{tabular*}
+  \end{table}
+\end{frame}
+
+
+\begin{frame}{Short-range, homogeneous, uncorrelated}
+  \begin{itemize}\itemsep -10pt
+    \vfill
+  \item<1-> Error estimate:
+    \bluec{
+      \begin{align*}
+        \mathcal E^2(r_c) = 4\pi\rho\int_{r_c}^\infty r^2[u'(r)]^2 \,\d dr,
+      \end{align*}}
+    where \bluec{$u(r)$} is the pairwise interaction potential.
+    \vfill
+    \vskip 1.cm
+  \item<2-> Homogeneity $\Rightarrow$ \bluec{$\langle\Delta\v F\rangle = 0$}
+    \bluec{
+      \begin{align*}
+        \mathcal E^2 = \textrm{Var}(\Delta\v F)
+      \end{align*}
+    }
+    \vfill
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Short-range, inhomogeneous, correlated}
+  \begin{enumerate}\itemsep 3pt
+  \item {Homogeneous}.
+  \item Particles are {uncorrelated}.
+  \end{enumerate}
+    \begin{table}
+    \centering
+    \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
+      Conditions & Short-range & Long-range \\\hline
+      1+2 & \shadowc{\tickYes\quad$\mathcal O(1)$}  & \shadowc{\tickYes\quad$\mathcal O(1)$} \\
+      2   & \redc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      none& \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} & \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} \\
+          &  & \shadowc{N.N.A. $\mathcal O(N\log N)$} \\\hline\hline
+    \end{tabular*}
+  \end{table}
+\end{frame}
+
 
 \begin{frame}{The error estimate}
   \begin{itemize}
-  \item <1-> The error force
-    \bluec{
-      \begin{align*}
-        \Delta \v F(\v r)
-        &=
-        \v F_{\textrm{calculate}}(\v r) - \v F_{\textrm{exact}}(\v r)
-      \end{align*}}
-  \item <2-> Define the error force kernel
+  \item <1-> Define the error force kernel
     \bluec{
       \begin{align*}
         \Delta \v F(\v r)
@@ -182,14 +312,14 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
         q \sum_{j=1}^N q_j \,\v K(\v r, \v r_j)
       \end{align*}}
     It is possible for most main stream force calculation algorithms: cut-off, SPME, P3M, etc.
-  \item <3-> The kernel of cut-off method:
+  \item <2-> The kernel of cut-off method:
     \bluec{
       \begin{align*}
         \v K(\v r,\v r') =
         \left\{
           \begin{array}{ll}
             0, & \vert\v r - \v r'\vert\leq r_c; \\
-            \v F(\vert\v r-\v r'\vert), & \vert\v r - \v r'\vert > r_c.
+            \v f(\vert\v r-\v r'\vert), & \vert\v r - \v r'\vert > r_c.
           \end{array}
         \right.
       \end{align*}}
@@ -304,6 +434,80 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
   \end{figure}  
 \end{frame}
 
+\begin{frame}{Long-range force correction}
+  \begin{itemize}\itemsep -10pt
+  \item<1-> Force correction:
+    \bluec{
+      \begin{align*}
+        \v F_{\textrm{corr}}(\v r) =
+        {\v F}_{\textrm{calculated}}(\v r) +
+        \redc{\langle\Delta\v F(\v r)\rangle}.
+      \end{align*}}
+  \item<2->   The mean of
+    the corrected error force vanishes:
+    \bluec{
+      \begin{align*}
+        \langle\Delta\v F_{\textrm{corr}}(\v r)\rangle
+        =
+        \big\langle\,
+        \v F_{\textrm{exact}}(\v r) - {\v F}_{\textrm{calculated}}(\v r) - \langle\Delta\v F(\v r)\rangle\,
+        \big\rangle = 0.
+      \end{align*}}
+  \item<3-> The mean square error is given by
+    \bluec{
+      \begin{align*} \nonumber
+        \langle\vert\Delta\v F_{\textrm{corr}}(\v r)\vert^2\rangle
+        =
+        \redc{\mathcal E^2_{\textrm{homo}}(\v r)} +
+        \redc{\mathcal E_{\textrm{correlation}}(\v r)}.
+      \end{align*}}
+    which contains \redc{NO} inhomogeneous part.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Long-range force correction}
+  \begin{figure}
+    \centering
+    \includegraphics[scale=1]{figs/t0.85-n16000-rc07.5uni/confout-02.eps}\\
+    \includegraphics[]{figs/t0.85-n16000-fcorr-rc07.5-feq0200/fcorr-and-error.eps}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Adaptive cut-off radius}
+  \begin{figure}
+    \centering
+    \includegraphics[scale=1]{figs/t0.85-n16000-rc07.5uni/confout-02.eps}\\
+    \includegraphics[]{figs/t0.85-n16000-adapt-e0.0045-extend/rcut-and-error.eps}
+  \end{figure}
+\end{frame}
+
+
+
+\renewcommand\arraystretch{1.1}
+\begin{frame}{Accuracy and efficiency}
+  \begin{table}
+  \centering
+  \begin{tabular*}{0.8\textwidth}{c|@{\extracolsep{\fill}}lcc}\hline\hline
+    $r^\ast_{c}$ & \textrm{method} & $\max\mathcal E^\ast$ & Cost($\times 10^{-6}$) \\ \hline
+     &\textrm{uniform} & $8.6\times 10^{-2}$ & 2.9 \\
+ 3.5 &\textrm{adaptive} & $8.6\times 10^{-2}$ & 1.9 \\
+     &\textrm{force corr} & $1.4\times 10^{-2}$ & 3.1 \\\cline{1-4}
+     &\textrm{uniform} & $2.2\times 10^{-2}$ & 7.8 \\
+ 5.0 &\textrm{adaptive} & $2.2\times 10^{-2}$ & 4.5 \\
+     &\textrm{force corr} & $1.9\times 10^{-3}$ & 7.9 \\\cline{1-4}
+ 6.0 &\textrm{uniform} & $1.1\times 10^{-2}$ & 13 \\\cline{1-4}
+     &\textrm{uniform} & $4.5\times 10^{-3}$ & 24 \\
+ 7.5 &\textrm{adaptive} & $4.3\times 10^{-3}$ & 12 \\
+     &\textrm{force corr} & $2.3\times 10^{-4}$ & 24 \\\cline{1-4}
+     &\textrm{uniform} & $1.4\times 10^{-3}$ & 53 \\
+10.0 &\textrm{adaptive} & $1.4\times 10^{-3}$ & 26 \\
+     &\textrm{force corr} & $5.3\times 10^{-5}$ & 53 \\ \hline\hline
+  \end{tabular*}
+\end{table}
+\end{frame}
+\renewcommand\arraystretch{1.5}
+
+
 \begin{frame}{Equilibrium gas density}
   \begin{figure}
     \centering
@@ -328,6 +532,11 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
   \end{figure}
   URC: uniform cut-off, ARC: adaptive cut-off, LFC: long-range force correction,
   LPC: long-range pressure correction.
+\end{frame}
+
+
+\begin{frame}{Conclusion of the cut-off method}
+  \centerline{\redc{The inhomogeneity error is bad}}.
 \end{frame}
 
 
@@ -403,24 +612,74 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
     \item \redc{$n$} \quad The order of cardinal B-spline interpolation.
   \end{itemize}
   \vfill An arbitrary combination may lead to \redc{totally wrong
-    results}. \vfill
+    results}.
+  \vfill
+  Two branches of force derivation: ik- and ananlytical differentiation.
+  \vfill
 \end{frame}
 
-\begin{frame}{The parameter tuning of SPME }
-  The parameter tuning is a constrained optimization problem:\footnote{
+\begin{frame}{Long-range, homogeneous, uncorrelated}
+  \begin{enumerate}\itemsep 3pt
+  \item {Homogeneous}.
+  \item Particles are {uncorrelated}.
+  \end{enumerate}
+    \begin{table}
+    \centering
+    \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
+      Conditions & Short-range & Long-range \\\hline
+      1+2 & \shadowc{\tickYes\quad$\mathcal O(1)$}  & \bluec{\tickYes\quad$\mathcal O(1)$} \\
+      2   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      none& \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} & \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} \\
+          &  & \shadowc{N.N.A. $\mathcal O(N\log N)$} \\\hline\hline
+    \end{tabular*}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Long-range, homogeneous, uncorrelated}
+  \begin{figure}
+  \includegraphics[width=0.7\textwidth]{figs/long-range//bspline-order6.pdf}
+\end{figure}
+  The SPME error estimate\footnote{
     \bluec{H. Wang, F. Dommert and C. Holm, J. Chem. Phys. \textbf{133}, 034117 (2010).}}
-  \bluec{
-    \begin{align*} 
-      \min\quad &  T (r_c, \v K, n, \beta),\\
-      \textrm{\textbf{s.t.}}\quad & \mathcal E (r_c, \v K, n, \beta) = \mathcal E_{\textrm{C}}
-    \end{align*}}
-  \redc{Nearly optimal} working parameters can be found \redc{automatically}.
+  is available in MD package Gromacs \redc{now}.
+\end{frame}
+
+
+% \begin{frame}{The parameter tuning of SPME }
+%   The parameter tuning is a constrained optimization problem:\footnote{
+%     \bluec{H. Wang, F. Dommert and C. Holm, J. Chem. Phys. \textbf{133}, 034117 (2010).}}
+%   \bluec{
+%     \begin{align*} 
+%       \min\quad &  T (r_c, \v K, n, \beta),\\
+%       \textrm{\textbf{s.t.}}\quad & \mathcal E (r_c, \v K, n, \beta) = \mathcal E_{\textrm{C}}
+%     \end{align*}}
+%   \redc{Nearly optimal} working parameters can be found \redc{automatically}.
+% \end{frame}
+
+
+\begin{frame}{Long-range, inhomogeneous, correlated}
+  \begin{enumerate}\itemsep 3pt
+  \item {Homogeneous}.
+  \item Particles are {uncorrelated}.
+  \end{enumerate}
+    \begin{table}
+    \centering
+    \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
+      Conditions & Short-range & Long-range \\\hline
+      1+2 & \shadowc{\tickYes\quad$\mathcal O(1)$}  & \shadowc{\tickYes\quad$\mathcal O(1)$} \\
+      2   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \redc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      none& \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} & \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} \\
+          &  & \shadowc{N.N.A. $\mathcal O(N\log N)$} \\\hline\hline
+    \end{tabular*}
+  \end{table}
 \end{frame}
 
 
 \begin{frame}{The inhomogeneity problem of SPME}
   \begin{itemize}
-  \item <1-> The mean error force is
+  \item <1-> The error kernels are available
+    for \redc{Ewald summation}, \redc{SPME} and \redc{staggered mesh SPME}.
+  \item <2-> The mean error force is
     \bluec{
       \begin{align*}
         \langle\Delta\v F(\v r)\rangle
@@ -437,7 +696,7 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
         \bigg\rangle
       }
     \end{align*}    
-  \item <2-> Varnishes if the system is \redc{locally neutral}.
+    Varnishes if the system is \redc{locally neutral}.
   \end{itemize}
 \end{frame}
 
@@ -449,12 +708,41 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
   \end{figure}  
 \end{frame}
 
-\begin{frame}{The trouble in water system}{Staggered mesh SPME}
+
+\begin{frame}{Long-range, inhomogeneous, correlated}
+  \begin{enumerate}\itemsep 3pt
+  \item {Homogeneous}.
+  \item Particles are {uncorrelated}.
+  \end{enumerate}
+    \begin{table}
+    \centering
+    \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
+      Conditions & Short-range & Long-range \\\hline
+      1+2 & \shadowc{\tickYes\quad$\mathcal O(1)$}  & \shadowc{\tickYes\quad$\mathcal O(1)$} \\
+      2   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
+      none& \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} & \redc{\tickNo\quad$\mathcal O(N^2\log N)$} \\
+          &  & \redc{N.N.A. $\mathcal O(N\log N)$} \\\hline\hline
+    \end{tabular*}
+  \end{table}
+\end{frame}
+
+
+
+\begin{frame}{The trouble in the inhomogeneous water system}
+  {Staggered mesh SPME}
   \begin{figure}
     \centering
     \includegraphics[width=0.9\textwidth]{figs/long-range-inhomo/water-st-error-1.eps}
   \end{figure}  
 \end{frame}
+
+\begin{frame}{The correlations in a water system}{Radial distribution functions}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figs/long-range-nna/rdf-corr-h2o.eps}
+  \end{figure}
+\end{frame}
+
 
 \begin{frame}{Nearest neighbor approximation of the correlation error}{Staggered mesh SPME}
   \begin{figure}
@@ -463,12 +751,21 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
   \end{figure}  
 \end{frame}
 
-
 \begin{frame}
   \vfill
   \centerline{ \Huge
     Thanks!  }
   \vfill
+  \bluec{
+    \begin{align*} \nonumber
+      \langle\vert\Delta\v F(\v r)\vert^2\rangle
+      = 
+      \redc{\mathcal E^2_{\textrm{homo}}(\v r)} +
+      % \langle\Delta\v F(\v r)\,\rangle^2 +
+      \redc{\mathcal E^2_{\textrm{inhomo}}(\v r)} +
+      \redc{\mathcal E_{\textrm{correlation}}(\v r)}.
+    \end{align*}
+  }
 \end{frame}
 
 
