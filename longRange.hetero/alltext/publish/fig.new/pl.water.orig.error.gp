@@ -2,9 +2,10 @@ set term post eps enh color font 16 size 8.5cm,6cm
 set out 'fig.water.orig.error.eps'
 
 set style line 90 lc 0 lw 3 pt 3 lt 1
-set style line 11 lc 1 lw 3 pt 2 lt 1
-set style line 21 lc 2 lw 3 pt 2 lt 1
+set style line 11 lc 1 lw 3 pt 2 lt 2
+set style line 21 lc 2 lw 3 pt 1 lt 1
 set style line 22 lc 2 lw 3 pt 2 lt 2
+set style line 24 lc 2 lw 3 pt 4 lt 2
 set style line 31 lc 3 lw 3 pt 2 lt 1
 set style line 32 lc 3 lw 3 pt 2 lt 2
 set style line 33 lc 3 lw 3 pt 1
@@ -54,6 +55,9 @@ pl\
 'water/real.spme.ana.noHO.error.out'	u 1:(138.935485*$3) w p ls 11 not 'real dir',\
 'water/real.spme.ana.noHO.error.out'	u 1:(138.935485*$4) w p ls 32 not 'real rec ana', \
 'water/real.spme.ik.noHO.error.out'	u 1:(138.935485*$4) w p ls 21 not 'real rec ik'
+
+# 'water.bond/real.spme.ana.noHO.error.out'	u 1:(138.935485*$4) w p ls 34 not 'real rec ana', \
+# 'water.bond/real.spme.ik.noHO.error.out'	u 1:(138.935485*$4) w p ls 24 not 'real rec ik'
 
 unset multiplot
 

@@ -3,7 +3,7 @@ set out 'fig.water.ana.st.error.more.eps'
 
 set style line 90 lc 0 lw 3 pt 3 lt 1
 set style line 11 lc 1 lw 3 pt 2 lt 1
-set style line 21 lc 2 lw 3 pt 2 lt 1
+set style line 21 lc 2 lw 3 pt 1 lt 1
 set style line 31 lc 3 lw 3 pt 2 lt 1
 set style line 32 lc 3 lw 3 pt 3 lt 2
 set style line 33 lc 3 lw 3 pt 1
@@ -21,6 +21,7 @@ set mxtics 2
 set mytics 2
 
 set arrow from 6,1.55e-2 to 6,0.45e-2 lw 1
+set arrow from 7,0.43e-2 to 7,0.18e-2 lw 3 lt 3 lc 0
 # set label "1st nbr. approx." at 6.2, 0.6e-2
 # set arrow from 7.3,0.7e-2 to 6.8,1.0e-2 lw 1
 # set label "st ana" at 7.5,0.7e-2
@@ -37,11 +38,23 @@ set arrow from 6,1.55e-2 to 6,0.45e-2 lw 1
 
 pl\
 'water/real.spme.ana.noHO.st.error.out'	u 1:(138.935485*$4) w p ls 31 not 'real rec ana st', \
-'water/real.spme.ik.noHO.st.error.out'	u 1:(138.935485*$4) w p ls 33 not 'real rec ik st', \
-'water.bond/real.spme.ana.st.error.out'	u 1:(138.935485*$4) w p ls 34 t 'intra-', \
-'water.bond/real.spme.ana.noHO.st.error.out'	u 1:(138.935485*$4) w p ls 35 t 'no intra-', \
+'water.bond/real.spme.ana.noHO.st.error.out'	u 1:(138.935485*$4) w p ls 34 not 'no intra-', \
 'water/esti.spme.st.h2o.error.out'	u 1:(138.935485*$4) w l ls 31 not 'esti rec st', \
-'water/esti.spme.st.error.out'		u 1:(138.935485*$4) w l ls 32 not 'esti rec ana sc'
+'water/esti.spme.st.h2o.gr1.8.error.out'	u 1:(138.935485*$4) w l ls 34 not 'esti rec st gr 1.8', \
+'water/esti.spme.st.error.out'		u 1:(138.935485*$4) w l ls 32 not 'esti rec ana sc',\
+'water/real.spme.ik.noHO.st.error.out'	u 1:(138.935485*$4) w p ls 21 not 'real rec ik st'
+
+# 'water/esti.spme.st.h2o.gr0.3.error.out'	u 1:(138.935485*$4) w l ls 34 not 'esti rec st gr 1.8', \
+# 'water/esti.spme.st.h2o.gr0.6.error.out'	u 1:(138.935485*$4) w l ls 34 not 'esti rec st gr 1.8', \
+
+#'water.bond/real.spme.ana.st.error.out'	u 1:(138.935485*$4) w p ls 34 t 'intra-', \
+
+
+
+
+
+
+
 
 # 'water.bond/esti.spme.st.h2o.error.out'	u 1:(138.935485*$4) w l ls 34 not 'esti rec st', \
 # 'water.bond/esti.spme.st.error.out'	u 1:(138.935485*$4) w l ls 35 not 'esti rec st', \
