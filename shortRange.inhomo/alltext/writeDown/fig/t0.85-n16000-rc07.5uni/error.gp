@@ -32,3 +32,9 @@ pl\
 'a.error.xtc.x.part1.out' every 1 axes x1y1 w l ls 21 t '{/Symbol e}_{homo}',\
 'a.error.xtc.x.part2.out' every 1 axes x1y1 w l ls 22 t '{/Symbol e}_{inhomo}'
 
+
+set format y '%L'
+set ylabel 'RMS error of the force log_{10}[{/Symbol e}]'
+set out 'pre.error.uniform.eps'
+
+rep

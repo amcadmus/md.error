@@ -32,3 +32,11 @@ pl\
 '' u 1:3 axes x1y1 w l ls 21 t '{/Symbol e}_{homo}',\
 '' u 1:4 axes x1y1 w l ls 22 t '{/Symbol e}_{hetero}'
 
+set format y '%L'
+set xlabel 'x*'
+set ylabel 'RMS error of the force  log_{10}[{/Symbol e}*]'
+set out 'pre.rcut.and.error.eps'
+
+rep
+
+
