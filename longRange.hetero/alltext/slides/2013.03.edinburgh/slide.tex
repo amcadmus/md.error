@@ -69,7 +69,7 @@
   Institute for Mathematics, Freie Universit\"at Berlin, Germany
 \vskip 0.4cm
 Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
-\date[7 July 2013]{7 July 2013}
+\date[7 July 2013]{7 July 2013\\University of Edinburgh}
 \frame{\titlepage}
 
 % \begin{frame}{Why?}
@@ -96,7 +96,7 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
 
 \begin{frame}{Background: Molecular dynamics simulation}
   \begin{itemize}\itemsep -10pt
-  \item<1-> Molecular dynamics simulation:
+  \item<1-> Molecular dynamics (MD) simulation:
     \bluec{
       \begin{align*}
         m_i \frac{\d d^2\vect r_i}{\d dt^2} = \vect F_i, \quad i = 1, 2, \cdots, N
@@ -108,7 +108,7 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
         \vect F_i = \sum_{j\neq i}\, \vect f(\vect r_i - \vect r_j)
       \end{align*}}
   \item<3-> \bluec{$\vect f$} can be:\\
-    van der Waals interaction modeled by Lennard-Jones 12-6 potential:
+    van der Waals interaction modeled by the Lennard-Jones 12-6 potential:
     \bluec{
       \begin{align*}
         \vect f(\vect r) = -\nabla_{\vect r}
@@ -118,7 +118,7 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
         \Big)
       \end{align*}
     }\\
-    Electrostatic interaction modeled by Coulomb potential:
+    Electrostatic interaction modeled by the Coulomb potential:
     \bluec{
       \begin{align*}
         \vect f(\vect r) \propto -\nabla_{\vect r}
@@ -129,15 +129,15 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Motivation of our study}
-  Why force computation is important?
-  \begin{itemize}\itemsep 3pt
-  \item <2->Computationally intensive: \redc{$ \sim 90 \%$}
-  \item <3->One of the main sources of the \redc{``error''}.
-  \item <4->May introduce \redc{unphysical artifacts}.
-  \end{itemize}
-  \vfill
-\end{frame}
+% \begin{frame}{Motivation of our study}
+%   Why force computation is important?
+%   \begin{itemize}\itemsep 3pt
+%   \item <2->Computationally intensive: \redc{$ \sim 90 \%$}
+%   \item <3->One of the main sources of the \redc{``error''}.
+%   \item <4->May introduce \redc{unphysical artifacts}.
+%   \end{itemize}
+%   \vfill
+% \end{frame}
 
 
 \begin{frame}{Fast algorithms of the force computation}
@@ -176,13 +176,13 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
 \begin{frame}{Cut-off in homogeneous systems}
   \begin{itemize}
   \item<1-> However, there is \redc{NO} free lunch... Error of force.
-  \item<2-> Mostly used $r_c$: 2.5 -- 4.0 $\sigma$ for homogeneous systems.
-  \item <3->\redc{Convergence check} needed (in extreme cases).
+  \item<2-> Expense: \redc{$\mathcal O(r_c^3)$}. Force computation costs \redc{$ \sim 90 \%$} of a typical molecular dynamics simulation.
+  \item<3-> Mostly used $r_c$: 2.5 -- 4.0 $\sigma$ for homogeneous systems.
+  \item<4->\redc{Convergence check} needed (in extreme cases).
   \begin{figure}
       \centering
-      \includegraphics[width=0.5\textwidth]{figs/simple-cut-conv/natom-rcut-c.pdf}
+      \includegraphics[width=0.6\textwidth]{figs/simple-cut-conv/natom-rcut-c.pdf}
     \end{figure}
-  \item<4-> Expense: \redc{$\mathcal O(r_c^3)$}.
   \end{itemize}
 \end{frame}
 
@@ -203,12 +203,12 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{One more example}
+\begin{frame}{One more example}{Surface tension of 61 organic liquids}
   \begin{figure}
     \centering
     \includegraphics[width=0.6\textwidth]{figs/short-range/membrane-example.pdf} 
   \end{figure}
-  \bluec{Zubillaga, R.A. et. al., Journal of Chemical Theory and Computation, in press, 2013}
+  \bluec{R.A. Zubillaga et. al., Journal of Chemical Theory and Computation, in press, 2013}
 \end{frame}
 
 \begin{frame}{Motivation of quantitative error study}
@@ -220,7 +220,7 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
   \begin{itemize}\itemsep 3pt
   \item <2->Understanding
     the unphysical artifacts, quantitatively.
-  \item <3->Correction to density, energy, pressure, etc.
+  \item <3->Cheap correction to density, energy, pressure, etc.
   \item <4->Boost the accuracy \& efficiency of simulation automatically.
   \end{itemize}  
   \vfill
@@ -349,7 +349,7 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
         &=
         q \sum_{j=1}^N q_j \,\vect K(\vect r, \vect r_j)
       \end{align*}}
-    It is possible for most main stream force calculation algorithms: cut-off, SPME, P3M, etc.
+    It is possible for most main stream fast force calculation algorithms: cut-off, SPME, P3M, etc.
   \item <2-> The kernel of cut-off method:
     \bluec{
       \begin{align*}
@@ -379,7 +379,8 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
 \item<2->   The error:
   \bluec{
     \begin{align*} \nonumber
-      \langle\vert\Delta\vect F(\vect r)\vert^2\rangle
+      % \langle\vert\Delta\vect F(\vect r)\vert^2\rangle
+      \mathcal E^2
       = 
       \redc{\mathcal E^2_{\textrm{homo}}(\vect r)} +
       % \langle\Delta\vect F(\vect r)\,\rangle^2 +
@@ -664,7 +665,7 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
     \begin{table}
     \centering
     \begin{tabular*}{0.85\textwidth}{l@{\extracolsep{\fill}}ll}\hline\hline
-      Conditions & Short-range & Long-range \\\hline
+      Conditions & cut-off & SPME \\\hline
       1+2 & \shadowc{\tickYes\quad$\mathcal O(1)$}  & \bluec{\tickYes\quad$\mathcal O(1)$} \\
       2   & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} & \shadowc{\tickYes\quad$\mathcal O(N\log N)$} \\
       none& \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} & \shadowc{\tickNo\quad$\mathcal O(N^2\log N)$} \\
@@ -713,11 +714,11 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
 \end{frame}
 
 
-\begin{frame}{The inhomogeneity problem of SPME}
+\begin{frame}{The inhomogeneity error of SPME}
   \begin{itemize}
   \item <1-> The error kernels are available
     for \redc{Ewald summation}, \redc{SPME} and \redc{staggered mesh SPME}.
-  \item <2-> The mean error force is
+  \item <1-> The mean error force is
     \bluec{
       \begin{align*}
         \langle\Delta\vect F(\vect r)\rangle
@@ -810,6 +811,12 @@ Joint with: Christof Sch\"utte (FUB), Pingwen Zhang (PKU)}
     \includegraphics[width=0.9\textwidth]{figs/long-range-inhomo/water-st-error-3.eps}
   \end{figure}  
 \end{frame}
+
+% \begin{frame}{Summary}
+%   \begin{itemize}
+%   \item 
+%   \end{itemize}
+% \end{frame}
 
 \begin{frame}
   \vfill

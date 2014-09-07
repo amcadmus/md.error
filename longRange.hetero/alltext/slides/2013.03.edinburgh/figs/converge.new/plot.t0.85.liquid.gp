@@ -42,3 +42,11 @@ pl \
 't0.85.liquid.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
 't0.85.liquid.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
 't0.85.liquid.uni.out'   u 1:($2):3 w e ls 11 not, '' u 1:($2) w l ls 11 not
+
+set out 't0p85-liquid-2.eps'
+
+pl \
+'t0.85.liquid.ref.out' u 1:($2+$3):($2-$3) w filledcu lc 0 not,\
+'t0.85.liquid.ref.out' u 1:2 w l lt 1 lc 0 lw 3 not,\
+'t0.85.liquid.uni.out'   u 1:($2):3 w e ls 11 not, '' u 1:($2) w l ls 11 t'cut-off',\
+'t0.85.liquid.fcorr.out' u 1:($2):3 w e ls 31 not, '' u 1:($2) w l ls 31 t'cut-off with LFC'

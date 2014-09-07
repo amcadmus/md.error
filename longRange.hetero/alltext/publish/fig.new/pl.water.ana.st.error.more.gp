@@ -50,6 +50,13 @@ pl\
 #'water.bond/real.spme.ana.st.error.out'	u 1:(138.935485*$4) w p ls 34 t 'intra-', \
 
 
+set out 'tmp.eps'
+pl\
+'water/real.spme.ana.noHO.st.error.out'	u 1:(138.935485*$4) w p ls 31 not 'real rec ana st', \
+'water/esti.spme.st.h2o.error.out'	u 1:(138.935485*$4) w l ls 31 not 'esti rec st', \
+'water/esti.spme.st.h2o.gr1.8.error.out'	u 1:(138.935485*$4) w l ls 34 not 'esti rec st gr 1.8', \
+'water/esti.spme.st.error.out'		u 1:(138.935485*$4) w l ls 32 not 'esti rec ana sc',\
+'water/real.spme.ik.noHO.st.error.out'	u 1:(138.935485*$4) w p ls 21 not 'real rec ik st'
 
 
 
@@ -80,7 +87,7 @@ pl\
 # 'real.spme.ana.st.error.out'		u 1:(138.935485*$2) w p ls 41 not 'real ana ', \
 # 'esti.spme.st.error.out'		u 1:(138.935485*$2) w l ls 41 not 'esti st'
 
-unset multiplot
+# unset multiplot
 
 
 #'real.spme.ik.error.out'		u 1:(138.935485*$4) w p ls 34 t 'real SPME ik rec', \
