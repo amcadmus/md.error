@@ -1,0 +1,3 @@
+./ewaldSum -c conf.gro -b 1.0 -k 9 -o force1.out
+./ewaldSum -c conf.gro -b 1.0 -k 27 -o force0.out
+./compare.force
