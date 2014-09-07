@@ -1,0 +1,9 @@
+#include "gmx.ff/forcefield.itp"
+#include "gmx.ff/tip3p.itp"
+
+[ system ]
+Pure Water
+
+[ molecules ]
+SOL	3244
+
