@@ -1,0 +1,342 @@
+\documentclass[aps, pre, preprint,unsortedaddress,a4paper,onecolumn]{revtex4}
+% \documentclass[aps, pre, preprint,unsortedaddress,a4paper,twocolumn]{revtex4}
+% \documentclass[acs, jctcce, a4paper,preprint,unsortedaddress,onecolumn]{revtex4-1}
+% \documentclass[aps,pre,twocolumn,unsortedaddress]{revtex4-1}
+% \documentclass[aps,jcp,groupedaddress,twocolumn,unsortedaddress]{revtex4}
+
+\usepackage[fleqn]{amsmath}
+\usepackage{amssymb}
+\usepackage[dvips]{graphicx}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\makeatletter
+\makeatother
+
+\newcommand{\recheck}[1]{{\color{red} #1}}
+\newcommand{\redc}[1]{{\color{red} #1}}
+\newcommand{\bluec}[1]{{\color{red} #1}}
+\newcommand{\greenc}[1]{{\color{green} #1}}
+\newcommand{\vect}[1]{\textbf{\textit{#1}}}
+% \newcommand{\vect}[1]{#1}
+\newcommand{\dd}[1]{\textsf{#1}}
+% \newcommand{\fwd}[0]{\textrm{fw}}
+% \newcommand{\bwd}[0]{\textrm{bw}}
+\newcommand{\fwd}[0]{+}
+\newcommand{\bwd}[0]{-}
+\newcommand{\period}[0]{T_{\textrm{P}}}
+\newcommand{\ml}[0]{\mathcal {L}}
+\newcommand{\mo}[0]{\mathcal {O}}
+\newcommand{\mbp}[0]{\mathbb {P}}
+\newcommand{\mc}[0]{\mathcal {C}}
+\newcommand{\dt}[0]{\Delta t}
+\newcommand{\id}{\mathrm{Id}}
+\newcommand{\mypi}{\boldsymbol\pi}
+% \newcommand{\mymu}{\boldsymbol\mu}
+\newcommand{\myphi}{\Phi}
+\newcommand{\mymu}{\mu}
+\newcommand{\prob}{\textrm{P}}
+\newcommand{\ins}{\textrm{ins}}
+
+\newcommand{\confaa}[0]{{\alpha_{\textrm{R}}}}
+\newcommand{\confab}[0]{{\alpha_{\textrm{R}}'}}
+\newcommand{\confba}[0]{{\textrm{C}7_{\textrm{eq}}}}
+\newcommand{\confbb}[0]{{\textrm{C}5}}
+\newcommand{\confc}[0]{{\alpha_{\textrm{L}}}}
+
+
+
+\begin{document}
+
+\title{Structure preserving numerical scheme for isothermal isobaric Langevin dynamics}
+\author{Han Wang}
+\email{han.wang@fu-berlin.de}
+\affiliation{Zuse Institut Berlin, Germany}
+   
+\begin{abstract}
+\end{abstract}
+
+\maketitle
+
+\section{Two possible ways of defining Hamiltonian}
+
+The isobaric simulation is implmented by rescaling the simulation region.
+Here we assume the box is cubic and of volume $V$. The positions of the
+atoms are denoted by $\vect r_i,\ i=1, \cdots, N$. 
+The rescaling is given by
+\begin{align}
+  \vect s_i = V^{-\frac13} \vect r_i, \quad \vect r_i = V^{\frac13}\vect s_i
+\end{align}
+Therefore, the straightforward definition of the kinetic energy is given by
+\begin{align}
+  \mathcal K &=
+  \sum_{i=1}^N \frac12 m_i \big(\frac{d}{dt} (V^{\frac13}\vect s_i) \big)^2
+  +
+  \frac 12 {M_V} \dot V^2 \\
+  & =
+  \sum_{i=1}^N \frac 12 m_i
+  \big(\frac13 V^{-\frac23} \dot V \vect s_i + V^{\frac13}\dot{\vect s}_i\big)^2
+  +
+  \frac 12 {M_V} \dot V^2 
+\end{align}
+The corresponding momenta are
+\begin{align}
+  \mypi_i
+  &=
+  \frac{\partial \mathcal K}{\partial \dot{\vect s}_i} =
+  m_i \big(\frac13 V^{-\frac23} \dot V \vect s_i + V^{\frac13}\dot{\vect s}_i\big) V^{\frac13}  \\
+  p_V
+  &=
+  \frac{\partial \mathcal K}{\partial \dot{V}}
+  =
+  \sum_{i=1}^N m_i
+  \big(\frac13 V^{-\frac23} \dot V \vect s_i + V^{\frac13}\dot{\vect s}_i\big)\,
+  \frac13 V^{-\frac23}\vect s_i
+  +
+  {M_V}\dot V \\
+  &=
+  \sum_{i=1}^N 
+  \frac13 V^{-1} \mypi_i\cdot\vect s_i + {M_V} \dot V
+\end{align}
+The Hamiltonian of the system is therefore given by
+\begin{align}
+  \mathcal H =
+  \sum_{i=1}^N \mypi\cdot\dot{\vect s}_i + p_V \dot V - \mathcal K + \mathcal V,
+\end{align}
+where $\mathcal V$ is the potential energy:
+\begin{align}
+  \mathcal V = U(V^{\frac13}\vect s_1, \cdots, V^{\frac13}\vect s_N) + PV
+\end{align}
+then
+\begin{align}\nonumber
+  \mathcal H &=
+  \sum_{i=1}^N
+  m_i \big(\frac13 V^{-\frac23} \dot V \vect s_i + V^{\frac13}\dot{\vect s}_i\big) V^{\frac13}\dot{\vect s}_i
+  + 
+  \sum_{i=1}^N
+  m_i \big(\frac13 V^{-\frac23} \dot V \vect s_i + V^{\frac13}\dot{\vect s}_i\big)
+  \frac13 V^{-\frac23}\vect s_i \dot V
+  - \mathcal K + \mathcal V \\
+  & =
+  \mathcal K + \mathcal V \\
+  &=
+  \sum_{i=1}^N \frac 12 m_i
+  \big(\frac13 V^{-\frac23} \dot V \vect s_i + V^{\frac13}\dot{\vect s}_i\big)^2
+  +
+  \frac 12 {M_V} \dot V^2
+  +
+  U(V^{\frac13}\vect s_1, \cdots, V^{\frac13}\vect s_N) + PV \\
+  &=
+  \sum_{i=1}^N\frac{V^{-\frac23} \mypi_i^2}{2m_i}
+  +
+  \frac1{2{M_V}}\big(p_V - \sum_{i=1}^N\frac13V^{-1} \mypi_i\cdot\vect s_i\big)^2
+  +
+  U(V^{\frac13}\vect s_1, \cdots, V^{\frac13}\vect s_N) + PV 
+\end{align}
+The equation of motion:
+\begin{align}
+  \dot{\vect s}_i
+  &=
+  \frac{\partial \mathcal H}{\partial \mypi_i}
+  =
+  \frac{V^{-\frac23}\mypi_i}{m_i} -
+  \frac1{{M_V}}\big(p_V - \sum_{i=1}^N\frac13V^{-1} \mypi_i\cdot\vect s_i\big)\frac13 V^{-1}\vect s_i \\
+  \dot{\mypi}_i
+  &= 
+  -\frac{\partial \mathcal H}{\partial \vect s_i}
+  = -\partial_i U V^{\frac13} +
+  \frac1{{M_V}}\big(p_V - \sum_{i=1}^N\frac13V^{-1} \mypi_i\cdot\vect s_i\big)\frac13 V^{-1}\mypi_i \\
+  \dot{V} 
+  &=
+  \frac{\partial \mathcal H}{\partial \vect p_V}
+  =\frac1{M_V}\big(p_V - \sum_{i=1}^N\frac13V^{-1} \mypi_i\cdot\vect s_i\big)\\
+  \dot{p}_V
+  &=
+  -\frac{\partial \mathcal H}{\partial V}
+  =
+  \sum_{i=1}^N \frac13V^{-\frac53} \frac{ \mypi_i^2}{m_i}
+  -
+  \frac1{{M_V}}\big(p_V - \sum_{i=1}^N\frac13V^{-1} \mypi_i\cdot\vect s_i\big)
+  \sum_{i=1}^N\frac13V^{-2} \mypi_i\cdot\vect s_i
+  -
+  \sum_{i=1}^N\partial_i U \frac13V^{-\frac23}\vect s_i - P
+\end{align}
+These quations of motion are too complicated.  It seems there is no good way to simplify it.
+
+We use an alternative way of defining the kinetic energy:
+\begin{align}
+  \mathcal K &=
+  \sum_{i=1}^N \frac12 m_i V^{\frac23}\dot{\vect s}_i^2
+  +
+  \frac 12 {M_V} \dot V^2 
+\end{align}
+The momenta are given by
+\begin{align}
+  \mypi_i
+  &=
+  \frac{\partial \mathcal K}{\partial\dot{\vect s}_i}
+  =m_i V^{\frac23}\dot{\vect s}_i\\
+  p_V
+  &=
+  \frac{\partial \mathcal K}{\partial\dot{V}}
+  = {M_V}\dot V
+\end{align}
+The the Hamiltonian is
+\begin{align}
+  \mathcal H
+  &=
+  \sum_{i=1}^N\mypi_i\cdot \dot{\vect s}_i +
+  p_V \dot V - \mathcal K + \mathcal V \\
+  & =
+  \mathcal K + \mathcal V \\
+  &=
+  \sum_{i=1}^N \frac12 m_i V^{\frac23}\dot{\vect s}_i^2
+  +
+  \frac 12 {M_V} \dot V^2  +
+  U(V^{\frac13}\vect s_1, \cdots, V^{\frac13}\vect s_N) + PV    \\
+  & =
+  \sum_{i=1}^N V^{-\frac23} \frac{\mypi_i^2}{2m_i}
+  +
+  \frac{p_V^2}{2{M_V}}
+  +
+  U(V^{\frac13}\vect s_1, \cdots, V^{\frac13}\vect s_N) + PV      
+\end{align}
+The corresponding equations of motion are:
+\begin{align}
+  \dot{\vect s}_i
+  &=
+  \frac{\partial \mathcal H}{\partial \mypi_i}
+  =
+  V^{-\frac23} \frac{\mypi_i}{m_i} \\
+  \dot{\mypi}_i
+  &=
+  -\frac{\partial \mathcal H}{\partial \vect s_i}
+  = -\partial_i U V^{\frac13} \\
+  \dot{V} 
+  &=
+  \frac{\partial \mathcal H}{\partial p_V}
+  = \frac{p_V}{M_V} \\
+  \dot{p}_V
+  &=
+  -\frac{\partial \mathcal H}{\partial V}
+  =
+  \sum_{i=1}^N \frac13 V^{-\frac53} \frac{\mypi_i^2}{m_i}
+  -
+  \sum_{i=1}^N \partial_i U \frac13 V^{-\frac23} \vect s_i
+  - P
+\end{align}
+Or we want to write it in terms of the generlized Langevin quations:
+\begin{align}
+  \dot{\vect s}_i
+  &=
+  \frac{\partial \mathcal H}{\partial \mypi_i} \\
+  \dot{\mypi}_i
+  &=
+  -\frac{\partial \mathcal H}{\partial \vect s_i} - \gamma_i\frac{\partial H}{\partial\mypi_i} + \sigma_i \dot W\\
+  \dot{V} 
+  &=
+  \frac{\partial \mathcal H}{\partial p_V}\\
+  \dot{p}_V
+  &=
+  -\frac{\partial \mathcal H}{\partial V}
+  -\gamma_V\frac{\partial \mathcal H}{\partial p_V} + \sigma_V \dot W
+\end{align}
+Equivalently:
+\begin{align} \label{eq:lang-00}
+  \dot{\vect s}_i
+  &=
+  V^{-\frac23} \frac{\mypi_i}{m_i} \\ \label{eq:lang-01}
+  \dot{\mypi}_i
+  &=
+  -\partial_i U V^{\frac13} - \gamma_iV^{-\frac23} \frac{\mypi_i}{m_i} + \sigma_i\dot W \\\label{eq:lang-02}
+  \dot{V} 
+  &=
+  \frac{p_V}{M_V} \\\label{eq:lang-03}
+  \dot{p}_V
+  &=
+  \sum_{i=1}^N \frac13 V^{-\frac53} \frac{\mypi_i^2}{m_i}
+  -
+  \sum_{i=1}^N \partial_i U \frac13 V^{-\frac23} \vect s_i
+  - P - \gamma_V  \frac{p_V}{M_V} + \sigma_V\dot W
+\end{align}
+Noticing that $\vect S$ and $\mypi$ are not physical variable, we do the
+following variable transformations:
+\begin{align}
+  \vect s
+  &= V^{-\frac13}\vect r \\
+  \dot{\vect s}
+  &=
+  V^{-\frac13}\dot{\vect r} - \frac13 V^{-\frac43}\dot V\vect r\\
+  \mypi
+  &= V^{\frac13}\vect p\\
+  \dot\mypi
+  &=
+  V^{\frac13}\dot{\vect p} + \frac13 V^{-\frac23}\dot V\vect p
+\end{align}
+Then Eq.~\eqref{eq:lang-00}--\eqref{eq:lang-03} become
+\begin{align}
+  \dot{\vect r}_i
+  &= \frac{\vect p_i}{m_i} + \frac{\dot V}{3V} \vect r_i\\
+  \dot{\vect p}_i
+  & =
+  -\partial_i U - \frac{\dot V}{3V}\vect p_i - \gamma_iV^{-\frac23}\frac{\vect p_i}{m_i}
+  + \sigma_iV^{-\frac13}\dot W\\
+  \dot{V} 
+  &=
+  \frac{p_V}{M_V} \\
+  \dot{p}_V
+  &=
+  \sum_{i=1}^N \frac13 V^{-1} \frac{\vect p_i^2}{m_i}
+  -
+  \sum_{i=1}^N \frac13 V^{-1} \partial_i U  \vect r_i
+  - P - \gamma_V  \frac{p_V}{M_V} + \sigma_V\dot W 
+\end{align}
+We denote
+\begin{align}
+  \hat \gamma_i = \gamma_i V^{-\frac23}, \quad \hat \sigma_i = \sigma_i V^{-\frac13}
+\end{align}
+Here the new notation satisfies the same fluctuation-disspation relation as the old one.
+The instantaneous pressure is given by
+\begin{align}
+  P_\ins =
+  \sum_{i=1}^N \frac13 V^{-1} \frac{\vect p_i^2}{m_i}
+  -
+  \sum_{i=1}^N \frac13 V^{-1} \partial_i U  \vect r_i
+\end{align}
+Therefore we end up with the Langevin equations in the transformed variables:
+\begin{align}
+  \dot{\vect r}_i
+  &= \frac{\vect p_i}{m_i} + \frac{\dot V}{3V} \vect r_i\\
+  \dot{\vect p}_i
+  & =
+  -\partial_i U - \frac{\dot V}{3V}\vect p_i - \hat\gamma_i\frac{\vect p_i}{m_i}
+  + \hat\sigma_i\dot W\\
+  \dot{V} 
+  &=
+  \frac{p_V}{M_V} \\
+  \dot{p}_V
+  &=
+  P_\ins - P - \gamma_V  \frac{p_V}{M_V} + \sigma_V\dot W   
+\end{align}
+Please not that the variable $\vect p$ here is not exactly the same as the physical momentum $\tilde {\vect p}$:
+\begin{align}\nonumber
+  \tilde {\vect p}
+  &= m \dot{\vect r}
+  = m \frac{d}{dt}\big(V^{\frac13}\vect s\big)
+  = m V^{\frac13}\dot{\vect s} + \frac13 V^{-\frac23}\dot Vm\vect s \\\nonumber
+  & =
+  V^{-\frac13}\mypi + \frac{\dot V}{3V}m V^{\frac13}\vect s \\
+  &=
+  \vect p + \frac{\dot V}{3V}m\vect r
+\end{align}
+
+
+
+
+
+% \bibliography{ref}{}
+% \bibliographystyle{unsrt}
+
+\end{document}
