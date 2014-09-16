@@ -10,11 +10,11 @@ include                  =
 define                   = 
 
 ; RUN CONTROL PARAMETERS
-integrator               = md
+integrator               = md-vv
 ; Start time and timestep in ps
 tinit                    = 0
-dt                       = 0.002
-nsteps                   = 20000000
+dt                       = 0.0005
+nsteps                   = 10
 ; For exact run continuation or redoing part of a run
 init_step                = 0
 ; mode for center of mass motion removal
@@ -99,7 +99,7 @@ tc-grps                  = System
 tau_t                    = 1.0
 ref_t                    = 300
 ; Pressure coupling     
-Pcoupl                   = no
+Pcoupl                   = mttk
 Pcoupltype               = isotropic
 ; Time constant (ps), compressibility (1/bar) and reference P (bar)
 tau_p                    = 2.0
