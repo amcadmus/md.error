@@ -36,8 +36,8 @@ nstvout                  = 0
 nstfout                  = 0
 ; Output frequency for energies to log file and energy file
 nstlog                   = 0
-nstcalcenergy            = 2
-nstenergy                = 2
+nstcalcenergy            = 50
+nstenergy                = 50
 ; Output frequency and precision for .xtc file
 nstxtcout                = 2500
 xtc-precision            = 1000
@@ -132,27 +132,6 @@ lincs-iter               = 1
 lincs-warnangle          = 30
 ; Convert harmonic bonds to morse potentials
 morse                    = no
-
-; Free energy control stuff
-free-energy              = no
-init_lambda              = 0.00
-delta_lambda             = 0.00
-foreign_lambda           = 0.00 
-sc-alpha                 = 0.5
-sc-power                 = 1.0
-sc-sigma                 = 0.3 
-couple-moltype           = 
-couple-lambda0           = vdw		; only van der Waals interactions
-couple-lambda1           = none		; turn off everything, in this case only vdW
-couple-intramol          = no
-nstdhdl                  = 10
-
-; Non-equilibrium MD stuff
-acc-grps                 = 
-accelerate               = 
-freezegrps               = 
-freezedim                = 
-cos-acceleration         = 0
 
 ; Electric fields      
 ; Format is number of terms (int) and for all terms an amplitude (real)
