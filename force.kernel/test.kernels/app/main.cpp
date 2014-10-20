@@ -45,11 +45,11 @@ int main(int argc, char * argv[])
   for (int ii = 0; ii < n0; ++ii){
     for (int jj = 0; jj < n1; ++jj){
 dof1[0] = RandomGenerator_MT19937::genrand_real3();
-dof1[1] = RandomGenerator_MT19937::genrand_real3();
-dof1[2] = RandomGenerator_MT19937::genrand_real3();
-dof0[0] = RandomGenerator_MT19937::genrand_real3();
-dof0[1] = RandomGenerator_MT19937::genrand_real3();
-dof0[2] = RandomGenerator_MT19937::genrand_real3();
+// dof1[1] = RandomGenerator_MT19937::genrand_real3();
+// dof1[2] = RandomGenerator_MT19937::genrand_real3();
+// dof0[0] = RandomGenerator_MT19937::genrand_real3();
+// dof0[1] = RandomGenerator_MT19937::genrand_real3();
+// dof0[2] = RandomGenerator_MT19937::genrand_real3();
       nb_pair_force <3, double,
 		     nb_interaction_geometric_none_tag,
 		     nb_interaction_accelteration_none_tag,

@@ -24,6 +24,12 @@ int main(int argc, char * argv[])
   vdwParam[LennardJones6_12::sigma] = 1.0;
 
   double dof0[MDDIM], dof1[MDDIM];
+  dof1[0] = 1.5;
+  dof1[1] = 0.0;
+  dof1[2] = 0.0;
+  dof0[0] = 0.0;
+  dof0[1] = 0.0;
+  dof0[2] = 0.0;
   double force[MDDIM];
   force[0] = force[1] = force[2] = 0.;
 
@@ -33,11 +39,11 @@ int main(int argc, char * argv[])
   for (int ii = 0; ii < n0; ++ii){
     for (int jj = 0; jj < n1; ++jj){
       dof1[0] = RandomGenerator_MT19937::genrand_real3();
-      dof1[1] = RandomGenerator_MT19937::genrand_real3();
-      dof1[2] = RandomGenerator_MT19937::genrand_real3();
-      dof0[0] = RandomGenerator_MT19937::genrand_real3();
-      dof0[1] = RandomGenerator_MT19937::genrand_real3();
-      dof0[2] = RandomGenerator_MT19937::genrand_real3();
+      // dof1[1] = RandomGenerator_MT19937::genrand_real3();
+      // dof1[2] = RandomGenerator_MT19937::genrand_real3();
+      // dof0[0] = RandomGenerator_MT19937::genrand_real3();
+      // dof0[1] = RandomGenerator_MT19937::genrand_real3();
+      // dof0[2] = RandomGenerator_MT19937::genrand_real3();
 
       double diff[MDDIM];
       diff[0] = dof1[0] - dof0[0];
