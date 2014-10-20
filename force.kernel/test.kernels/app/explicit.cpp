@@ -22,6 +22,7 @@ int main(int argc, char * argv[])
   double vdwParam[LennardJones6_12::nparam];
   vdwParam[LennardJones6_12::epsilon] = 1.0;
   vdwParam[LennardJones6_12::sigma] = 1.0;
+  double cutoff[1] = {5.0};
 
   double dof0[MDDIM], dof1[MDDIM];
   dof1[0] = 1.5;
@@ -50,6 +51,7 @@ int main(int argc, char * argv[])
       diff[1] = dof1[1] - dof0[1];
       diff[2] = dof1[2] - dof0[2];
       double dist2 = diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2];
+      if (dist2 > cutoff[0] * cutoff[0]) continue;
       double ri2 = 1./dist2;
       double sri2 = vdwParam[LennardJones6_12::sigma] * vdwParam[LennardJones6_12::sigma] * ri2;
       double sri6 = sri2*sri2*sri2;
