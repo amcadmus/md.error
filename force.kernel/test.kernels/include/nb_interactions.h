@@ -35,22 +35,23 @@ struct nb_interaction_compute_fv_tag		{} ;
 
 
 template <int MDDIM, typename ValueType>
-inline void nb_pair_force_impl_nocut (const ValueType *		eleParam,
-				      const ValueType *		vdwParam,
-				      const ValueType *		dof0,
-				      const ValueType *		dof1,
-				      const ValueType *		charge0,
-				      const ValueType *		charge1,
-				      const ValueType &		dist2,
-				      const ValueType *		diff,
-				      ValueType *			energy,
-				      ValueType *			force,
-				      ValueType *			fshift,
-				      nb_interaction_geometric_none_tag,
-				      nb_interaction_accelteration_none_tag,
-				      nb_interaction_electrostatic_null_tag,
-				      nb_interaction_vanderWaals_cutoff_tag,
-				      nb_interaction_compute_f_tag)
+inline void
+nb_pair_force_impl_nocut (const ValueType *		eleParam,
+			  const ValueType *		vdwParam,
+			  const ValueType *		dof0,
+			  const ValueType *		dof1,
+			  const ValueType *		charge0,
+			  const ValueType *		charge1,
+			  const ValueType &		dist2,
+			  const ValueType *		diff,
+			  ValueType *			energy,
+			  ValueType *			force,
+			  ValueType *			fshift,
+			  nb_interaction_geometric_none_tag,
+			  nb_interaction_accelteration_none_tag,
+			  nb_interaction_electrostatic_null_tag,
+			  nb_interaction_vanderWaals_cutoff_tag,
+			  nb_interaction_compute_f_tag)
 {
   ValueType ri2 = 1./dist2;
   ValueType sri2 = vdwParam[LennardJones6_12::sigma] * vdwParam[LennardJones6_12::sigma] * ri2;
@@ -86,19 +87,20 @@ template <int MDDIM,
 	  typename ElectrostaticType,
 	  typename VanderWaalsType,
 	  typename ComputeMode>
-inline void nb_pair_force_impl (const ValueType *		eleParam,
-				const ValueType *		vdwParam,
-				const ValueType *		cutoff,
-				const int *			idx0,
-				const int *			idx1,
-				const ValueType *		dof0,
-				const ValueType *		dof1,
-				const ValueType *		charge0,
-				const ValueType *		charge1,
-				ValueType *			energy,
-				ValueType *			force,
-				ValueType *			fshift,
-				nb_interaction_geometric_none_tag)
+inline void
+nb_pair_force_impl (const ValueType *		eleParam,
+		    const ValueType *		vdwParam,
+		    const ValueType *		cutoff,
+		    const int *			idx0,
+		    const int *			idx1,
+		    const ValueType *		dof0,
+		    const ValueType *		dof1,
+		    const ValueType *		charge0,
+		    const ValueType *		charge1,
+		    ValueType *			energy,
+		    ValueType *			force,
+		    ValueType *			fshift,
+		    nb_interaction_geometric_none_tag)
 {
   ValueType diff[MDDIM];
   nb_auxiliary_diff <MDDIM, ValueType> (dof0, dof1, diff);

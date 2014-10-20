@@ -2,7 +2,7 @@
 #define __nb_auxiliary_h_wanghan__
 
 template <int MDDIM, typename ValueType>
-void
+inline void
 nb_auxiliary_diff (const ValueType * dof0,
 		   const ValueType * dof1,
 		   ValueType * diff) 
@@ -13,7 +13,7 @@ nb_auxiliary_diff (const ValueType * dof0,
 }
 
 template <>
-void
+inline void
 nb_auxiliary_diff<3, double> (const double * dof0,
 			      const double * dof1,
 			      double * diff)
@@ -24,7 +24,7 @@ nb_auxiliary_diff<3, double> (const double * dof0,
 }
 
 template <int MDDIM, typename ValueType>
-ValueType
+inline ValueType
 nb_auxiliary_dist2 (const ValueType * diff) 
 {
   ValueType sum = ValueType(0);
@@ -35,14 +35,14 @@ nb_auxiliary_dist2 (const ValueType * diff)
 }
 
 template <>
-double
+inline double
 nb_auxiliary_dist2<3, double> (const double * diff)
 {		   
   return diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2];
 }
 
 template <int MDDIM, typename ValueType>
-void
+inline void
 nb_auxiliary_scalor_multiply (const ValueType & scalor,
 			      const ValueType * diff,
 			      ValueType * b) 
@@ -53,7 +53,7 @@ nb_auxiliary_scalor_multiply (const ValueType & scalor,
 }
 
 template <>
-void
+inline void
 nb_auxiliary_scalor_multiply<3, double> (const double & scalor,
 					 const double * diff,
 					 double * b) 

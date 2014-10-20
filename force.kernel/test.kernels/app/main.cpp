@@ -39,7 +39,7 @@ int main(int argc, char * argv[])
   double force[MDDIM];
   force[0] = force[1] = force[2] = 0.;
 
-  int n0 = 100;
+  int n0 = 1000;
   int n1 = 100000;
 
   for (int ii = 0; ii < n0; ++ii){
