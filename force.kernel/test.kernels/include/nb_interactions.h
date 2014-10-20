@@ -53,9 +53,9 @@ inline void nb_pair_force_impl_nocut (const ValueType *		eleParam,
 				      nb_interaction_compute_f_tag)
 {
   ValueType ri2 = 1./dist2;
-  ValueType sri2 = vdwParam[LennardJones6_12_Cutoff::sigma] * vdwParam[LennardJones6_12_Cutoff::sigma] * ri2;
+  ValueType sri2 = vdwParam[LennardJones6_12::sigma] * vdwParam[LennardJones6_12::sigma] * ri2;
   ValueType sri6 = sri2*sri2*sri2;
-  ValueType scalor = 24 * vdwParam[LennardJones6_12_Cutoff::epsilon] * (ValueType(2) * (sri6*sri6) - sri6) * ri2;
+  ValueType scalor = 24 * vdwParam[LennardJones6_12::epsilon] * (ValueType(2) * (sri6*sri6) - sri6) * ri2;
 
   nb_auxiliary_scalor_multiply <MDDIM, ValueType> (scalor, diff, force);
 }
