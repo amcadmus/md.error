@@ -14,22 +14,19 @@ inline void
 nb_pair_force (const ValueType *		eleParam,
 	       const ValueType *		vdwParam,
 	       const ValueType *		cutoff,
-	       const int *		idx0,
-	       const int *		idx1,
-	       const ValueType *		dof0,
-	       const ValueType *		dof1,
-	       const ValueType *		charge0,
-	       const ValueType *		charge1,
-	       ValueType *			energy,
+	       const int *			idx0,
+	       const int *			idx1,
+	       const ValueType *		dof,
+	       const ValueType *		charge,
 	       ValueType *			force,
+	       ValueType *			energy,
 	       ValueType *			fshift)
 {
   nb_pair_force_impl <MDDIM, ValueType,
-		      Acceleration,
 		      ElectrostaticType,
 		      VanderWaalsType,
 		      ComputeMode>
-      (eleParam, vdwParam, cutoff, idx0, idx1, dof0, dof1, charge0, charge1, energy, force, fshift, Geometric());
+      (eleParam, vdwParam, cutoff, idx0, idx1, dof, charge, force, energy, fshift, Geometric(), Acceleration());
 }
 
 #endif

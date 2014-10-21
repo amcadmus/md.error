@@ -63,5 +63,29 @@ nb_auxiliary_scalor_multiply<3, double> (const double & scalor,
   b[2] = scalor * diff[2];
 }
 
+template <int MDDIM, typename ValueType>
+inline void
+nb_auxiliary_scalor_multiply_two (const ValueType & scalor,
+				  const ValueType * diff,
+				  ValueType * b0,
+				  ValueType * b1) 
+{
+  for (unsigned ii = 0; ii < MDDIM; ++ii){
+    b1[ii] = -(b0[ii] = scalor * diff[ii]);
+  }
+}
+
+template <>
+inline void
+nb_auxiliary_scalor_multiply_two<3, double> (const double & scalor,
+					     const double * diff,
+					     double * b0,
+					     double * b1) 
+{
+  b1[0] = -(b0[0] = scalor * diff[0]);
+  b1[1] = -(b0[1] = scalor * diff[1]);
+  b1[2] = -(b0[2] = scalor * diff[2]);
+}
+
 
 #endif

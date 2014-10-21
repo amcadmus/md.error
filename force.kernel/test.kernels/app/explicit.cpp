@@ -31,8 +31,10 @@ int main(int argc, char * argv[])
   dof0[0] = 0.0;
   dof0[1] = 0.0;
   dof0[2] = 0.0;
-  double force[MDDIM];
-  force[0] = force[1] = force[2] = 0.;
+  double force0[MDDIM];
+  force0[0] = force0[1] = force0[2] = 0.;
+  double force1[MDDIM];
+  force1[0] = force1[1] = force1[2] = 0.;
 
   int n0 = 1000;
   int n1 = 100000;
@@ -57,15 +59,18 @@ int main(int argc, char * argv[])
       double sri6 = sri2*sri2*sri2;
       double scalor = 24 * vdwParam[LennardJones6_12::epsilon] * (double(2) * (sri6*sri6) - sri6) * ri2;
       
-      force[0] = scalor * diff[0];
-      force[1] = scalor * diff[1];
-      force[2] = scalor * diff[2];
+      force0[0] = scalor * diff[0];
+      force0[1] = scalor * diff[1];
+      force0[2] = scalor * diff[2];
+      force1[0] =-scalor * diff[0];
+      force1[1] =-scalor * diff[1];
+      force1[2] =-scalor * diff[2];
     }
   }
 
-  cout << force[0] << endl;
-  cout << force[1] << endl;
-  cout << force[2] << endl;
+  cout << force0[0] << endl;
+  cout << force0[1] << endl;
+  cout << force0[2] << endl;
 
   return 0;
 }

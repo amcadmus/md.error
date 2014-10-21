@@ -27,24 +27,27 @@ int main(int argc, char * argv[])
   vdwParam[LennardJones6_12::sigma] = 1.0;
   
   double cutoff[1] = {5.0};
-  double dof0[MDDIM], dof1[MDDIM];
-  dof1[0] = 1.5;
-  dof1[1] = 0.0;
-  dof1[2] = 0.0;
-  dof0[0] = 0.0;
-  dof0[1] = 0.0;
-  dof0[2] = 0.0;
-  double charge0 = 1;
-  double charge1 = -1;
-  double force[MDDIM];
-  force[0] = force[1] = force[2] = 0.;
+  double dof[MDDIM*2];
+  dof[0] = 1.5;
+  dof[1] = 0.0;
+  dof[2] = 0.0;
+  dof[3] = 0.0;
+  dof[4] = 0.0;
+  dof[5] = 0.0;
+  int index0 = 0;
+  int index1 = 1;
+  double charge[2];
+  charge[0] = -1;
+  charge[1] = -1;  
+  double force[MDDIM*2];
+  force[0] = force[1] = force[2] = force[3] = force[4] = force[5] = 0.;
 
   int n0 = 1000;
   int n1 = 100000;
 
   for (int ii = 0; ii < n0; ++ii){
     for (int jj = 0; jj < n1; ++jj){
-      dof1[0] = RandomGenerator_MT19937::genrand_real3();
+      dof[0] = RandomGenerator_MT19937::genrand_real3();
 // dof1[1] = RandomGenerator_MT19937::genrand_real3();
 // dof1[2] = RandomGenerator_MT19937::genrand_real3();
 // dof0[0] = RandomGenerator_MT19937::genrand_real3();
@@ -56,8 +59,8 @@ int main(int argc, char * argv[])
       		     nb_interaction_electrostatic_null_tag,
       		     nb_interaction_vanderWaals_cutoff_tag,
       		     nb_interaction_compute_f_tag>
-      	  (eleParam, vdwParam, cutoff, NULL, NULL, dof0, dof1, &charge0, &charge1,
-      	   NULL, force, NULL);
+      	  (eleParam, vdwParam, cutoff, &index0, &index1, dof, charge,
+      	   force, NULL, NULL);
       // double diff[MDDIM];
       // nb_auxiliary_diff <MDDIM, double> (dof0, dof1, diff);
       // double dist2 = nb_auxiliary_dist2<MDDIM, double>  (diff);
