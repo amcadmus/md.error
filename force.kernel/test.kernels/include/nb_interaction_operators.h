@@ -22,6 +22,13 @@ load_data_coord_full (const typename Acceleration::ValueType * __restrict__ dof,
 
 template <int MDDIM, typename Acceleration>
 inline void
+load_data_pair_full (const typename Acceleration::ValueType * __restrict__ dof,
+		     const typename Acceleration::IndexType input,
+		     typename Acceleration::DataType * x,
+		     typename Acceleration::DataType * y);
+
+template <int MDDIM, typename Acceleration>
+inline void
 update_data_force_full (typename Acceleration::ValueType * __restrict__ dof,
 			const typename Acceleration::IndexType input,
 			typename Acceleration::DataType x,
@@ -74,51 +81,52 @@ inline typename Acceleration::DataType
 sq (const typename Acceleration::DataType & a);					// a*a
 
 // default implementation. Acc = none, native data types
+// comment out to test code
 
-template<typename ValueType, typename Acceleration>
-inline typename Acceleration::DataType
-init (const ValueType & a)
-{
-  return typename Acceleration::DataType(a);
-}
+// template<typename ValueType, typename Acceleration>
+// inline typename Acceleration::DataType
+// init (const ValueType & a)
+// {
+//   return typename Acceleration::DataType(a);
+// }
 
-template<typename Acceleration>
-inline typename Acceleration::DataType
-sub (const typename Acceleration::DataType & a,
-     const typename Acceleration::DataType & b) 
-{
-  return a-b;
-}
+// template<typename Acceleration>
+// inline typename Acceleration::DataType
+// sub (const typename Acceleration::DataType & a,
+//      const typename Acceleration::DataType & b) 
+// {
+//   return a-b;
+// }
 
-template<typename Acceleration>
-inline typename Acceleration::DataType
-mul (const typename Acceleration::DataType & a,
-     const typename Acceleration::DataType & b)
-{
-  return a*b;
-}
+// template<typename Acceleration>
+// inline typename Acceleration::DataType
+// mul (const typename Acceleration::DataType & a,
+//      const typename Acceleration::DataType & b)
+// {
+//   return a*b;
+// }
 
-template<typename Acceleration>
-inline typename Acceleration::DataType
-rsq (const typename Acceleration::DataType & x,
-     const typename Acceleration::DataType & y,
-     const typename Acceleration::DataType & z)
-{
-  return x*x + y*y + z*z;
-}
+// template<typename Acceleration>
+// inline typename Acceleration::DataType
+// rsq (const typename Acceleration::DataType & x,
+//      const typename Acceleration::DataType & y,
+//      const typename Acceleration::DataType & z)
+// {
+//   return x*x + y*y + z*z;
+// }
 
-template<typename Acceleration>
-inline typename Acceleration::DataType
-invsqrt (const typename Acceleration::DataType & a)
-{
-  return 1./sqrtf(a);
-}
+// template<typename Acceleration>
+// inline typename Acceleration::DataType
+// invsqrt (const typename Acceleration::DataType & a)
+// {
+//   return 1./sqrtf(a);
+// }
 
-template<typename Acceleration>
-inline typename Acceleration::DataType
-sq (const typename Acceleration::DataType & a)
-{
-  return a*a;
-}
+// template<typename Acceleration>
+// inline typename Acceleration::DataType
+// sq (const typename Acceleration::DataType & a)
+// {
+//   return a*a;
+// }
 
 #endif

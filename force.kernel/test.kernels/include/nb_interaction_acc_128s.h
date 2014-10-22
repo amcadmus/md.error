@@ -110,6 +110,28 @@ sq <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelt
   return _mm_mul_ps (a, a);
 }
 
+
+template <>
+inline void
+load_data_coord_one
+<3, nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
+					    const int & iidx,
+					    typename nb_interaction_accelteration_128s_tag::DataType * x,
+					    typename nb_interaction_accelteration_128s_tag::DataType * y,
+					    typename nb_interaction_accelteration_128s_tag::DataType * z)
+{
+  const float * __restrict__ p0 (dof+3*iidx);
+  
+  __m128 t1, t2;
+
+  t1 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p0);
+  t2 = _mm_load_ss(dof+2);
+
+  *x = _mm_shuffle_ps(t1, t1, _MM_SHUFFLE(0, 0, 0, 0));
+  *y = _mm_shuffle_ps(t1, t1, _MM_SHUFFLE(1, 1, 1, 1));
+  *z = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(0, 0, 0, 0));
+}
+
 template <>
 inline void
 load_data_coord_full
@@ -140,6 +162,31 @@ load_data_coord_full
   t5 = _mm_unpacklo_ps(t5, t6);
   t7 = _mm_unpacklo_ps(t7, t8);
   *z = _mm_movelh_ps(t5, t7);
+}
+
+template <>
+inline void
+load_data_pair_full
+<3, nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
+					    const typename nb_interaction_accelteration_128s_tag::IndexType iidx,
+					    typename nb_interaction_accelteration_128s_tag::DataType * x,
+					    typename nb_interaction_accelteration_128s_tag::DataType * y)
+{
+  const float * __restrict__ p0 (dof+2*iidx[0]);
+  const float * __restrict__ p1 (dof+2*iidx[1]);
+  const float * __restrict__ p2 (dof+2*iidx[2]);
+  const float * __restrict__ p3 (dof+2*iidx[3]);
+  
+  __m128 t1, t2, t3, t4;
+
+  t1 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p0);   /* - - c12a  c6a */
+  t2 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p1);   /* - - c12b  c6b */
+  t3 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p2);   /* - - c12c  c6c */
+  t4 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p3);   /* - - c12d  c6d */
+  t1 = _mm_unpacklo_ps(t1, t2);
+  t2 = _mm_unpacklo_ps(t3, t4);
+  *x = _mm_movelh_ps(t1, t2);
+  *y = _mm_movehl_ps(t2, t1);
 }
 
 template <>
@@ -186,26 +233,6 @@ update_data_force_full
 }
 
 
-template <>
-inline void
-load_data_coord_one
-<3, nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
-					    const int & iidx,
-					    typename nb_interaction_accelteration_128s_tag::DataType * x,
-					    typename nb_interaction_accelteration_128s_tag::DataType * y,
-					    typename nb_interaction_accelteration_128s_tag::DataType * z)
-{
-  const float * __restrict__ p0 (dof+3*iidx);
-  
-  __m128 t1, t2;
-
-  t1 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p0);
-  t2 = _mm_load_ss(dof+2);
-
-  *x = _mm_shuffle_ps(t1, t1, _MM_SHUFFLE(0, 0, 0, 0));
-  *y = _mm_shuffle_ps(t1, t1, _MM_SHUFFLE(1, 1, 1, 1));
-  *z = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(0, 0, 0, 0));
-}
 
 // template <>
 // inline void

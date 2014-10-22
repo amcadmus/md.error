@@ -24,17 +24,27 @@ class LennardJones_6_12
   static typename Acceleration::DataType one_over_6;
 public:
   inline typename Acceleration::DataType
-  fscale (typename Acceleration::DataType r);
+  fscale (const typename Acceleration::DataType & rinvsq,
+	  const typename Acceleration::DataType & c6,
+	  const typename Acceleration::DataType & c12);
 }
     ;
 
 template<typename Acceleration>
 inline typename Acceleration::DataType
 LennardJones_6_12<Acceleration>::
-fscale (typename Acceleration::DataType r)
+fscale (const typename Acceleration::DataType & rinvsq,
+	const typename Acceleration::DataType & c6,
+	const typename Acceleration::DataType & c12)
 {
+  typename Acceleration::DataType rinv6, vvdw6, vvdw12;
+  
+  rinv6  = mul<Acceleration>(mul<Acceleration>(rinvsq, rinvsq), rinvsq);
+  vvdw6  = mul<Acceleration>(c6, rinv6);
+  vvdw12 = mul<Acceleration>(c12, mul<Acceleration>(rinv6, rinv6));
+  return  mul<Acceleration>(sub<Acceleration>(vvdw12, vvdw6), rinvsq);
 }
 
-
 #endif
+
 
