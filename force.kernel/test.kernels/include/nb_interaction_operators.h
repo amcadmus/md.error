@@ -48,11 +48,20 @@ load_data_s3_afull (const typename Acceleration::ValueType * __restrict__ dof,
 
 template <typename Acceleration>
 inline void
-update_data_s3_afull (typename Acceleration::ValueType * __restrict__ dof,
-		      const typename Acceleration::IndexType input,
-		      typename Acceleration::DataType x,
-		      typename Acceleration::DataType y,
-		      typename Acceleration::DataType z);
+decrease_data_s3_afull (typename Acceleration::ValueType * __restrict__ dof,
+			const typename Acceleration::IndexType input,
+			typename Acceleration::DataType x,
+			typename Acceleration::DataType y,
+			typename Acceleration::DataType z);
+
+template <typename Acceleration>
+inline void
+increase_data_s3_a1 (typename Acceleration::ValueType * __restrict__ dof,
+		     typename Acceleration::ValueType * __restrict__ shift,
+		     const int &input,
+		     typename Acceleration::DataType x,
+		     typename Acceleration::DataType y,
+		     typename Acceleration::DataType z);
 
 
 template<typename Acceleration>

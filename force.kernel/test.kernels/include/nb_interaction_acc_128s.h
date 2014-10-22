@@ -141,21 +141,22 @@ template <>
 inline void
 load_data_s3_a1
 <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
-					    const int & iidx,
-					    typename nb_interaction_accelteration_128s_tag::DataType * x,
-					    typename nb_interaction_accelteration_128s_tag::DataType * y,
-					    typename nb_interaction_accelteration_128s_tag::DataType * z)
+					 const int & iidx,
+					 typename nb_interaction_accelteration_128s_tag::DataType * x,
+					 typename nb_interaction_accelteration_128s_tag::DataType * y,
+					 typename nb_interaction_accelteration_128s_tag::DataType * z)
 {
   const float * __restrict__ p0 (dof+3*iidx);
   
   __m128 t1, t2;
 
   t1 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p0);
-  t2 = _mm_load_ss(dof+2);
+  t2 = _mm_load_ss(p0+2);
 
   *x = _mm_shuffle_ps(t1, t1, _MM_SHUFFLE(0, 0, 0, 0));
   *y = _mm_shuffle_ps(t1, t1, _MM_SHUFFLE(1, 1, 1, 1));
   *z = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(0, 0, 0, 0));
+
 }
 
 template <>
@@ -217,7 +218,7 @@ load_data_s2_afull
 
 template <>
 inline void
-update_data_s3_afull
+decrease_data_s3_afull
 <nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
 					    const typename nb_interaction_accelteration_128s_tag::IndexType iidx,
 					    typename nb_interaction_accelteration_128s_tag::DataType x,
@@ -256,6 +257,40 @@ update_data_s3_afull
   t4          = _mm_sub_ps(t4, t10);
   _mm_store_ss(p3, t4);
   _mm_storeh_pi((__m64 *)(p3+1), t4);
+}
+
+template <>
+inline void
+increase_data_s3_a1
+<nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof_,
+					 typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ shift_,
+					 const int &index,
+					 typename nb_interaction_accelteration_128s_tag::DataType x,
+					 typename nb_interaction_accelteration_128s_tag::DataType y,
+					 typename nb_interaction_accelteration_128s_tag::DataType z)
+{
+  float * __restrict__ dof (dof_+3*index);
+  float * __restrict__ shift (shift_+3*index);
+
+  __m128 t1, t2, t3;
+
+  /* transpose data */
+  t1 = x;
+  _MM_TRANSPOSE4_PS(x, t1, y, z);
+  x = _mm_add_ps(_mm_add_ps(x, t1), _mm_add_ps(y, z));
+
+  t2 = _mm_load_ss(dof);
+  t2 = _mm_loadh_pi(t2, (__m64 *)(dof+1));
+  t3 = _mm_load_ss(shift);
+  t3 = _mm_loadh_pi(t3, (__m64 *)(shift+1));
+
+  t2 = _mm_add_ps(t2, x);
+  t3 = _mm_add_ps(t3, x);
+
+  _mm_store_ss(dof, t2);
+  _mm_storeh_pi((__m64 *)(dof+1), t2);
+  _mm_store_ss(shift, t3);
+  _mm_storeh_pi((__m64 *)(shift+1), t3);  
 }
 
 

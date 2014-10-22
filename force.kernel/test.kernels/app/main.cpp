@@ -17,14 +17,15 @@ using namespace std;
 #include "nb_kernels.h"
 #include "nb_interactions.h"
 #include "RandomGenerator.h"
+#include "Stopwatch.h"
 
 const int MDDIM = 3;
 typedef float ValueType;
 
 int main(int argc, char * argv[])
 {
-  int n0 = 100;
-  int n1 = 4*2;
+  int n0 = 10000;
+  int n1 = 4*10000;
   ValueType cutoff[1] = {5.0};
   ValueType param [4] = {0.};
   param[0] = 24;
@@ -36,10 +37,11 @@ int main(int argc, char * argv[])
     coord[ii] = RandomGenerator_MT19937::genrand_real3();
     vdwtype[ii] = 0;
   }
-  // ValueType * force = (ValueType *) malloc (sizeof(ValueType) * MDDIM * n0);
-  // for (int ii = 0; ii < n0 * MDDIM; ++ii){
-  //   coord[ii] = RandomGenerator_MT19937::genrand_real3();
-  // }
+  ValueType * force = (ValueType *) malloc (sizeof(ValueType) * MDDIM * n0);
+  ValueType * force_shift = (ValueType *) malloc (sizeof(ValueType) * MDDIM * n0);
+  for (int ii = 0; ii < n0 * MDDIM; ++ii){
+    force[ii] = force_shift[ii] = 0;
+  }
   int * neighbor_index = (int *) malloc (sizeof(int) * n1);
   for (int ii = 0; ii < n1; ++ii){
     neighbor_index[ii] = int(RandomGenerator_MT19937::genrand_real2() * n0);
@@ -50,8 +52,9 @@ int main(int argc, char * argv[])
     neighbor_index_data[ii+1] = n1;
   }
 
-  int iindex = 0;
-  
+  Stopwatch mywatch;
+
+  mywatch.start();
   nb_pair_force <3,
 		 float,
 		 nb_interaction_geometric_none_tag,
@@ -59,11 +62,22 @@ int main(int argc, char * argv[])
 		 nb_interaction_electrostatic_null_tag,
 		 nb_interaction_vanderWaals_cutoff_tag,
 		 nb_interaction_compute_f_tag>
-      (NULL, param, cutoff, iindex, neighbor_index_data, neighbor_index, coord, NULL, vdwtype, 1, NULL, NULL, NULL);
+      (NULL, param, cutoff, n0, neighbor_index_data, neighbor_index, coord, NULL, vdwtype, 1, force, force_shift, NULL);
+  mywatch.stop();
+  
+  for (int ii = 0; ii < n0; ++ii){
+    printf ("%f %f %f\n", force[0+3*ii], force[1+3*ii], force[2+3*ii]);
+  }
+  
+  printf ("syste: %f  user: %f  real: %f\n", mywatch.system(), mywatch.user(), mywatch.real());
 
   free (coord);
   free (neighbor_index);
   free (neighbor_index_data);
+  free (force_shift);
+  free (force);
+
+  return 0;
 }
 
 
