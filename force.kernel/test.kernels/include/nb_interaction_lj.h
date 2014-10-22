@@ -2,6 +2,7 @@
 #define __nb_interaction_lj_h_wanghan__
 
 #include "nb_interaction_acc.h"
+#include "nb_interaction_vdw.h"
 
 namespace LennardJones6_12{
   typedef enum paramIndex {
@@ -12,7 +13,7 @@ namespace LennardJones6_12{
 }
 
 template <typename Acceleration>
-class LennardJones_6_12 
+class VanderWaals_Interaction <Acceleration, nb_interaction_vanderWaals_cutoff_tag>
 {
   typedef enum paramIndex {
     epsilon		,
@@ -32,7 +33,7 @@ public:
 
 template<typename Acceleration>
 inline typename Acceleration::DataType
-LennardJones_6_12<Acceleration>::
+VanderWaals_Interaction<Acceleration, nb_interaction_vanderWaals_cutoff_tag>::
 fscale (const typename Acceleration::DataType & rinvsq,
 	const typename Acceleration::DataType & c6,
 	const typename Acceleration::DataType & c12)

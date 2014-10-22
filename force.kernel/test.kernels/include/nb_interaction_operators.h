@@ -12,36 +12,48 @@ copy_index (const int & start_idx,
 	    const int * nlist_data,
 	    typename Acceleration::IndexType * idx);
 
-template <int MDDIM, typename Acceleration>
+template<typename Acceleration>
 inline void
-load_data_coord_full (const typename Acceleration::ValueType * __restrict__ dof,
+index_table_trans (const typename Acceleration::IndexType * in,
+		   const int * table,
+		   typename Acceleration::IndexType * out);
+
+template<typename Acceleration>
+inline void
+index_increase (typename Acceleration::IndexType * out,
+		const int & inc);
+
+template <typename Acceleration>
+inline void
+load_data_s2_afull (const typename Acceleration::ValueType * __restrict__ dof,
+		    const typename Acceleration::IndexType input,
+		    typename Acceleration::DataType * x,
+		    typename Acceleration::DataType * y);
+
+template <typename Acceleration>
+inline void
+load_data_s3_a1 (const typename Acceleration::ValueType * __restrict__ dof,
+		 const int & idx,
+		 typename Acceleration::DataType * x,
+		 typename Acceleration::DataType * y,
+		 typename Acceleration::DataType * z);
+
+template <typename Acceleration>
+inline void
+load_data_s3_afull (const typename Acceleration::ValueType * __restrict__ dof,
+		    const typename Acceleration::IndexType input,
+		    typename Acceleration::DataType * x,
+		    typename Acceleration::DataType * y,
+		    typename Acceleration::DataType * z);
+
+template <typename Acceleration>
+inline void
+update_data_s3_afull (typename Acceleration::ValueType * __restrict__ dof,
 		      const typename Acceleration::IndexType input,
-		      typename Acceleration::DataType * x,
-		      typename Acceleration::DataType * y,
-		      typename Acceleration::DataType * z);
+		      typename Acceleration::DataType x,
+		      typename Acceleration::DataType y,
+		      typename Acceleration::DataType z);
 
-template <int MDDIM, typename Acceleration>
-inline void
-load_data_pair_full (const typename Acceleration::ValueType * __restrict__ dof,
-		     const typename Acceleration::IndexType input,
-		     typename Acceleration::DataType * x,
-		     typename Acceleration::DataType * y);
-
-template <int MDDIM, typename Acceleration>
-inline void
-update_data_force_full (typename Acceleration::ValueType * __restrict__ dof,
-			const typename Acceleration::IndexType input,
-			typename Acceleration::DataType x,
-			typename Acceleration::DataType y,
-			typename Acceleration::DataType z);
-
-template <int MDDIM, typename Acceleration>
-inline void
-load_data_coord_one (const typename Acceleration::ValueType * __restrict__ dof,
-		     const int & idx,
-		     typename Acceleration::DataType * x,
-		     typename Acceleration::DataType * y,
-		     typename Acceleration::DataType * z);
 
 template<typename Acceleration>
 inline typename Acceleration::DataType

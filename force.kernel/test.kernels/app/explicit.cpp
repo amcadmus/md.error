@@ -14,63 +14,132 @@
 
 using namespace std;
 const int MDDIM = 3;
+typedef float ValueType;
+
 #include "nb_interaction_lj.h"
 #include "RandomGenerator.h"
 
 int main(int argc, char * argv[])
 {
-  double vdwParam[LennardJones6_12::nparam];
-  vdwParam[LennardJones6_12::epsilon] = 1.0;
-  vdwParam[LennardJones6_12::sigma] = 1.0;
-  double cutoff[1] = {5.0};
+  int n0 = 100;
+  int n1 = 4*2;
+  ValueType cutoff[1] = {5.0};
+  ValueType param [4] = {0.};
+  param[0] = 24;
+  param[1] = 48;
 
-  double dof0[MDDIM], dof1[MDDIM];
-  dof1[0] = 1.5;
-  dof1[1] = 0.0;
-  dof1[2] = 0.0;
-  dof0[0] = 0.0;
-  dof0[1] = 0.0;
-  dof0[2] = 0.0;
-  double force0[MDDIM];
-  force0[0] = force0[1] = force0[2] = 0.;
-  double force1[MDDIM];
-  force1[0] = force1[1] = force1[2] = 0.;
-
-  int n0 = 1000;
-  int n1 = 100000;
-
-  for (int ii = 0; ii < n0; ++ii){
-    for (int jj = 0; jj < n1; ++jj){
-      dof1[0] = RandomGenerator_MT19937::genrand_real3();
-      // dof1[1] = RandomGenerator_MT19937::genrand_real3();
-      // dof1[2] = RandomGenerator_MT19937::genrand_real3();
-      // dof0[0] = RandomGenerator_MT19937::genrand_real3();
-      // dof0[1] = RandomGenerator_MT19937::genrand_real3();
-      // dof0[2] = RandomGenerator_MT19937::genrand_real3();
-
-      double diff[MDDIM];
-      diff[0] = dof1[0] - dof0[0];
-      diff[1] = dof1[1] - dof0[1];
-      diff[2] = dof1[2] - dof0[2];
-      double dist2 = diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2];
-      if (dist2 > cutoff[0] * cutoff[0]) continue;
-      double ri2 = 1./dist2;
-      double sri2 = vdwParam[LennardJones6_12::sigma] * vdwParam[LennardJones6_12::sigma] * ri2;
-      double sri6 = sri2*sri2*sri2;
-      double scalor = 24 * vdwParam[LennardJones6_12::epsilon] * (double(2) * (sri6*sri6) - sri6) * ri2;
-      
-      force0[0] = scalor * diff[0];
-      force0[1] = scalor * diff[1];
-      force0[2] = scalor * diff[2];
-      force1[0] =-scalor * diff[0];
-      force1[1] =-scalor * diff[1];
-      force1[2] =-scalor * diff[2];
-    }
+  ValueType * coord = (ValueType *) malloc (sizeof(ValueType) * MDDIM * n0);
+  int * vdwtype = (int *) malloc (sizeof(ValueType) * MDDIM * n0);
+  for (int ii = 0; ii < n0 * MDDIM; ++ii){
+    coord[ii] = RandomGenerator_MT19937::genrand_real3();
+    vdwtype[ii] = 0;
   }
 
-  cout << force0[0] << endl;
-  cout << force0[1] << endl;
-  cout << force0[2] << endl;
+  int * neighbor_index = (int *) malloc (sizeof(int) * n1);
+  for (int ii = 0; ii < n1; ++ii){
+    neighbor_index[ii] = int(RandomGenerator_MT19937::genrand_real2() * n0);
+  }
+  int * neighbor_index_data = (int *) malloc (sizeof(int) * n0 * 2);
+  for (int ii = 0; ii < n0 * 2; ii+=2){
+    neighbor_index_data[ii+0] = 0;
+    neighbor_index_data[ii+1] = n1;
+  }
+  ValueType force0[MDDIM], force1[MDDIM];
+  ValueType total[MDDIM] = {0.};
 
-  return 0;
+  int iindex = 0;
+  ValueType dof0[MDDIM], dof1[MDDIM];
+  dof0[0] = coord[iindex*3]	-2;
+  dof0[1] = coord[iindex*3+1]	-2;
+  dof0[2] = coord[iindex*3+2]	-2;
+  
+
+  for (int jj = neighbor_index_data[iindex]; jj < neighbor_index_data[iindex+1]; ++jj){
+    int jindex = neighbor_index[jj];
+    dof1[0] = coord[jindex*3];
+    dof1[1] = coord[jindex*3+1];
+    dof1[2] = coord[jindex*3+2];
+    ValueType diff[MDDIM];
+    diff[0] = dof1[0] - dof0[0];
+    diff[1] = dof1[1] - dof0[1];
+    diff[2] = dof1[2] - dof0[2];
+    ValueType dist2 = diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2];
+    // if (dist2 > cutoff[0] * cutoff[0]) continue;
+    ValueType ri2 = 1./dist2;
+    ValueType sri2 = ri2;
+    ValueType sri6 = sri2*sri2*sri2;
+    ValueType scalor = (param[1] * (sri6*sri6) - param[0] * sri6) * ri2;
+      
+    // force0[0] = scalor * diff[0];
+    // force0[1] = scalor * diff[1];
+    // force0[2] = scalor * diff[2];
+    force1[0] =-scalor * diff[0];
+    force1[1] =-scalor * diff[1];
+    force1[2] =-scalor * diff[2];
+    
+    total[0] += force1[0];
+    total[1] += force1[0];
+    total[2] += force1[0];
+    printf ("%f %f %f\n", force1[0], force1[1], force1[2]);
+  }  
 }
+
+
+
+// int main(int argc, char * argv[])
+// {
+//   ValueType vdwParam[LennardJones6_12::nparam];
+//   vdwParam[LennardJones6_12::epsilon] = 1.0;
+//   vdwParam[LennardJones6_12::sigma] = 1.0;
+//   ValueType cutoff[1] = {5.0};
+
+//   ValueType dof0[MDDIM], dof1[MDDIM];
+//   dof1[0] = 1.5;
+//   dof1[1] = 0.0;
+//   dof1[2] = 0.0;
+//   dof0[0] = 0.0;
+//   dof0[1] = 0.0;
+//   dof0[2] = 0.0;
+//   ValueType force0[MDDIM];
+//   force0[0] = force0[1] = force0[2] = 0.;
+//   ValueType force1[MDDIM];
+//   force1[0] = force1[1] = force1[2] = 0.;
+
+//   int n0 = 1000;
+//   int n1 = 100000;
+
+//   for (int ii = 0; ii < n0; ++ii){
+//     for (int jj = 0; jj < n1; ++jj){
+//       dof1[0] = RandomGenerator_MT19937::genrand_real3();
+//       // dof1[1] = RandomGenerator_MT19937::genrand_real3();
+//       // dof1[2] = RandomGenerator_MT19937::genrand_real3();
+//       // dof0[0] = RandomGenerator_MT19937::genrand_real3();
+//       // dof0[1] = RandomGenerator_MT19937::genrand_real3();
+//       // dof0[2] = RandomGenerator_MT19937::genrand_real3();
+
+//       ValueType diff[MDDIM];
+//       diff[0] = dof1[0] - dof0[0];
+//       diff[1] = dof1[1] - dof0[1];
+//       diff[2] = dof1[2] - dof0[2];
+//       ValueType dist2 = diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2];
+//       if (dist2 > cutoff[0] * cutoff[0]) continue;
+//       ValueType ri2 = 1./dist2;
+//       ValueType sri2 = vdwParam[LennardJones6_12::sigma] * vdwParam[LennardJones6_12::sigma] * ri2;
+//       ValueType sri6 = sri2*sri2*sri2;
+//       ValueType scalor = 24 * vdwParam[LennardJones6_12::epsilon] * (ValueType(2) * (sri6*sri6) - sri6) * ri2;
+      
+//       force0[0] = scalor * diff[0];
+//       force0[1] = scalor * diff[1];
+//       force0[2] = scalor * diff[2];
+//       force1[0] =-scalor * diff[0];
+//       force1[1] =-scalor * diff[1];
+//       force1[2] =-scalor * diff[2];
+//     }
+//   }
+
+//   cout << force0[0] << endl;
+//   cout << force0[1] << endl;
+//   cout << force0[2] << endl;
+
+//   return 0;
+// }

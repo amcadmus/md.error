@@ -5,9 +5,12 @@
 #include "nb_interaction_operators.h"
 
 struct nb_interaction_accelteration_128s_tag	{
+private:
+  struct int4 {int x, y, z, w;};
+public:
   typedef float		ValueType;
   typedef __m128	DataType;
-  typedef int*		IndexType;
+  typedef int4		IndexType;
   static const int	index_stride = 4;
 }
     ;
@@ -25,16 +28,39 @@ struct nb_interaction_accelteration_128s_tag	{
 // {
 // }
 
-template<typename Acceleration>
+template<>
 inline void
-copy_index (const int & start_idx,
-	    const int * nlist_data,
-	    typename Acceleration::IndexType * idx)
+copy_index<nb_interaction_accelteration_128s_tag> (const int & start_idx,
+						   const int * nlist_data,
+						   typename nb_interaction_accelteration_128s_tag::IndexType * idx)
 {
-  idx[0] = nlist_data[start_idx+0];
-  idx[1] = nlist_data[start_idx+1];
-  idx[2] = nlist_data[start_idx+2];
-  idx[3] = nlist_data[start_idx+3];
+  (*idx).x = nlist_data[start_idx+0];
+  (*idx).y = nlist_data[start_idx+1];
+  (*idx).z = nlist_data[start_idx+2];
+  (*idx).w = nlist_data[start_idx+3];
+}
+
+template<>
+inline void
+index_table_trans<nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::IndexType * in,
+							  const int * table,
+							  typename nb_interaction_accelteration_128s_tag::IndexType * out)
+{
+  out->x = table[in->x];
+  out->y = table[in->y];
+  out->z = table[in->z];
+  out->w = table[in->w];
+}
+
+template<>
+inline void
+index_increase<nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelteration_128s_tag::IndexType * out,
+						       const int & inc)
+{
+  out->x += inc;
+  out->y += inc;
+  out->z += inc;
+  out->w += inc;
 }
 
 template<>
@@ -42,7 +68,7 @@ inline void
 get <nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelteration_128s_tag::DataType in,
 					     typename nb_interaction_accelteration_128s_tag::ValueType* out)
 {
-  _mm_store_ps (out, in);
+  _mm_storeu_ps (out, in);
 }
 
 template<>
@@ -113,8 +139,8 @@ sq <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelt
 
 template <>
 inline void
-load_data_coord_one
-<3, nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
+load_data_s3_a1
+<nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
 					    const int & iidx,
 					    typename nb_interaction_accelteration_128s_tag::DataType * x,
 					    typename nb_interaction_accelteration_128s_tag::DataType * y,
@@ -134,17 +160,17 @@ load_data_coord_one
 
 template <>
 inline void
-load_data_coord_full
-<3, nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
+load_data_s3_afull
+<nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
 					    const typename nb_interaction_accelteration_128s_tag::IndexType iidx,
 					    typename nb_interaction_accelteration_128s_tag::DataType * x,
 					    typename nb_interaction_accelteration_128s_tag::DataType * y,
 					    typename nb_interaction_accelteration_128s_tag::DataType * z)
 {
-  const float * __restrict__ p0 (dof+3*iidx[0]);
-  const float * __restrict__ p1 (dof+3*iidx[1]);
-  const float * __restrict__ p2 (dof+3*iidx[2]);
-  const float * __restrict__ p3 (dof+3*iidx[3]);
+  const float * __restrict__ p0 (dof+3*iidx.x);
+  const float * __restrict__ p1 (dof+3*iidx.y);
+  const float * __restrict__ p2 (dof+3*iidx.z);
+  const float * __restrict__ p3 (dof+3*iidx.w);
   
   __m128 t1, t2, t3, t4, t5, t6, t7, t8;
   t1 = _mm_castpd_ps(_mm_load_sd((const double *)p0));
@@ -166,16 +192,16 @@ load_data_coord_full
 
 template <>
 inline void
-load_data_pair_full
-<3, nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
-					    const typename nb_interaction_accelteration_128s_tag::IndexType iidx,
-					    typename nb_interaction_accelteration_128s_tag::DataType * x,
-					    typename nb_interaction_accelteration_128s_tag::DataType * y)
+load_data_s2_afull
+<nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
+					 const typename nb_interaction_accelteration_128s_tag::IndexType iidx,
+					 typename nb_interaction_accelteration_128s_tag::DataType * x,
+					 typename nb_interaction_accelteration_128s_tag::DataType * y)
 {
-  const float * __restrict__ p0 (dof+2*iidx[0]);
-  const float * __restrict__ p1 (dof+2*iidx[1]);
-  const float * __restrict__ p2 (dof+2*iidx[2]);
-  const float * __restrict__ p3 (dof+2*iidx[3]);
+  const float * __restrict__ p0 (dof+2*iidx.x);
+  const float * __restrict__ p1 (dof+2*iidx.y);
+  const float * __restrict__ p2 (dof+2*iidx.z);
+  const float * __restrict__ p3 (dof+2*iidx.w);
   
   __m128 t1, t2, t3, t4;
 
@@ -191,17 +217,17 @@ load_data_pair_full
 
 template <>
 inline void
-update_data_force_full
-<3, nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
+update_data_s3_afull
+<nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
 					    const typename nb_interaction_accelteration_128s_tag::IndexType iidx,
 					    typename nb_interaction_accelteration_128s_tag::DataType x,
 					    typename nb_interaction_accelteration_128s_tag::DataType y,
 					    typename nb_interaction_accelteration_128s_tag::DataType z)
 {
-  float * __restrict__ p0 (dof+3*iidx[0]);
-  float * __restrict__ p1 (dof+3*iidx[1]);
-  float * __restrict__ p2 (dof+3*iidx[2]);
-  float * __restrict__ p3 (dof+3*iidx[3]);
+  float * __restrict__ p0 (dof+3*iidx.x);
+  float * __restrict__ p1 (dof+3*iidx.y);
+  float * __restrict__ p2 (dof+3*iidx.z);
+  float * __restrict__ p3 (dof+3*iidx.w);
   
   __m128 t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
   t5          = _mm_unpacklo_ps(y, z);
