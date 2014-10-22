@@ -87,13 +87,13 @@ nb_pair_force (const ValueType *		eleParam_,
     tfy = mul<Acceleration> (fscale, diffy);
     tfz = mul<Acceleration> (fscale, diffz);
 
-    typename Acceleration::ValueType ofx[4], ofy[4], ofz[4];
-    get<Acceleration> (tfx, ofx);
-    get<Acceleration> (tfy, ofy);
-    get<Acceleration> (tfz, ofz);
-    for (int kk = 0; kk < 4; ++kk){
-      printf ("%f %f %f\n", tfx[kk], tfy[kk], tfz[kk]);
-    }
+    // typename Acceleration::ValueType ofx[4], ofy[4], ofz[4];
+    // get<Acceleration> (tfx, ofx);
+    // get<Acceleration> (tfy, ofy);
+    // get<Acceleration> (tfz, ofz);
+    // for (int kk = 0; kk < 4; ++kk){
+    //   printf ("%f %f %f\n", tfx[kk], tfy[kk], tfz[kk]);
+    // }
 
     totalx = add<Acceleration> (totalx, tfx);
     totaly = add<Acceleration> (totaly, tfy);
