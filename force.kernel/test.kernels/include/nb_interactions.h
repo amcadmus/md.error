@@ -3,6 +3,7 @@
 
 #include "nb_auxiliary.h"
 #include "nb_interaction_lj.h"
+#include "nb_interaction_acc_128s.h"
 
 // accelteration options:
 struct nb_interaction_geometric_none_tag	{} ;
@@ -10,11 +11,18 @@ struct nb_interaction_geometric_tip3p_tag	{} ;
 struct nb_interaction_geometric_tip4p_tag	{} ;
 
 struct nb_interaction_accelteration_none_tag	{} ;
-struct nb_interaction_accelteration_sse_tag	{} ;
-struct nb_interaction_accelteration_sse2_tag	{} ;
-struct nb_interaction_accelteration_sse4_tag	{} ;
-struct nb_interaction_accelteration_avx_128_tag	{} ;
-struct nb_interaction_accelteration_avx_256_tag	{} ;
+struct nb_interaction_accelteration_128s_tag ;
+struct nb_interaction_accelteration_128d_tag	{} ;
+struct nb_interaction_accelteration_256s_tag	{} ;
+struct nb_interaction_accelteration_256d_tag	{} ;
+#include "nb_interaction_acc_128s.h"
+struct nb_interaction_accelteration_sse2_s_tag
+    :  public nb_interaction_accelteration_128s_tag {} ;
+struct nb_interaction_accelteration_sse4_s_tag
+    :  public nb_interaction_accelteration_128s_tag {} ;
+struct nb_interaction_accelteration_avx_128_s_tag
+    :  public nb_interaction_accelteration_128s_tag {} ;
+struct nb_interaction_accelteration_avx_256_s_tag {} ;
 
 // interaction control:
 struct nb_interaction_electrostatic_null_tag	{} ;
