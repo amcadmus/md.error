@@ -39,12 +39,15 @@
 \newcommand{\mymu}{\mu}
 \newcommand{\prob}{\textrm{P}}
 \newcommand{\ins}{\textrm{ins}}
+\newcommand{\target}{\textrm{ref}}
 
 \newcommand{\confaa}[0]{{\alpha_{\textrm{R}}}}
 \newcommand{\confab}[0]{{\alpha_{\textrm{R}}'}}
 \newcommand{\confba}[0]{{\textrm{C}7_{\textrm{eq}}}}
 \newcommand{\confbb}[0]{{\textrm{C}5}}
 \newcommand{\confc}[0]{{\alpha_{\textrm{L}}}}
+\newcommand{\temp}[0]{{\textrm{T}}}
+\newcommand{\pres}[0]{{\textrm{P}}}
 
 
 
@@ -60,7 +63,8 @@
 
 \maketitle
 
-\section{Two possible ways of defining Hamiltonian}
+\section{Theoretical background}
+\subsection{First Hamiltonian definition}
 
 The isobaric simulation is implmented by rescaling the simulation region.
 Here we assume the box is cubic and of volume $V$. The positions of the
@@ -165,6 +169,7 @@ The equation of motion:
 \end{align}
 These quations of motion are too complicated.  It seems there is no good way to simplify it.
 
+\subsection{Second Hamiltonian definition}
 We use an alternative way of defining the kinetic energy:
 \begin{align}
   \mathcal K &=
@@ -227,7 +232,9 @@ The corresponding equations of motion are:
   \sum_{i=1}^N \partial_i U \frac13 V^{-\frac23} \vect s_i
   - P
 \end{align}
-Or we want to write it in terms of the generlized Langevin quations:
+
+\subsection{Generalized Langevin equation}
+we want to write the equations of motion in terms of the generlized Langevin quations:
 \begin{align}
   \dot{\vect s}_i
   &=
@@ -300,7 +307,7 @@ We denote
 Here the new notation satisfies the same fluctuation-disspation relation as the old one.
 The instantaneous pressure is given by
 \begin{align}
-  P_\ins =
+  P =
   \sum_{i=1}^N \frac13 V^{-1} \frac{\vect p_i^2}{m_i}
   -
   \sum_{i=1}^N \frac13 V^{-1} \partial_i U  \vect r_i
@@ -318,9 +325,43 @@ Therefore we end up with the Langevin equations in the transformed variables:
   \frac{p_V}{M_V} \\
   \dot{p}_V
   &=
-  P_\ins - P - \gamma_V  \frac{p_V}{M_V} + \sigma_V\dot W   
+  P - P_\target - \gamma_V  \frac{p_V}{M_V} + \sigma_V\dot W   
 \end{align}
-Please not that the variable $\vect p$ here is not exactly the same as the physical momentum $\tilde {\vect p}$:
+The fluctuation-disspation theorem claims that:
+\begin{align}
+  \hat \sigma_i^2 = 2k_BT \hat\gamma_i /m_i,\quad
+  \sigma_V^2 = 2k_BT \gamma_V /M_V
+\end{align}
+We set:
+\begin{align}
+  \hat\sigma_i^2 / m_i = \sigma_\temp^2, \quad \hat\gamma_i / m_i = \gamma_\temp,
+\end{align}
+and
+\begin{align}
+  \sigma_V^2 / M_V = \sigma_\pres^2, \quad \gamma_V / M_V = \gamma_\pres,
+\end{align}
+where $\gamma_\temp$, $\gamma_\temp$, $\sigma_\temp$ and $\sigma_\pres$ are constants, then
+The fluctuation-disspation theorem becomes
+\begin{align}
+  m_i\sigma_\temp^2 = 2k_BT \gamma_\temp ,\quad
+  M_V\sigma_\pres^2 = 2k_BT \gamma_\pres.
+\end{align}
+The equations of motion are
+\begin{align}\label{eq:eom-1}
+  \dot{\vect r}_i
+  &= \frac{\vect p_i}{m_i} + \frac{p_V}{3M_VV} \vect r_i\\\label{eq:eom-2}
+  \dot{\vect p}_i
+  & =
+  -\partial_i U - \frac{p_V}{3M_VV}\vect p_i - \gamma_\temp{\vect p_i}
+  + m_i^{\frac12}\sigma_\temp\dot W\\ \label{eq:eom-3}
+  \dot{V} 
+  &=
+  \frac{p_V}{M_V} \\\label{eq:eom-4}
+  \dot{p}_V
+  &=
+  P - P_\target - \gamma_\pres  {p_V} +M_V^{\frac12} \sigma_\pres\dot W   
+\end{align}
+Please note that the variable $\vect p$ here is not exactly the same as the physical momentum $\tilde {\vect p}$:
 \begin{align}\nonumber
   \tilde {\vect p}
   &= m \dot{\vect r}
@@ -332,7 +373,62 @@ Please not that the variable $\vect p$ here is not exactly the same as the physi
   \vect p + \frac{\dot V}{3V}m\vect r
 \end{align}
 
-
+\subsection{The choice of parameters}
+Substituting Eq.~\eqref{eq:eom-3} into \eqref{eq:eom-4}, and neglecting the
+Gaussian noise, we have
+\begin{align}\label{eq:damp-v-0}
+  M_V \ddot V = P - P_\target - \gamma_\pres M_V \dot V 
+\end{align}
+A first order taylor expansion of the instantaneous volume with respect to the
+reference volume gives:
+\begin{align}
+  V - V_\target = -\kappa_\temp V_\target (P - P_\target),
+\end{align}
+where the isothermal compressibility is defined by
+\begin{align}
+  \kappa_\temp =-\frac 1V \Big(\frac{\partial V}{\partial P}\Big)_\temp
+\end{align}
+The Eq.~\eqref{eq:damp-v-0} becomes
+\begin{align}\label{eq:damp-v-1}
+  M_V \ddot V = -\frac{1}{\kappa_\temp V_\target}(V - V_\target) - \gamma_\pres M_V \dot V
+\end{align}
+This is comparable to the equation of motion of the damped harmonic oscillator:
+\begin{align}
+  m\ddot x = -kx - c\dot x
+\end{align}
+For the damped harmonic oscillator, the angular frequency is
+\begin{align}
+  \omega_0 = \sqrt{\frac km}
+\end{align}
+And the damping ratio is
+\begin{align}
+  \zeta = \frac{c}{2\sqrt{mk}}
+\end{align}
+Converting writing angular frequency and the damping ration in terms of the
+Eq.~\eqref{eq:damp-v-1}, we have
+\begin{align}
+  \omega_0 = \frac{1}{\sqrt{M_V \kappa_\temp V_\target}}, \quad
+  \zeta = \frac{\gamma_\pres}{2}\sqrt{M_V\kappa_\temp V_\target}
+\end{align}
+We denote the time-scale of pressure convergence by $\tau_\pres$, and ask for
+\begin{align}
+  \omega_0 = \frac{2\pi}{\tau_\pres}
+\end{align}
+Then
+\begin{align}
+  M_V = \frac{1}{\kappa_T V_\target}\Big(\frac{\tau_\pres}{2\pi}\Big)^2
+\end{align}
+We use the damping ratio of $\zeta = 1/(4\pi)$ leads to
+\begin{align}
+  \gamma_\pres = \frac{1}{\tau_\pres}
+\end{align}
+We do not know in priori the value of $V_\target$, but we can use the
+inital volume $V_0$ as a good guess, if the system is not very far from
+equilibrium.
+Similiarly, we use 
+\begin{align}
+  \gamma_\temp = \frac{1}{\tau_\temp}.
+\end{align}
 
 
 
