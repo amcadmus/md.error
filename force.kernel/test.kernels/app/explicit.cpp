@@ -16,14 +16,13 @@ using namespace std;
 const int MDDIM = 3;
 typedef float ValueType;
 
-#include "nb_interaction_lj.h"
 #include "RandomGenerator.h"
 #include "Stopwatch.h"
 
 int main(int argc, char * argv[])
 {
-  int n0 = 10000;
-  int n1 = 4*10000;
+  int n0 = 4;
+  int n1 = 2;
   ValueType cutoff[1] = {5.0};
   ValueType param [4] = {0.};
   param[0] = 24;
@@ -41,10 +40,14 @@ int main(int argc, char * argv[])
     force[ii] = force_shift[ii] = 0;
   }
 
-  int * neighbor_index = (int *) malloc (sizeof(int) * n1);
+  int * neighbor_index = (int *) malloc (sizeof(int) * (n1 + 256));
   for (int ii = 0; ii < n1; ++ii){
     neighbor_index[ii] = int(RandomGenerator_MT19937::genrand_real2() * n0);
   }
+  for (int ii = n1; ii < n1+256; ++ii){
+    neighbor_index[ii] = -1;
+  }
+  
   int * neighbor_index_data = (int *) malloc (sizeof(int) * n0 * 2);
   for (int ii = 0; ii < n0 * 2; ii+=2){
     neighbor_index_data[ii+0] = 0;
@@ -101,11 +104,11 @@ int main(int argc, char * argv[])
   
   mywatch.stop();
 
-  // for (int ii = 0; ii < n0; ++ii){
-  //   printf ("%f %f %f\n", force[0+3*ii], force[1+3*ii], force[2+3*ii]);
-  // }
+  for (int ii = 0; ii < n0; ++ii){
+    printf ("%f %f %f\n", force[0+3*ii], force[1+3*ii], force[2+3*ii]);
+  }
 
-  printf ("syste: %f  user: %f  real: %f\n", mywatch.system(), mywatch.user(), mywatch.real());
+  printf ("system: %f  user: %f  real: %f\n", mywatch.system(), mywatch.user(), mywatch.real());
   return 0;
 }
 

@@ -2,7 +2,7 @@
 #define __nb_interactions_h_wanghan__
 
 #include "nb_auxiliary.h"
-#include "nb_interaction_lj.h"
+#include "nb_interaction_vdw.h"
 #include "nb_interaction_acc_128s.h"
 
 // accelteration options:
@@ -15,11 +15,6 @@ struct nb_interaction_electrostatic_null_tag	{} ;
 struct nb_interaction_electrostatic_rf_tag	{} ;
 struct nb_interaction_electrostatic_pme_tag	{} ;
 struct nb_interaction_electrostatic_zm_tag	{} ;
-
-struct nb_interaction_compute_f_tag		{} ;
-struct nb_interaction_compute_fe_tag		{} ;
-struct nb_interaction_compute_fev_tag		{} ;
-struct nb_interaction_compute_fv_tag		{} ;
 
 template <int MDDIM, typename ValueType>
 inline void
@@ -37,7 +32,7 @@ nb_pair_force_lj_scale (const ValueType *		vdwParam,
 			const ValueType &		dist2,
 			ValueType &			fscale,
 			nb_interaction_accelteration_none_tag,
-			nb_interaction_vanderWaals_cutoff_tag)
+			nb_interaction_vanderWaals_full_tag)
 {
   ValueType ri2 = 1./dist2;
   ValueType sri2 = vdwParam[LennardJones6_12::sigma] * vdwParam[LennardJones6_12::sigma] * ri2;
@@ -73,8 +68,8 @@ nb_pair_force_impl_nocut (const ValueType *		eleParam,
 			  nb_interaction_geometric_none_tag,
 			  nb_interaction_accelteration_none_tag,
 			  nb_interaction_electrostatic_null_tag,
-			  nb_interaction_vanderWaals_cutoff_tag,
-			  nb_interaction_compute_f_tag)
+			  nb_interaction_vanderWaals_full_tag,
+			  nb_interaction_compute_energy_no_tag)
 {
   ValueType ri2 = 1./dist2;
   ValueType sri2 = vdwParam[LennardJones6_12::sigma] * vdwParam[LennardJones6_12::sigma] * ri2;

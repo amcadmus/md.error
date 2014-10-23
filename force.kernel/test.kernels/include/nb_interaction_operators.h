@@ -14,6 +14,22 @@ copy_index (const int & start_idx,
 
 template<typename Acceleration>
 inline void
+copy_index_capped (const int & start_idx,
+		   const int * nlist_data,
+		   typename Acceleration::IndexType * idx);
+
+template<typename Acceleration>
+inline typename Acceleration::DataType
+cal_mask (const int & start_idx,
+	  const int * nlist_data);
+
+template<typename Acceleration>
+inline typename Acceleration::DataType
+apply_mask (const typename Acceleration::DataType & mask,
+	    const typename Acceleration::DataType & a);
+
+template<typename Acceleration>
+inline void
 index_table_trans (const typename Acceleration::IndexType * in,
 		   const int * table,
 		   typename Acceleration::IndexType * out);

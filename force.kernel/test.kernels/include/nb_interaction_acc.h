@@ -18,4 +18,6 @@ struct nb_interaction_accelteration_avx_128_s_tag
 struct nb_interaction_accelteration_avx_256_s_tag {} ;
 
 
+
+
 #endif
