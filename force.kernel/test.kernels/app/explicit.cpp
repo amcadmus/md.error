@@ -27,6 +27,7 @@ int main(int argc, char * argv[])
   ValueType param [4] = {0.};
   param[0] = 24;
   param[1] = 48;
+  int nvdw = 1;
 
   ValueType * coord = (ValueType *) malloc (sizeof(ValueType) * MDDIM * n0);
   int * vdwtype = (int *) malloc (sizeof(ValueType) * MDDIM * n0);
@@ -65,6 +66,7 @@ int main(int argc, char * argv[])
     dof0[1] = coord[iindex*3+1]	-2;
     dof0[2] = coord[iindex*3+2]	-2;
     ValueType tmpf [MDDIM] = {0.};
+    int vdw_ishift = vdwtype[iindex] * nvdw;
     
     for (int jj = neighbor_index_data[iindex*2]; jj < neighbor_index_data[iindex*2+1]; ++jj){
       int jindex = neighbor_index[jj];
@@ -80,8 +82,9 @@ int main(int argc, char * argv[])
       ValueType ri2 = 1./dist2;
       ValueType sri2 = ri2;
       ValueType sri6 = sri2*sri2*sri2;
-      ValueType scalor = (param[1] * (sri6*sri6) - param[0] * sri6) * ri2;
-      
+      int ljparam_idx  = vdwtype[jindex] + vdw_ishift;
+      ValueType scalor = (param[ljparam_idx*2+1] * (sri6*sri6) - param[ljparam_idx*2] * sri6) * ri2;
+
       // force0[0] = scalor * diff[0];
       // force0[1] = scalor * diff[1];
       // force0[2] = scalor * diff[2];

@@ -3,12 +3,14 @@
 
 #include "nb_interaction_operators.h"
 
-struct nb_interaction_accelteration_none_tag	{} ;
-struct nb_interaction_accelteration_128s_tag ;
+struct nb_interaction_accelteration_none_s_tag	;
+struct nb_interaction_accelteration_none_d_tag	{} ;
+struct nb_interaction_accelteration_128s_tag	;
 struct nb_interaction_accelteration_128d_tag	{} ;
 struct nb_interaction_accelteration_256s_tag	{} ;
 struct nb_interaction_accelteration_256d_tag	{} ;
 
+#include "nb_interaction_acc_none_s.h"
 #include "nb_interaction_acc_128s.h"
 
 struct nb_interaction_accelteration_sse2_s_tag

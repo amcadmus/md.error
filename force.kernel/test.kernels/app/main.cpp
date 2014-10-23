@@ -30,6 +30,7 @@ int main(int argc, char * argv[])
   ValueType param [4] = {0.};
   param[0] = 24;
   param[1] = 48;
+  int nvdw = 1;
 
   ValueType * coord = (ValueType *) malloc (sizeof(ValueType) * MDDIM * n0);
   int * vdwtype = (int *) malloc (sizeof(ValueType) * MDDIM * n0);
@@ -62,11 +63,11 @@ int main(int argc, char * argv[])
   nb_pair_force <3,
 		 float,
 		 nb_interaction_geometric_none_tag,
-		 nb_interaction_accelteration_128s_tag,
+		 nb_interaction_accelteration_none_s_tag,
 		 nb_interaction_electrostatic_null_tag,
 		 nb_interaction_vanderWaals_full_tag,
 		 nb_interaction_compute_energy_no_tag>
-      (NULL, param, cutoff, n0, neighbor_index_data, neighbor_index, coord, NULL, vdwtype, 1, force, force_shift, NULL);
+      (NULL, param, cutoff, n0, neighbor_index_data, neighbor_index, coord, NULL, vdwtype, nvdw, force, force_shift, NULL);
   mywatch.stop();
   
   // for (int ii = 0; ii < n0; ++ii){
@@ -80,6 +81,7 @@ int main(int argc, char * argv[])
   free (neighbor_index_data);
   free (force_shift);
   free (force);
+  free (vdwtype);
 
   return 0;
 }

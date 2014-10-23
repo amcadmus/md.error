@@ -54,7 +54,7 @@ nb_pair_force (const ValueType *		eleParam_,
     fiy = init<Acceleration>();
     fiz = init<Acceleration>();
 
-    int vdw_ishift = vdwtype[iindex] * nvdw * 2;
+    int vdw_ishift = vdwtype[iindex] * nvdw;
 
     int jj;
     for (jj = neighbor_index_data[iindex*2];
@@ -78,14 +78,16 @@ nb_pair_force (const ValueType *		eleParam_,
       rinv = invsqrt<Acceleration>(r2);
       rinv2 = mul<Acceleration>(rinv, rinv);
 
-      typename Acceleration::DataType c6, c12;
-      typename Acceleration::IndexType param_index;
-      index_table_trans<Acceleration> (&jindex, vdwtype, &param_index);
-      index_increase<Acceleration> (&param_index, vdw_ishift);
+      {
+	typename Acceleration::DataType c6, c12;
+	typename Acceleration::IndexType param_index;
+	index_table_trans<Acceleration> (jindex, vdwtype, &param_index);
+	index_increase<Acceleration> (&param_index, vdw_ishift);
     
-      load_data_s2_afull<Acceleration> (vdwParam, param_index, &c6, &c12);
+	load_data_s2_afull<Acceleration> (vdwParam, param_index, &c6, &c12);
     
-      vdw_inter.force_energy (rinv2, c6, c12, &fscale, &energy);
+	vdw_inter.force_energy (rinv2, c6, c12, &fscale, &energy);
+      }
     
       typename Acceleration::DataType tfx, tfy, tfz;
       tfx = mul<Acceleration> (fscale, diffx);
@@ -128,29 +130,23 @@ nb_pair_force (const ValueType *		eleParam_,
       rinv = invsqrt<Acceleration>(r2);
       rinv2 = mul<Acceleration>(rinv, rinv);
 
-      typename Acceleration::DataType c6, c12;
-      typename Acceleration::IndexType param_index;
-      index_table_trans<Acceleration> (&jindex, vdwtype, &param_index);
-      index_increase<Acceleration> (&param_index, vdw_ishift);
+      {
+	typename Acceleration::DataType c6, c12;
+	typename Acceleration::IndexType param_index;
+	index_table_trans<Acceleration> (jindex, vdwtype, &param_index);
+	index_increase<Acceleration> (&param_index, vdw_ishift);
     
-      load_data_s2_afull<Acceleration> (vdwParam, param_index, &c6, &c12);
+	load_data_s2_afull<Acceleration> (vdwParam, param_index, &c6, &c12);
     
-      vdw_inter.force_energy (rinv2, c6, c12, &fscale, &energy);
-      fscale = apply_mask<Acceleration> (mask,fscale);
-      energy = apply_mask<Acceleration> (mask,energy);
+	vdw_inter.force_energy (rinv2, c6, c12, &fscale, &energy);
+	fscale = apply_mask<Acceleration> (mask,fscale);
+	energy = apply_mask<Acceleration> (mask,energy);
+      }
     
       typename Acceleration::DataType tfx, tfy, tfz;
       tfx = mul<Acceleration> (fscale, diffx);
       tfy = mul<Acceleration> (fscale, diffy);
       tfz = mul<Acceleration> (fscale, diffz);
-
-      // typename Acceleration::ValueType ofx[4], ofy[4], ofz[4];
-      // get<Acceleration> (tfx, ofx);
-      // get<Acceleration> (tfy, ofy);
-      // get<Acceleration> (tfz, ofz);
-      // for (int kk = 0; kk < 4; ++kk){
-      //   printf ("%f %f %f   %f\n", ofx[kk], ofy[kk], ofz[kk], fscale[kk]);
-      // }
 
       fix = add<Acceleration> (fix, tfx);
       fiy = add<Acceleration> (fiy, tfy);

@@ -58,14 +58,14 @@ apply_mask <nb_interaction_accelteration_128s_tag> (const nb_interaction_accelte
 
 template<>
 inline void
-index_table_trans<nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::IndexType * in,
+index_table_trans<nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::IndexType in,
 							  const int * table,
 							  typename nb_interaction_accelteration_128s_tag::IndexType * out)
 {
-  out->x = table[in->x];
-  out->y = table[in->y];
-  out->z = table[in->z];
-  out->w = table[in->w];
+  out->x = table[in.x];
+  out->y = table[in.y];
+  out->z = table[in.z];
+  out->w = table[in.w];
 }
 
 template<>
@@ -179,10 +179,10 @@ template <>
 inline void
 load_data_s3_afull
 <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
-					    const typename nb_interaction_accelteration_128s_tag::IndexType iidx,
-					    typename nb_interaction_accelteration_128s_tag::DataType * x,
-					    typename nb_interaction_accelteration_128s_tag::DataType * y,
-					    typename nb_interaction_accelteration_128s_tag::DataType * z)
+					 const typename nb_interaction_accelteration_128s_tag::IndexType iidx,
+					 typename nb_interaction_accelteration_128s_tag::DataType * x,
+					 typename nb_interaction_accelteration_128s_tag::DataType * y,
+					 typename nb_interaction_accelteration_128s_tag::DataType * z)
 {
   const float * __restrict__ p0 (dof+3*iidx.x);
   const float * __restrict__ p1 (dof+3*iidx.y);
