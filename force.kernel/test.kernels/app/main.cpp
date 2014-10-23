@@ -65,9 +65,9 @@ int main(int argc, char * argv[])
       (NULL, param, cutoff, n0, neighbor_index_data, neighbor_index, coord, NULL, vdwtype, 1, force, force_shift, NULL);
   mywatch.stop();
   
-  for (int ii = 0; ii < n0; ++ii){
-    printf ("%f %f %f\n", force[0+3*ii], force[1+3*ii], force[2+3*ii]);
-  }
+  // for (int ii = 0; ii < n0; ++ii){
+  //   printf ("%f %f %f\n", force[0+3*ii], force[1+3*ii], force[2+3*ii]);
+  // }
   
   printf ("syste: %f  user: %f  real: %f\n", mywatch.system(), mywatch.user(), mywatch.real());
 
