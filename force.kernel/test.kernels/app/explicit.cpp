@@ -78,6 +78,8 @@ int main(int argc, char * argv[])
       diff[1] = dof0[1] - dof1[1];
       diff[2] = dof0[2] - dof1[2];
       ValueType dist2 = diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2];
+      // ValueType rinv = 1.f/sqrt(dist2);
+      // ValueType ri2 = rinv * rinv;
       // if (dist2 > cutoff[0] * cutoff[0]) continue;
       ValueType ri2 = 1./dist2;
       ValueType sri2 = ri2;
