@@ -24,8 +24,8 @@ typedef float ValueType;
 
 int main(int argc, char * argv[])
 {
-  int n0 = 4;
-  int n1 = 2;
+  int n0 = 10000;
+  int n1 = 39999;
   ValueType cutoff[1] = {5.0};
   ValueType param [4] = {0.};
   param[0] = 24;
@@ -69,9 +69,9 @@ int main(int argc, char * argv[])
       (NULL, param, cutoff, n0, neighbor_index_data, neighbor_index, coord, NULL, vdwtype, 1, force, force_shift, NULL);
   mywatch.stop();
   
-  for (int ii = 0; ii < n0; ++ii){
-    printf ("%f %f %f\n", force[0+3*ii], force[1+3*ii], force[2+3*ii]);
-  }
+  // for (int ii = 0; ii < n0; ++ii){
+  //   printf ("%f %f %f\n", force[0+3*ii], force[1+3*ii], force[2+3*ii]);
+  // }
   
   printf ("system: %f  user: %f  real: %f\n", mywatch.system(), mywatch.user(), mywatch.real());
 

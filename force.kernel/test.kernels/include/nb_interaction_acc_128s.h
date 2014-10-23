@@ -15,22 +15,9 @@ public:
 }
     ;
 
-// template<>
-// inline typename nb_interaction_accelteration_128s_tag::DataType
-// init <float, nb_interaction_accelteration_128s_tag> (const float & a)
-// {
-//   return _mm_set1_ps (a);
-// }
-// template<>
-// inline void 
-// copy_index <nb_interaction_accelteration_128s_tag> (const int & input,
-// 						    typename nb_interaction_accelteration_128s_tag::IndexType * idx)
-// {
-// }
-
 template<>
 inline void
-copy_index<nb_interaction_accelteration_128s_tag> (const int & start_idx,
+copy_index<nb_interaction_accelteration_128s_tag> (const int   start_idx,
 						   const int * nlist_data,
 						   typename nb_interaction_accelteration_128s_tag::IndexType * idx)
 {
@@ -42,7 +29,7 @@ copy_index<nb_interaction_accelteration_128s_tag> (const int & start_idx,
 
 template<>
 inline void
-copy_index_capped <nb_interaction_accelteration_128s_tag> (const int & start_idx,
+copy_index_capped <nb_interaction_accelteration_128s_tag> (const int   start_idx,
 							   const int * nlist_data,
 							   typename nb_interaction_accelteration_128s_tag::IndexType * idx)
 {
@@ -54,7 +41,7 @@ copy_index_capped <nb_interaction_accelteration_128s_tag> (const int & start_idx
 
 template<>
 inline nb_interaction_accelteration_128s_tag::DataType
-cal_mask <nb_interaction_accelteration_128s_tag> (const int & start_idx,
+cal_mask <nb_interaction_accelteration_128s_tag> (const int   start_idx,
 						  const int * nlist_data)
 {
   return (nb_interaction_accelteration_128s_tag::DataType) (
@@ -63,8 +50,8 @@ cal_mask <nb_interaction_accelteration_128s_tag> (const int & start_idx,
 
 template<>
 inline nb_interaction_accelteration_128s_tag::DataType
-apply_mask <nb_interaction_accelteration_128s_tag> (const nb_interaction_accelteration_128s_tag::DataType & mask,
-						    const nb_interaction_accelteration_128s_tag::DataType & a)
+apply_mask <nb_interaction_accelteration_128s_tag> (const nb_interaction_accelteration_128s_tag::DataType mask,
+						    const nb_interaction_accelteration_128s_tag::DataType a)
 {
   return _mm_andnot_ps(mask, a);
 }
@@ -84,7 +71,7 @@ index_table_trans<nb_interaction_accelteration_128s_tag> (const typename nb_inte
 template<>
 inline void
 index_increase<nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelteration_128s_tag::IndexType * out,
-						       const int & inc)
+						       const int inc)
 {
   out->x += inc;
   out->y += inc;
@@ -94,7 +81,7 @@ index_increase<nb_interaction_accelteration_128s_tag> (typename nb_interaction_a
 
 template<>
 inline void
-get <nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelteration_128s_tag::DataType in,
+get <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType in,
 					     typename nb_interaction_accelteration_128s_tag::ValueType* out)
 {
   _mm_storeu_ps (out, in);
@@ -102,7 +89,7 @@ get <nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelterati
 
 template<>
 inline typename nb_interaction_accelteration_128s_tag::DataType
-init <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType & a)
+init <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType a)
 {
   return _mm_set1_ps (a);
 }
@@ -116,33 +103,33 @@ init <nb_interaction_accelteration_128s_tag> ()
 
 template <>
 inline typename nb_interaction_accelteration_128s_tag::DataType 
-add <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType & a,
-					     const typename nb_interaction_accelteration_128s_tag::DataType & b)
+add <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType a,
+					     const typename nb_interaction_accelteration_128s_tag::DataType b)
 {
   return _mm_add_ps (a, b);
 }
 
 template <>
 inline typename nb_interaction_accelteration_128s_tag::DataType 
-sub <nb_interaction_accelteration_128s_tag> (const nb_interaction_accelteration_128s_tag::DataType & a,
-					     const nb_interaction_accelteration_128s_tag::DataType & b)
+sub <nb_interaction_accelteration_128s_tag> (const nb_interaction_accelteration_128s_tag::DataType a,
+					     const nb_interaction_accelteration_128s_tag::DataType b)
 {
   return _mm_sub_ps (a, b);
 }
 
 template <>
 inline typename nb_interaction_accelteration_128s_tag::DataType 
-mul <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType & a,
-					     const typename nb_interaction_accelteration_128s_tag::DataType & b)
+mul <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType a,
+					     const typename nb_interaction_accelteration_128s_tag::DataType b)
 {
   return _mm_mul_ps (a, b);
 }
 
 template <>
 inline typename nb_interaction_accelteration_128s_tag::DataType
-rsq<nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType & x,
-					    const typename nb_interaction_accelteration_128s_tag::DataType & y,
-					    const typename nb_interaction_accelteration_128s_tag::DataType & z)
+rsq<nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType x,
+					    const typename nb_interaction_accelteration_128s_tag::DataType y,
+					    const typename nb_interaction_accelteration_128s_tag::DataType z)
 {
   return _mm_add_ps( _mm_add_ps( _mm_mul_ps(x, x), _mm_mul_ps(y, y) ), _mm_mul_ps(z, z) );
 }
@@ -150,7 +137,7 @@ rsq<nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelt
 // rough estimate of 1/sqrt(a) with an extra N-R refinement
 template <>
 inline typename nb_interaction_accelteration_128s_tag::DataType 
-invsqrt <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType & a)
+invsqrt <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType a)
 {
   const __m128 onehalf  = _mm_set_ps(0.5, 0.5, 0.5, 0.5);
   const __m128 three = _mm_set_ps(3.0, 3.0, 3.0, 3.0);  
@@ -160,7 +147,7 @@ invsqrt <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_a
 
 template <>
 inline typename nb_interaction_accelteration_128s_tag::DataType 
-sq <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType & a)
+sq <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::DataType a)
 {
   return _mm_mul_ps (a, a);
 }
@@ -170,7 +157,7 @@ template <>
 inline void
 load_data_s3_a1
 <nb_interaction_accelteration_128s_tag> (const typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof,
-					 const int & iidx,
+					 const int iidx,
 					 typename nb_interaction_accelteration_128s_tag::DataType * x,
 					 typename nb_interaction_accelteration_128s_tag::DataType * y,
 					 typename nb_interaction_accelteration_128s_tag::DataType * z)
@@ -235,10 +222,10 @@ load_data_s2_afull
   
   __m128 t1, t2, t3, t4;
 
-  t1 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p0);   /* - - c12a  c6a */
-  t2 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p1);   /* - - c12b  c6b */
-  t3 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p2);   /* - - c12c  c6c */
-  t4 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p3);   /* - - c12d  c6d */
+  t1 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p0);   // x x c12 c6
+  t2 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p1);
+  t3 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p2);
+  t4 = _mm_loadl_pi(_mm_setzero_ps(), (__m64 *)p3);
   t1 = _mm_unpacklo_ps(t1, t2);
   t2 = _mm_unpacklo_ps(t3, t4);
   *x = _mm_movelh_ps(t1, t2);
@@ -260,30 +247,30 @@ decrease_data_s3_afull
   float * __restrict__ p3 (dof+3*iidx.w);
   
   __m128 t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
-  t5          = _mm_unpacklo_ps(y, z);
-  t6          = _mm_unpackhi_ps(y, z);
-  t7          = _mm_shuffle_ps(x, t5, _MM_SHUFFLE(1, 0, 0, 0));
-  t8          = _mm_shuffle_ps(x, t5, _MM_SHUFFLE(3, 2, 0, 1));
-  t9          = _mm_shuffle_ps(x, t6, _MM_SHUFFLE(1, 0, 0, 2));
-  t10         = _mm_shuffle_ps(x, t6, _MM_SHUFFLE(3, 2, 0, 3));
-  t1          = _mm_load_ss(p0);
-  t1          = _mm_loadh_pi(t1, (__m64 *)(p0+1));
-  t1          = _mm_sub_ps(t1, t7);
+  t5  = _mm_unpacklo_ps(y, z);
+  t6  = _mm_unpackhi_ps(y, z);
+  t7  = _mm_shuffle_ps(x, t5, _MM_SHUFFLE(1, 0, 0, 0));
+  t8  = _mm_shuffle_ps(x, t5, _MM_SHUFFLE(3, 2, 0, 1));
+  t9  = _mm_shuffle_ps(x, t6, _MM_SHUFFLE(1, 0, 0, 2));
+  t10 = _mm_shuffle_ps(x, t6, _MM_SHUFFLE(3, 2, 0, 3));
+  t1  = _mm_load_ss(p0);
+  t1  = _mm_loadh_pi(t1, (__m64 *)(p0+1));
+  t1  = _mm_sub_ps(t1, t7);
   _mm_store_ss(p0, t1);
   _mm_storeh_pi((__m64 *)(p0+1), t1);
-  t2          = _mm_load_ss(p1);
-  t2          = _mm_loadh_pi(t2, (__m64 *)(p1+1));
-  t2          = _mm_sub_ps(t2, t8);
+  t2  = _mm_load_ss(p1);
+  t2  = _mm_loadh_pi(t2, (__m64 *)(p1+1));
+  t2  = _mm_sub_ps(t2, t8);
   _mm_store_ss(p1, t2);
   _mm_storeh_pi((__m64 *)(p1+1), t2);
-  t3          = _mm_load_ss(p2);
-  t3          = _mm_loadh_pi(t3, (__m64 *)(p2+1));
-  t3          = _mm_sub_ps(t3, t9);
+  t3  = _mm_load_ss(p2);
+  t3  = _mm_loadh_pi(t3, (__m64 *)(p2+1));
+  t3  = _mm_sub_ps(t3, t9);
   _mm_store_ss(p2, t3);
   _mm_storeh_pi((__m64 *)(p2+1), t3);
-  t4          = _mm_load_ss(p3);
-  t4          = _mm_loadh_pi(t4, (__m64 *)(p3+1));
-  t4          = _mm_sub_ps(t4, t10);
+  t4  = _mm_load_ss(p3);
+  t4  = _mm_loadh_pi(t4, (__m64 *)(p3+1));
+  t4  = _mm_sub_ps(t4, t10);
   _mm_store_ss(p3, t4);
   _mm_storeh_pi((__m64 *)(p3+1), t4);
 }
@@ -293,7 +280,7 @@ inline void
 increase_data_s3_a1
 <nb_interaction_accelteration_128s_tag> (typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ dof_,
 					 typename nb_interaction_accelteration_128s_tag::ValueType * __restrict__ shift_,
-					 const int &index,
+					 const int index,
 					 typename nb_interaction_accelteration_128s_tag::DataType x,
 					 typename nb_interaction_accelteration_128s_tag::DataType y,
 					 typename nb_interaction_accelteration_128s_tag::DataType z)

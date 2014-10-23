@@ -1,6 +1,8 @@
 #ifndef __nb_interaction_acc_h_wanghan__
 #define __nb_interaction_acc_h_wanghan__
 
+#include "nb_interaction_operators.h"
+
 struct nb_interaction_accelteration_none_tag	{} ;
 struct nb_interaction_accelteration_128s_tag ;
 struct nb_interaction_accelteration_128d_tag	{} ;
