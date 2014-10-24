@@ -20,12 +20,15 @@ using namespace std;
 #include "Stopwatch.h"
 
 const int MDDIM = 3;
-typedef float ValueType;
+typedef nb_interaction_accelteration_128s_tag		MyAcc;
+typedef MyAcc::ValueType				ValueType;
 
 int main(int argc, char * argv[])
 {
-  int n0 = 10000;
-  int n1 = 39999;
+  // int n0 = 10000;
+  // int n1 = 39999;
+  int n0 = 10;
+  int n1 = 5;
   ValueType cutoff[1] = {5.0};
   ValueType param [4] = {0.};
   param[0] = 24;
@@ -57,22 +60,28 @@ int main(int argc, char * argv[])
     neighbor_index_data[ii+1] = n1;
   }
 
+  VanderWaals_Parameter<MyAcc> vdw_param;
+  vdw_param.nvdw = nvdw;
+  vdw_param.data = param;
+  Electrostatic_Control<MyAcc> ele_ctrl;
+  VanderWaals_Control<MyAcc> vdw_ctrl;
+      
   Stopwatch mywatch;
-
+  
   mywatch.start();
   nb_pair_force <3,
 		 float,
 		 nb_interaction_geometric_none_tag,
-		 nb_interaction_accelteration_none_s_tag,
+		 MyAcc,
 		 nb_interaction_electrostatic_null_tag,
 		 nb_interaction_vanderWaals_full_tag,
 		 nb_interaction_compute_energy_no_tag>
-      (NULL, param, cutoff, n0, neighbor_index_data, neighbor_index, coord, NULL, vdwtype, nvdw, force, force_shift, NULL);
+      (n0, neighbor_index_data, neighbor_index, vdw_param, ele_ctrl, vdw_ctrl, coord, NULL, vdwtype, force, force_shift, NULL);
   mywatch.stop();
   
-  // for (int ii = 0; ii < n0; ++ii){
-  //   printf ("%f %f %f\n", force[0+3*ii], force[1+3*ii], force[2+3*ii]);
-  // }
+  for (int ii = 0; ii < n0; ++ii){
+    printf ("%f %f %f\n", force[0+3*ii], force[1+3*ii], force[2+3*ii]);
+  }
   
   printf ("system: %f  user: %f  real: %f\n", mywatch.system(), mywatch.user(), mywatch.real());
 

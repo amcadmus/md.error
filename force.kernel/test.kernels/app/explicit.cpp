@@ -23,6 +23,8 @@ int main(int argc, char * argv[])
 {
   int n0 = 10000;
   int n1 = 39999;
+  // int n0 = 10;
+  // int n1 = 5;
   ValueType cutoff[1] = {5.0};
   ValueType param [4] = {0.};
   param[0] = 24;

@@ -1,6 +1,8 @@
 #ifndef __nb_kernels_h_wanghan__
 #define __nb_kernels_h_wanghan__
 
+#include "global_defines.h"
+
 #include "nb_interaction_acc_128s.h"
 #include "nb_interaction_vdw_cutoff.h"
 // #include "nb_interactions.h"
@@ -13,31 +15,24 @@ template <int MDDIM,
 	  typename VanderWaalsType,
 	  typename ComputeMode> 
 void
-nb_pair_force (const ValueType *		eleParam_,
-	       const ValueType *		vdwParam_,
-	       const ValueType *		cutoff,
-	       const int			ni,
-	       const int *			neighbor_index_data,
-	       const int *			neighbor_index,
-	       const ValueType *		dof_,
-	       const ValueType *		charge,
-	       const int *			vdwtype,
-	       const int			nvdw,
-	       ValueType *			force,
-	       ValueType *			force_shift,
-	       ValueType *			total_energy)
+nb_pair_force (const int					ni,
+	       const int *					neighbor_index_data,
+	       const int *					neighbor_index,
+	       const VanderWaals_Parameter<Acceleration> 	vdw_param,
+	       const Electrostatic_Control<Acceleration> 	ele_ctrl,
+	       const VanderWaals_Control<Acceleration>		vdw_ctrl,
+	       const typename Acceleration::ValueType *		dof,
+	       const typename Acceleration::ValueType *		charge,
+	       const int *					vdwtype,
+	       typename Acceleration::ValueType *		force,
+	       typename Acceleration::ValueType *		force_shift,
+	       typename Acceleration::ValueType *		total_energy)
 {
-  // nb_pair_force_impl <MDDIM, ValueType,
-  // 		      ElectrostaticType,
-  // 		      VanderWaalsType,
-  // 		      ComputeMode>
-  //     (eleParam, vdwParam, cutoff, idx0, idx1, dof, charge, force, energy, fshift, Geometric(), Acceleration());
-  VanderWaals_Interaction <Acceleration, VanderWaalsType, ComputeMode> vdw_inter;
+  VanderWaals_Interaction <Acceleration, VanderWaalsType, ComputeMode> vdw_inter (vdw_ctrl);
   
-  const typename Acceleration::ValueType * dof,*vdwParam;
-  dof = static_cast <const typename Acceleration::ValueType *> (dof_);
-  // eleParam = static_cast <const typename Acceleration::ValueType *> (eleParam_);
-  vdwParam = static_cast <const typename Acceleration::ValueType *> (vdwParam_);
+  // init internal vdw parameters
+  const typename Acceleration::ValueType * vdwParam (vdw_param.data);
+  const int nvdw (vdw_param.nvdw);
 
   typename Acceleration::DataType fscale, energy;
   energy = fscale = init<Acceleration>();

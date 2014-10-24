@@ -32,14 +32,14 @@ class VanderWaals_Interaction <Acceleration,
 	      typename Acceleration::DataType * energy,
 	      nb_interaction_compute_energy_yes_tag);	  
 public:
+  VanderWaals_Interaction (const VanderWaals_Control<Acceleration> & ctrl) {};
+public:
   inline void
   force_energy (const typename Acceleration::DataType & rinv2,
 		const typename Acceleration::DataType & c6,
 		const typename Acceleration::DataType & c12,
 		typename Acceleration::DataType * fscale,
 		typename Acceleration::DataType * energy);
-  inline void
-  foo ();
 }
     ;
 
