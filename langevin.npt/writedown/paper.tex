@@ -40,6 +40,12 @@
 \newcommand{\prob}{\textrm{P}}
 \newcommand{\ins}{\textrm{ins}}
 \newcommand{\target}{\textrm{ref}}
+\newcommand{\trace}{\textrm{Tr}}
+\newcommand{\dvs}{\dot{\vect s}}
+\newcommand{\dvh}{\dot{\vect h}}
+\newcommand{\dvr}{\dot{\vect r}}
+\newcommand{\dvp}{\dot{\vect p}}
+\newcommand{\inv}{{-1}}
 
 \newcommand{\confaa}[0]{{\alpha_{\textrm{R}}}}
 \newcommand{\confab}[0]{{\alpha_{\textrm{R}}'}}
@@ -55,15 +61,15 @@
 
 \title{Structure preserving numerical scheme for isothermal isobaric Langevin dynamics}
 \author{Han Wang}
-\email{han.wang@fu-berlin.de}
-\affiliation{Zuse Institut Berlin, Germany}
+\email{wang_han@iapcm.ac.cn}
+\affiliation{CAEP, Beijing, China}
    
 \begin{abstract}
 \end{abstract}
 
 \maketitle
 
-\section{Theoretical background}
+\section{Theoretical background: Isotropic case}
 \subsection{First Hamiltonian definition}
 
 The isobaric simulation is implmented by rescaling the simulation region.
@@ -432,6 +438,195 @@ Similiarly, we use
   \gamma_\temp = \frac{1}{\tau_\temp}.
 \end{align}
 
+
+\section{Anisotropic box shape fluctuation}
+
+We define the affine transformation from the logic (reference) to the physical coordinates
+of an atom by
+\begin{align}
+  \vect r_i = \vect h \vect s_i
+\end{align}
+Similar to the isotropic case, the kinetic energy is defined by
+\begin{align}
+  \mathcal K = \sum_i \frac12 m_i (\vect h \dvs_i)^\top(\vect h \dvs_i) + \frac12 M_h \trace (\dvh^\top \dvh)
+\end{align}
+The momenta are defined by
+\begin{align}
+  \mypi_i & = \frac{\partial\mathcal K}{\partial\dvs_i} = m_i \vect h^\top\vect h \dvs_i\\
+  \vect p_h &= \frac{\partial \mathcal K}{\partial \dvh}  = M_h \dvh
+\end{align}
+We now write down the Hamiltonian of the system by:
+\begin{align}\nonumber
+  \mathcal H & = \sum_i \mypi_i\cdot\dvs_i + \trace (\vect p_h^\top \cdot \dvh ) - \mathcal K + U(\vect h\vect s_1, \cdots, \vect h\vect s_N) + P\det (\vect h)\\\nonumber
+             & = \sum_i \frac12 m_i (\vect h \dvs_i)^\top(\vect h \dvs_i) + \frac12 M_h \trace (\dvh^\top \dvh) + U(\vect h\vect s_1, \cdots, \vect h\vect s_N) + P\det (\vect h)\\ \label{eqn:a-hamiltonian}
+             & = \sum_i \frac1{2m_i} \mypi_i^\top \vect h^{-1}\vect h^{-\top}\mypi_i + \frac1{2M_h}\trace (\vect p_h^\top \vect p_h)  + U(\vect h\vect s_1, \cdots, \vect h\vect s_N) + P\det (\vect h)
+\end{align}
+The equations of motion are therefore
+\begin{align}
+  \dvs_i &= \frac{\partial\mathcal H}{\partial \mypi_i} = \frac1{m_i}\vect h^{-1}\vect h^{-\top}\mypi_i \\
+  \dot{\mypi_i} & = -\frac{\partial \mathcal H}{\partial \vect s_i} =  - \vect h^\top \partial_i U\\
+  \dvh &= \frac{\partial\mathcal H}{\partial \vect p_h} = \frac1{M_h}{\vect p_h}\\ \label{eqn:a-dph}
+  \dot{\vect p}_h & = - \frac{\partial\mathcal H}{\partial \vect h}
+\end{align}
+
+
+We explain here the derivation of the R.H.S.~of \eqref{eqn:a-dph}. In
+the Hamiltonian~\eqref{eqn:a-hamiltonian}, the first, third and fourth
+terms are $\vect h$ dependent. The partial derivative of the first term is
+\begin{align}\label{eqn:tmp79}
+  \frac{\partial{I}}{\partial h_{lm}}
+  = \sum_i\frac1{2m_i} \frac{\partial (\pi^i_\alpha h^{-1}_{\alpha\beta}h^{-1}_{\gamma\beta}\pi^i_{\gamma})}{\partial h_{lm}}
+  = \sum_i\frac{\pi^i_\alpha\pi^i_\gamma}{2m_i} \Big( \frac{\partial h^{-1}_{\alpha\beta}}{\partial h_{lm}} h^{-1}_{\gamma\beta} + h^{-1}_{\alpha\beta} \frac{\partial h^{-1}_{\gamma\beta}}{\partial h_{lm}} \Big)
+\end{align}
+Now we need to know the partial derivative $\partial h^{-1}_{\alpha\beta}/ \partial h_{lm}$. We consider a $x$ parameterized inversible matrix $M$:
+\begin{align}
+  M(x)^{-1}M(x) = \textrm{Id}
+\end{align}
+By taking derivative w.r.t. $x$ on both sides of the identity, we have
+\begin{align}
+  \frac{dM^{-1}}{dx} M + M^{-1} \frac{dM}{dx} = 0
+\end{align}
+Therefore,
+\begin{align}
+  \frac{dM^{-1}}{dx} = - M^{-1} \frac{dM}{dx} M^{-1}
+\end{align}
+Then Eq.~\eqref{eqn:tmp79} becomes
+\begin{align}\nonumber
+  \frac{\partial{I}}{\partial h_{lm}}
+  &= - \sum_i\frac{\pi^i_\alpha\pi^i_\gamma}{2m_i}
+    \Big(
+    h^{-1}_{\alpha\delta} \frac{\partial h_{\delta\epsilon}}{\partial h_{lm}} h^{-1}_{\epsilon\beta}h^{-1}_{\gamma\beta} 
+    +
+    h^{-1}_{\alpha\beta} h^{-1}_{\gamma\delta}\frac{\partial h_{\delta\epsilon}}{\partial h_{lm}} h^{-1}_{\epsilon\beta}
+    \Big)   \\
+  &= - \sum_i\frac{\pi^i_\alpha\pi^i_\gamma}{2m_i}
+    \Big(
+    h^{-1}_{\alpha l}  h^{-1}_{ m\beta}h^{-1}_{\gamma\beta} 
+    +
+    h^{-1}_{\alpha\beta} h^{-1}_{\gamma l}  h^{-1}_{ m\beta}
+    \Big)   
+\end{align}
+The partial derivative of the potential term of \eqref{eqn:a-dph} reads
+\begin{align}
+  \frac{\partial U}{\partial h_{lm}} = \partial_i U \cdot  \frac{\partial \vect h\vect s_i}{\partial h_{lm}}
+  = (\partial_i U)_\alpha \frac{\partial h_{\alpha\beta}}{\partial h_{lm}} s^i_{\beta}
+  = (\partial_i U)_l  s^i_{m}
+\end{align}
+Finally, we need to know the partial derivative $\partial \det(\vect h)/\partial h_{lm}$.
+We start from the identity of any matrix $M$: $\det (M) = \exp [\trace \ln (M) ]$. By taking the derivative and
+noticing that $\trace( AB ) = \trace (BA)$ holds for any two matrices $A$ and $B$:
+\begin{align}
+  \frac{d \det(M)}{dM_{ij}} = \det ( M) \trace[ M^{-1} \frac{d M}{d M_{ij}} ] = \det(M) M^{-1}_{\alpha\beta} \frac{dM_{\beta\alpha}}{d M_{ij}}
+  = \det(M) M^{-1}_{ji}
+\end{align}
+Therefore the partial derivative of the last term of \eqref{eqn:a-dph} reads
+\begin{align}
+  \frac{\partial \det(\vect h)}{\partial h_{lm}} = \det (\vect h) h^{-1}_{ml}
+\end{align}
+In summary, the Eq.~\eqref{eqn:a-dph} becomes
+\begin{align}
+  (\dot {\vect p})_{lm}
+  = \sum_i\frac{\pi^i_\alpha\pi^i_\gamma}{2m_i}
+  \Big(
+  h^{-1}_{\alpha l}  h^{-1}_{ m\beta}h^{-1}_{\gamma\beta} 
+  +
+  h^{-1}_{\alpha\beta} h^{-1}_{\gamma l}  h^{-1}_{ m\beta}
+  \Big)
+  - (\partial_i U)_l  s^i_{m}
+  - P \det (\vect h) h^{-1}_{ml}
+\end{align}
+
+
+The Langevin equations are
+\begin{align}
+  \dvs_i =\,& \frac1{m_i}\vect h^{-1}\vect h^{-\top}\mypi_i \\
+  \dot{\mypi_i} =\,& - \vect h^\top \partial_i U -   \frac1{m_i} \Gamma^i\vect h^{-1}\vect h^{-\top}\mypi_i + \Sigma^i \dot W\\
+  \dvh =\,& \frac1{M_h}{\vect p_h}\\ \nonumber
+  (\dot{\vect p}_h)_{lm} =\,& \sum_i\frac{\pi^i_\alpha\pi^i_\gamma}{2m_i}
+                           \Big(
+                           h^{-1}_{\alpha l}  h^{-1}_{ m\beta}h^{-1}_{\gamma\beta} 
+                           +
+                           h^{-1}_{\alpha\beta} h^{-1}_{\gamma l}  h^{-1}_{ m\beta}
+                           \Big)
+                           - (\partial_i U)_l  s^i_{m}
+                           - P \det (\vect h) h^{-1}_{ml} \\
+         &- \frac1{M_h} \gamma^h_{lmpq} (p_h)_{pq}
+           + \sigma^h_{lm}\dot W
+\end{align}
+Now we take the variable transformation:
+\begin{align}
+  \vect s &= \vect h^\inv \vect r\\
+  \dvs &=  \vect h^\inv \dvr - \vect h^\inv\dvh\vect h^\inv \vect r\\
+  \mypi & = \vect  h^\top \vect p\\
+  \dot{\mypi} &= \dvh^\top\vect p + \vect h^\top\dvp
+\end{align}
+The Langevin equations becomes
+\begin{align}
+  \dvr_i &= \frac1{m_i}\vect p_i + \dvh\vect h^\inv\vect r \\\label{eqn:tmp97}
+  \dvp_i & = - \partial_i U - \vect h^{-\top}\dvh^\top\vect p_i -  \frac1{m_i}\vect h^{-\top} \Gamma^i \vect h^{-1}\vect p_i + \vect h^{-\top} \Sigma^i \dot W\\
+  \dvh &= \frac1{M_h}{\vect p_h}\\\label{eqn:tmp99}
+  (\dot{\vect p}_h)_{lm} & = \sum_i\frac{1}{m_i}
+                           p^i_l h^\inv_{m\beta} p^i_\beta
+                           - (\partial_i U)_l h^\inv_{m\beta}  r^i_{\beta}
+                           - P \det (\vect h) h^{-1}_{ml}
+                           - \frac1{M_h} \gamma^h_{lmpq} (p_h)_{pq}
+                           + \sigma^h_{lm} \dot W
+\end{align}
+In Eq.~\eqref{eqn:tmp97}, the matrix $\Gamma$ and vector $\Sigma$ satisfy the fluctuation-disspation theorem
+\begin{align}
+  \Sigma_\alpha \Sigma_\beta = 2k_BT \Gamma_{\alpha\beta}
+\end{align}
+We change the variables by
+\begin{align}
+  \hat \Sigma &= m^{-1/2} \vect h^{-\top}\Sigma\\
+  \hat \Gamma &= m^\inv \vect h^{-\top} \Gamma \vect h^\inv
+\end{align}
+One can easily show that $\hat \Sigma$ and $\hat \Gamma$ also satisfy the  fluctuation-disspation theorem. We rewrite Eq.~\eqref{eqn:tmp97} leaving out the hats:
+\begin{align}
+  \dvp_i & = - \partial_i U - \vect h^{-\top}\dvh^\top\vect p_i -   \Gamma^i \vect p_i + m_i^{1/2} \Sigma^i \dot W
+\end{align}
+Multiplying from R.H.S. of the equation~\eqref{eqn:tmp99} by $\vect h^\top$, 
+\begin{align}\label{eqn:tmp100}
+  \dot{\vect p}_h \vect h^\top
+  = \sum_i\frac{1}{m_i} \vect p_i\otimes\vect p_i + \vect F_i \otimes \vect r_i 
+  - P \det (\vect h)\, \id
+  - \frac1{M_h} (\Gamma^h \vect p_h) \vect h^\top
+  + \Sigma^h \vect h^\top \dot W 
+\end{align}
+The pressure tensor of the system is
+\begin{align}
+  \vect P = \frac1{\det(\vect h)} \sum_i \Big( \frac1{m_i}\vect p_i\otimes\vect p_i + \vect F_i\otimes \vect r_i \Big )
+\end{align}
+And the reference pressure tensor is denoted by
+\begin{align}
+  \vect P_{\textrm{ref}} = P\,\id
+\end{align}
+Then Eq.~\eqref{eqn:tmp100} becomes
+\begin{align}
+  \dot{\vect p}_h 
+  =
+ (\vect P - \vect P_{\textrm{ref}}) \cdot (\det (\vect h) \vect h^{-\top})
+  - \frac1{M_h} \Gamma^h \vect p_h
+  + \Sigma^h \dot W   
+\end{align}
+or
+\begin{align}
+  \dot{\vect p}_h 
+  =
+ (\vect P - \vect P_{\textrm{ref}}) \cdot (\det (\vect h) \vect h^{-\top})
+  -  \Gamma^h \vect p_h
+  + M^{1/2}_h\Sigma^h \dot W   
+\end{align}
+Putting all together, the Langevin equations becomes
+\begin{align}
+  \dvr_i &= \frac1{m_i}\vect p_i + \dvh\vect h^\inv\vect r \\
+  \dvp_i & = - \partial_i U - \vect h^{-\top}\dvh^\top\vect p_i -   \Gamma^i \vect p_i + m_i^{1/2} \Sigma^i \dot W\\
+  \dvh &= \frac1{M_h}{\vect p_h}\\
+  \dot{\vect p}_h 
+         & =  (\vect P - \vect P_{\textrm{ref}}) \cdot (\det (\vect h) \vect h^{-\top})
+           - \Gamma^h \vect p_h
+           + M^{1/2}_h\Sigma^h \dot W   
+\end{align}
 
 
 % \bibliography{ref}{}
