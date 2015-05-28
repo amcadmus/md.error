@@ -329,8 +329,8 @@ Therefore we end up with the Langevin equations in the transformed variables:
 \end{align}
 The fluctuation-disspation theorem claims that:
 \begin{align}
-  \hat \sigma_i^2 = 2k_BT \hat\gamma_i /m_i,\quad
-  \sigma_V^2 = 2k_BT \gamma_V /M_V
+  \hat \sigma_i^2 = 2k_BT \hat\gamma_i ,\quad
+  \sigma_V^2 = 2k_BT \gamma_V 
 \end{align}
 We set:
 \begin{align}
@@ -343,8 +343,8 @@ and
 where $\gamma_\temp$, $\gamma_\temp$, $\sigma_\temp$ and $\sigma_\pres$ are constants, then
 The fluctuation-disspation theorem becomes
 \begin{align}
-  m_i\sigma_\temp^2 = 2k_BT \gamma_\temp ,\quad
-  M_V\sigma_\pres^2 = 2k_BT \gamma_\pres.
+  \sigma_\temp^2 = 2k_BT \gamma_\temp ,\quad
+  \sigma_\pres^2 = 2k_BT \gamma_\pres.
 \end{align}
 The equations of motion are
 \begin{align}\label{eq:eom-1}
@@ -374,6 +374,8 @@ Please note that the variable $\vect p$ here is not exactly the same as the phys
 \end{align}
 
 \subsection{The choice of parameters}
+\recheck{bug fix in FD theorem, may be some changes in this section, not checked}
+
 Substituting Eq.~\eqref{eq:eom-3} into \eqref{eq:eom-4}, and neglecting the
 Gaussian noise, we have
 \begin{align}\label{eq:damp-v-0}
