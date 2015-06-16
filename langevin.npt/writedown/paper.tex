@@ -620,14 +620,59 @@ or
 Putting all together, the Langevin equations becomes
 \begin{align}
   \dvr_i &= \frac1{m_i}\vect p_i + \dvh\vect h^\inv\vect r \\
-  \dvp_i & = - \partial_i U - \vect h^{-\top}\dvh^\top\vect p_i -   \Gamma^i \vect p_i + m_i^{1/2} \Sigma^i \dot W\\
-  \dvh &= \frac1{M_h}{\vect p_h}\\
+  \dvp_i & = - \partial_i U - \vect h^{-\top}\dvh^\top\vect p_i -   \Gamma^i \vect p_i + m_i^{1/2} \Sigma^i \dot W\\\label{eqn:tmp111}
+  \dvh &= \frac1{M_h}{\vect p_h}\\ \label{eqn:tmp112}
   \dot{\vect p}_h 
          & =  (\vect P - \vect P_{\textrm{ref}}) \cdot (\det (\vect h) \vect h^{-\top})
            - \Gamma^h \vect p_h
            + M^{1/2}_h\Sigma^h \dot W   
 \end{align}
 
+The Hamiltonian in the new variables reads
+\begin{align}\nonumber
+  \mathcal H
+  & = \sum_i \frac1{2m_i} \vect p^2_i + \frac1{2M_h}\trace (\vect p_h^\top \vect p_h)  + U(\vect r_1, \cdots, \vect r_N) + P\det (\vect h)
+\end{align}
+Here $\vect p_i$ should not be considered as the momenta corresponding to $\vect r_i$.
+Similar to the isotropic case, $\vect p$ can be related to the physical momenta $\tilde {\vect p}$ by
+\begin{align}
+  \tilde{ \vect p} = m\dvr = m d(\vect h\vect s)/dt = m\dvh\vect s + m\vect h\dvs = \vect p + \frac m{M_h} \vect p_h\vect h^\inv\vect r
+\end{align}
+
+\subsection{Choice of the parameters}
+
+Now we consider the case that $\vect h$ is a diangonal matrix.
+Insert Eq.~\eqref{eqn:tmp111} into Eq.~\eqref{eqn:tmp112}, and neglect the noise term
+\begin{align}
+  M_h \ddot {\vect h} =
+  (\vect P - \vect P_{\textrm{ref}}) \cdot (\det (\vect h) \vect h^{-\top})
+  - \Gamma^h M_h \dot{\vect h}
+\end{align}
+Again, we use the linear approximation
+\begin{align}
+  V- V_\target = -\kappa_\temp V_\target (P - P_\target),
+\end{align}
+% that gives 
+% \begin{align}
+%   M_h \ddot {\vect h} =
+%   - \frac{1}{\kappa_\temp V_\target}(V - V_\target) \cdot (V \vect h^{-\top})
+%   - \Gamma^h M_h \dot{\vect h}
+% \end{align}
+and consider the equation component-wise. Take the first component
+$h_1$ for example, and assume that $h_2$ and $h_3$ are the same as the
+their $\target$ values
+\begin{align}\nonumber
+  M_1 \ddot{h}_1 &=
+                   - \frac{1}{\kappa_\temp h^\target_1h_2h_3}(h_1h_2h_3 - h_1^\target h_2 h_3) \cdot (h_2 h_3) - \gamma_1 M_1 \dot{ h}_1 \\
+                 & =
+                   - \frac{h_2h_3}{\kappa_\temp h^\target_1}(h_1 - h_1^\target)  - \gamma_1 M_1 \dot{ h}_1 
+\end{align}
+Following the same process as the iostropoic case, we have
+\begin{align}
+  M_1 = \frac{h^\target_2 h^\target_3}{\kappa_\temp h^\target_1} \Big( \frac{\tau_\pres}{2\pi}\Big)^2
+\end{align}
+Here $h_2$ and $h_3$ are approximately taken the $\target$ value.
+The $M_2$ and $M_3$ can be estimated analogously.
 
 % \bibliography{ref}{}
 % \bibliographystyle{unsrt}
