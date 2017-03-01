@@ -43,11 +43,11 @@ class IkError (object) :
                     for ll in range (-self.over_cmpt_ratio, self.over_cmpt_ratio+1) : 
                         if (ll == 0) : 
                             continue
-                        tmpz = self.hat_comput (m0 + ll * self.KK[0]) / self.hat_comput (m0)
+                        tmpz = self.hat_comput[0] (m0 + ll * self.KK[0]) / self.hat_comput[0] (m0)
                         o1e = o1e + tmpz * tmpz
-                        tmpz = self.hat_comput (m1 + ll * self.KK[1]) / self.hat_comput (m1)
+                        tmpz = self.hat_comput[1] (m1 + ll * self.KK[1]) / self.hat_comput[1] (m1)
                         o1e = o1e + tmpz * tmpz
-                        tmpz = self.hat_comput (m2 + ll * self.KK[2]) / self.hat_comput (m2)
+                        tmpz = self.hat_comput[2] (m2 + ll * self.KK[2]) / self.hat_comput[2] (m2)
                         o1e = o1e + tmpz * tmpz
                     sum_o1 = sum_o1 + 2. * gm2 * o1e
 
@@ -59,7 +59,9 @@ class IkError (object) :
         bd0 = int(self.KK[0]/2)
         bd1 = int(self.KK[1]/2)
         bd2 = int(self.KK[2]/2)
-        numb_basis = self.hat_comput.basis_value(0).shape[0]
+        numb_basis = self.hat_comput[0].basis_value(0).shape[0]
+        assert (numb_basis == self.hat_comput[1].basis_value(0).shape[0])
+        assert (numb_basis == self.hat_comput[2].basis_value(0).shape[0])
         sum_o1 = np.zeros (numb_basis)
 
         for m0 in range (-bd0, bd0+1) :
@@ -75,10 +77,10 @@ class IkError (object) :
                         if (ll == 0) : 
                             continue
                         for dd in range (3) :
-                            hat_phil = self.hat_comput (idxmm[dd] + ll * self.KK[dd])
-                            hat_phi0 = self.hat_comput (idxmm[dd] )
-                            hat_basisl = self.hat_comput.basis_value (idxmm[dd] + ll * self.KK[dd])
-                            hat_basis0 = self.hat_comput.basis_value (idxmm[dd])
+                            hat_phil = self.hat_comput[dd] (idxmm[dd] + ll * self.KK[dd])
+                            hat_phi0 = self.hat_comput[dd] (idxmm[dd] )
+                            hat_basisl = self.hat_comput[dd].basis_value (idxmm[dd] + ll * self.KK[dd])
+                            hat_basis0 = self.hat_comput[dd].basis_value (idxmm[dd])
                             o1e = o1e \
                                   + 2 * hat_phil / (hat_phi0 * hat_phi0) * hat_basisl  \
                                   - 2 * hat_phil * hat_phil / (hat_phi0 * hat_phi0 * hat_phi0) * hat_basis0                            
@@ -157,15 +159,21 @@ class HermiteLossFunc (object) :
         self.q2 = q2
         self.natoms = natoms
         self.region = region
-        self.hhc = HermiteBasisHatComput (self.CC, self.nbin, self.KK, 
-                                          over_smpl = 400 * (self.nbin / self.CC) )
-        self.err_basis = IkError (self.beta, [self.KK, self.KK, self.KK], self.hhc, over_cmpt_ratio = 5)
+        over_sampling = over_smpl = 400 * (self.nbin / self.CC)
+        tmp0 = HermiteBasisHatComput (self.CC, self.nbin, self.KK[0], over_smpl = over_sampling)
+        tmp1 = HermiteBasisHatComput (self.CC, self.nbin, self.KK[1], over_smpl = over_sampling)
+        tmp2 = HermiteBasisHatComput (self.CC, self.nbin, self.KK[2], over_smpl = over_sampling)
+        self.hhc = [tmp0, tmp1, tmp2]
+        self.err_basis = IkError (self.beta, self.KK, self.hhc, over_cmpt_ratio = 5)
 
     def value (self, vv) :
-        assert (len(vv) == self.nbin * 2 + 1)
-        hv = vv[0:self.nbin+1]
-        hd = vv[self.nbin+1:self.nbin * 2 + 1]
-        self.hhc.set_value (hv, hd)
+        assert (len(vv) == self.nbin * 2)
+        hv = vv[0:self.nbin]
+        hv = np.insert (hv, 0, 1.)
+        hd = vv[self.nbin:self.nbin * 2]
+        self.hhc[0].set_value (hv, hd)
+        self.hhc[1].set_value (hv, hd)
+        self.hhc[2].set_value (hv, hd)
         error = self.err_basis.estimate (self.q2, self.natoms, self.region)
         print ("returned %e" % error)
         tmpd = np.insert (hd, 0, 0)
@@ -174,41 +182,44 @@ class HermiteLossFunc (object) :
         return error
 
     def deriv (self, vv) :
-        assert (len(vv) == self.nbin * 2 + 1)
-        hv = vv[0:self.nbin+1]
-        hd = vv[self.nbin+1:self.nbin * 2 + 1]
-        self.hhc.set_value (hv, hd)
+        assert (len(vv) == self.nbin * 2)
+        hv = vv[0:self.nbin]
+        hv = np.insert (hv, 0, 1.)
+        hd = vv[self.nbin:self.nbin * 2]
+        self.hhc[0].set_value (hv, hd)
+        self.hhc[1].set_value (hv, hd)
+        self.hhc[2].set_value (hv, hd)
         deriv = self.err_basis.estimate_deriv (self.q2, self.natoms, self.region)
-        return deriv
+        return deriv[1:]
         
-    def __call__ (self,
-                  vv) :        
-        assert (len(vv) == self.nbin * 2 + 1)
-        hv = vv[0:self.nbin+1]
-        hd = vv[self.nbin+1:self.nbin * 2 + 1]
-        self.hhc.set_value (hv, hd)        
-        err_basis = IkError (self.beta, [self.KK, self.KK, self.KK], self.hhc, over_cmpt_ratio = 5)
-        error = err_basis.estimate (self.q2, self.natoms, self.region)
+    # def __call__ (self,
+    #               vv) :        
+    #     assert (len(vv) == self.nbin * 2 + 1)
+    #     hv = vv[0:self.nbin+1]
+    #     hd = vv[self.nbin+1:self.nbin * 2 + 1]
+    #     self.hhc.set_value (hv, hd)        
+    #     err_basis = IkError (self.beta, [self.KK, self.KK, self.KK], self.hhc, over_cmpt_ratio = 5)
+    #     error = err_basis.estimate (self.q2, self.natoms, self.region)
 
-        # print ("error is %f" % error)
-        # error_deriv = err_basis.estimate_deriv (self.q2, self.natoms, self.region)
-        # print ("deriv is %s" % error_deriv)
-        # hh = 0.001
-        # hd1 = hd
-        # hd1[-1] = hd1[-1] + hh
-        # self.hhc.set_value (hv, hd1)        
-        # error = err_basis.estimate (self.q2, self.natoms, self.region)
-        # print ("error + is %f" % error)
-        # hd1[-1] = hd1[-1] - 2. * hh
-        # self.hhc.set_value (hv, hd1)        
-        # error = err_basis.estimate (self.q2, self.natoms, self.region)
-        # print ("error - is %f" % error)        
+    #     # print ("error is %f" % error)
+    #     # error_deriv = err_basis.estimate_deriv (self.q2, self.natoms, self.region)
+    #     # print ("deriv is %s" % error_deriv)
+    #     # hh = 0.001
+    #     # hd1 = hd
+    #     # hd1[-1] = hd1[-1] + hh
+    #     # self.hhc.set_value (hv, hd1)        
+    #     # error = err_basis.estimate (self.q2, self.natoms, self.region)
+    #     # print ("error + is %f" % error)
+    #     # hd1[-1] = hd1[-1] - 2. * hh
+    #     # self.hhc.set_value (hv, hd1)        
+    #     # error = err_basis.estimate (self.q2, self.natoms, self.region)
+    #     # print ("error - is %f" % error)        
         
-        tmpd = np.insert (hd, 0, 0)
-        np.savetxt ('basis.out', hv)
-        np.savetxt ('deriv.out', tmpd)
-        print ("returned %e" % error)
-        return error
+    #     tmpd = np.insert (hd, 0, 0)
+    #     np.savetxt ('basis.out', hv)
+    #     np.savetxt ('deriv.out', tmpd)
+    #     print ("returned %e" % error)
+    #     return error
 
 
 if __name__ == "__main__" : 
@@ -248,14 +259,18 @@ if __name__ == "__main__" :
     lossfunc = HermiteLossFunc (CC, nbin, beta, KK, q2, natoms, region)
 
     bx = np.arange (0, CC + .5 * bstep, bstep)
-    bv = bs(bx)
+    bv_ = bs(bx)
     bd_ = bs.deriv (bx)
+    scale = bv_[0]
+    bv = bv_[1:]
     bd = bd_[1:]
+    bv = bv / scale
+    bd = bd / scale
     init_vv = np.append (bv, bd)
-    print (lossfunc(init_vv))
+    print (lossfunc.value(init_vv))
     # aa = sp.optimize.minimize (lossfunc, init_vv, method='Nelder-Mead', options={'disp': True})
 
-    aa = sp.optimize.minimize (lossfunc.value, init_vv, jac = lossfunc.deriv, method='BFGS', options={'disp': True})
+    aa = sp.optimize.minimize (lossfunc.value, init_vv, jac = lossfunc.deriv, method='BFGS', options={'disp': True}, tol=1e-4)
     
     
     

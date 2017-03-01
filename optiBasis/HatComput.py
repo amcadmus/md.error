@@ -65,7 +65,7 @@ class HermiteBasisHatComput (object) :
         self.n_bin = n_bin
         self.hh = self.CC / self.n_bin
         self.KK = KK
-        self.over_smpl = over_smpl
+        self.over_smpl = int(over_smpl)
         self.MM = self.KK * self.over_smpl
         
         xx = np.arange (0, self.KK, float(self.KK) / float(self.MM))
