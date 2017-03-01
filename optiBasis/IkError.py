@@ -6,6 +6,7 @@ import scipy as sp
 from Region import Region
 from Bspline import Bspline
 from HatComput import HatComput
+from HatComput import HermiteBasisHatComput
 from IntplBasis import IntplBasis
 from scipy.interpolate import interp1d
 
@@ -53,6 +54,40 @@ class IkError (object) :
         sum_o1 = sum_o1 / (2. * np.pi * VV * 2. * np.pi * VV)
         self.sum_o1 = sum_o1
 
+    def prepare_sum_deriv (self, region) :
+        VV = region.volume()
+        bd0 = int(self.KK[0]/2)
+        bd1 = int(self.KK[1]/2)
+        bd2 = int(self.KK[2]/2)
+        numb_basis = self.hat_comput.basis_value(0).shape[0]
+        sum_o1 = np.zeros (numb_basis)
+
+        for m0 in range (-bd0, bd0+1) :
+            for m1 in range (-bd1, bd1+1) :
+                for m2 in range (-bd2, bd2+1) :
+                    if (abs(m0) + abs(m1) + abs(m2) == 0) : 
+                        continue
+                    gm = self._compute_G (m0, m1, m2, region)
+                    gm2 = np.dot(gm, gm)
+                    o1e = np.zeros (numb_basis)
+                    idxmm = [m0, m1, m2]
+                    for ll in range (-self.over_cmpt_ratio, self.over_cmpt_ratio+1) : 
+                        if (ll == 0) : 
+                            continue
+                        for dd in range (3) :
+                            hat_phil = self.hat_comput (idxmm[dd] + ll * self.KK[dd])
+                            hat_phi0 = self.hat_comput (idxmm[dd] )
+                            hat_basisl = self.hat_comput.basis_value (idxmm[dd] + ll * self.KK[dd])
+                            hat_basis0 = self.hat_comput.basis_value (idxmm[dd])
+                            o1e = o1e \
+                                  + 2 * hat_phil / (hat_phi0 * hat_phi0) * hat_basisl  \
+                                  - 2 * hat_phil * hat_phil / (hat_phi0 * hat_phi0 * hat_phi0) * hat_basis0                            
+                    sum_o1 = sum_o1 + 2. * gm2 * o1e
+
+        sum_o1 = sum_o1 / (2. * np.pi * VV * 2. * np.pi * VV)
+        self.sum_deriv = sum_o1
+        
+
     def _compute_G (self, m0, m1, m2, region) :
         if (m0 == 0 and m1 == 0 and m2 == 0) : 
             return np.zeros (3)
@@ -67,8 +102,15 @@ class IkError (object) :
                   natoms,
                   region) :
         self.prepare_sum (region)
-        return np.sqrt (self.sum_o1 * q2 * q2 / float(natoms)) * self.conversion
-        
+        return np.sqrt (self.sum_o1 * q2 * q2 / float(natoms)) * self.conversion        
+
+    def estimate_deriv (self,
+                        q2,
+                        natoms,
+                        region) :
+        self.prepare_sum (region)
+        self.prepare_sum_deriv (region)
+        return self.sum_deriv * 0.5 / np.sqrt (self.sum_o1) * np.sqrt(q2 * q2 / float(natoms)) * self.conversion 
 
 class LossFunc (object) :
     def __init__ (self,
@@ -98,36 +140,122 @@ class LossFunc (object) :
         print ("returned %e" % error)
         return error
 
+class HermiteLossFunc (object) :
+    def __init__ (self,
+                  CC,
+                  nbin, 
+                  beta,
+                  KK,
+                  q2, 
+                  natoms, 
+                  region,
+    ) :
+        self.CC = CC
+        self.nbin = nbin
+        self.beta = beta
+        self.KK = KK
+        self.q2 = q2
+        self.natoms = natoms
+        self.region = region
+        self.hhc = HermiteBasisHatComput (self.CC, self.nbin, self.KK, 
+                                          over_smpl = 400 * (self.nbin / self.CC) )
+        self.err_basis = IkError (self.beta, [self.KK, self.KK, self.KK], self.hhc, over_cmpt_ratio = 5)
+
+    def value (self, vv) :
+        assert (len(vv) == self.nbin * 2 + 1)
+        hv = vv[0:self.nbin+1]
+        hd = vv[self.nbin+1:self.nbin * 2 + 1]
+        self.hhc.set_value (hv, hd)
+        error = self.err_basis.estimate (self.q2, self.natoms, self.region)
+        print ("returned %e" % error)
+        tmpd = np.insert (hd, 0, 0)
+        np.savetxt ('basis.1.out', hv)
+        np.savetxt ('deriv.1.out', tmpd)
+        return error
+
+    def deriv (self, vv) :
+        assert (len(vv) == self.nbin * 2 + 1)
+        hv = vv[0:self.nbin+1]
+        hd = vv[self.nbin+1:self.nbin * 2 + 1]
+        self.hhc.set_value (hv, hd)
+        deriv = self.err_basis.estimate_deriv (self.q2, self.natoms, self.region)
+        return deriv
+        
+    def __call__ (self,
+                  vv) :        
+        assert (len(vv) == self.nbin * 2 + 1)
+        hv = vv[0:self.nbin+1]
+        hd = vv[self.nbin+1:self.nbin * 2 + 1]
+        self.hhc.set_value (hv, hd)        
+        err_basis = IkError (self.beta, [self.KK, self.KK, self.KK], self.hhc, over_cmpt_ratio = 5)
+        error = err_basis.estimate (self.q2, self.natoms, self.region)
+
+        # print ("error is %f" % error)
+        # error_deriv = err_basis.estimate_deriv (self.q2, self.natoms, self.region)
+        # print ("deriv is %s" % error_deriv)
+        # hh = 0.001
+        # hd1 = hd
+        # hd1[-1] = hd1[-1] + hh
+        # self.hhc.set_value (hv, hd1)        
+        # error = err_basis.estimate (self.q2, self.natoms, self.region)
+        # print ("error + is %f" % error)
+        # hd1[-1] = hd1[-1] - 2. * hh
+        # self.hhc.set_value (hv, hd1)        
+        # error = err_basis.estimate (self.q2, self.natoms, self.region)
+        # print ("error - is %f" % error)        
+        
+        tmpd = np.insert (hd, 0, 0)
+        np.savetxt ('basis.out', hv)
+        np.savetxt ('deriv.out', tmpd)
+        print ("returned %e" % error)
+        return error
+
 
 if __name__ == "__main__" : 
     q2 = (-0.8476 * -0.8476 + 0.4238 * 0.4238 * 2) * 1728
     natoms = 3 * 1728
-    KK = 30
+    KK = 32
     beta = 3.5
     region = Region ([3.72412,3.72412,3.72412])
-
     bs = Bspline(4)
-    hat_cmpt = HatComput (bs, KK, over_smpl = 50)
-    err = IkError (beta, [KK, KK, KK], hat_cmpt, over_cmpt_ratio = 2)
-    error = err.estimate (q2, natoms, region)
-    print (error)
+
+    # hat_cmpt = HatComput (bs, KK, over_smpl = 50)
+    # err = IkError (beta, [KK, KK, KK], hat_cmpt, over_cmpt_ratio = 2)
+    # error = err.estimate (q2, natoms, region)
+    # CC = 2
+    # bstep = 0.05
+    # bx = np.arange (0, CC + bstep, bstep)
+    # lossfunc = LossFunc (CC, bx, beta, KK, q2, natoms, region)
+    # # bv = bs(bx)
+    # bx0 = np.arange (0, CC + 0.1, 0.1)
+    # bv0 = np.array([  6.65332244e-01,   6.56613040e-01,   6.30384087e-01,
+    #                   5.91167006e-01,   5.40009415e-01,   4.80249323e-01,
+    #                   4.15509569e-01,   3.48863540e-01,   2.83952069e-01,
+    #                   2.21532255e-01,   1.67361006e-01,   1.21794403e-01,
+    #                   8.52340358e-02,   5.62708564e-02,   3.48644458e-02,
+    #                   1.97821619e-02,   9.75321961e-03,   3.77135561e-03,
+    #                   6.34660481e-04,   2.68299590e-04,  -8.06167151e-04])
+    # func0 = interp1d (bx0, bv0, axis = 0)
+    # bv = func0 (bx)
+    # print (lossfunc(bv))
+    # aa = sp.optimize.minimize (lossfunc, bv, method='Nelder-Mead', options={'disp': True})
+    # print (aa)
+    # np.savetxt ('basis.out', aa.x)
 
     CC = 2
-    bstep = 0.05
-    bx = np.arange (0, CC + bstep, bstep)
-    lossfunc = LossFunc (CC, bx, beta, KK, q2, natoms, region)
-    # bv = bs(bx)
-    bx0 = np.arange (0, CC + 0.1, 0.1)
-    bv0 = np.array([  6.65332244e-01,   6.56613040e-01,   6.30384087e-01,
-                      5.91167006e-01,   5.40009415e-01,   4.80249323e-01,
-                      4.15509569e-01,   3.48863540e-01,   2.83952069e-01,
-                      2.21532255e-01,   1.67361006e-01,   1.21794403e-01,
-                      8.52340358e-02,   5.62708564e-02,   3.48644458e-02,
-                      1.97821619e-02,   9.75321961e-03,   3.77135561e-03,
-                      6.34660481e-04,   2.68299590e-04,  -8.06167151e-04])
-    func0 = interp1d (bx0, bv0, axis = 0)
-    bv = func0 (bx)
-    print (lossfunc(bv))
-    aa = sp.optimize.minimize (lossfunc, bv, method='Nelder-Mead', options={'disp': True})
-    print (aa)
-    np.savetxt ('basis.out', aa.x)
+    nbin = 10
+    bstep = CC / float(nbin)
+    lossfunc = HermiteLossFunc (CC, nbin, beta, KK, q2, natoms, region)
+
+    bx = np.arange (0, CC + .5 * bstep, bstep)
+    bv = bs(bx)
+    bd_ = bs.deriv (bx)
+    bd = bd_[1:]
+    init_vv = np.append (bv, bd)
+    print (lossfunc(init_vv))
+    # aa = sp.optimize.minimize (lossfunc, init_vv, method='Nelder-Mead', options={'disp': True})
+
+    aa = sp.optimize.minimize (lossfunc.value, init_vv, jac = lossfunc.deriv, method='BFGS', options={'disp': True})
+    
+    
+    
