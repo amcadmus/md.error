@@ -9,6 +9,8 @@ from HatComput import HatComput
 from HatComput import HermiteBasisHatComput
 from IntplBasis import IntplBasis
 from scipy.interpolate import interp1d
+from basis_common import unpack_v_d
+from basis_common import make_print_matrix
 
 class IkError (object) :
     def __init__ (self, 
@@ -159,33 +161,31 @@ class HermiteLossFunc (object) :
         self.q2 = q2
         self.natoms = natoms
         self.region = region
-        over_sampling = over_smpl = 400 * (self.nbin / self.CC)
+        over_sampling = 400 * (self.nbin / self.CC)
         tmp0 = HermiteBasisHatComput (self.CC, self.nbin, self.KK[0], over_smpl = over_sampling)
         tmp1 = HermiteBasisHatComput (self.CC, self.nbin, self.KK[1], over_smpl = over_sampling)
         tmp2 = HermiteBasisHatComput (self.CC, self.nbin, self.KK[2], over_smpl = over_sampling)
         self.hhc = [tmp0, tmp1, tmp2]
-        self.err_basis = IkError (self.beta, self.KK, self.hhc, over_cmpt_ratio = 5)
+        self.err_basis = IkError (self.beta, self.KK, self.hhc, over_cmpt_ratio = 20)
 
     def value (self, vv) :
         assert (len(vv) == self.nbin * 2)
-        hv = vv[0:self.nbin]
-        hv = np.insert (hv, 0, 1.)
-        hd = vv[self.nbin:self.nbin * 2]
+        [hv, hd] = unpack_v_d (vv)
         self.hhc[0].set_value (hv, hd)
         self.hhc[1].set_value (hv, hd)
         self.hhc[2].set_value (hv, hd)
         error = self.err_basis.estimate (self.q2, self.natoms, self.region)
         print ("returned %e" % error)
-        tmpd = np.insert (hd, 0, 0)
-        np.savetxt ('basis.1.out', hv)
-        np.savetxt ('deriv.1.out', tmpd)
+        # tmpd = np.insert (hd, 0, 0)
+        # np.savetxt ('basis.1.out', hv)
+        # np.savetxt ('deriv.1.out', tmpd)
+        print_matrix = make_print_matrix (self.CC, hv, hd)
+        np.savetxt ("basis.step.out", print_matrix)
         return error
 
     def deriv (self, vv) :
         assert (len(vv) == self.nbin * 2)
-        hv = vv[0:self.nbin]
-        hv = np.insert (hv, 0, 1.)
-        hd = vv[self.nbin:self.nbin * 2]
+        [hv, hd] = unpack_v_d (vv)
         self.hhc[0].set_value (hv, hd)
         self.hhc[1].set_value (hv, hd)
         self.hhc[2].set_value (hv, hd)
