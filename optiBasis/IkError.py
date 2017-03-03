@@ -45,15 +45,15 @@ class IkError (object) :
                     gm = self._compute_G (m0, m1, m2, region)
                     gm2 = np.dot(gm, gm)
                     o1e = 0
-                    for ll in range (-self.l_cut, self.l_cut+1) : 
-                        if (ll == 0) : 
-                            continue
-                        tmpz = self.hat_comput[0] (m0 + ll * self.KK[0]) / self.hat_comput[0] (m0)
-                        o1e = o1e + tmpz * tmpz
-                        tmpz = self.hat_comput[1] (m1 + ll * self.KK[1]) / self.hat_comput[1] (m1)
-                        o1e = o1e + tmpz * tmpz
-                        tmpz = self.hat_comput[2] (m2 + ll * self.KK[2]) / self.hat_comput[2] (m2)
-                        o1e = o1e + tmpz * tmpz
+                    idxmm = [m0, m1, m2]
+                    for dd in range (3) :
+                        hat_phi0   = self.hat_comput[dd] (idxmm[dd] )
+                        hat_phi02i = 1./(hat_phi0 * hat_phi0)
+                        for ll in range (-self.l_cut, self.l_cut+1) : 
+                            if (ll == 0) : 
+                                continue
+                            hat_phil   = self.hat_comput[dd] (idxmm[dd] + ll * self.KK[dd])
+                            o1e = o1e + hat_phil * hat_phil * hat_phi02i
                     sum_o1 = sum_o1 + 2. * gm2 * o1e
 
         sum_o1 = sum_o1 / (2. * np.pi * VV * 2. * np.pi * VV)
@@ -78,17 +78,19 @@ class IkError (object) :
                     gm2 = np.dot(gm, gm)
                     o1e = np.zeros (numb_basis)
                     idxmm = [m0, m1, m2]
-                    for ll in range (-self.l_cut, self.l_cut+1) : 
-                        if (ll == 0) : 
-                            continue
-                        for dd in range (3) :
-                            hat_phil = self.hat_comput[dd] (idxmm[dd] + ll * self.KK[dd])
-                            hat_phi0 = self.hat_comput[dd] (idxmm[dd] )
+                    for dd in range (3) :
+                        hat_phi0   = self.hat_comput[dd] (idxmm[dd] )
+                        hat_basis0 = self.hat_comput[dd].basis_value (idxmm[dd])
+                        hat_phi02i = 1./(hat_phi0 * hat_phi0)
+                        hat_phi03i = 1./(hat_phi0 * hat_phi0 * hat_phi0)
+                        for ll in range (-self.l_cut, self.l_cut+1) : 
+                            if (ll == 0) : 
+                                continue
+                            hat_phil   = self.hat_comput[dd] (idxmm[dd] + ll * self.KK[dd])
                             hat_basisl = self.hat_comput[dd].basis_value (idxmm[dd] + ll * self.KK[dd])
-                            hat_basis0 = self.hat_comput[dd].basis_value (idxmm[dd])
                             o1e = o1e \
-                                  + 2 * hat_phil / (hat_phi0 * hat_phi0) * hat_basisl  \
-                                  - 2 * hat_phil * hat_phil / (hat_phi0 * hat_phi0 * hat_phi0) * hat_basis0                            
+                                  + 2 * hat_phil * hat_phi02i * hat_basisl  \
+                                  - 2 * hat_phil * hat_phil * hat_phi03i * hat_basis0                            
                     sum_o1 = sum_o1 + 2. * gm2 * o1e
 
         sum_o1 = sum_o1 / (2. * np.pi * VV * 2. * np.pi * VV)
