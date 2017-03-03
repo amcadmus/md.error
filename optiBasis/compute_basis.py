@@ -7,6 +7,7 @@ import argparse
 from Region import Region
 from Bspline import Bspline
 from IkError import HermiteLossFunc
+from IkError import HermiteLossFunc_Bound0
 import basis_common as bc
 
 def _parse_argument():
@@ -26,6 +27,8 @@ def _parse_argument():
                         help='the tolerence of convergence')
     parser.add_argument('--l-cut', type=int, default = 0,
                         help='the cut-off of l sum. Use 0 for an estimate')
+    parser.add_argument('-d', '--vanish-boundary', action = 'store_true',
+                        help='set boundary value and derivative to 0')
     parser.add_argument('-o', '--output', type=str, default = "basis.out",
                         help='the output file of basis')
     args = parser.parse_args()
@@ -44,15 +47,20 @@ def _main () :
     CC = args.cut_off
     nbin = args.numb_bin    
     l_cut = args.l_cut
+    vanish_boundary = args.vanish_boundary
     if (l_cut <= 0) :
-        l_cut = bc.estimate_l_cut (CC, nbin)
+        l_cut = bc.estimate_l_cut (CC, nbin, vanish_boundary)
         print ("# estimated l_cut is %d" % l_cut)
 
     # make a water like system
     q2 = 33.456 * np.prod(LL) * (-0.8476 * -0.8476 + 0.4238 * 0.4238 * 2)
     natoms = 33.456 * np.prod(LL) * 3
 
-    lossfunc = HermiteLossFunc (CC, nbin, beta, KK, q2, natoms, region, l_cut = l_cut)
+    if vanish_boundary :
+        lossfunc = HermiteLossFunc_Bound0 (CC, nbin, beta, KK, q2, natoms, region, l_cut = l_cut)
+    else :
+        lossfunc = HermiteLossFunc (CC, nbin, beta, KK, q2, natoms, region, l_cut = l_cut)
+    
     
     bstep = CC / float(nbin)
     bs = Bspline(CC*2)    
@@ -64,13 +72,24 @@ def _main () :
     bd = bd_[1:]
     bv = bv / scale
     bd = bd / scale
+    if vanish_boundary :
+        bv = np.delete (bv, -1)
+        bd = np.delete (bd, -1)
     init_vv = bc.pack_v_d (bv, bd)
     tolerence = args.tolerence
 
-    aa = sp.optimize.minimize (lossfunc.value, init_vv, jac = lossfunc.deriv, method='BFGS', options={'disp': True}, tol=tolerence)
+    aa = sp.optimize.minimize (lossfunc.value, 
+                               init_vv, 
+                               jac = lossfunc.deriv, 
+                               method='BFGS', 
+                               options={'disp': True}, 
+                               tol=tolerence)
 
     [rv, rd] = bc.unpack_v_d (aa.x)
-    pmat = bc.make_print_matrix (CC, rv, rd)
+    if vanish_boundary: 
+        pmat = bc.make_print_matrix_bound0 (CC, rv, rd)
+    else :
+        pmat = bc.make_print_matrix (CC, rv, rd)
     np.savetxt (args.output, pmat)
 
 if __name__ == '__main__':

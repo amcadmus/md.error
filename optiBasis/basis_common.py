@@ -32,6 +32,19 @@ def make_print_matrix (CC, vv, dd) :
     print_matrix = np.append (print_matrix, [dd1],axis = 0)
     return print_matrix.T
 
+def make_print_matrix_bound0 (CC, vv, dd) :
+    nbin = len(dd) + 1
+    assert (nbin == len(vv) + 1)
+    vv1 = np.insert (vv, 0, 1)
+    dd1 = np.insert (dd, 0, 0)
+    vv1 = np.append (vv1, 0)
+    dd1 = np.append (dd1, 0)
+    hh = CC / float(nbin)
+    print_matrix = [np.arange (0, CC + hh/2., hh)]
+    print_matrix = np.append (print_matrix, [vv1], axis = 0)
+    print_matrix = np.append (print_matrix, [dd1], axis = 0)
+    return print_matrix.T
+
 def make_working_vec (print_matrix) :
     print_matrix = print_matrix.T
     xx = print_matrix[0]
@@ -44,5 +57,12 @@ def make_working_vec (print_matrix) :
     dd = np.delete (dd1, 0)
     return [CC, vv, dd]
 
-def estimate_l_cut (CC, nbins) :
-    return int (4 * nbins / CC)
+def estimate_l_cut (CC, nbins, vanish_boundary) :
+    esti = 0
+    if vanish_boundary :
+        esti = int (1 * nbins / CC)
+    else :
+        esti = int (4 * nbins / CC)
+    if esti < 2 :
+        esti = 2
+    return esti

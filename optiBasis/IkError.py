@@ -8,10 +8,12 @@ from Bspline import Bspline
 from HatComput import HatComput
 from HatComput import HermiteBasisHatComput
 from HatComput import HermiteBasisHatComput_Norm1
+from HatComput import HermiteBasisHatComput_Norm1_Bound0
 from IntplBasis import IntplBasis
 from scipy.interpolate import interp1d
 from basis_common import unpack_v_d
 from basis_common import make_print_matrix
+from basis_common import make_print_matrix_bound0
 
 class IkError (object) :
     def __init__ (self, 
@@ -193,6 +195,53 @@ class HermiteLossFunc (object) :
         # return deriv[1:]
         return deriv        
 
+class HermiteLossFunc_Bound0 (object) :
+    def __init__ (self,
+                  CC,
+                  nbin, 
+                  beta,
+                  KK,
+                  q2, 
+                  natoms, 
+                  region,
+                  l_cut = 10
+    ) :
+        self.CC = CC
+        self.nbin = nbin
+        self.beta = beta
+        self.KK = KK
+        self.q2 = q2
+        self.natoms = natoms
+        self.region = region
+        self.l_cut = l_cut
+        over_sampling = 400 * (self.nbin / self.CC)
+        tmp0 = HermiteBasisHatComput_Norm1_Bound0 (self.CC, self.nbin, self.KK[0], over_smpl = over_sampling)
+        tmp1 = HermiteBasisHatComput_Norm1_Bound0 (self.CC, self.nbin, self.KK[1], over_smpl = over_sampling)
+        tmp2 = HermiteBasisHatComput_Norm1_Bound0 (self.CC, self.nbin, self.KK[2], over_smpl = over_sampling)
+        self.hhc = [tmp0, tmp1, tmp2]
+        self.err_basis = IkError (self.beta, self.KK, self.hhc, l_cut = self.l_cut)
+
+    def value (self, vv) :
+        assert (len(vv) == self.nbin * 2 - 2)
+        [hv, hd] = unpack_v_d (vv)
+        self.hhc[0].set_value (hv, hd)
+        self.hhc[1].set_value (hv, hd)
+        self.hhc[2].set_value (hv, hd)
+        error = self.err_basis.estimate (self.q2, self.natoms, self.region)
+        print ("returned %e" % error, end = "   \r")
+        print_matrix = make_print_matrix_bound0 (self.CC, hv, hd)
+        np.savetxt ("basis.step.out", print_matrix)
+        return error
+
+    def deriv (self, vv) :
+        assert (len(vv) == self.nbin * 2 - 2)
+        [hv, hd] = unpack_v_d (vv)
+        self.hhc[0].set_value (hv, hd)
+        self.hhc[1].set_value (hv, hd)
+        self.hhc[2].set_value (hv, hd)
+        deriv = self.err_basis.estimate_deriv (self.q2, self.natoms, self.region)
+        # return deriv[1:]
+        return deriv        
 
 if __name__ == "__main__" : 
     q2 = (-0.8476 * -0.8476 + 0.4238 * 0.4238 * 2) * 1728

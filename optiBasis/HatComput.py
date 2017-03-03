@@ -255,8 +255,8 @@ class HermiteBasisHatComput_Norm1_Bound0 (object) :
             else : self.hathd = np.append (self.hathd, [np.real(fhd)], axis = 0)
         
     def set_value (self, vi, di) :
-        assert (len(vi) == self.nbin-1)
-        assert (len(di) == self.nbin-1)
+        assert (len(vi) == self.n_bin-1)
+        assert (len(di) == self.n_bin-1)
         self.vi = vi
         self.di = di        
         assert (len(self.hathv) == len(self.vi))
