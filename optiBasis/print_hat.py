@@ -6,7 +6,7 @@ import scipy as sp
 import argparse
 from Region import Region
 from Bspline import Bspline
-from HatComput import HermiteBasisHatComput
+from HatComput import HermiteBasisHatComput_Norm1
 from basis_common import unpack_v_d
 from basis_common import make_print_matrix
 from basis_common import make_dim3_vec
@@ -34,7 +34,7 @@ def _main () :
     nbins = len(dd)
     over_sampling = 400 * (nbins / CC)
 
-    hat = HermiteBasisHatComput (CC, nbins, KK, over_sampling)
+    hat = HermiteBasisHatComput_Norm1 (CC, nbins, KK, over_sampling)
     hat.set_value (vv, dd)
     
     for ii in range (args.m_up) :

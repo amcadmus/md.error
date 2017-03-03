@@ -139,7 +139,138 @@ class HermiteBasisHatComput (object) :
 
     def basis_value (self, mm) :
         return np.append (self.hathv[:,mm], self.hathd[:,mm])
+
+class HermiteBasisHatComput_Norm1 (object) :
+    def __init__ (self, 
+                  CC,
+                  n_bin,
+                  KK = 32,
+                  over_smpl = 30,
+                  ) :
+        self.CC = CC
+        self.n_bin = n_bin
+        self.hh = self.CC / self.n_bin
+        self.KK = KK
+        self.over_smpl = int(over_smpl)
+        self.MM = self.KK * self.over_smpl
         
+        xx = np.arange (0, self.KK, float(self.KK) / float(self.MM))
+        # print (len(xx))
+        for ii in range (len(xx)) :
+            if xx[ii] > float(self.KK / 2.) : 
+                xx[ii] = xx[ii] - self.KK
+        
+        self.hathv = []
+        self.hathd = []
+
+        # at knot 0
+        [hv, hd] = symm_hermite (xx, 0, self.hh)
+        hd = np.zeros (hd.shape)
+        fhv = np.fft.fft (hv) / len(hv)
+        self.hathv0 = np.real(fhv)
+
+        # at "normal" knot
+        for ii in range (1, self.n_bin) :
+            [hv, hd] = symm_hermite (xx, ii, self.hh)
+            fhv = np.fft.fft (hv) / len(hv)
+            fhd = np.fft.fft (hd) / len(hd)
+            if len(self.hathv) == 0 : self.hathv = [np.real(fhv)] 
+            else : self.hathv = np.append (self.hathv, [np.real(fhv)], axis = 0)
+            if len(self.hathd) == 0 : self.hathd = [np.real(fhd)] 
+            else : self.hathd = np.append (self.hathd, [np.real(fhd)], axis = 0)
+
+        # at boundary knot
+        [hv, hd] = symm_hermite (xx, self.n_bin, self.hh)
+        for ii in range (len(xx)) : 
+            if xx[ii] > CC : 
+                hv[ii] = 0
+                hd[ii] = 0
+            elif xx[ii] < -CC : 
+                hv[ii] = 0
+                hd[ii] = 0
+        fhv = np.fft.fft (hv) / len(hv)
+        fhd = np.fft.fft (hd) / len(hd)
+        if len(self.hathv) == 0 : self.hathv = [np.real(fhv)] 
+        else : self.hathv = np.append (self.hathv, [np.real(fhv)], axis = 0)
+        if len(self.hathd) == 0 : self.hathd = [np.real(fhd)] 
+        else : self.hathd = np.append (self.hathd, [np.real(fhd)], axis = 0)
+        # plt.plot (np.arange (0, self.KK, float(self.KK) / float(self.MM)), hv)
+        # plt.plot (np.arange (0, self.KK, float(self.KK) / float(self.MM)), hd)
+        # plt.show()
+        
+    def set_value (self, vi, di) :
+        self.vi = vi
+        self.di = di
+        assert (len(self.hathv) == len(self.vi))
+        assert (len(self.hathd) == len(self.di))
+        
+    def __call__ (self, mm) :
+        if mm < 0 : mm = -mm
+        result = self.hathv0[mm]
+        result = result + np.dot (self.vi, self.hathv[:,mm])
+        result = result + np.dot (self.di, self.hathd[:,mm])
+        return result
+
+    def basis_value (self, mm) :
+        return np.append (self.hathv[:,mm], self.hathd[:,mm])
+
+
+class HermiteBasisHatComput_Norm1_Bound0 (object) :
+    def __init__ (self, 
+                  CC,
+                  n_bin,
+                  KK = 32,
+                  over_smpl = 30,
+                  ) :
+        self.CC = CC
+        self.n_bin = n_bin
+        self.hh = self.CC / self.n_bin
+        self.KK = KK
+        self.over_smpl = int(over_smpl)
+        self.MM = self.KK * self.over_smpl
+        
+        xx = np.arange (0, self.KK, float(self.KK) / float(self.MM))
+        # print (len(xx))
+        for ii in range (len(xx)) :
+            if xx[ii] > float(self.KK / 2.) : 
+                xx[ii] = xx[ii] - self.KK
+        
+        self.hathv = []
+        self.hathd = []
+
+        # at knot 0
+        [hv, hd] = symm_hermite (xx, 0, self.hh)
+        hd = np.zeros (hd.shape)
+        fhv = np.fft.fft (hv) / len(hv)
+        self.hathv0 = np.real(fhv)
+
+        # at "normal" knot
+        for ii in range (1, self.n_bin) :
+            [hv, hd] = symm_hermite (xx, ii, self.hh)
+            fhv = np.fft.fft (hv) / len(hv)
+            fhd = np.fft.fft (hd) / len(hd)
+            if len(self.hathv) == 0 : self.hathv = [np.real(fhv)] 
+            else : self.hathv = np.append (self.hathv, [np.real(fhv)], axis = 0)
+            if len(self.hathd) == 0 : self.hathd = [np.real(fhd)] 
+            else : self.hathd = np.append (self.hathd, [np.real(fhd)], axis = 0)
+        
+    def set_value (self, vi, di) :
+        assert (len(vi) == self.nbin-1)
+        assert (len(di) == self.nbin-1)
+        self.vi = vi
+        self.di = di        
+        assert (len(self.hathv) == len(self.vi))
+        assert (len(self.hathd) == len(self.di))
+        
+    def __call__ (self, mm) :
+        if mm < 0 : mm = -mm
+        result = self.hathv0[mm]
+        result = result + np.dot (self.vi, self.hathv[:,mm])
+        result = result + np.dot (self.di, self.hathd[:,mm])
+        return result
+
+    def basis_value (self, mm) :
+        return np.append (self.hathv[:,mm], self.hathd[:,mm])        
 
 if __name__ == "__main__" : 
     bs = Bspline(4)

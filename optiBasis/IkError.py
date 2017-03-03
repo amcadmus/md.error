@@ -7,6 +7,7 @@ from Region import Region
 from Bspline import Bspline
 from HatComput import HatComput
 from HatComput import HermiteBasisHatComput
+from HatComput import HermiteBasisHatComput_Norm1
 from IntplBasis import IntplBasis
 from scipy.interpolate import interp1d
 from basis_common import unpack_v_d
@@ -17,13 +18,13 @@ class IkError (object) :
                   beta,
                   KK, 
                   hat_comput,
-                  over_cmpt_ratio = 1,
+                  l_cut = 1,
     ) :
         self.conversion = 138.93545756169981341199
         self.beta = beta
         self.KK = KK
         self.hat_comput = hat_comput
-        self.over_cmpt_ratio = over_cmpt_ratio
+        self.l_cut = l_cut
         assert len(self.KK) == 3
         
     def prepare_sum (self,
@@ -42,7 +43,7 @@ class IkError (object) :
                     gm = self._compute_G (m0, m1, m2, region)
                     gm2 = np.dot(gm, gm)
                     o1e = 0
-                    for ll in range (-self.over_cmpt_ratio, self.over_cmpt_ratio+1) : 
+                    for ll in range (-self.l_cut, self.l_cut+1) : 
                         if (ll == 0) : 
                             continue
                         tmpz = self.hat_comput[0] (m0 + ll * self.KK[0]) / self.hat_comput[0] (m0)
@@ -75,7 +76,7 @@ class IkError (object) :
                     gm2 = np.dot(gm, gm)
                     o1e = np.zeros (numb_basis)
                     idxmm = [m0, m1, m2]
-                    for ll in range (-self.over_cmpt_ratio, self.over_cmpt_ratio+1) : 
+                    for ll in range (-self.l_cut, self.l_cut+1) : 
                         if (ll == 0) : 
                             continue
                         for dd in range (3) :
@@ -138,7 +139,7 @@ class LossFunc (object) :
                   vv) :        
         basis = IntplBasis (self.xx, vv, self.CC)
         hat_basis = HatComput (basis, self.KK, over_smpl = 200)
-        err_basis = IkError (self.beta, [self.KK, self.KK, self.KK], hat_basis, over_cmpt_ratio = 5)
+        err_basis = IkError (self.beta, [self.KK, self.KK, self.KK], hat_basis, l_cut = 5)
         error = err_basis.estimate (self.q2, self.natoms, self.region)
         np.savetxt ('basis.out', vv)
         print ("returned %e" % error)
@@ -153,6 +154,7 @@ class HermiteLossFunc (object) :
                   q2, 
                   natoms, 
                   region,
+                  l_cut = 10
     ) :
         self.CC = CC
         self.nbin = nbin
@@ -161,12 +163,13 @@ class HermiteLossFunc (object) :
         self.q2 = q2
         self.natoms = natoms
         self.region = region
+        self.l_cut = l_cut
         over_sampling = 400 * (self.nbin / self.CC)
-        tmp0 = HermiteBasisHatComput (self.CC, self.nbin, self.KK[0], over_smpl = over_sampling)
-        tmp1 = HermiteBasisHatComput (self.CC, self.nbin, self.KK[1], over_smpl = over_sampling)
-        tmp2 = HermiteBasisHatComput (self.CC, self.nbin, self.KK[2], over_smpl = over_sampling)
+        tmp0 = HermiteBasisHatComput_Norm1 (self.CC, self.nbin, self.KK[0], over_smpl = over_sampling)
+        tmp1 = HermiteBasisHatComput_Norm1 (self.CC, self.nbin, self.KK[1], over_smpl = over_sampling)
+        tmp2 = HermiteBasisHatComput_Norm1 (self.CC, self.nbin, self.KK[2], over_smpl = over_sampling)
         self.hhc = [tmp0, tmp1, tmp2]
-        self.err_basis = IkError (self.beta, self.KK, self.hhc, over_cmpt_ratio = 20)
+        self.err_basis = IkError (self.beta, self.KK, self.hhc, l_cut = self.l_cut)
 
     def value (self, vv) :
         assert (len(vv) == self.nbin * 2)
@@ -175,10 +178,7 @@ class HermiteLossFunc (object) :
         self.hhc[1].set_value (hv, hd)
         self.hhc[2].set_value (hv, hd)
         error = self.err_basis.estimate (self.q2, self.natoms, self.region)
-        print ("returned %e" % error)
-        # tmpd = np.insert (hd, 0, 0)
-        # np.savetxt ('basis.1.out', hv)
-        # np.savetxt ('deriv.1.out', tmpd)
+        print ("returned %e" % error, end = "   \r")
         print_matrix = make_print_matrix (self.CC, hv, hd)
         np.savetxt ("basis.step.out", print_matrix)
         return error
@@ -190,36 +190,8 @@ class HermiteLossFunc (object) :
         self.hhc[1].set_value (hv, hd)
         self.hhc[2].set_value (hv, hd)
         deriv = self.err_basis.estimate_deriv (self.q2, self.natoms, self.region)
-        return deriv[1:]
-        
-    # def __call__ (self,
-    #               vv) :        
-    #     assert (len(vv) == self.nbin * 2 + 1)
-    #     hv = vv[0:self.nbin+1]
-    #     hd = vv[self.nbin+1:self.nbin * 2 + 1]
-    #     self.hhc.set_value (hv, hd)        
-    #     err_basis = IkError (self.beta, [self.KK, self.KK, self.KK], self.hhc, over_cmpt_ratio = 5)
-    #     error = err_basis.estimate (self.q2, self.natoms, self.region)
-
-    #     # print ("error is %f" % error)
-    #     # error_deriv = err_basis.estimate_deriv (self.q2, self.natoms, self.region)
-    #     # print ("deriv is %s" % error_deriv)
-    #     # hh = 0.001
-    #     # hd1 = hd
-    #     # hd1[-1] = hd1[-1] + hh
-    #     # self.hhc.set_value (hv, hd1)        
-    #     # error = err_basis.estimate (self.q2, self.natoms, self.region)
-    #     # print ("error + is %f" % error)
-    #     # hd1[-1] = hd1[-1] - 2. * hh
-    #     # self.hhc.set_value (hv, hd1)        
-    #     # error = err_basis.estimate (self.q2, self.natoms, self.region)
-    #     # print ("error - is %f" % error)        
-        
-    #     tmpd = np.insert (hd, 0, 0)
-    #     np.savetxt ('basis.out', hv)
-    #     np.savetxt ('deriv.out', tmpd)
-    #     print ("returned %e" % error)
-    #     return error
+        # return deriv[1:]
+        return deriv        
 
 
 if __name__ == "__main__" : 
@@ -231,7 +203,7 @@ if __name__ == "__main__" :
     bs = Bspline(4)
 
     # hat_cmpt = HatComput (bs, KK, over_smpl = 50)
-    # err = IkError (beta, [KK, KK, KK], hat_cmpt, over_cmpt_ratio = 2)
+    # err = IkError (beta, [KK, KK, KK], hat_cmpt, l_cut = 2)
     # error = err.estimate (q2, natoms, region)
     # CC = 2
     # bstep = 0.05
