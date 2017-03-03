@@ -180,7 +180,7 @@ class HermiteLossFunc (object) :
         self.hhc[1].set_value (hv, hd)
         self.hhc[2].set_value (hv, hd)
         error = self.err_basis.estimate (self.q2, self.natoms, self.region)
-        print ("returned %e" % error, end = "   \r")
+        print ("# returned %e" % error, end = "   \r")
         print_matrix = make_print_matrix (self.CC, hv, hd)
         np.savetxt ("basis.step.out", print_matrix)
         return error
@@ -228,7 +228,7 @@ class HermiteLossFunc_Bound0 (object) :
         self.hhc[1].set_value (hv, hd)
         self.hhc[2].set_value (hv, hd)
         error = self.err_basis.estimate (self.q2, self.natoms, self.region)
-        print ("returned %e" % error, end = "   \r")
+        print ("# returned %e" % error, end = "   \r")
         print_matrix = make_print_matrix_bound0 (self.CC, hv, hd)
         np.savetxt ("basis.step.out", print_matrix)
         return error
