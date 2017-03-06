@@ -47,7 +47,7 @@ def _main () :
     over_sampling = 100 * (nbin / CC)
     l_cut = args.l_cut
     if (l_cut <= 0) :
-        l_cut = bc.estimate_l_cut (CC, nbin)
+        l_cut = bc.estimate_l_cut (CC, nbin, False)
         print ("# estimated l_cut is %d" % l_cut)
         
     # make a water like system
