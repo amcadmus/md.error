@@ -42,6 +42,9 @@ def _main () :
             for i_kk in KK :
                 LL = global_basic_sys_size * mul
                 ofile = file_name (nbins, i_cc, i_beta, mul, i_kk)                
+                if os.path.exists (output+"/"+ofile) : 
+                    print ("# existing file %s , do nothing" % (output+"/"+ofile))
+                    continue
                 command = "./compute_basis.py " +  \
                           " -n %d" % nbins + \
                           " -c %d" % i_cc + \
