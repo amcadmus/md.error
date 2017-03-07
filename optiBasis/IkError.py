@@ -36,6 +36,9 @@ class IkError (object) :
         bd0 = int(self.KK[0]/2)
         bd1 = int(self.KK[1]/2)
         bd2 = int(self.KK[2]/2)
+        value_buff = [self.hat_comput[0].get_value_buff(), \
+                      self.hat_comput[1].get_value_buff(), \
+                      self.hat_comput[2].get_value_buff()]
 
         for m0 in range (-bd0, bd0+1) :
             for m1 in range (-bd1, bd1+1) :
@@ -47,12 +50,12 @@ class IkError (object) :
                     o1e = 0
                     idxmm = [m0, m1, m2]
                     for dd in range (3) :
-                        hat_phi0   = self.hat_comput[dd] (idxmm[dd] )
+                        hat_phi0   = value_buff[dd][abs(idxmm[dd] )]
                         hat_phi02i = 1./(hat_phi0 * hat_phi0)
                         for ll in range (-self.l_cut, self.l_cut+1) : 
                             if (ll == 0) : 
                                 continue
-                            hat_phil   = self.hat_comput[dd] (idxmm[dd] + ll * self.KK[dd])
+                            hat_phil   = value_buff[dd][abs(idxmm[dd] + ll * self.KK[dd])]
                             o1e = o1e + hat_phil * hat_phil * hat_phi02i
                     sum_o1 = sum_o1 + 2. * gm2 * o1e
 
@@ -68,6 +71,12 @@ class IkError (object) :
         assert (numb_basis == self.hat_comput[1].basis_value(0).shape[0])
         assert (numb_basis == self.hat_comput[2].basis_value(0).shape[0])
         sum_o1 = np.zeros (numb_basis)
+        value_buff = [self.hat_comput[0].get_value_buff(), \
+                      self.hat_comput[1].get_value_buff(), \
+                      self.hat_comput[2].get_value_buff()]
+        basis_buff = [self.hat_comput[0].get_basis_buff(), \
+                      self.hat_comput[1].get_basis_buff(), \
+                      self.hat_comput[2].get_basis_buff()]
 
         for m0 in range (-bd0, bd0+1) :
             for m1 in range (-bd1, bd1+1) :
@@ -79,16 +88,20 @@ class IkError (object) :
                     o1e = np.zeros (numb_basis)
                     idxmm = [m0, m1, m2]
                     for dd in range (3) :
-                        hat_phi0   = self.hat_comput[dd] (idxmm[dd] )
-                        hat_basis0 = self.hat_comput[dd].basis_value (idxmm[dd])
+                        # hat_phi0   = self.hat_comput[dd] (idxmm[dd] )
+                        # hat_basis0 = self.hat_comput[dd].basis_value (idxmm[dd])
+                        hat_phi0   = value_buff[dd][abs(idxmm[dd])]
+                        hat_basis0 = basis_buff[dd][abs(idxmm[dd])]
                         hat_phi02i = 1./(hat_phi0 * hat_phi0)
                         hat_phi03i = 1./(hat_phi0 * hat_phi0 * hat_phi0)
                         pref2 = hat_phi03i * hat_basis0
                         for ll in range (-self.l_cut, self.l_cut+1) : 
                             if (ll == 0) : 
                                 continue
-                            hat_phil   = self.hat_comput[dd] (idxmm[dd] + ll * self.KK[dd])
-                            hat_basisl = self.hat_comput[dd].basis_value (idxmm[dd] + ll * self.KK[dd])
+                            # hat_phil   = self.hat_comput[dd] (idxmm[dd] + ll * self.KK[dd])
+                            # hat_basisl = self.hat_comput[dd].basis_value (idxmm[dd] + ll * self.KK[dd])
+                            hat_phil   = value_buff[dd][abs(idxmm[dd] + ll * self.KK[dd])]
+                            hat_basisl = basis_buff[dd][abs(idxmm[dd] + ll * self.KK[dd])]
                             o1e = o1e \
                                   + 2 * hat_phil * hat_phi02i * hat_basisl  \
                                   - 2 * hat_phil * hat_phil * pref2

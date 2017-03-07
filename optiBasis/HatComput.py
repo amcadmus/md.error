@@ -119,26 +119,38 @@ class HermiteBasisHatComput (object) :
         # plt.plot (np.arange (0, self.KK, float(self.KK) / float(self.MM)), hv)
         # plt.plot (np.arange (0, self.KK, float(self.KK) / float(self.MM)), hd)
         # plt.show()
+        self.basis_buff = np.append (self.hathv, self.hathd, axis = 0)
+        self.basis_buff = self.basis_buff.T
         
     def set_value (self, vi, di) :
         self.vi = vi
         self.di = di
         assert (len(self.hathv) == len(self.vi))
         assert (len(self.hathd) == len(self.di))
+        self.result_buff = self.hathv0
+        self.result_buff = np.dot (self.vi, self.hathv) + self.result_buff
+        self.result_buff = np.dot (self.di, self.hathd) + self.result_buff
         
     def __call__ (self, mm) :
-        if mm < 0 : mm = -mm
-        result = 0
-        result = result + np.dot (self.vi, self.hathv[:,mm])
-        result = result + np.dot (self.di, self.hathd[:,mm])
-        # for ii in range(len(self.vi)) :
-        #     result = result + self.vi[ii] * self.hathv[ii][mm]
-        # for ii in range(len(self.di)) :
-        #     result = result + self.di[ii] * self.hathd[ii][mm]
-        return result
+        return self.result_buff[abs(mm)]
+        # result = 0
+        # result = result + np.dot (self.vi, self.hathv[:,mm])
+        # result = result + np.dot (self.di, self.hathd[:,mm])
+        # # for ii in range(len(self.vi)) :
+        # #     result = result + self.vi[ii] * self.hathv[ii][mm]
+        # # for ii in range(len(self.di)) :
+        # #     result = result + self.di[ii] * self.hathd[ii][mm]
+        # return result
 
     def basis_value (self, mm) :
-        return np.append (self.hathv[:,mm], self.hathd[:,mm])
+        # return np.append (self.hathv[:,mm], self.hathd[:,mm])
+        return self.basis_buff[abs(mm)]
+
+    def get_value_buff (self) :
+        return self.result_buff
+
+    def get_basis_buff (self) :
+        return self.basis_buff
 
 class HermiteBasisHatComput_Norm1 (object) :
     def __init__ (self, 
@@ -197,22 +209,29 @@ class HermiteBasisHatComput_Norm1 (object) :
         # plt.plot (np.arange (0, self.KK, float(self.KK) / float(self.MM)), hv)
         # plt.plot (np.arange (0, self.KK, float(self.KK) / float(self.MM)), hd)
         # plt.show()
+        self.basis_buff = np.append (self.hathv, self.hathd, axis = 0)
+        self.basis_buff = self.basis_buff.T
         
     def set_value (self, vi, di) :
         self.vi = vi
         self.di = di
         assert (len(self.hathv) == len(self.vi))
         assert (len(self.hathd) == len(self.di))
+        self.result_buff = self.hathv0
+        self.result_buff = np.dot (self.vi, self.hathv) + self.result_buff
+        self.result_buff = np.dot (self.di, self.hathd) + self.result_buff
         
     def __call__ (self, mm) :
-        if mm < 0 : mm = -mm
-        result = self.hathv0[mm]
-        result = result + np.dot (self.vi, self.hathv[:,mm])
-        result = result + np.dot (self.di, self.hathd[:,mm])
-        return result
+        return self.result_buff[abs(mm)]
 
     def basis_value (self, mm) :
-        return np.append (self.hathv[:,mm], self.hathd[:,mm])
+        return self.basis_buff[abs(mm)]
+
+    def get_value_buff (self) :
+        return self.result_buff
+
+    def get_basis_buff (self) :
+        return self.basis_buff
 
 
 class HermiteBasisHatComput_Norm1_Bound0 (object) :
@@ -253,6 +272,9 @@ class HermiteBasisHatComput_Norm1_Bound0 (object) :
             else : self.hathv = np.append (self.hathv, [np.real(fhv)], axis = 0)
             if len(self.hathd) == 0 : self.hathd = [np.real(fhd)] 
             else : self.hathd = np.append (self.hathd, [np.real(fhd)], axis = 0)
+
+        self.basis_buff = np.append (self.hathv, self.hathd, axis = 0)
+        self.basis_buff = self.basis_buff.T
         
     def set_value (self, vi, di) :
         assert (len(vi) == self.n_bin-1)
@@ -261,16 +283,21 @@ class HermiteBasisHatComput_Norm1_Bound0 (object) :
         self.di = di        
         assert (len(self.hathv) == len(self.vi))
         assert (len(self.hathd) == len(self.di))
+        self.result_buff = self.hathv0
+        self.result_buff = np.dot (self.vi, self.hathv) + self.result_buff
+        self.result_buff = np.dot (self.di, self.hathd) + self.result_buff
         
     def __call__ (self, mm) :
-        if mm < 0 : mm = -mm
-        result = self.hathv0[mm]
-        result = result + np.dot (self.vi, self.hathv[:,mm])
-        result = result + np.dot (self.di, self.hathd[:,mm])
-        return result
+        return self.result_buff[abs(mm)]
 
     def basis_value (self, mm) :
-        return np.append (self.hathv[:,mm], self.hathd[:,mm])        
+        return self.basis_buff[abs(mm)]
+
+    def get_value_buff (self) :
+        return self.result_buff
+
+    def get_basis_buff (self) :
+        return self.basis_buff
 
 if __name__ == "__main__" : 
     bs = Bspline(4)
