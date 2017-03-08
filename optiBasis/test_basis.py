@@ -67,6 +67,8 @@ def _main () :
     print ("#")
     print ("# estimated error is")
     print (error)
+    deriv = esti.estimate_deriv (q2, natoms, region)
+    print (deriv)
 
 
 if __name__ == '__main__' :

@@ -55,7 +55,10 @@ def _main () :
 
     CC = np.sort (CC)
     beta = np.sort (beta)
-    KK = np.flip(np.sort(KK), 0)
+    tmpKK = np.sort(KK)
+    for ii in range (len(tmpKK)) :
+        KK[ii] = tmpKK[-(ii+1)]
+#    KK = np.flip(np.sort(KK), 0)        
     print (KK)
     
     # loop order: CC, beta, hh

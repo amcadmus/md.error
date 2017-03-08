@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from Bspline import Bspline
 from Hermite import symm_hermite
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 def _naive_hat_bspline4 (mm) :
     if mm == 0: return 1

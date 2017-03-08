@@ -3,6 +3,7 @@
 import sys
 import numpy as np
 import scipy as sp
+from scipy import optimize
 import argparse
 from Region import Region
 from Bspline import Bspline
