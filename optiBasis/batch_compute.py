@@ -45,12 +45,15 @@ def _main () :
                 if os.path.exists (output+"/"+ofile) : 
                     print ("# existing file %s , do nothing" % (output+"/"+ofile))
                     continue
-                command = "./compute_basis.py " +  \
+                command = "time c.src/compute_basis " +  \
                           " -n %d" % nbins + \
                           " -c %d" % i_cc + \
                           " -b %.16e" % i_beta + \
                           " -l %.16e" % LL + \
                           " -k %d" % i_kk + \
+                          " -T 4" + \
+                          " -v" + \
+                          " -t 1e-8" + \
                           " -o %s" % (output+"/"+ofile)
                 print ("\n# run with command " + command)
                 sp.check_call (command, shell = True)
