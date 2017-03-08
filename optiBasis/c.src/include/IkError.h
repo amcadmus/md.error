@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SimulationRegion.h"
+#include <omp.h>
 
 const static double ElectrostaticConvertion = 138.93545756169981341199;
 
@@ -12,7 +13,8 @@ public:
   IkError (const double & beta,
 	   const vector<int> & KK,
 	   const vector<HatComputer> & hat_comput,
-	   const int & l_cut);
+	   const int & l_cut,
+	   const int numb_threads);
   double estimate (const double & q2,
 		   const int & natoms,
 		   const SimulationRegion<double> & region) ;
@@ -25,6 +27,7 @@ private:
   vector<int > KK;
   const vector<HatComputer> & hat_comput;
   int l_cut;
+  int func_numb_threads;
   double sum_o1;
   vector<double > sum_o1_deriv;
   void prepare_sum (const SimulationRegion<double> & region);
@@ -42,11 +45,13 @@ IkError<HatComputer>::
 IkError (const double & beta_,
 	 const vector<int> & KK_,
 	 const vector<HatComputer> & hat_comput_,
-	 const int & l_cut_)
+	 const int & l_cut_,
+	 const int numb_threads)
     : beta (beta_),
       KK (KK_),
       hat_comput (hat_comput_),
-      l_cut (l_cut_)
+      l_cut (l_cut_),
+      func_numb_threads (numb_threads)
 {
   
 }
@@ -96,8 +101,9 @@ IkError<HatComputer>::
 prepare_sum (const SimulationRegion<double> & region)
 {
   double V = region.getVolume ();
-  sum_o1 = 0;
+  double tmp_sum_o1 = 0;
 
+#pragma omp parallel for reduction (+:tmp_sum_o1) num_threads(func_numb_threads)
   for (int m0 = -int(KK[0]/2); m0 <= KK[0]/2; ++m0){
     double ip = m0;
     for (int m1 = -int(KK[1]/2); m1 <= KK[1]/2; ++m1){
@@ -126,10 +132,12 @@ prepare_sum (const SimulationRegion<double> & region)
 	    // cout << hat_phil * hat_phil * hat_phi02i << endl;
 	  }
 	}
-	sum_o1 += 2. * gm2 * o1e;
+	tmp_sum_o1 += 2. * gm2 * o1e;
       }
     }
   }
+  
+  sum_o1 = tmp_sum_o1;
   sum_o1 /= (2. * M_PI * V * 2. * M_PI * V);
 }
 
@@ -141,53 +149,66 @@ prepare_sum_deriv (const SimulationRegion<double> & region)
 {
   double V = region.getVolume ();
   unsigned basis_size = hat_comput[0].basis_size();
-  sum_o1 = 0;
+  double tmp_sum_o1 = 0;
   sum_o1_deriv.resize (basis_size, 0);
   fill (sum_o1_deriv.begin(), sum_o1_deriv.end(), 0.);
 
-  for (int m0 = -int(KK[0]/2); m0 <= KK[0]/2; ++m0){
-    double ip = m0;
-    for (int m1 = -int(KK[1]/2); m1 <= KK[1]/2; ++m1){
-      double jp = m1;
-      for (int m2 = -int(KK[2]/2); m2 <= KK[2]/2; ++m2){
-	double kp = m2;
-	if (abs(m0) + abs(m1) + abs(m2) == 0) continue;
-	int idxmm[3];
-	idxmm[0] = m0;
-	idxmm[1] = m1;
-	idxmm[2] = m2;
+  vector<vector<double > > t_sum_o1_deriv (func_numb_threads, sum_o1_deriv);
 
-	double gm[3];
-	compute_G (gm, ip, jp, kp, region);
-	double gm2 = MathUtilities::dot<double > (gm, gm);	
+#pragma omp parallel for reduction (+:tmp_sum_o1) num_threads(func_numb_threads)
+  for (int tt = 0; tt < func_numb_threads; ++tt){ 
+    for (int m0 = -int(KK[0]/2)+tt; m0 <= KK[0]/2; m0 += func_numb_threads){
+      double ip = m0;
+      for (int m1 = -int(KK[1]/2); m1 <= KK[1]/2; ++m1){
+	double jp = m1;
+	for (int m2 = -int(KK[2]/2); m2 <= KK[2]/2; ++m2){
+	  double kp = m2;
+	  if (abs(m0) + abs(m1) + abs(m2) == 0) continue;
+	  int idxmm[3];
+	  idxmm[0] = m0;
+	  idxmm[1] = m1;
+	  idxmm[2] = m2;
+
+	  double gm[3];
+	  compute_G (gm, ip, jp, kp, region);
+	  double gm2 = MathUtilities::dot<double > (gm, gm);	
 	
-	double o1e = 0;
-	vector<double> o1e_deriv (basis_size, 0);
+	  double o1e = 0;
+	  vector<double> o1e_deriv (basis_size, 0);
 	
-	for (int dd = 0; dd < 3; ++dd){
-	  const double &	hat_phi0   = hat_comput[dd].value (idxmm[dd]);
-	  const vector<double>&	hat_basis0 = hat_comput[dd].basis_value (idxmm[dd]);
-	  double		hat_phi02i = 1./(hat_phi0 * hat_phi0);
-	  double		hat_phi03i = 1./(hat_phi0 * hat_phi0 * hat_phi0);
-	  for (int ll = -l_cut; ll <= l_cut; ll += 1){
-	    if (ll == 0) continue;
-	    const double &		hat_phil   = hat_comput[dd].value(idxmm[dd] + ll * KK[dd]);
-	    const vector<double> &	hat_basisl = hat_comput[dd].basis_value(idxmm[dd] + ll * KK[dd]);
-	    o1e += hat_phil * hat_phil * hat_phi02i;
-	    for (unsigned pp = 0; pp < basis_size; ++pp){
-	      o1e_deriv[pp] += (2 * hat_phil * hat_phi02i * hat_basisl[pp] - 2 * hat_phil * hat_phil * hat_phi03i * hat_basis0[pp] );
+	  for (int dd = 0; dd < 3; ++dd){
+	    const double &	hat_phi0   = hat_comput[dd].value (idxmm[dd]);
+	    const vector<double>&	hat_basis0 = hat_comput[dd].basis_value (idxmm[dd]);
+	    double		hat_phi02i = 1./(hat_phi0 * hat_phi0);
+	    double		hat_phi03i = 1./(hat_phi0 * hat_phi0 * hat_phi0);
+	    for (int ll = -l_cut; ll <= l_cut; ll += 1){
+	      if (ll == 0) continue;
+	      const double &		hat_phil   = hat_comput[dd].value(idxmm[dd] + ll * KK[dd]);
+	      const vector<double> &	hat_basisl = hat_comput[dd].basis_value(idxmm[dd] + ll * KK[dd]);
+	      o1e += hat_phil * hat_phil * hat_phi02i;
+	      for (unsigned pp = 0; pp < basis_size; ++pp){
+		o1e_deriv[pp] += (2 * hat_phil * hat_phi02i * hat_basisl[pp] - 2 * hat_phil * hat_phil * hat_phi03i * hat_basis0[pp] );
+	      }
 	    }
 	  }
-	}
-	sum_o1 += 2. * gm2 * o1e;
-	for (unsigned pp = 0; pp < basis_size; ++pp){
-	  sum_o1_deriv[pp] += 2. * gm2 * o1e_deriv[pp];
+	  tmp_sum_o1 += 2. * gm2 * o1e;
+	  for (unsigned pp = 0; pp < basis_size; ++pp){
+	    t_sum_o1_deriv[tt][pp] += 2. * gm2 * o1e_deriv[pp];
+	  }
 	}
       }
     }
   }
+#pragma omp parallel for num_threads(func_numb_threads)
+  for (unsigned pp = 0; pp < basis_size; ++pp){
+    for (int tt = 0; tt < func_numb_threads; ++tt){
+      sum_o1_deriv[pp] += t_sum_o1_deriv[tt][pp];
+    }
+  }
 
+  sum_o1 = tmp_sum_o1;
   sum_o1 /= (2. * M_PI * V * 2. * M_PI * V);
+#pragma omp parallel for num_threads(func_numb_threads)
   for (unsigned pp = 0; pp < basis_size; ++pp){
     sum_o1_deriv[pp] = sum_o1_deriv[pp] / (2. * M_PI * V * 2. * M_PI * V);
   }

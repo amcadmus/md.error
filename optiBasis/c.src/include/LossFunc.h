@@ -18,7 +18,8 @@ public:
 	    const double & q2, 
 	    const int & natoms, 
 	    const SimulationRegion<double > & region,
-	    const int & l_cut);
+	    const int & l_cut,
+	    const int numb_threads = 1);
   double value (const column_vector & xx);
   const column_vector deriv (const column_vector & xx);
 public:
@@ -45,7 +46,8 @@ LossFunc (const int & CC_,
 	  const double & q2_, 
 	  const int & natoms_, 
 	  const SimulationRegion<double > & region_,
-	  const int & l_cut_)
+	  const int & l_cut_,
+	  const int numb_threads)
     : CC (CC_), 
       nbins (nbins_),
       beta (beta_),
@@ -54,7 +56,7 @@ LossFunc (const int & CC_,
       natoms (natoms_),
       region (region_),
       l_cut (l_cut_),
-      err (beta, KK, hhc, l_cut)
+      err (beta, KK, hhc, l_cut, numb_threads)
 {
   over_sampling = 400 * (nbins / CC);
   hhc.push_back (typename ErrorEsti::HatType (CC, nbins, KK[0], over_sampling));
