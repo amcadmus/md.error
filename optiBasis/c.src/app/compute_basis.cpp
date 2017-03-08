@@ -67,6 +67,7 @@ int main(int argc, char * argv[])
   int nbins, CC, sKK, l_cut;
   double beta, LL, tol;
   bool is_vbs = false;
+  int numb_threads;
   
   po::options_description desc ("# Allow options");
   desc.add_options()
@@ -80,6 +81,7 @@ int main(int argc, char * argv[])
       ("box-size,l",	po::value<double > (&LL)->default_value (3.72412), "The box size.")
       ("tolerence,t",	po::value<double > (&tol)->default_value (1e-6), "The relative tol for opti.")
       ("l-cut",		po::value<int > (&l_cut), "the cut-off of l sum. Guess if not set")
+      ("numb-threads,T",po::value<int > (&numb_threads)->default_value (1), "the number of threads")
       ("output,o",	po::value<string > (&ofile)->default_value ("basis.out"), "The output basis.");
   
   po::variables_map vm;
@@ -145,7 +147,7 @@ int main(int argc, char * argv[])
   int natoms = 33.456 * LL*LL*LL * 3;
   vector<int> KK(3, sKK);
       
-  LossFunc<IkError<HatSymmHermiteBase> > lf (CC, nbins, beta, KK, q2, natoms, region, l_cut);
+  LossFunc<IkError<HatSymmHermiteBase> > lf (CC, nbins, beta, KK, q2, natoms, region, l_cut, numb_threads);
   global_p_loss = &lf;
   
   column_vector xx (vi.size() * 2);

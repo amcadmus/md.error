@@ -58,7 +58,7 @@ LossFunc (const int & CC_,
       l_cut (l_cut_),
       err (beta, KK, hhc, l_cut, numb_threads)
 {
-  over_sampling = 400 * (nbins / CC);
+  over_sampling = 1600 * (nbins / CC);
   hhc.push_back (typename ErrorEsti::HatType (CC, nbins, KK[0], over_sampling));
   hhc.push_back (typename ErrorEsti::HatType (CC, nbins, KK[1], over_sampling));
   hhc.push_back (typename ErrorEsti::HatType (CC, nbins, KK[2], over_sampling));
