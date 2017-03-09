@@ -1,13 +1,9 @@
-#tmp_sources =	mk_mem.cpp main.cpp norm_var.cpp rhs.cpp pub_func.cpp solution.cpp
-#tmp_sources :=	$(wildcard *.cpp)
-#MKL_INCLUDE=	/home/wang/intel/mkl/8.0.1/include
-#MKL_LINK= 	-L/home/wang/intel/mkl/8.0.1/lib/32 -lmkl_lapack -lmkl_ia32 -lguide -lpthread 
-# boost-include-path=	/people/thnfs/homes/wanghan/local/include/boost-1_36
-# boost-lib-path=		/people/thnfs/homes/wanghan/local/lib
+# Makefile for optiBasis
+
 boost-lib-option=	-lboost_program_options
 link-libs=		-lfftw3 -L /home/wanghan/local/lib -ldlib -lcblas -llapack $(boost-lib-option)
 
-include_dirs = 	./include $(MKL_INCLUDE) $(boost-include-path) -I ~/local/include
+include_dirs = 	./include $(MKL_INCLUDE) $(boost-include-path) ~/local/include
 
 sources_dir =		src
 application_dir=	app
@@ -36,7 +32,7 @@ cobjects = 	$(addprefix $(cobjects_dir)/,$(tmp_cobjects))
 
 
 C:=		gcc
-CFLAGS +=	-g -O3 -Wall -fopenmp
+CFLAGS +=	-g -O3 -Wall -fopenmp -std=c++11
 CFLAGS += 	$(addprefix -I ,$(include_dirs))
 
 CXX:=		g++
