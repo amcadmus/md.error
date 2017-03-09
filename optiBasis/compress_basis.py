@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import argparse
 
-global_version_str = "1.0.0"
+global_version_str = "1.1.0"
 global_basic_sys_size = 0.93103
 
 def file_name (nbins, CC, beta, multi, KK) : 
@@ -25,8 +25,8 @@ def file_name (nbins, CC, beta, multi, KK) :
 def _parse_argument():
     parser = argparse.ArgumentParser(
         description="*** Compress the basis files. ***")
-    parser.add_argument('-n', '--numb-bin', type=int, default = 10,
-                        help='number of bins for piecewise cubic Hermite')
+    parser.add_argument('-n', '--bin-dens', type=int, default = 10,
+                        help='number of bins divided by cut-off for piecewise cubic Hermite')
     parser.add_argument('-c', '--cut-off', type=int, nargs = '+', default = [2],
                         help='cut-off radius of basis')
     parser.add_argument('-b', '--beta', type=float, nargs = '+', default = [3.5],
@@ -45,7 +45,7 @@ def _parse_argument():
 def _main () : 
     args = _parse_argument()
     
-    nbins        = args.numb_bin
+    bin_dens     = args.bin_dens
     CC           = args.cut_off
     beta         = args.beta
     mul          = args.box_multiple
@@ -68,8 +68,8 @@ def _main () :
     ofp.write ("# tabulated PM interpl. basis version: %s\n" % global_version_str)
 
     # number of bins
-    ofp.write ("# nbins\n")
-    ofp.write ("%d" % nbins)
+    ofp.write ("# bin density\n")
+    ofp.write ("%d" % bin_dens)
     ofp.write ("\n")
 
     # cut-off
@@ -93,6 +93,7 @@ def _main () :
     # opti value
     ofp.write ("# optimized value\n")
     for i_cc in CC:
+        nbins = i_cc * bin_dens
         for i_beta in beta:
             for i_kk in KK :
                 input_file = file_name (nbins, i_cc, i_beta, mul, i_kk)
@@ -106,6 +107,7 @@ def _main () :
     # opti value
     ofp.write ("# optimized value\n")
     for i_cc in CC:
+        nbins = i_cc * bin_dens
         for i_beta in beta:
             for i_kk in KK :
                 input_file = file_name (nbins, i_cc, i_beta, mul, i_kk)
