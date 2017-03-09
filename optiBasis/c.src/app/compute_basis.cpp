@@ -64,6 +64,7 @@ void print_result (const char * file,
 int main(int argc, char * argv[])
 {
   string ifile, ofile;
+  string b_style;
   int nbins, CC, sKK, l_cut;
   double beta, LL, tol;
   bool is_vbs = false;
@@ -74,6 +75,7 @@ int main(int argc, char * argv[])
       ("help,h", "Print this message and exit.")
       ("verbose,v", "Being loud and noisy.")
       ("input,f",	po::value<string > (&ifile), "The input guess. If not set use b-spline as initial guess.")
+      ("b-style,B",	po::value<string > (&b_style)->default_value ("SPME"), "The style of B-function, can be SPME or PPPM.")
       ("numb-bins,n",	po::value<int > (&nbins)->default_value (10), "The number of dicretizing bins for basis.")
       ("cut-off,c",	po::value<int > (&CC)->default_value (2), "The cut-off of basis.")
       ("beta,b",	po::value<double > (&beta)->default_value (3.0), "The splitting parameter.")
@@ -97,6 +99,18 @@ int main(int argc, char * argv[])
   if (!vm.count("l-cut")){
     l_cut = int (4* nbins / CC);
     if (is_vbs) cout << "# guessed l_cut " << l_cut << endl;
+  }
+
+  int ib_style = -1;
+  if (b_style == "SPME") {
+    ib_style = B_STYLE::SPME;
+  }
+  else if (b_style == "PPPM") {
+    ib_style = B_STYLE::PPPM;    
+  }
+  else {
+    cerr << "unknow b-style " << b_style << endl;
+    return 1;
   }
 
   vector<double > vi (nbins-1), di(nbins-1);
@@ -147,7 +161,7 @@ int main(int argc, char * argv[])
   int natoms = 33.456 * LL*LL*LL * 3;
   vector<int> KK(3, sKK);
       
-  LossFunc<IkError<HatSymmHermiteBase> > lf (CC, nbins, beta, KK, q2, natoms, region, l_cut, numb_threads);
+  LossFunc<IkError<HatSymmHermiteBase> > lf (CC, nbins, beta, KK, q2, natoms, region, l_cut, ib_style, numb_threads);
   global_p_loss = &lf;
   
   column_vector xx (vi.size() * 2);
