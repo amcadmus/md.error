@@ -186,8 +186,10 @@ prepare_sum_deriv (const SimulationRegion<double> & region)
 	      const double &		hat_phil   = hat_comput[dd].value(idxmm[dd] + ll * KK[dd]);
 	      const vector<double> &	hat_basisl = hat_comput[dd].basis_value(idxmm[dd] + ll * KK[dd]);
 	      o1e += hat_phil * hat_phil * hat_phi02i;
+	      double pref0 = 2 * hat_phil * hat_phi02i;
+	      double pref1 = 2 * hat_phil * hat_phil * hat_phi03i;
 	      for (unsigned pp = 0; pp < basis_size; ++pp){
-		o1e_deriv[pp] += (2 * hat_phil * hat_phi02i * hat_basisl[pp] - 2 * hat_phil * hat_phil * hat_phi03i * hat_basis0[pp] );
+		o1e_deriv[pp] += (pref0 * hat_basisl[pp] - pref1 * hat_basis0[pp] );
 	      }
 	    }
 	  }
