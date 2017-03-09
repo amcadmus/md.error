@@ -186,7 +186,7 @@ int main(int argc, char * argv[])
   
   char head[1024];
   sprintf (head, "%f %f %e", beta, LL/double(sKK), vmin);
-  print_result (ofile.c_str(), 2, xx, head);
+  print_result (ofile.c_str(), CC, xx, head);
 
   return 0;
 }
