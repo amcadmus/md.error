@@ -20,6 +20,8 @@ def _parse_argument():
                         help='box size is the multiple of basic size %f' % global_basic_sys_size)
     parser.add_argument('-k', '--numb-grid', type=int, nargs = '+', default = [32],
                         help='number of grid points')
+    parser.add_argument('-T', '--numb-threads', type=int, default = 2,
+                        help='number of threads')
     parser.add_argument('-o', '--output-dir', type=str, default = "dir.basis",
                         help='the output dir of basis')
     args = parser.parse_args()
@@ -34,6 +36,7 @@ def _main () :
     mul          = args.box_multiple
     KK           = args.numb_grid
     output       = args.output_dir
+    numb_threads = args.numb_threads
     if not os.path.exists (output): 
         os.mkdir (output)
 
@@ -51,7 +54,7 @@ def _main () :
                           " -b %.16e" % i_beta + \
                           " -l %.16e" % LL + \
                           " -k %d" % i_kk + \
-                          " -T 4" + \
+                          " -T %d" % numb_threads + \
                           " -v" + \
                           " -t 1e-8" + \
                           " -o %s" % (output+"/"+ofile)

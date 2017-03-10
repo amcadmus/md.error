@@ -75,7 +75,7 @@ def _main () :
     # cut-off
     ofp.write ("# CC\n")
     for i_cc in CC:
-        ofp.write ("%d" % i_cc)
+        ofp.write ("%d " % i_cc)
     ofp.write ("\n")
 
     # beta
