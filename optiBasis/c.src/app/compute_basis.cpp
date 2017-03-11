@@ -97,7 +97,7 @@ int main(int argc, char * argv[])
     is_vbs = true;
   }
   if (!vm.count("l-cut")){
-    l_cut = int (4* nbins / CC);
+    l_cut = int (2 * nbins / CC);
     if (is_vbs) cout << "# guessed l_cut " << l_cut << endl;
   }
 

@@ -114,7 +114,7 @@ IkError<HatComputer>::
 prepare_sum (const SimulationRegion<double> & region)
 {
   double V = region.getVolume ();
-  double tmp_sum_o1 = 0;
+  long double tmp_sum_o1 = 0;
 
 #pragma omp parallel for reduction (+:tmp_sum_o1) num_threads(func_numb_threads)
   for (int m0 = -int(KK[0]/2); m0 <= KK[0]/2; ++m0){
@@ -162,11 +162,11 @@ prepare_sum_deriv (const SimulationRegion<double> & region)
 {
   double V = region.getVolume ();
   unsigned basis_size = hat_comput[0].basis_size();
-  double tmp_sum_o1 = 0;
+  long double tmp_sum_o1 = 0;
   sum_o1_deriv.resize (basis_size, 0);
   fill (sum_o1_deriv.begin(), sum_o1_deriv.end(), 0.);
 
-  vector<vector<double > > t_sum_o1_deriv (func_numb_threads, sum_o1_deriv);
+  vector<vector<long double > > t_sum_o1_deriv (func_numb_threads, vector<long double> (basis_size, 0));
 
 #pragma omp parallel for reduction (+:tmp_sum_o1) num_threads(func_numb_threads)
   for (int tt = 0; tt < func_numb_threads; ++tt){ 
