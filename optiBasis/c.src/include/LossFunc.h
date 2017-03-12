@@ -7,8 +7,16 @@
 typedef dlib::matrix<double,0,1> column_vector;
 using namespace std;
 
+class AbsLossFunc 
+{
+public:
+  virtual double value (const column_vector & xx) = 0;
+  virtual const column_vector deriv (const column_vector & xx) = 0;
+}
+    ;
+
 template <typename ErrorEsti> 
-class LossFunc 
+class LossFunc : public AbsLossFunc
 {
 public:
   LossFunc (const int & CC,
@@ -21,8 +29,8 @@ public:
 	    const int & l_cut,
 	    const int b_style,
 	    const int numb_threads);
-  double value (const column_vector & xx);
-  const column_vector deriv (const column_vector & xx);
+  virtual double value (const column_vector & xx);
+  virtual const column_vector deriv (const column_vector & xx);
 public:
   int CC;
   int nbins;
