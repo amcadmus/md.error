@@ -16,9 +16,11 @@
 #include "TableFileLoader.h"
 #include "HatSymmHermiteBase.h"
 #include "IkError.h"
+#include "AdError.h"
 #include "LossFunc.h"
 #include "CardinalBSpline.h"
 #include "SimulationRegion.h"
+#include "Interpolation.h"
 
 // third party
 #include <boost/program_options.hpp>
@@ -26,8 +28,9 @@
 
 namespace po = boost::program_options;
 
-LossFunc<IkError<HatSymmHermiteBase> > * global_p_loss;
+// LossFunc<IkError<HatSymmHermiteBase> > * global_p_loss;
 
+AbsLossFunc * global_p_loss;
 
 double func_value (const column_vector& m) 
 {
@@ -64,7 +67,7 @@ void print_result (const char * file,
 int main(int argc, char * argv[])
 {
   string ifile, ofile;
-  string b_style;
+  string b_style, fmethod;
   int nbins, CC, sKK, l_cut;
   double beta, LL, tol;
   bool is_vbs = false;
@@ -76,6 +79,7 @@ int main(int argc, char * argv[])
       ("verbose,v", "Being loud and noisy.")
       ("input,f",	po::value<string > (&ifile), "The input guess. If not set use b-spline as initial guess.")
       ("b-style,B",	po::value<string > (&b_style)->default_value ("SPME"), "The style of B-function, can be SPME or PPPM.")
+      ("force-scheme,F",po::value<string > (&fmethod)->default_value ("ik"), "The force scheme, can be ik or ad.")
       ("numb-bins,n",	po::value<int > (&nbins)->default_value (10), "The number of dicretizing bins for basis.")
       ("cut-off,c",	po::value<int > (&CC)->default_value (2), "The cut-off of basis.")
       ("beta,b",	po::value<double > (&beta)->default_value (3.0), "The splitting parameter.")
@@ -142,12 +146,34 @@ int main(int argc, char * argv[])
     tbl.setColumns (cols);
     std::vector<std::vector<double > > data;
     tbl.loadAll (data);
-    vi = data[1];
-    di = data[2];
-    vi.erase (vi.begin());
-    vi.erase (vi.end()-1);
-    di.erase (di.begin());
-    di.erase (di.end()-1);
+    assert (fabs(data[0].back() - CC) < 1e-6);
+    int table_nbins = data[0].size() - 1;
+    double table_h = CC / double(table_nbins);
+    vector<Poly> table_p;
+    vector<Poly> table_pp;
+    for (int ii = 0; ii < table_nbins; ++ii){
+      Poly tmpp;
+      Interpolation::pieceHermiteInterpol (data[0][ii], data[0][ii+1], 
+					   data[1][ii], data[1][ii+1], 
+					   data[2][ii], data[2][ii+1],
+					   tmpp);
+      table_p.push_back (tmpp);
+      table_pp.push_back(tmpp.derivative());
+    }
+    double hh = CC / double(nbins);
+    for (int ii = 0; ii < nbins-1; ++ii){
+      double xx = (ii+1) * hh;
+      int table_idx = int(xx / table_h);
+      assert (table_idx < int(table_p.size()));
+      vi[ii] = (table_p[table_idx].value(xx));
+      di[ii] = (table_pp[table_idx].value(xx));
+    }
+    // vi = data[1];
+    // di = data[2];
+    // vi.erase (vi.begin());
+    // vi.erase (vi.end()-1);
+    // di.erase (di.begin());
+    // di.erase (di.end()-1);
     assert (int(vi.size()) == nbins-1);
     assert (int(di.size()) == nbins-1);
     if (is_vbs) cout << "# use " << ifile << " as initial guess" << endl;
@@ -161,8 +187,18 @@ int main(int argc, char * argv[])
   int natoms = 33.456 * LL*LL*LL * 3;
   vector<int> KK(3, sKK);
       
-  LossFunc<IkError<HatSymmHermiteBase> > lf (CC, nbins, beta, KK, q2, natoms, region, l_cut, ib_style, numb_threads);
-  global_p_loss = &lf;
+  // LossFunc<IkError<HatSymmHermiteBase> > lf (CC, nbins, beta, KK, q2, natoms, region, l_cut, ib_style, numb_threads);
+  // global_p_loss = &lf;
+  if (fmethod == "ik") {
+    global_p_loss = new LossFunc<IkError<HatSymmHermiteBase> > (CC, nbins, beta, KK, q2, natoms, region, l_cut, ib_style, numb_threads);
+  }
+  else if (fmethod == "ad"){
+    global_p_loss = new LossFunc<AdError<HatSymmHermiteBase> > (CC, nbins, beta, KK, q2, natoms, region, l_cut, ib_style, numb_threads);
+  }
+  else {
+    cerr << "unknown force scheme " << fmethod << endl;
+    return 1;
+  }
   
   column_vector xx (vi.size() * 2);
   for (unsigned ii = 0; ii < vi.size(); ++ii){
@@ -170,7 +206,7 @@ int main(int argc, char * argv[])
     xx(ii+vi.size()) = di[ii];
   }
 
-  // print_result ("init.out", CC, xx, "");
+  print_result ("init.out", CC, xx, "");
   double initv = func_value (xx);
   if (is_vbs) cout << "# init value " << initv << endl;
 
@@ -187,6 +223,8 @@ int main(int argc, char * argv[])
   char head[1024];
   sprintf (head, "%f %f %e", beta, LL/double(sKK), vmin);
   print_result (ofile.c_str(), CC, xx, head);
+
+  delete global_p_loss;
 
   return 0;
 }

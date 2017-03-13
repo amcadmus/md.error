@@ -33,7 +33,7 @@ private:
   double sum_o1;
   vector<double > sum_o1_deriv;
   void prepare_sum (const SimulationRegion<double> & region);
-  void prepare_sum_deriv (const SimulationRegion<double> & region) {};
+  void prepare_sum_deriv (const SimulationRegion<double> & region) ;
   void prepare_sum_pppm (const SimulationRegion<double> & region) {};
   void prepare_sum_pppm_deriv (const SimulationRegion<double> & region) {};
   void compute_G (double * gm, const int ip, const int jp, const int kp,
@@ -128,29 +128,21 @@ prepare_sum (const SimulationRegion<double> & region)
 	  gm[dd] = -4. * M_PI * mm[dd] * expp;
 	}
 	double gm2 = MathUtilities::dot<double > (gm, gm);
+	double fm_scale = expp;
 	
 	double o1e = 0;
 
-	for (int ll = -l_cut; ll <= l_cut; ll += 1){
-	  if (ll == 0) continue;
-
-	  double zl[3];
-	  zl[0] = hat_comput[0].value(ll * KK[0] + idxmm[0]) / hat_comput[0].value(idxmm[0]);
-	  zl[1] = hat_comput[1].value(ll * KK[1] + idxmm[1]) / hat_comput[1].value(idxmm[1]);
-	  zl[2] = hat_comput[2].value(ll * KK[2] + idxmm[2]) / hat_comput[2].value(idxmm[2]);
-
-	  double fm_scale = expp;
-	  for (int alpha = 0; alpha < 3; ++alpha){
-	    double tmp_scale = zl[alpha] * fm_scale * -4. * M_PI * ll * KK[alpha];
+	for (int alpha = 0; alpha < 3; ++alpha){
+	  double hat0i = 1./hat_comput[alpha].value(idxmm[alpha]);
+	  for (int ll = -l_cut; ll <= l_cut; ll += 1){
+	    if (ll == 0) continue;
+	    double zl = hat_comput[alpha].value(ll * KK[alpha] + idxmm[alpha]) * hat0i;
+	    double tmp_scale = fm_scale * -4. * M_PI * ll * KK[alpha];
 	    double fm[3];
-	    fm[0] = tmp_scale * rec_boxt[alpha*3+0];
-	    fm[1] = tmp_scale * rec_boxt[alpha*3+1];
-	    fm[2] = tmp_scale * rec_boxt[alpha*3+2];
-	    fm[0] += gm[0] * zl[alpha];
-	    fm[1] += gm[1] * zl[alpha];
-	    fm[2] += gm[2] * zl[alpha];
-	    o1e += 1. * gm2 * zl[alpha] * zl[alpha];
-	    o1e += MathUtilities::dot<double > (fm, fm);
+	    fm[0] = gm[0] + tmp_scale * rec_boxt[alpha*3+0];
+	    fm[1] = gm[1] + tmp_scale * rec_boxt[alpha*3+1];
+	    fm[2] = gm[2] + tmp_scale * rec_boxt[alpha*3+2];	    
+	    o1e += (MathUtilities::dot<double > (fm, fm) + gm2) * zl * zl;
 	  }
 	}
 	tmp_sum_o1 += o1e;
@@ -161,6 +153,94 @@ prepare_sum (const SimulationRegion<double> & region)
   sum_o1 = tmp_sum_o1;
   sum_o1 /= (2. * M_PI * V * 2. * M_PI * V);
 }
+
+template<typename HatComputer> 
+void
+AdError<HatComputer>::
+prepare_sum_deriv (const SimulationRegion<double> & region)
+{
+  double V = region.getVolume ();
+  double scale = M_PI * M_PI / beta / beta;
+  const double * rec_boxt = region.getRecBoxTensor();
+
+  unsigned basis_size = hat_comput[0].basis_size();
+  double tmp_sum_o1 = 0;
+  sum_o1_deriv.resize (basis_size, 0);
+  fill (sum_o1_deriv.begin(), sum_o1_deriv.end(), 0.);
+  vector<vector<double > > t_sum_o1_deriv (func_numb_threads, sum_o1_deriv);
+
+#pragma omp parallel for reduction (+:tmp_sum_o1) num_threads(func_numb_threads)
+  for (int tt = 0; tt < func_numb_threads; ++tt){ 
+    for (int m0 = -int(KK[0]/2)+tt; m0 <= KK[0]/2; m0 += func_numb_threads){
+      for (int m1 = -int(KK[1]/2); m1 <= KK[1]/2; ++m1){
+	for (int m2 = -int(KK[2]/2); m2 <= KK[2]/2; ++m2){
+	  if (abs(m0) + abs(m1) + abs(m2) == 0) continue;
+	  int idxmm[3];
+	  idxmm[0] = m0;
+	  idxmm[1] = m1;
+	  idxmm[2] = m2;
+
+	  double mm[3] = {0};
+	  rect_vec (mm, idxmm[0], idxmm[1], idxmm[2], region);
+	  double mm2 = MathUtilities::dot<double> (mm, mm);
+	  double expp = exp (- scale * mm2) / (mm2);
+	  double gm[3];
+	  for (int dd = 0; dd < 3; ++dd) {
+	    gm[dd] = -4. * M_PI * mm[dd] * expp;
+	  }
+	  double gm2 = MathUtilities::dot<double > (gm, gm);
+	  double fm_scale = expp;
+	
+	  double o1e = 0;
+	  vector<double> o1e_deriv (basis_size, 0);
+
+	  for (int alpha = 0; alpha < 3; ++alpha){
+	    const double & hat_phi0 = hat_comput[alpha].value (idxmm[alpha]);
+	    const vector<double>& hat_basis0 = hat_comput[alpha].basis_value (idxmm[alpha]);
+	    double hat_phi02i = 1./(hat_phi0 * hat_phi0);
+	    double hat_phi03i = 1./(hat_phi0 * hat_phi0 * hat_phi0);
+
+	    for (int ll = -l_cut; ll <= l_cut; ll += 1){
+	      if (ll == 0) continue;
+	      const double & hat_phil = hat_comput[alpha].value(idxmm[alpha] + ll * KK[alpha]);
+	      const vector<double> & hat_basisl = hat_comput[alpha].basis_value(idxmm[alpha] + ll * KK[alpha]);
+	      double pref0 = 2 * hat_phil * hat_phi02i;
+	      double pref1 = 2 * hat_phil * hat_phil * hat_phi03i;
+	      double tmp_scale = fm_scale * -4. * M_PI * ll * KK[alpha];
+	      double fm[3];
+	      fm[0] = gm[0] + tmp_scale * rec_boxt[alpha*3+0];
+	      fm[1] = gm[1] + tmp_scale * rec_boxt[alpha*3+1];
+	      fm[2] = gm[2] + tmp_scale * rec_boxt[alpha*3+2];	    
+	      double pref_fg = MathUtilities::dot<double > (fm, fm) + gm2;
+	      o1e += pref_fg * hat_phil * hat_phil * hat_phi02i;
+	      for (unsigned pp = 0; pp < basis_size; ++pp){
+		o1e_deriv[pp] += pref_fg * (pref0 * hat_basisl[pp] - pref1 * hat_basis0[pp] );
+	      }
+	    }
+	  }
+	  tmp_sum_o1 += o1e;
+	  for (unsigned pp = 0; pp < basis_size; ++pp){
+	    t_sum_o1_deriv[tt][pp] += o1e_deriv[pp];
+	  }
+	}
+      }
+    }
+  }
+#pragma omp parallel for num_threads(func_numb_threads)
+  for (unsigned pp = 0; pp < basis_size; ++pp){
+    for (int tt = 0; tt < func_numb_threads; ++tt){
+      sum_o1_deriv[pp] += t_sum_o1_deriv[tt][pp];
+    }
+  }
+  
+  sum_o1 = tmp_sum_o1;
+  sum_o1 /= (2. * M_PI * V * 2. * M_PI * V);
+#pragma omp parallel for num_threads(func_numb_threads)
+  for (unsigned pp = 0; pp < basis_size; ++pp){
+    sum_o1_deriv[pp] = sum_o1_deriv[pp] / (2. * M_PI * V * 2. * M_PI * V);
+  }
+}
+
 
 template<typename HatComputer> 
 double
