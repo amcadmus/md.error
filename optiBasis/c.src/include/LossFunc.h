@@ -10,6 +10,7 @@ using namespace std;
 class AbsLossFunc 
 {
 public:
+  virtual ~AbsLossFunc () {};
   virtual double value (const column_vector & xx) = 0;
   virtual const column_vector deriv (const column_vector & xx) = 0;
 }
@@ -29,6 +30,7 @@ public:
 	    const int & l_cut,
 	    const int b_style,
 	    const int numb_threads);
+  virtual ~LossFunc () {};
   virtual double value (const column_vector & xx);
   virtual const column_vector deriv (const column_vector & xx);
 public:
@@ -68,7 +70,7 @@ LossFunc (const int & CC_,
       l_cut (l_cut_),
       err (beta, KK, hhc, l_cut, b_style, numb_threads)
 {
-  over_sampling = 1600 * (nbins / CC);
+  over_sampling = 100 * l_cut;
   hhc.push_back (typename ErrorEsti::HatType (CC, nbins, KK[0], over_sampling));
   hhc.push_back (typename ErrorEsti::HatType (CC, nbins, KK[1], over_sampling));
   hhc.push_back (typename ErrorEsti::HatType (CC, nbins, KK[2], over_sampling));
