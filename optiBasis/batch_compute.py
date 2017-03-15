@@ -10,8 +10,10 @@ from compress_basis import global_basic_sys_size
 def _parse_argument():
     parser = argparse.ArgumentParser(
         description="*** Compute the optimal basis for SPME. Error estimated for water like homogeneous system. ***")
-    parser.add_argument('-n', '--numb-bin', type=int, default = 10,
-                        help='number of bins for piecewise cubic Hermite')
+    parser.add_argument('-F', '--force-scheme', type=str, default = "ik",
+                        help='the force scheme')
+    parser.add_argument('-n', '--bin-dens', type=int, default = 10,
+                        help='number of bins divided by cut-off for piecewise cubic Hermite')
     parser.add_argument('-c', '--cut-off', type=int, nargs = '+', default = [2],
                         help='cut-off radius of basis')
     parser.add_argument('-b', '--beta', type=float, nargs = '+', default = [1.0],
@@ -30,7 +32,8 @@ def _parse_argument():
 def _main () : 
     args = _parse_argument()
     
-    nbins        = args.numb_bin
+    force_scheme = args.force_scheme
+    bin_dens     = args.bin_dens
     CC           = args.cut_off
     beta         = args.beta
     mul          = args.box_multiple
@@ -41,14 +44,16 @@ def _main () :
         os.mkdir (output)
 
     for i_cc in CC:
+        nbins = i_cc * bin_dens
         for i_beta in beta:
             for i_kk in KK :
                 LL = global_basic_sys_size * mul
-                ofile = file_name (nbins, i_cc, i_beta, mul, i_kk)                
+                ofile = file_name (force_scheme, nbins, i_cc, i_beta, mul, i_kk)
                 if os.path.exists (output+"/"+ofile) : 
                     print ("# existing file %s , do nothing" % (output+"/"+ofile))
                     continue
                 command = "time c.src/compute_basis " +  \
+                          " -F %s" % force_scheme + \
                           " -n %d" % nbins + \
                           " -c %d" % i_cc + \
                           " -b %.16e" % i_beta + \

@@ -8,13 +8,14 @@ import argparse
 global_version_str = "1.1.0"
 global_basic_sys_size = 0.93103
 
-def file_name (nbins, CC, beta, multi, KK) : 
+def file_name (f_scheme, nbins, CC, beta, multi, KK) : 
     p_nbin = "n%03d" % nbins
     p_cc = "C%02d" % CC
     p_beta = "beta%.2f" % beta
     p_mul = "mul%03d" % multi
     p_kk = "K%03d" % KK
     input_file = "basis." +         \
+                 f_scheme + "." +     \
                  p_nbin + "." +     \
                  p_cc + "." +       \
                  p_beta + "." +     \
@@ -25,6 +26,8 @@ def file_name (nbins, CC, beta, multi, KK) :
 def _parse_argument():
     parser = argparse.ArgumentParser(
         description="*** Compress the basis files. ***")
+    parser.add_argument('-F', '--force-scheme', type=str, default = "ik",
+                        help='the force scheme')
     parser.add_argument('-n', '--bin-dens', type=int, default = 10,
                         help='number of bins divided by cut-off for piecewise cubic Hermite')
     parser.add_argument('-c', '--cut-off', type=int, nargs = '+', default = [2],
@@ -45,6 +48,7 @@ def _parse_argument():
 def _main () : 
     args = _parse_argument()
     
+    force_scheme = args.force_scheme
     bin_dens     = args.bin_dens
     CC           = args.cut_off
     beta         = args.beta
@@ -96,7 +100,7 @@ def _main () :
         nbins = i_cc * bin_dens
         for i_beta in beta:
             for i_kk in KK :
-                input_file = file_name (nbins, i_cc, i_beta, mul, i_kk)
+                input_file = file_name (force_scheme, nbins, i_cc, i_beta, mul, i_kk)
                 input_file = input_dir + "/" + input_file
 #                print (input_file)
                 fp = open (input_file, "r")
@@ -110,7 +114,7 @@ def _main () :
         nbins = i_cc * bin_dens
         for i_beta in beta:
             for i_kk in KK :
-                input_file = file_name (nbins, i_cc, i_beta, mul, i_kk)
+                input_file = file_name (force_scheme, nbins, i_cc, i_beta, mul, i_kk)
                 input_file = input_dir + "/" + input_file
                 data = np.loadtxt (input_file)
                 assert (data.shape == (nbins+1, 3))
