@@ -13,6 +13,10 @@ public:
   virtual ~AbsLossFunc () {};
   virtual double value (const column_vector & xx) = 0;
   virtual const column_vector deriv (const column_vector & xx) = 0;
+  virtual bool evaluate (double & v,
+			  column_vector & d,
+			  const column_vector & xx) = 0;
+  virtual int inputDim  () const = 0;
 }
     ;
 
@@ -33,6 +37,10 @@ public:
   virtual ~LossFunc () {};
   virtual double value (const column_vector & xx);
   virtual const column_vector deriv (const column_vector & xx);
+  virtual bool evaluate (double & v,
+			 column_vector & d,
+			 const column_vector & xx);
+  virtual int inputDim  () const {return 2 * (nbins - 1);};
 public:
   int CC;
   int nbins;
@@ -132,6 +140,43 @@ deriv (const column_vector & xx)
 
   return ret;
 }
+
+template <typename ErrorEsti> 
+bool
+LossFunc<ErrorEsti>::
+evaluate (double & rvv,
+	  column_vector & rdd,
+	  const column_vector & xx)
+{
+  long size = xx.size();
+  assert (size == 2 * (nbins - 1));
+  
+  vector<double > vv (nbins-1);
+  vector<double > dd (nbins-1);
+  for (long ii = 0; ii < nbins-1; ++ii){
+    vv[ii] = xx(ii);
+    dd[ii] = xx(ii+nbins-1);
+  }
+
+  hhc[0].set_value (vv, dd);
+  hhc[1].set_value (vv, dd);
+  hhc[2].set_value (vv, dd);
+
+  vector<double > reslt;
+  rvv = err.estimate (reslt, q2, natoms, region);
+
+  assert (size == long(reslt.size()));
+  
+  column_vector ret (size);
+  
+  for (long ii = 0; ii < size; ++ii){
+    ret(ii) = reslt[ii];
+  }
+  rdd = ret;
+
+  return true;
+}
+
 
 
 
