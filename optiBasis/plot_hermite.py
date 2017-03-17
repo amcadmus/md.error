@@ -4,6 +4,7 @@ import numpy as np
 import argparse
 # import matplotlib.pyplot as plt
 from Hermite import symm_hermite
+from Hermite import symm_hermite_deriv
 
 def _parse_argument():
     parser = argparse.ArgumentParser(
@@ -25,16 +26,16 @@ def plot_hermite (CC,
     sample_h = hh / float(sampling)
     xx = np.arange (-CC, CC + sample_h * 0.5, sample_h)
     value = np.zeros (len(xx))
+    deriv = np.zeros (len(xx))
 
     assert (len(vv) == len(dd))
     for ii in range(len(vv)) :
         [hv, hd] = symm_hermite (xx, ii, hh)
-        # plt.plot (xx, hv)
-        # plt.plot (xx, hd)
-        # plt.show()
         value = value + vv[ii] * hv + dd[ii] * hd
+        [hv, hd] = symm_hermite_deriv (xx, ii, hh)
+        deriv = deriv + vv[ii] * hv + dd[ii] * hd
     
-    return [xx, value]
+    return [xx, value, deriv]
 
 
 if __name__ == '__main__' :
@@ -51,8 +52,9 @@ if __name__ == '__main__' :
     hh = CC / float(nbin)
     print ("nbin is %d", nbin)
     print ("hh   is %f", hh)
-    [sx, sv] = plot_hermite (CC, hh, vv, dd, args.sampling_points)
+    [sx, sv, sd] = plot_hermite (CC, hh, vv, dd, args.sampling_points)
     
     print_mat = [sx]
     print_mat = np.append (print_mat, [sv], axis=0)
+    print_mat = np.append (print_mat, [sd], axis=0)
     np.savetxt (args.output, print_mat.T)
